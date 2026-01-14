@@ -2,11 +2,17 @@
   "name": "@sotbi/auth",
   "version": "0.0.1",
   "peerDependencies": {
-    "@angular/common": "^20.0.0",
-    "@angular/core": "^20.0.0",
-    "@angular/router": "^20.0.0",
-    "@ngxs/store": "^20.0.0",
-    "rxjs": "^7.8.0"
+    "@angular/common": "^20.3.0",
+    "@angular/core": "^20.3.0",
+    "@angular/router": "^20.3.0",
+    "@angular/platform-browser": "^20.3.0",
+    "@ngxs/store": "^21.0.0",
+    "rxjs": "^7.8.0",
+    "@angular/material": "^21.1.0",
+    "@sotbi/models": "0.0.1",
+    "@sotbi/data-access": "0.0.1",
+    "date-fns": "^4.1.0",
+    "jwt-decode": "^4.0.0"
   },
   "sideEffects": false
 }

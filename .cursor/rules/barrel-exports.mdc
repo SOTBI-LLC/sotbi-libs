@@ -1,0 +1,44 @@
+---
+alwaysApply: true
+---
+
+# Barrel File Export Patterns
+
+**IMPORTANT**: Always use concrete named exports in barrel files (`index.ts`). Never use wildcard exports.
+
+## ❌ Bad (Wildcard Exports)
+
+```typescript
+// index.ts
+export * from './component';
+export * from './service';
+export * from './model';
+```
+
+## ✅ Good (Concrete Named Exports)
+
+```typescript
+// index.ts
+export { MyComponent } from './component';
+export { MyService } from './service';
+export { MyModel, MyInterface } from './model';
+```
+
+## Benefits
+
+- **Explicit API**: Clear visibility of what is exported from each module
+- **Better Tree-shaking**: Bundlers can optimize unused exports more effectively
+- **Improved IDE Support**: Better autocomplete and refactoring
+- **Prevents Name Collisions**: Reduces risk of accidentally exporting internal symbols
+- **Easier Maintenance**: Explicitly see what's part of the public API
+
+## Implementation
+
+When creating barrel files, list each export explicitly:
+
+```typescript
+// admin/index.ts
+export { AdminModule } from './admin.module';
+export { LandingComponent } from './landing.component';
+export { AccessComponent } from './access/access.component';
+```

@@ -30,11 +30,12 @@ export enum InsurancePolicyType {
   ADDITIONAL = 'additional',
 }
 
-export const InsurancePolicyTypeArr: { id: InsurancePolicyType; ru: string }[] = [
-  { id: InsurancePolicyType.PRIMARY, ru: 'Основной' },
-  { id: InsurancePolicyType.ADDITIONAL, ru: 'Дополнительный' },
-];
+export const InsurancePolicyTypeArr: { id: InsurancePolicyType; ru: string }[] =
+  [
+    { id: InsurancePolicyType.PRIMARY, ru: 'Основной' },
+    { id: InsurancePolicyType.ADDITIONAL, ru: 'Дополнительный' },
+  ];
 
 export const InsurancePolicyTypeMap = new Map(
-  InsurancePolicyTypeArr.map((i): [string, string] => [i.id, i.ru]),
+  InsurancePolicyTypeArr.map((i): [string, string] => [i.id, i.ru])
 );

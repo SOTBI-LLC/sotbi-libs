@@ -113,4 +113,6 @@ export const StaffTypeArr: { id: StaffType; ru: string }[] = [
   { id: StaffType.DEPARTMENT, ru: 'Департамент' },
 ];
 
-export const StaffTypeMap = new Map(StaffTypeArr.map((i): [number, string] => [i.id, i.ru]));
+export const StaffTypeMap = new Map(
+  StaffTypeArr.map((i): [number, string] => [i.id, i.ru])
+);

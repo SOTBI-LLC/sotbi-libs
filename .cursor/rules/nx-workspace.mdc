@@ -1,0 +1,142 @@
+---
+alwaysApply: true
+---
+
+# Nx Workspace Conventions
+
+This is an Nx 21.4.1 workspace with yarn as the package manager.
+
+## Workspace Configuration
+
+Configuration files:
+
+- [nx.json](mdc:nx.json) - Nx workspace configuration
+- [project.json](mdc:project.json) - Project-specific configuration
+- [package.json](mdc:package.json) - Dependencies and scripts
+
+## NPM Scripts
+
+```bash
+# Development
+yarn start                # Start development server
+nx run time-table:serve  # Alternative start command
+
+# Build
+npm run build           # Production build with optimizations
+
+# Testing
+yarn test --watch=false # Run tests (skips cache)
+npm run e2e             # Run e2e tests
+
+# Linting
+yarn lint            # Lint and fix (skips cache)
+```
+
+## Nx Commands
+
+### Running Tasks
+
+```bash
+# Run specific project task
+nx run time-table:serve
+nx run time-table:build
+nx run time-table:test
+nx run time-table:lint
+
+# With options
+nx build --configuration=production
+nx test --skip-nx-cache
+nx lint --fix --skip-nx-cache
+```
+
+### Workspace Management
+
+```bash
+# See affected projects
+nx affected:graph
+
+# Run task for affected projects
+nx affected:test
+nx affected:build
+
+# Clear cache
+nx reset
+```
+
+## Caching
+
+Nx caches operations for better performance:
+
+**Cacheable Operations** (defined in nx.json):
+- `build`
+- `lint`
+- `test`
+- `e2e`
+
+**Skip Cache**: Use `--skip-nx-cache` flag when needed (tests/lint scripts use this by default)
+
+## Generators
+
+Default collection: `@angular-eslint/schematics`
+
+**Style defaults**:
+- Applications: CSS
+- Components: SCSS (configured for `@nx/angular:component`)
+
+**Test runner**: Jest (for new libraries)
+**E2E runner**: Cypress
+
+## Build Configuration
+
+Production build includes:
+- AOT compilation (`--aot`)
+- Build optimizer (`--build-optimizer`)
+- Output path cleanup (`--delete-output-path`)
+- Common chunk generation (`--common-chunk`)
+- License extraction (`--extract-licenses`)
+
+## Workspace Layout
+
+```
+nx.json - Workspace config
+project.json - Project targets
+package.json - Dependencies
+src/ - Application source
+  app/ - Application code
+dist/ - Build output
+```
+
+## Target Defaults
+
+All projects inherit target configurations from nx.json:
+
+- **build**: Depends on dependencies' build, uses production inputs, cached
+- **test**: Uses default inputs + karma config, cached
+- **lint**: Uses default inputs + eslint config, cached
+- **e2e**: Uses default + production inputs
+
+## Best Practices
+
+1. **Use Nx Commands**: Prefer `nx run` over direct CLI commands for caching benefits
+2. **Respect Cache**: Only skip cache when necessary (debugging, CI/CD)
+3. **Check Affected**: Use `nx affected` commands in CI to optimize build times
+4. **Follow Generators**: Use Nx generators for consistency
+5. **Update Together**: Keep Nx and Angular versions compatible
+
+## Package Manager
+
+This workspace uses **yarn**. Always use yarn for dependency management:
+
+```bash
+yarn install          # Install dependencies
+yarn add package      # Add dependency
+yarn remove package   # Remove dependency
+```
+
+## Nx Console
+
+This project has Nx Console integration. Use the Nx MCP tools:
+- `nx_workspace` - View workspace structure
+- `nx_project_details` - Get project configuration
+- `nx_generators` - List available generators
+- `nx_docs` - Search Nx documentation

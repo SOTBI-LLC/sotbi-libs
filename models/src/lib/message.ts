@@ -5,7 +5,6 @@ import { Debtor } from './debtor';
 import { MessageAttachment } from './message-attachment';
 import { PostAddress } from './post-address';
 import { SimpleEditModel } from './simple-edit';
-import { Sro } from './sro';
 import { StatusEnum } from './status-request';
 import { SubMessageType } from './sub-message-type';
 import { User } from './user';
@@ -123,7 +122,9 @@ export const CreditorTypeArr: { id: CreditorType; ru: string }[] = [
   { id: CreditorType.FOREIGN_COMPANY, ru: 'иностранная компания' },
 ];
 
-export const CreditorTypeMap = new Map(CreditorTypeArr.map((i): [number, string] => [i.id, i.ru]));
+export const CreditorTypeMap = new Map(
+  CreditorTypeArr.map((i): [number, string] => [i.id, i.ru])
+);
 
 export enum CreditorMeetingType {
   IN_PERSON,
@@ -153,7 +154,10 @@ export enum DeliberateOrFictitiousValue {
   CHECK_WAS_NOT_CARRIED_OUT_FOR_THE_REASON,
 }
 
-export const DeliberateOrFictitiousValueArr: { id: DeliberateOrFictitiousValue; ru: string }[] = [
+export const DeliberateOrFictitiousValueArr: {
+  id: DeliberateOrFictitiousValue;
+  ru: string;
+}[] = [
   {
     id: DeliberateOrFictitiousValue.PRESENCE_OF_SIGNS_WAS_REVEALED,
     ru: 'Выявлено наличие признаков',
@@ -169,7 +173,7 @@ export const DeliberateOrFictitiousValueArr: { id: DeliberateOrFictitiousValue; 
 ];
 
 export const DeliberateOrFictitiousValueMap = new Map(
-  DeliberateOrFictitiousValueArr.map((i): [number, string] => [i.id, i.ru]),
+  DeliberateOrFictitiousValueArr.map((i): [number, string] => [i.id, i.ru])
 );
 
 export enum TypeOrderOfSatisfaction {

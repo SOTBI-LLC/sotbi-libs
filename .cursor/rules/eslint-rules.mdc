@@ -1,0 +1,88 @@
+---
+alwaysApply: true
+---
+
+# ESLint Configuration
+
+This project uses ESLint 9.37.0 with TypeScript and Angular-specific rules.
+
+## Configuration
+
+See [eslint.config.mjs](mdc:eslint.config.mjs) for full configuration.
+
+## Key Rules
+
+### 1. Explicit Member Accessibility
+
+**REQUIRED**: All class members must have explicit accessibility modifiers, with some exceptions:
+
+```typescript
+// ✅ Good
+export class MyComponent {
+  private readonly store = inject(Store);
+  protected data = signal<string[]>([]);
+  public somePublicMethod() {}
+}
+
+// ❌ Bad
+export class MyComponent {
+  store = inject(Store); // Missing accessibility modifier
+  data = signal<string[]>([]);
+}
+```
+
+**Exceptions** (do not require modifiers):
+- Constructors (implicit public)
+- Accessors/getters/setters (implicit public)
+- Methods (currently off, TODO: make explicit)
+- Properties (currently off, TODO: make explicit)
+
+### 2. Avoid `any` Type
+
+**WARN**: Avoid using `any` type. Use proper typing or `unknown` when type is uncertain.
+
+```typescript
+// ❌ Avoid
+function process(data: any) {
+  return data.value;
+}
+
+// ✅ Good - Use proper types
+function process(data: MyInterface) {
+  return data.value;
+}
+
+// ✅ Good - Use unknown for uncertain types
+function process(data: unknown) {
+  if (isMyType(data)) {
+    return data.value;
+  }
+}
+```
+
+## Running ESLint
+
+```bash
+# Lint with auto-fix
+npm run lint
+
+# Lint specific files
+nx run time-table:lint --fix
+
+# Without cache (for fresh run)
+nx run time-table:lint --fix --skip-nx-cache
+```
+
+## Pre-commit Hooks
+
+Lint-staged is configured to run on commit:
+- Prettier formatting for `.js`, `.ts`, `.json`, `.html`, `.scss`
+- ESLint for JavaScript files
+
+## Best Practices
+
+1. **Fix Warnings**: Address `@typescript-eslint/no-explicit-any` warnings
+2. **Add Accessibility**: Use `private`, `protected`, or `public` for class members
+3. **Type Everything**: Prefer explicit types over inference for public APIs
+4. **Run Before Commit**: Always run `npm run lint` before committing
+5. **Fix Automatically**: Use `--fix` flag to auto-resolve fixable issues

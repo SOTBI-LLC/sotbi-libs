@@ -42,13 +42,16 @@ export enum PaymentRequestTarget {
   CARDFILE = 'cardfile',
 }
 
-export const PaymentRequestTargetArr: { id: PaymentRequestTarget; ru: string }[] = [
+export const PaymentRequestTargetArr: {
+  id: PaymentRequestTarget;
+  ru: string;
+}[] = [
   { id: PaymentRequestTarget.PAY, ru: '💰 Оплатить' },
   { id: PaymentRequestTarget.CARDFILE, ru: '🗂️ Картотека' },
 ];
 
 export const PaymentRequestTargetMap = new Map(
-  PaymentRequestTargetArr.map((i): [string, string] => [i.id, i.ru]),
+  PaymentRequestTargetArr.map((i): [string, string] => [i.id, i.ru])
 );
 
 export enum PaymentRequestType {
@@ -62,5 +65,5 @@ export const PaymentRequestTypeArr: { id: PaymentRequestType; ru: string }[] = [
 ];
 
 export const PaymentRequestTypeMap = new Map(
-  PaymentRequestTypeArr.map((i): [string, string] => [i.id, i.ru]),
+  PaymentRequestTypeArr.map((i): [string, string] => [i.id, i.ru])
 );

@@ -1,3 +1,4 @@
+import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import baseConfig from '../eslint.config.mjs';
 
 export default [
@@ -16,4 +17,5 @@ export default [
       parser: await import('jsonc-eslint-parser'),
     },
   },
+  eslintConfigPrettier,
 ];

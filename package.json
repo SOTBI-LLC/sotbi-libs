@@ -2,9 +2,20 @@
   "name": "@sotbi-libs/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "lint": "nx run-many -t lint",
+    "format": "nx format:write",
+    "format:check": "nx format:check"
+  },
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "@angular/compiler": "20.3",
+    "@angular/material": "^21.1.0",
+    "@angular/platform-browser": "20.3",
+    "@ngxs/store": "^21.0.0",
+    "date-fns": "^4.1.0",
+    "jwt-decode": "^4.0.0"
+  },
   "devDependencies": {
     "@angular-devkit/core": "20.3.5",
     "@angular-devkit/schematics": "20.3.5",

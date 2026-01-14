@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "module": "ES2022",
     "outDir": "../dist/out-tsc",
     "declaration": true,
     "declarationMap": true,
@@ -8,5 +9,5 @@
     "types": []
   },
   "exclude": ["src/**/*.spec.ts", "jest.config.ts", "src/**/*.test.ts"],
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "../models/src/lib/user.ts"]
 }

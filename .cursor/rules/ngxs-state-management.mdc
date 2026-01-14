@@ -1,0 +1,94 @@
+---
+description: NGXS state management patterns, usage, and best practices
+---
+
+# NGXS State Management
+
+This application uses **NGXS** (@ngxs/store v20.1.0) for global state management.
+
+## Configuration
+
+NGXS is configured in [ngxs.config.ts](mdc:src/app/ngxs.config.ts):
+
+```typescript
+export const ngxsConfig: NgxsModuleOptions = {
+  developmentMode: !environment.production,
+  selectorOptions: {
+    suppressErrors: false,
+  },
+  compatibility: {
+    strictContentSecurityPolicy: true,
+  },
+};
+```
+
+## State Files
+
+All state classes are located in `src/app/store/`:
+- `announcement.state.ts`
+- `deposits.state.ts`
+- `labels.state.ts`
+- `users.state.ts`
+- And more...
+
+## Usage Patterns
+
+### 1. Providing States at Route Level
+
+Use `provideStates()` in route configuration for feature-specific state:
+
+```typescript
+{
+  path: 'payments',
+  canLoad: [_RolesGuard],
+  loadComponent: () => import('@root/payments').then((m) => m.PaymentsPageComponent),
+  providers: [provideStates([DepositsState, LabelsState])],
+}
+```
+
+### 2. Selecting State with Signals
+
+Use `selectSignal()` for reactive state selection with Angular signals:
+
+```typescript
+import { inject } from '@angular/core';
+import { Store } from '@ngxs/store';
+import { MyState } from './store/my.state';
+
+export class MyComponent {
+  private readonly store = inject(Store);
+  protected readonly data = this.store.selectSignal(MyState.selectAll);
+}
+```
+
+### 3. Dispatching Actions
+
+```typescript
+import { inject } from '@angular/core';
+import { Store } from '@ngxs/store';
+import { LoadData } from './store/my.actions';
+
+export class MyComponent {
+  private readonly store = inject(Store);
+
+  loadData() {
+    this.store.dispatch(new LoadData());
+  }
+}
+```
+
+## Best Practices
+
+1. **Lazy Load State**: Provide states only where needed using `provideStates()`
+2. **Use Signals**: Prefer `selectSignal()` over `select()` for better Angular 20 integration
+3. **Immutable Updates**: Always return new state objects, never mutate existing state
+4. **Error Handling**: Handle errors within action handlers
+5. **Development Mode**: Use `developmentMode` for better debugging
+
+## Integration with Angular 20
+
+NGXS works seamlessly with:
+- ✅ Zoneless change detection
+- ✅ Signal-based state selection
+- ✅ Standalone components
+- ✅ Lazy-loaded routes

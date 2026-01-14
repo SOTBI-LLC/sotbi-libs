@@ -106,11 +106,11 @@ export interface ResponseCostMonitoring {
   workdays_count: number;
 }
 
-export interface CostRealFilter {
-  period: Interval;
-  users?: Uint16Array | number[];
-  debtors?: Uint32Array | number[];
-  units?: Uint16Array | number[];
+export class CostRealFilter {
+  period?: Interval;
+  users: Uint16Array | number[] = [];
+  debtors: Uint32Array | number[] = [];
+  units: Uint16Array | number[] = [];
 }
 
 export const calcSumHours = (items: CostReal[]): number => {

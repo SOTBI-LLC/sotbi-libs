@@ -1,0 +1,176 @@
+---
+globs: *.spec.ts
+---
+
+# Testing Strategy for Angular 20
+
+This application runs with zoneless change detection in production but uses Zone.js in tests for compatibility. See [TESTING_STRATEGY.md](mdc:docs/TESTING_STRATEGY.md) for full details.
+
+## Test Setup
+
+### Component Tests with TestBed
+
+```typescript
+import { provideZonelessChangeDetection } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentName } from './component-name.component';
+
+describe('ComponentName', () => {
+  let component: ComponentName;
+  let fixture: ComponentFixture<ComponentName>;
+
+  beforeEach(async () => {
+    // Override template to avoid complex DOM/dependency issues
+    TestBed.overrideComponent(ComponentName, {
+      set: { template: '' },
+    });
+
+    await TestBed.configureTestingModule({
+      imports: [ComponentName],
+      providers: [
+        provideZonelessChangeDetection(),
+        // Mock dependencies here
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(ComponentName);
+    component = fixture.componentInstance;
+
+    // Set required inputs using componentRef.setInput
+    if (component.someRequiredInput) {
+      fixture.componentRef.setInput('someRequiredInput', mockValue);
+    }
+
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+```
+
+### Service Tests
+
+```typescript
+import { TestBed } from '@angular/core/testing';
+import { ServiceName } from './service-name.service';
+
+describe('ServiceName', () => {
+  let service: ServiceName;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [ServiceName /* , mock dependencies */],
+    });
+    service = TestBed.inject(ServiceName);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+```
+
+## Key Testing Patterns
+
+### 1. Setting Signal Inputs
+
+For components with signal-based inputs:
+
+```typescript
+// Component with signal input
+export class MyComponent {
+  protected readonly data = input.required<string[]>();
+}
+
+// Test
+fixture.componentRef.setInput('data', ['test1', 'test2']);
+fixture.detectChanges(); // Always call after setting inputs
+```
+
+### 2. Mocking NGXS Store
+
+```typescript
+import { signal } from '@angular/core';
+import { of } from 'rxjs';
+
+class StoreStub {
+  selectSignal = <T>() => signal([] as unknown as T);
+  dispatch = jasmine.createSpy('dispatch').and.returnValue(of(undefined));
+}
+
+// In TestBed
+providers: [
+  { provide: Store, useClass: StoreStub },
+]
+```
+
+### 3. Mocking Router
+
+```typescript
+class RouterStub {
+  navigate = jasmine.createSpy('navigate').and.returnValue(Promise.resolve(true));
+}
+
+// In TestBed
+providers: [
+  { provide: Router, useClass: RouterStub },
+]
+```
+
+### 4. Template Override for Complex Components
+
+When testing component logic without DOM dependencies:
+
+```typescript
+TestBed.overrideComponent(ComponentName, {
+  set: { template: '<div>Simple test template</div>' },
+});
+```
+
+### 5. Change Detection in Zoneless Mode
+
+Always explicitly trigger change detection:
+
+```typescript
+// After setting inputs or triggering actions
+fixture.detectChanges();
+
+// For async operations
+it('should handle async operation', fakeAsync(() => {
+  component.asyncMethod();
+  tick(1000);
+  fixture.detectChanges();
+  expect(component.result).toBe(expected);
+}));
+```
+
+## Best Practices
+
+1. **Override Templates**: Use template overrides to simplify complex component tests
+2. **Mock Dependencies**: Create lightweight stubs for services, routers, and stores
+3. **Explicit Change Detection**: Always call `detectChanges()` after state changes
+4. **Set Inputs First**: Set required inputs before calling `detectChanges()`
+5. **Use Zoneless Provider**: Include `provideZonelessChangeDetection()` to match production
+6. **Keep Tests Simple**: Focus on component logic, not template rendering
+7. **Run tests fast**: Always run tests with --watch=false flag
+
+## Running Tests
+
+```bash
+# Run all tests
+yarn test --watch=false
+
+# Run specific test file
+yarn test -- --include="**/component-name.spec.ts"
+
+# Run with coverage
+yarn test -- --code-coverage --watch=false
+```
+
+## Current Status
+
+✅ **1388 tests passing**
+✅ Angular 20.3.3 with zoneless change detection
+✅ Compatible with Karma/Jasmine testing framework

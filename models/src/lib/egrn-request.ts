@@ -1,5 +1,5 @@
 import { Debtor } from './debtor';
-import { EgrnAttachment, EgrnAttachmentType } from './egrn-attachment';
+import { EgrnAttachment } from './egrn-attachment';
 import { Project } from './project';
 import { RealEstate } from './real-estate';
 import { StatusEnum } from './status-request';
@@ -65,7 +65,7 @@ export const StatementTypeArr: { id: StatementType; ru: string }[] = [
 ];
 
 export const StatementTypeMap = new Map(
-  StatementTypeArr.map((i): [string, string] => [i.id, i.ru]),
+  StatementTypeArr.map((i): [string, string] => [i.id, i.ru])
 );
 
 export enum ProvidingWay {
@@ -80,7 +80,9 @@ export const ProvidingWayArr: { id: ProvidingWay; ru: string }[] = [
   { id: ProvidingWay.HANDS, ru: '📄 Бумажный док. (на руки)' },
 ];
 
-export const ProvidingWayMap = new Map(ProvidingWayArr.map((i): [string, string] => [i.id, i.ru]));
+export const ProvidingWayMap = new Map(
+  ProvidingWayArr.map((i): [string, string] => [i.id, i.ru])
+);
 
 export enum PersonType {
   ENTITY = 'entity',
@@ -92,7 +94,9 @@ export const PersonTypeArr: { id: PersonType; ru: string }[] = [
   { id: PersonType.INDIVIDUAL, ru: 'Физическое лицо' },
 ];
 
-export const PersonTypeMap = new Map(PersonTypeArr.map((i): [string, string] => [i.id, i.ru]));
+export const PersonTypeMap = new Map(
+  PersonTypeArr.map((i): [string, string] => [i.id, i.ru])
+);
 
 export enum OnBehalfOf {
   BANKRUPTCY = 'bankruptcy',
@@ -104,14 +108,18 @@ export const OnBehalfOfArr: { id: OnBehalfOf; ru: string }[] = [
   { id: OnBehalfOf.THIRDPERSON, ru: '3-е лицо' },
 ];
 
-export const OnBehalfOfMap = new Map(OnBehalfOfArr.map((i): [string, string] => [i.id, i.ru]));
+export const OnBehalfOfMap = new Map(
+  OnBehalfOfArr.map((i): [string, string] => [i.id, i.ru])
+);
 
 export const RightholderArr: { id: OnBehalfOf; ru: string }[] = [
   { id: OnBehalfOf.BANKRUPTCY, ru: 'Должник' },
   { id: OnBehalfOf.THIRDPERSON, ru: '3-е лицо' },
 ];
 
-export const RightholderMap = new Map(RightholderArr.map((i): [string, string] => [i.id, i.ru]));
+export const RightholderMap = new Map(
+  RightholderArr.map((i): [string, string] => [i.id, i.ru])
+);
 
 export enum ViewType {
   LIST = 'list',
@@ -122,7 +130,9 @@ export const ViewTypeArr: { id: ViewType; ru: string }[] = [
   { id: ViewType.FILE, ru: 'Приложить файл' },
 ];
 
-export const ViewTypeMap = new Map(ViewTypeArr.map((i): [string, string] => [i.id, i.ru]));
+export const ViewTypeMap = new Map(
+  ViewTypeArr.map((i): [string, string] => [i.id, i.ru])
+);
 
 export enum NotificationType {
   EVERY = 'every',
@@ -143,7 +153,9 @@ export const SubType1Arr: { id: SubType1; ru: string }[] = [
   { id: SubType1.CADASTRAL, ru: 'О кадастровой стоимости на дату' },
 ];
 
-export const SubType1Map = new Map(SubType1Arr.map((i): [number, string] => [i.id, i.ru]));
+export const SubType1Map = new Map(
+  SubType1Arr.map((i): [number, string] => [i.id, i.ru])
+);
 
 export enum SubType2 {
   ON_DATE,
@@ -159,7 +171,9 @@ export const SubType2Arr: { id: SubType2; ru: string }[] = [
   { id: SubType2.TO_DATE, ru: 'До даты' },
 ];
 
-export const SubType2Map = new Map(SubType2Arr.map((i): [number, string] => [i.id, i.ru]));
+export const SubType2Map = new Map(
+  SubType2Arr.map((i): [number, string] => [i.id, i.ru])
+);
 
 // Note: Form interfaces are moved to a separate Angular-specific file
 // since they depend on @angular/forms types

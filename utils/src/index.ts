@@ -1,1 +1,1 @@
-export * from './lib/utils';
+export { removeID } from './lib/utils';

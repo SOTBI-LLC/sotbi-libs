@@ -3,14 +3,13 @@ import { Staff } from './staff';
 import { UserScan } from './user-scan';
 
 export class UserShort {
-  id?: number;
-  user: string = '';
-  avatar: string = '';
+  id = 0;
+  user = '';
+  avatar = '';
 }
 
 export interface User extends UserShort {
   uuid: Uint16Array;
-  user: string;
   name: string;
   email: string;
   phone: string;
@@ -91,7 +90,11 @@ export enum SettingsType {
   HOLDING,
 }
 
-export const SettingsTypeArr: { id: SettingsType; name: string; toolTip: string }[] = [
+export const SettingsTypeArr: {
+  id: SettingsType;
+  name: string;
+  toolTip: string;
+}[] = [
   {
     id: SettingsType.ISFILLING,
     name: 'Сдает',
@@ -102,8 +105,16 @@ export const SettingsTypeArr: { id: SettingsType; name: string; toolTip: string 
     name: 'Категории работ',
     toolTip: 'Заполняет или нет категории работ',
   },
-  { id: SettingsType.DESCRIPTION, name: 'Описание', toolTip: 'Заполняет или нет описание работы' },
-  { id: SettingsType.HOLDING, name: '100% Холдинг', toolTip: '100% к холдингу или нет' },
+  {
+    id: SettingsType.DESCRIPTION,
+    name: 'Описание',
+    toolTip: 'Заполняет или нет описание работы',
+  },
+  {
+    id: SettingsType.HOLDING,
+    name: '100% Холдинг',
+    toolTip: '100% к холдингу или нет',
+  },
 ];
 
 export interface HeadDepartmentChef {

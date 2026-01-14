@@ -1,5 +1,5 @@
-import { EgrnRequest } from './egrn-request';
 import { IAttachment } from './egrn-attachment';
+import { EgrnRequest } from './egrn-request';
 import { User } from './user';
 
 export interface RealEstate extends IAttachment {

@@ -1,4 +1,5 @@
 import nx from '@nx/eslint-plugin';
+import eslintConfigPrettier from 'eslint-config-prettier/flat';
 
 export default [
   ...nx.configs['flat/base'],
@@ -39,4 +40,5 @@ export default [
     // Override or add rules here
     rules: {},
   },
+  eslintConfigPrettier,
 ];

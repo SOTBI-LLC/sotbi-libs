@@ -16,7 +16,10 @@ export enum PaymentAttachmentType {
   OTHER = 'other', // файлы для заказчика
 }
 
-export const PaymentAttachmentTypeArr: { id: PaymentAttachmentType; ru: string }[] = [
+export const PaymentAttachmentTypeArr: {
+  id: PaymentAttachmentType;
+  ru: string;
+}[] = [
   { id: PaymentAttachmentType.REQUEST, ru: 'Заявка' },
   { id: PaymentAttachmentType.ORDERS, ru: 'Платежные поручения' },
   { id: PaymentAttachmentType.WRITINGOUT, ru: 'Выписка' },
@@ -25,5 +28,5 @@ export const PaymentAttachmentTypeArr: { id: PaymentAttachmentType; ru: string }
 ];
 
 export const PaymentAttachmentTypeMap = new Map(
-  PaymentAttachmentTypeArr.map((i): [string, string] => [i.id, i.ru]),
+  PaymentAttachmentTypeArr.map((i): [string, string] => [i.id, i.ru])
 );
