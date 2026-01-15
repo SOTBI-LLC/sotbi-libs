@@ -33,22 +33,21 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "yarn"
+          node-version: '20'
+          cache: 'yarn'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
       - name: Set SHAs for Nx
-        id: setSHAs
         uses: nrwl/nx-set-shas@v4
-
-      - name: Run ESLint on affected projects
-        run: npx nx affected -t lint --parallel=3 --configuration=ci
 
       - name: Check formatting
         run: yarn format:check
         if: always()
+
+      - name: Run ESLint on affected projects
+        run: npx nx affected -t lint --parallel=3 --configuration=ci
 
   build:
     name: Build
@@ -65,8 +64,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "yarn"
+          node-version: '20'
+          cache: 'yarn'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -92,8 +91,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "yarn"
+          node-version: '20'
+          cache: 'yarn'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -107,7 +106,7 @@ jobs:
         env:
           JEST_JUNIT_OUTPUT_DIR: ./test-results
           JEST_JUNIT_OUTPUT_NAME: junit.xml
-          JEST_JUNIT_UNIQUE_OUTPUT_NAME: "true"
+          JEST_JUNIT_UNIQUE_OUTPUT_NAME: 'true'
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
