@@ -20,11 +20,11 @@
     "utils"
   ],
   "dependencies": {
-    "@angular/cdk": "^21.1.0",
-    "@angular/compiler": "20.3",
-    "@angular/material": "^21.1.0",
-    "@angular/platform-browser": "20.3",
-    "@angular/platform-browser-dynamic": "20.3",
+    "@angular/cdk": "^20.2.0",
+    "@angular/compiler": "^20.3.0",
+    "@angular/material": "^20.2.0",
+    "@angular/platform-browser": "^20.3.0",
+    "@angular/platform-browser-dynamic": "^20.3.0",
     "@ngxs/store": "^21.0.0",
     "date-fns": "^4.1.0",
     "jwt-decode": "^4.0.0",
