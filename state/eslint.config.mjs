@@ -39,6 +39,11 @@ export default [
           style: 'kebab-case',
         },
       ],
+      // Правила жизненного цикла Angular
+      '@angular-eslint/use-lifecycle-interface': 'error',
+      '@angular-eslint/no-empty-lifecycle-method': 'error',
+      // Рекомендовать OnPush стратегию для компонентов
+      '@angular-eslint/prefer-on-push-component-change-detection': 'warn',
     },
   },
   {

@@ -2,14 +2,13 @@
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "npmScope": "sotbi",
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
-    ],
-    "production": [
-      "default"
-    ],
-    "sharedGlobals": []
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "production": ["default"],
+    "sharedGlobals": [],
+    "eslint": [
+      "{workspaceRoot}/eslint.config.mjs",
+      "{projectRoot}/eslint.config.mjs"
+    ]
   },
   "plugins": [
     {
@@ -29,9 +28,11 @@
   ],
   "targetDefaults": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "inputs": ["default", "^production"],
+      "cache": true
     }
   }
 }

@@ -1,4 +1,4 @@
-import { PropertyClass } from './property-class';
+import type { PropertyClass } from './property-class';
 
 export interface AppraisalSubject {
   id: number;

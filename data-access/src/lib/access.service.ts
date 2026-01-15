@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Access } from '@sotbi/models';
-import { Observable } from 'rxjs';
+import type { Access } from '@sotbi/models';
+import type { Observable } from 'rxjs';
 import { CommonService } from './common.service';
 
 @Injectable({

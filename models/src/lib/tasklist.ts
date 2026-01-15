@@ -1,6 +1,6 @@
-import { Attachment } from './attachment';
-import { SimpleEditModel } from './simple-edit';
-import { User } from './user';
+import type { Attachment } from './attachment';
+import type { SimpleEditModel } from './simple-edit';
+import type { User } from './user';
 
 export interface TaskHistory {
   id?: number;

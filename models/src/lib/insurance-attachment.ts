@@ -1,5 +1,5 @@
-import { IAttachment } from './egrn-attachment';
-import { User } from './user';
+import type { IAttachment } from './egrn-attachment';
+import type { User } from './user';
 
 export interface InsuranceAttachment extends IAttachment {
   type: InsuranceAttachmentType;

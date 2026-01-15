@@ -1,14 +1,14 @@
-import { ActionPlan } from './actionplan';
-import { Arbitration } from './arbitration';
-import { BankDetail } from './bankdetail';
-import { Bankruptcy } from './bankruptcy';
-import { Bidding } from './bidding';
-import { InsurancePolicy } from './insurance-policy';
-import { Link } from './link';
-import { Project } from './project';
-import { Property } from './property';
-import { SimpleEdit2Model, SimpleEditModel } from './simple-edit';
-import { ClrSelectedState } from './staff';
+import type { ActionPlan } from './actionplan';
+import type { Arbitration } from './arbitration';
+import type { BankDetail } from './bankdetail';
+import type { Bankruptcy } from './bankruptcy';
+import type { Bidding } from './bidding';
+import type { InsurancePolicy } from './insurance-policy';
+import type { Link } from './link';
+import type { Project } from './project';
+import type { Property } from './property';
+import type { SimpleEdit2Model, SimpleEditModel } from './simple-edit';
+import type { ClrSelectedState } from './staff';
 
 export interface Debtor {
   id?: number;

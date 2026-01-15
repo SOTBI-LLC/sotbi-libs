@@ -1,4 +1,4 @@
-import { BankDetail } from './bankdetail';
+import type { BankDetail } from './bankdetail';
 
 export interface Marketplace {
   id: number;

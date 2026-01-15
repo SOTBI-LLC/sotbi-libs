@@ -1,12 +1,12 @@
-import { AccountStatement } from './account-statement';
-import { TradingCode } from './bidcode';
-import { Debtor } from './debtor';
-import { Deposit } from './deposit';
-import { Label } from './label';
-import { PaymentRequest } from './payment-request';
-import { Project } from './project';
-import { SimpleEditModel } from './simple-edit';
-import { User } from './user';
+import type { AccountStatement } from './account-statement';
+import type { TradingCode } from './bidcode';
+import type { Debtor } from './debtor';
+import type { Deposit } from './deposit';
+import type { Label } from './label';
+import type { PaymentRequest } from './payment-request';
+import type { Project } from './project';
+import type { SimpleEditModel } from './simple-edit';
+import type { User } from './user';
 
 export type UUID = `${string}-${string}-${string}-${string}-${string}`;
 

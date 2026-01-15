@@ -1,9 +1,9 @@
-import { Debtor } from './debtor';
-import { EgrnAttachment } from './egrn-attachment';
-import { Project } from './project';
-import { RealEstate } from './real-estate';
-import { StatusEnum } from './status-request';
-import { User } from './user';
+import type { Debtor } from './debtor';
+import type { EgrnAttachment } from './egrn-attachment';
+import type { Project } from './project';
+import type { RealEstate } from './real-estate';
+import type { StatusEnum } from './status-request';
+import type { User } from './user';
 
 export interface EgrnRequest {
   id?: number;

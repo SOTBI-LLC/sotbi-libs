@@ -1,14 +1,14 @@
 import { formatDate } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import {
+import type {
   CostRealFilter,
   HeadDepartment,
   HeadDepartmentChef,
   User,
   UserShort,
 } from '@sotbi/models';
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {

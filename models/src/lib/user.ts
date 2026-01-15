@@ -1,11 +1,11 @@
-import { Position } from './position';
-import { Staff } from './staff';
-import { UserScan } from './user-scan';
+import type { Position } from './position';
+import type { Staff } from './staff';
+import type { UserScan } from './user-scan';
 
 export class UserShort {
-  id = 0;
-  user = '';
-  avatar = '';
+  public id = 0;
+  public user = '';
+  public avatar = '';
 }
 
 export interface User extends UserShort {

@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import {
+import type {
   HttpErrorResponse,
   HttpEvent,
   HttpHandler,
@@ -10,7 +10,8 @@ import { Injectable, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { BehaviorSubject, throwError } from 'rxjs';
 import { catchError, filter, finalize, switchMap, take } from 'rxjs/operators';
 import { RefreshToken } from '../store/auth.actions';
 import { AuthState } from '../store/auth.state';

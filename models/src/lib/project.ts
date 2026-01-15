@@ -1,8 +1,8 @@
-import { ProjectCost } from './cost';
-import { Debtor } from './debtor';
-import { SimpleEditModel } from './simple-edit';
-import { Staff } from './staff';
-import { ClrSelectedState } from './staff';
+import type { ProjectCost } from './cost';
+import type { Debtor } from './debtor';
+import type { SimpleEditModel } from './simple-edit';
+import type { Staff } from './staff';
+import type { ClrSelectedState } from './staff';
 
 export interface Project {
   id: number;
@@ -38,4 +38,6 @@ export const conditionArr: { id: ConditionType; ru: string }[] = [
   { id: ConditionType.FINISHED, ru: 'Окончен' },
 ];
 
-export const conditionMap = new Map(conditionArr.map((i): [string, string] => [i.id, i.ru]));
+export const conditionMap = new Map(
+  conditionArr.map((i): [string, string] => [i.id, i.ru])
+);

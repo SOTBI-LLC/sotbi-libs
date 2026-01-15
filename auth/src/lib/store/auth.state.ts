@@ -1,17 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  Action,
-  createSelector,
-  NgxsOnInit,
-  Selector,
-  State,
-  StateContext,
-} from '@ngxs/store';
+import type { NgxsOnInit, StateContext } from '@ngxs/store';
+import { Action, createSelector, Selector, State } from '@ngxs/store';
 import { AccessService, UserService } from '@sotbi/data-access';
-import { User } from '@sotbi/models';
+import type { User } from '@sotbi/models';
 import { isBefore } from 'date-fns';
-import { jwtDecode, JwtPayload } from 'jwt-decode';
+import type { JwtPayload } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {

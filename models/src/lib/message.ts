@@ -1,13 +1,13 @@
-import { AppraisalSubject } from './appraisal-subject';
-import { Appraiser } from './appraiser';
-import { Creditor } from './creditor';
-import { Debtor } from './debtor';
-import { MessageAttachment } from './message-attachment';
-import { PostAddress } from './post-address';
-import { SimpleEditModel } from './simple-edit';
-import { StatusEnum } from './status-request';
-import { SubMessageType } from './sub-message-type';
-import { User } from './user';
+import type { AppraisalSubject } from './appraisal-subject';
+import type { Appraiser } from './appraiser';
+import type { Creditor } from './creditor';
+import type { Debtor } from './debtor';
+import type { MessageAttachment } from './message-attachment';
+import type { PostAddress } from './post-address';
+import type { SimpleEditModel } from './simple-edit';
+import type { StatusEnum } from './status-request';
+import type { SubMessageType } from './sub-message-type';
+import type { User } from './user';
 
 /**
  * Type for Release Citizen From Obligations.

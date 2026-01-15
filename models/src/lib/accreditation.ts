@@ -1,6 +1,6 @@
-import { Initiator } from './initiator';
-import { Sro } from './sro';
-import { User } from './user';
+import type { Initiator } from './initiator';
+import type { Sro } from './sro';
+import type { User } from './user';
 
 export interface Accreditation {
   id: number;

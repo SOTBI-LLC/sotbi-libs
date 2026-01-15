@@ -4,7 +4,7 @@
 
 ✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
 
 ## Run tasks
 
@@ -29,6 +29,7 @@ These targets are either [inferred automatically](https://nx.dev/concepts/inferr
 While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
 
 To install a new plugin you can use the `nx add` command. Here's an example of adding the React plugin:
+
 ```sh
 npx nx add @nx/react
 ```
@@ -47,32 +48,89 @@ You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx 
 
 [Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 
-## Set up CI!
+## Development Workflow
 
-### Step 1
+This project uses GitHub Actions for CI/CD with automated checks on pull requests.
 
-To connect to Nx Cloud, run the following command:
+### Quick Start
 
-```sh
-npx nx connect
+```bash
+# Install dependencies
+yarn install
+
+# Run linter
+yarn lint
+
+# Check formatting
+yarn format:check
+
+# Format code
+yarn format
 ```
 
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
+### Working with Feature Branches
 
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```bash
+# Create feature branch
+git checkout -b feature/my-feature
 
-### Step 2
+# Check affected projects
+npx nx show projects --affected
 
-Use the following command to configure a CI workflow for your workspace:
+# Run lint on affected projects
+npx nx affected -t lint --fix
 
-```sh
-npx nx g ci-workflow
+# Push and create PR
+git push origin feature/my-feature
 ```
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+**Read the full workflow guide:** [Development Workflow](.github/DEVELOPMENT_WORKFLOW.md)
+
+## CI/CD Pipeline
+
+### Automated Checks
+
+All pull requests to `main` automatically run:
+
+- ✅ **ESLint** - Code quality and style checks
+- ✅ **Prettier** - Code formatting verification
+- ✅ **Tests** - Unit tests with coverage
+- ✅ **Build** - Production build validation
+
+### Branch Protection
+
+Direct push to `main` is **disabled**. All changes must:
+
+1. Go through a Pull Request
+2. Pass all CI/CD checks
+3. Get approval from code reviewer
+4. Have up-to-date branch with `main`
+
+**Setup instructions:** [Branch Protection](.github/BRANCH_PROTECTION.md)
+
+### Nx Affected Optimization
+
+CI/CD uses `nx affected` to run checks only on changed projects, making the pipeline fast and efficient.
+
+## Project Structure
+
+This workspace contains the following libraries:
+
+- `auth` - Authentication services and guards
+- `data-access` - Data access services
+- `models` - TypeScript interfaces and models
+- `state` - NGXS state management
+- `ui` - UI components
+- `ui-ag-grid` - AG Grid components
+- `utils` - Utility functions
+
+## Documentation
+
+- [Development Workflow](.github/DEVELOPMENT_WORKFLOW.md) - Complete development guide
+- [Branch Protection Setup](.github/BRANCH_PROTECTION.md) - GitHub configuration
+- [CI/CD Workflows](.github/workflows/README.md) - GitHub Actions documentation
+- [ESLint Rules](.cursor/rules/eslint-rules.mdc) - Linting configuration
+- [Nx Workspace](.cursor/rules/nx-workspace.mdc) - Workspace conventions
 
 ## Install Nx Console
 
@@ -84,13 +142,7 @@ Nx Console is an editor extension that enriches your developer experience. It le
 
 Learn more:
 
-- [Learn more about this workspace setup](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
+- [Learn more about this workspace setup](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 - [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 - [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 - [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)

@@ -1,4 +1,4 @@
-import { User, UserGroup } from './user';
+import type { User, UserGroup } from './user';
 
 export interface Position {
   id: number;

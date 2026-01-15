@@ -1,0 +1,21 @@
+# Code Owners
+# These owners will be the default reviewers for everything in the repo
+# unless a later match takes precedence.
+
+# Global owners
+* @bazys
+
+# Library specific owners
+/auth/ @bazys
+/data-access/ @bazys
+/models/ @bazys
+/state/ @bazys
+/ui/ @bazys
+/ui-ag-grid/ @bazys
+/utils/ @bazys
+
+# Configuration files
+/.github/ @bazys
+/eslint.config.mjs @bazys
+/nx.json @bazys
+/.prettierrc.json @bazys

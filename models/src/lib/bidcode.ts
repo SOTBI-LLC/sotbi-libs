@@ -1,8 +1,8 @@
-import { Advert } from './advert';
-import { Attachment } from './attachment';
-import { Bidding } from './bidding';
-import { BidState } from './bidstate';
-import { User } from './user';
+import type { Advert } from './advert';
+import type { Attachment } from './attachment';
+import type { Bidding } from './bidding';
+import type { BidState } from './bidstate';
+import type { User } from './user';
 
 export interface Calculation {
   id: number;

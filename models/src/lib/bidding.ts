@@ -1,6 +1,6 @@
-import { Advert } from './advert';
-import { TradingCode } from './bidcode';
-import { Initiator } from './initiator';
+import type { Advert } from './advert';
+import type { TradingCode } from './bidcode';
+import type { Initiator } from './initiator';
 
 export interface Bidding {
   id?: number;

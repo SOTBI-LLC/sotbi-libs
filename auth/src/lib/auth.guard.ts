@@ -1,14 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import {
+import type {
   ActivatedRouteSnapshot,
   CanActivate,
   Route,
-  Router,
   RouterStateSnapshot,
 } from '@angular/router';
+import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 import { AuthState } from './store/auth.state';
 
 @Injectable({

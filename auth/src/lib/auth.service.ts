@@ -1,9 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Login, LoginAs, Logout, RefreshToken } from './store/auth.actions';
-import { AuthState, AuthStateModel } from './store/auth.state';
+import type { AuthStateModel } from './store/auth.state';
+import { AuthState } from './store/auth.state';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -28,7 +29,7 @@ export class AuthService {
   public isLogged$(): Observable<boolean> {
     return this.userState.pipe(
       map(({ user }) => {
-        return !!(user.role && user.role !== 1);
+        return !!((user.role ?? 0) > 1);
       })
     );
   }

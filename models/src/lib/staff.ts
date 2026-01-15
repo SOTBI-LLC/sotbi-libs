@@ -1,5 +1,5 @@
-import { SimpleEdit2Model } from './simple-edit';
-import { User } from './user';
+import type { SimpleEdit2Model } from './simple-edit';
+import type { User } from './user';
 
 /**
  * Selected state for tree view items.

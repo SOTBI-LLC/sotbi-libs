@@ -1,4 +1,4 @@
-import { User } from '@sotbi/models';
+import type { User } from '@sotbi/models';
 
 export class Login {
   public static readonly type = '[AUTH] Login';

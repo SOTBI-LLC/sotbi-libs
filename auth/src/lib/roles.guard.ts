@@ -1,18 +1,18 @@
 import { Injectable, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
-import {
+import type {
   ActivatedRouteSnapshot,
   CanActivate,
   CanActivateChild,
   CanMatch,
   Route,
-  Router,
   RouterStateSnapshot,
   UrlSegment,
 } from '@angular/router';
+import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 import { AuthState } from './store/auth.state';
 
 @Injectable({

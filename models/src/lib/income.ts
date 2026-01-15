@@ -1,4 +1,4 @@
-import { SimpleEdit2Model } from './simple-edit';
+import type { SimpleEdit2Model } from './simple-edit';
 
 export interface Income {
   id?: number;

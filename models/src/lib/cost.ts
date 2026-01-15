@@ -1,8 +1,8 @@
-import { Debtor } from './debtor';
-import { Interval } from './period';
-import { Project } from './project';
-import { User } from './user';
-import { WorkCategory } from './work-category';
+import type { Debtor } from './debtor';
+import type { Interval } from './period';
+import type { Project } from './project';
+import type { User } from './user';
+import type { WorkCategory } from './work-category';
 
 export interface ProjectCost {
   id?: number;
@@ -107,10 +107,10 @@ export interface ResponseCostMonitoring {
 }
 
 export class CostRealFilter {
-  period?: Interval;
-  users: Uint16Array | number[] = [];
-  debtors: Uint32Array | number[] = [];
-  units: Uint16Array | number[] = [];
+  public period?: Interval;
+  public users: Uint16Array | number[] = [];
+  public debtors: Uint32Array | number[] = [];
+  public units: Uint16Array | number[] = [];
 }
 
 export const calcSumHours = (items: CostReal[]): number => {

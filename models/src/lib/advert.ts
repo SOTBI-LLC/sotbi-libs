@@ -1,14 +1,14 @@
-import { Attachment } from './attachment';
-import { TradingCode } from './bidcode';
-import { Bidding } from './bidding';
-import { Debtor } from './debtor';
-import { Initiator } from './initiator';
-import { Progress } from './progress';
-import { Project } from './project';
-import { Responsible } from './responsible';
-import { SimpleEdit2Model } from './simple-edit';
-import { TaskList } from './tasklist';
-import { User } from './user';
+import type { Attachment } from './attachment';
+import type { TradingCode } from './bidcode';
+import type { Bidding } from './bidding';
+import type { Debtor } from './debtor';
+import type { Initiator } from './initiator';
+import type { Progress } from './progress';
+import type { Project } from './project';
+import type { Responsible } from './responsible';
+import type { SimpleEdit2Model } from './simple-edit';
+import type { TaskList } from './tasklist';
+import type { User } from './user';
 
 export interface Advert {
   id: number;

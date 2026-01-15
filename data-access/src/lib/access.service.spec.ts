@@ -1,27 +1,26 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { Access } from '@models/access';
-import { configureTestBed } from '@test-setup';
+import type { Access } from '@sotbi/models';
 import { of } from 'rxjs';
 import { AccessService } from './access.service';
 
 describe('AccessService', () => {
   let service: AccessService;
-  let httpClient: jasmine.SpyObj<HttpClient>;
+  let httpClient: jest.Mocked<HttpClient>;
 
   beforeEach(async () => {
-    const httpSpy = jasmine.createSpyObj('HttpClient', [
-      'get',
-      'post',
-      'patch',
-    ]);
+    const httpSpy = {
+      get: jest.fn(),
+      post: jest.fn(),
+      patch: jest.fn(),
+    } as unknown as jest.Mocked<HttpClient>;
 
-    await configureTestBed({
+    await TestBed.configureTestingModule({
       providers: [{ provide: HttpClient, useValue: httpSpy }, AccessService],
     }).compileComponents();
 
     service = TestBed.inject(AccessService);
-    httpClient = TestBed.inject(HttpClient) as jasmine.SpyObj<HttpClient>;
+    httpClient = TestBed.inject(HttpClient) as jest.Mocked<HttpClient>;
   });
 
   it('should be created', () => {
@@ -52,7 +51,7 @@ describe('AccessService', () => {
           description: 'Write permission',
         },
       ];
-      httpClient.get.and.returnValue(of(mockAccess));
+      httpClient.get.mockReturnValue(of(mockAccess));
 
       service.GetAll().subscribe((result) => {
         expect(result).toEqual(mockAccess);
@@ -73,7 +72,7 @@ describe('AccessService', () => {
           action: 'admin',
         },
       ];
-      httpClient.get.and.returnValue(of(mockAccess));
+      httpClient.get.mockReturnValue(of(mockAccess));
 
       service.GetAll().subscribe((result) => {
         expect(result).toEqual(mockAccess);
@@ -89,7 +88,7 @@ describe('AccessService', () => {
   describe('getAccess', () => {
     it('should call GET with correct URL, headers, and response type', () => {
       const mockAccessString = 'user:read,write;admin:all';
-      httpClient.get.and.returnValue(of(mockAccessString));
+      httpClient.get.mockReturnValue(of(mockAccessString));
 
       service.getAccess().subscribe((result) => {
         expect(result).toBe(mockAccessString);
@@ -97,28 +96,28 @@ describe('AccessService', () => {
 
       expect(httpClient.get).toHaveBeenCalledWith(
         '/api/access/my',
-        jasmine.objectContaining({
-          headers: jasmine.any(HttpHeaders),
+        expect.objectContaining({
+          headers: expect.any(HttpHeaders),
         })
       );
     });
 
     it('should set correct Content-Type header', () => {
       const mockAccessString = 'permissions:granted';
-      httpClient.get.and.returnValue(of(mockAccessString));
+      httpClient.get.mockReturnValue(of(mockAccessString));
 
       service.getAccess().subscribe();
 
-      const callArgs = httpClient.get.calls.argsFor(0);
+      const callArgs = httpClient.get.mock.calls[0];
       const options = callArgs[1];
-      const headers = options.headers as HttpHeaders;
+      const headers = options?.headers as HttpHeaders | undefined;
 
-      expect(headers.get('Content-Type')).toBe('text/plain; charset=utf-8');
+      expect(headers?.get('Content-Type')).toBe('text/plain; charset=utf-8');
     });
 
     it('should return string response', () => {
       const expectedResult = 'access_level:high;permissions:read,write,delete';
-      httpClient.get.and.returnValue(of(expectedResult));
+      httpClient.get.mockReturnValue(of(expectedResult));
 
       service.getAccess().subscribe((result) => {
         expect(typeof result).toBe('string');
@@ -134,7 +133,7 @@ describe('AccessService', () => {
         ['server2', 'read'],
         ['server3', 'admin'],
       ];
-      httpClient.get.and.returnValue(of(mockServerAccess));
+      httpClient.get.mockReturnValue(of(mockServerAccess));
 
       service.getAllSrv().subscribe((result) => {
         expect(result).toEqual(mockServerAccess);
@@ -145,7 +144,7 @@ describe('AccessService', () => {
 
     it('should handle empty server access array', () => {
       const emptyResult: string[][] = [];
-      httpClient.get.and.returnValue(of(emptyResult));
+      httpClient.get.mockReturnValue(of(emptyResult));
 
       service.getAllSrv().subscribe((result) => {
         expect(result).toEqual([]);
@@ -155,7 +154,7 @@ describe('AccessService', () => {
 
     it('should properly type the response as string[][]', () => {
       const mockData: string[][] = [['test', 'permissions']];
-      httpClient.get.and.returnValue(of(mockData));
+      httpClient.get.mockReturnValue(of(mockData));
 
       service.getAllSrv().subscribe((result) => {
         expect(Array.isArray(result)).toBe(true);
@@ -172,7 +171,7 @@ describe('AccessService', () => {
         ['existing-server', 'admin'],
         ['new-server', 'read', 'write'],
       ];
-      httpClient.post.and.returnValue(of(mockResponse));
+      httpClient.post.mockReturnValue(of(mockResponse));
 
       service.createSrv(newServerAccess).subscribe((result) => {
         expect(result).toEqual(mockResponse);
@@ -187,7 +186,7 @@ describe('AccessService', () => {
     it('should handle empty input array', () => {
       const emptyInput: string[] = [];
       const mockResponse: string[][] = [];
-      httpClient.post.and.returnValue(of(mockResponse));
+      httpClient.post.mockReturnValue(of(mockResponse));
 
       service.createSrv(emptyInput).subscribe((result) => {
         expect(result).toEqual(mockResponse);
@@ -205,7 +204,7 @@ describe('AccessService', () => {
         ['dev-server', 'read'],
         ['production-server', 'admin'],
       ];
-      httpClient.post.and.returnValue(of(expectedResponse));
+      httpClient.post.mockReturnValue(of(expectedResponse));
 
       service.createSrv(newAccess).subscribe((result) => {
         expect(Array.isArray(result)).toBe(true);
@@ -231,7 +230,7 @@ describe('AccessService', () => {
         ['server1', 'read', 'write'],
         ['server2', 'admin'],
       ];
-      httpClient.patch.and.returnValue(of(mockResponse));
+      httpClient.patch.mockReturnValue(of(mockResponse));
 
       service.updateSrv(updateData).subscribe((result) => {
         expect(result).toEqual(mockResponse);
@@ -257,7 +256,7 @@ describe('AccessService', () => {
         ],
       };
       const mockResponse: string[][] = complexUpdate.new;
-      httpClient.patch.and.returnValue(of(mockResponse));
+      httpClient.patch.mockReturnValue(of(mockResponse));
 
       service.updateSrv(complexUpdate).subscribe((result) => {
         expect(result).toEqual(complexUpdate.new);
@@ -276,11 +275,11 @@ describe('AccessService', () => {
         new: [['server1', 'write']],
       };
       const mockResponse: string[][] = updateData.new;
-      httpClient.patch.and.returnValue(of(mockResponse));
+      httpClient.patch.mockReturnValue(of(mockResponse));
 
       service.updateSrv(updateData).subscribe();
 
-      const callArgs = httpClient.patch.calls.argsFor(0);
+      const callArgs = httpClient.patch.mock.calls[0];
       const sentData = callArgs[1];
 
       expect(sentData.old).toBeDefined();
@@ -295,7 +294,7 @@ describe('AccessService', () => {
         new: [],
       };
       const mockResponse: string[][] = [];
-      httpClient.patch.and.returnValue(of(mockResponse));
+      httpClient.patch.mockReturnValue(of(mockResponse));
 
       service.updateSrv(emptyUpdate).subscribe((result) => {
         expect(result).toEqual([]);
@@ -311,35 +310,45 @@ describe('AccessService', () => {
   describe('HTTP Error Handling', () => {
     it('should propagate HTTP errors from GetAll', () => {
       const errorResponse = new Error('Access Denied');
-      httpClient.get.and.throwError(errorResponse);
+      httpClient.get.mockImplementation(() => {
+        throw errorResponse;
+      });
 
       expect(() => service.GetAll().subscribe()).toThrow();
     });
 
     it('should propagate HTTP errors from getAccess', () => {
       const errorResponse = new Error('Unauthorized');
-      httpClient.get.and.throwError(errorResponse);
+      httpClient.get.mockImplementation(() => {
+        throw errorResponse;
+      });
 
       expect(() => service.getAccess().subscribe()).toThrow();
     });
 
     it('should propagate HTTP errors from getAllSrv', () => {
       const errorResponse = new Error('Server Error');
-      httpClient.get.and.throwError(errorResponse);
+      httpClient.get.mockImplementation(() => {
+        throw errorResponse;
+      });
 
       expect(() => service.getAllSrv().subscribe()).toThrow();
     });
 
     it('should propagate HTTP errors from createSrv', () => {
       const errorResponse = new Error('Bad Request');
-      httpClient.post.and.throwError(errorResponse);
+      httpClient.post.mockImplementation(() => {
+        throw errorResponse;
+      });
 
       expect(() => service.createSrv(['test']).subscribe()).toThrow();
     });
 
     it('should propagate HTTP errors from updateSrv', () => {
       const errorResponse = new Error('Forbidden');
-      httpClient.patch.and.throwError(errorResponse);
+      httpClient.patch.mockImplementation(() => {
+        throw errorResponse;
+      });
 
       const updateData = { old: [], new: [] };
       expect(() => service.updateSrv(updateData).subscribe()).toThrow();
@@ -363,7 +372,7 @@ describe('AccessService', () => {
           action: 'reports.read',
         },
       ];
-      httpClient.get.and.returnValue(of(realWorldAccess));
+      httpClient.get.mockReturnValue(of(realWorldAccess));
 
       service.GetAll().subscribe((result) => {
         expect(result).toEqual(realWorldAccess);
@@ -393,9 +402,9 @@ describe('AccessService', () => {
       };
 
       // Mock the sequence of calls
-      httpClient.get.and.returnValue(of(existingAccess));
-      httpClient.post.and.returnValue(of(afterCreate));
-      httpClient.patch.and.returnValue(of(updatePayload.new));
+      httpClient.get.mockReturnValue(of(existingAccess));
+      httpClient.post.mockReturnValue(of(afterCreate));
+      httpClient.patch.mockReturnValue(of(updatePayload.new));
 
       // Test the workflow
       service.getAllSrv().subscribe((initial) => {

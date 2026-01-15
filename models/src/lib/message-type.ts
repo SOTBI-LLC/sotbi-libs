@@ -1,4 +1,4 @@
-import { SubMessageType } from './sub-message-type';
+import type { SubMessageType } from './sub-message-type';
 
 /**
  * @exports

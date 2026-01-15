@@ -1,8 +1,8 @@
-import { Bankruptcy } from './bankruptcy';
-import { Debtor } from './debtor';
-import { InsuranceAttachment } from './insurance-attachment';
-import { InsuranceCompany } from './insurance-company';
-import { User } from './user';
+import type { Bankruptcy } from './bankruptcy';
+import type { Debtor } from './debtor';
+import type { InsuranceAttachment } from './insurance-attachment';
+import type { InsuranceCompany } from './insurance-company';
+import type { User } from './user';
 
 export interface InsurancePolicy {
   id: number;

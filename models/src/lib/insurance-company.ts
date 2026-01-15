@@ -1,5 +1,5 @@
-import { InsurancePolicy } from './insurance-policy';
-import { User } from './user';
+import type { InsurancePolicy } from './insurance-policy';
+import type { User } from './user';
 
 export interface InsuranceCompany {
   id: number;

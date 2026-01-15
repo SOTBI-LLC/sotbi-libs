@@ -1,7 +1,7 @@
-import { Advert } from './advert';
-import { Calculation, TradingCode } from './bidcode';
-import { SimpleEditModel } from './simple-edit';
-import { User } from './user';
+import type { Advert } from './advert';
+import type { Calculation, TradingCode } from './bidcode';
+import type { SimpleEditModel } from './simple-edit';
+import type { User } from './user';
 
 export interface Attachment {
   id: number;

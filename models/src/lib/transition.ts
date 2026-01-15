@@ -1,6 +1,6 @@
-import { StatusEvent } from './event';
-import { RequestType } from './request-type';
-import { StatusEnum } from './status-request';
+import type { StatusEvent } from './event';
+import type { RequestType } from './request-type';
+import type { StatusEnum } from './status-request';
 
 export interface Transition {
   id: number;

@@ -1,6 +1,6 @@
-import { IAttachment } from './egrn-attachment';
-import { EgrnRequest } from './egrn-request';
-import { User } from './user';
+import type { IAttachment } from './egrn-attachment';
+import type { EgrnRequest } from './egrn-request';
+import type { User } from './user';
 
 export interface RealEstate extends IAttachment {
   id: number;

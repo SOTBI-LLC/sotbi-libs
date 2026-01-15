@@ -1,6 +1,6 @@
-import { BankDetail } from './bankdetail';
-import { StatusEnum } from './status-request';
-import { User } from './user';
+import type { BankDetail } from './bankdetail';
+import type { StatusEnum } from './status-request';
+import type { User } from './user';
 
 export interface AccountStatement {
   id: number;

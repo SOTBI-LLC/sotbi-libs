@@ -1,6 +1,7 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import type { HttpClient } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { removeID } from '@sotbi/utils';
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 
 export interface DownloadFile {
   file?: string;

@@ -1,4 +1,4 @@
-import { Sro } from './sro';
+import type { Sro } from './sro';
 
 // Appraiser : Оценщик или Эксперт
 export interface Appraiser {

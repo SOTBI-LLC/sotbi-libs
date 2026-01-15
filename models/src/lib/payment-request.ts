@@ -1,9 +1,9 @@
-import { BankDetail } from './bankdetail';
-import { Debtor } from './debtor';
-import { Defrayment } from './defrayment';
-import { PaymentAttachment } from './payment-attachment';
-import { StatusEnum } from './status-request';
-import { User } from './user';
+import type { BankDetail } from './bankdetail';
+import type { Debtor } from './debtor';
+import type { Defrayment } from './defrayment';
+import type { PaymentAttachment } from './payment-attachment';
+import type { StatusEnum } from './status-request';
+import type { User } from './user';
 
 export interface PaymentRequest {
   id: number;

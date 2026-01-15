@@ -1,5 +1,5 @@
-import { Debtor } from './debtor';
-import { User } from './user';
+import type { Debtor } from './debtor';
+import type { User } from './user';
 
 export interface Favorite {
   id: number;

@@ -1,6 +1,6 @@
-import { EgrnRequest } from './egrn-request';
-import { UploadResult } from './upload-result';
-import { User } from './user';
+import type { EgrnRequest } from './egrn-request';
+import type { UploadResult } from './upload-result';
+import type { User } from './user';
 
 export interface IAttachment extends UploadResult {
   id?: number;

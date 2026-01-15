@@ -1,4 +1,4 @@
-import { Staff } from './staff';
+import type { Staff } from './staff';
 
 export interface WorkCategory {
   id: number;
@@ -20,5 +20,5 @@ export const WorkCategoryArr: { id: WorkCategoryType; ru: string }[] = [
 ];
 
 export const WorkCategoryStatusMap = new Map(
-  WorkCategoryArr.map((i): [string, string] => [i.id, i.ru]),
+  WorkCategoryArr.map((i): [string, string] => [i.id, i.ru])
 );
