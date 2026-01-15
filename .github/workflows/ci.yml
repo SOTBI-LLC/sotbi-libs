@@ -48,6 +48,7 @@ jobs:
 
       - name: Check formatting
         run: yarn format:check
+        if: always()
 
   build:
     name: Build
