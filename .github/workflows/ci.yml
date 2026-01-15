@@ -47,7 +47,8 @@ jobs:
         if: always()
 
       - name: Run ESLint on affected projects
-        run: npx nx affected -t lint --parallel=3 --configuration=ci
+        run: npx nx run-many -t lint --parallel=3 --configuration=ci
+        # run: npx nx affected -t lint --parallel=3 --configuration=ci
 
   build:
     name: Build
