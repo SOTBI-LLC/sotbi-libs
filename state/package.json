@@ -1,6 +1,27 @@
 {
   "name": "@sotbi/state",
   "version": "0.0.1",
-  "peerDependencies": {},
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SOTBI-LLC/sotbi-libs.git",
+    "directory": "state"
+  },
+  "peerDependencies": {
+    "@sotbi/models": "^0.0.1",
+    "@sotbi/data-access": "^0.0.1",
+    "@angular/core": "20.3.4",
+    "@ngxs/store": "^21.0.0",
+    "rxjs": "7.8.2",
+    "ramda": "0.29.1",
+    "date-fns": "^4.1.0",
+    "@angular/material": "^20.2.0",
+    "@angular/forms": "^20.3.4",
+    "@angular/common": "20.3.4",
+    "@sotbi/auth": "0.0.1"
+  },
   "sideEffects": false
 }

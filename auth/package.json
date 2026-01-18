@@ -1,6 +1,15 @@
 {
   "name": "@sotbi/auth",
   "version": "0.0.1",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SOTBI-LLC/sotbi-libs.git",
+    "directory": "auth"
+  },
   "peerDependencies": {
     "@angular/common": "^20.3.0",
     "@angular/core": "^20.3.0",

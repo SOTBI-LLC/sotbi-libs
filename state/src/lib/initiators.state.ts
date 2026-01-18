@@ -1,0 +1,156 @@
+import { Injectable, inject } from '@angular/core';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { InitiatorService } from '@services/initiator.service';
+import { Initiator } from '@sotbi/models';
+import { catchError, tap, throwError } from 'rxjs';
+import {
+  AddInintiator,
+  DeleteItem,
+  EditItem,
+  FetchInitiators,
+  GetInintiator,
+} from './initiators.actions';
+
+export class InitiatorsStateModel {
+  public items: Initiator[] = [];
+  public selected: Partial<Initiator> | null = null;
+}
+
+@State<InitiatorsStateModel>({
+  name: 'initiators',
+  defaults: {
+    items: [],
+    selected: null,
+  },
+})
+@Injectable()
+export class InitiatorsState {
+  private readonly initiatorSrv = inject(InitiatorService);
+
+  @Selector()
+  public static getItems(state: InitiatorsStateModel): Initiator[] {
+    return state.items;
+  }
+
+  @Selector()
+  public static getItem(state: InitiatorsStateModel): Partial<Initiator> | null {
+    return state.selected;
+  }
+
+  @Action(FetchInitiators, { cancelUncompleted: true })
+  public fetchItems({ getState, patchState }: StateContext<InitiatorsStateModel>) {
+    const state = getState();
+    if (!state.items.length) {
+      return this.initiatorSrv.GetAll().pipe(
+        tap((items) => {
+          patchState({ items, selected: null });
+        }),
+        catchError((err) => {
+          console.error(err);
+          return throwError(() => err);
+        }),
+      );
+    }
+  }
+
+  @Action(GetInintiator)
+  public getItem(
+    { setState, getState }: StateContext<InitiatorsStateModel>,
+    { payload }: GetInintiator,
+  ) {
+    const state = getState();
+    if (!payload) {
+      return setState({
+        ...state,
+        selected: {
+          id: 0,
+          name: '',
+          full_name: '',
+          accreditations: [],
+          bank_details: [],
+          type: false,
+          is_bankruptcy: false,
+          inn: '',
+        },
+      });
+    }
+    if (state.selected?.id !== payload) {
+      return this.initiatorSrv.get(payload).pipe(
+        tap((selected) => {
+          if (!selected?.accreditations) {
+            selected.accreditations = [];
+          }
+          setState({ ...state, selected });
+        }),
+        catchError((err) => {
+          console.error(err);
+          return throwError(() => err);
+        }),
+      );
+    }
+  }
+
+  @Action(AddInintiator)
+  public addItem(
+    { getState, setState }: StateContext<InitiatorsStateModel>,
+    { payload }: AddInintiator,
+  ) {
+    const state = getState();
+    return this.initiatorSrv.add(payload).pipe(
+      tap((selected) => {
+        if (!selected?.accreditations) {
+          selected.accreditations = [];
+        }
+        setState({
+          ...state,
+          items: [...state.items, selected],
+          selected,
+        });
+      }),
+      catchError((err) => {
+        console.error(err);
+        return throwError(() => err);
+      }),
+    );
+  }
+
+  @Action(EditItem)
+  public editItem(
+    { getState, setState }: StateContext<InitiatorsStateModel>,
+    { payload }: EditItem,
+  ) {
+    const state = getState();
+    const { id } = payload;
+    return this.initiatorSrv.update(payload).pipe(
+      tap((selected) => {
+        const items = state.items.map((el) => (el.id === id ? selected : el));
+        setState({ ...state, items, selected });
+      }),
+      catchError((err) => {
+        console.error(err);
+        return throwError(() => err);
+      }),
+    );
+  }
+
+  @Action(DeleteItem)
+  public deleteItem(
+    { getState, setState }: StateContext<InitiatorsStateModel>,
+    { payload }: DeleteItem,
+  ) {
+    return this.initiatorSrv.delete(payload).pipe(
+      tap(() => {
+        const state = getState();
+        setState({
+          ...state,
+          items: state.items.filter((el) => el.id !== payload),
+          selected: null,
+        });
+      }),
+      catchError((err) => {
+        console.error(err);
+        return throwError(() => err);
+      }),
+    );
+  }
+}

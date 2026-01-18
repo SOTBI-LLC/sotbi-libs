@@ -1,0 +1,88 @@
+import { Injectable, inject } from '@angular/core';
+import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
+import { RequestTypeService } from '@root/service/request-type.service';
+import { RequestType } from '@sotbi/models';
+import { throwError } from 'rxjs';
+import { catchError, finalize, tap } from 'rxjs/operators';
+import { FetchRequests, GetRequest } from './request-type.actions';
+
+export class RequestTypeStateModel {
+  public items: RequestType[];
+  public selected: Partial<RequestType>;
+  public count: number;
+  public loading?: boolean;
+}
+
+@State<RequestTypeStateModel>({
+  name: 'request_type',
+  defaults: {
+    items: [],
+    count: 0,
+    selected: null,
+    loading: false,
+  },
+})
+@Injectable()
+export class RequestTypeState implements NgxsOnInit {
+  private readonly itemsService = inject(RequestTypeService);
+
+  @Selector()
+  public static getItems(state: RequestTypeStateModel) {
+    return state.items;
+  }
+
+  @Selector()
+  public static getCount(state: RequestTypeStateModel) {
+    return state.count;
+  }
+
+  @Selector()
+  public static getSelected(state: RequestTypeStateModel) {
+    return state.selected;
+  }
+
+  public ngxsOnInit({ dispatch }: StateContext<RequestTypeStateModel>) {
+    dispatch(new FetchRequests());
+  }
+
+  @Action(FetchRequests, { cancelUncompleted: false })
+  public fetchItems({ getState, patchState }: StateContext<RequestTypeStateModel>) {
+    const state = getState();
+    if (!state.loading && state.items.length === 0) {
+      patchState({ loading: true });
+      return this.itemsService.GetAll().pipe(
+        tap((result: RequestType[]) => {
+          patchState({
+            items: result,
+            count: result.length,
+          });
+        }),
+        catchError((err) => {
+          console.error(err);
+          return throwError(() => err);
+        }),
+        finalize(() => patchState({ loading: false })),
+      );
+    }
+  }
+  @Action(GetRequest)
+  public getItem({ patchState, getState }: StateContext<RequestTypeStateModel>, { payload }) {
+    patchState({ loading: true });
+    const state = getState();
+    let selected: Partial<RequestType>;
+    if (state.items.length > 0) {
+      selected = state.items.find(({ id }) => id === payload);
+      patchState({ selected, loading: false });
+    } else {
+      return this.itemsService.get(payload).pipe(
+        tap((selected) => {
+          patchState({ selected });
+        }),
+        catchError((err) => {
+          throw 'error fetching item. Details: ' + err.message;
+        }),
+        finalize(() => patchState({ loading: false })),
+      );
+    }
+  }
+}

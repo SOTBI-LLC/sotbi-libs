@@ -1,9 +1,19 @@
 {
   "name": "@sotbi/utils",
   "version": "0.0.1",
+  "license": "MIT",
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SOTBI-LLC/sotbi-libs.git",
+    "directory": "utils"
+  },
   "dependencies": {
     "tslib": "^2.3.0"
   }
