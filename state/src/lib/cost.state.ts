@@ -5,7 +5,12 @@ import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { formatEventDuraton } from '@root/shared/date-func';
 import { CostRealService } from '@services/cost-real.service';
 import { canSave, isAllSaved } from '@shared/shared-globals';
-import { calcSumHours, CostReal, CostRealFilter, Interval } from '@sotbi/models';
+import {
+  calcSumHours,
+  CostReal,
+  CostRealFilter,
+  Interval,
+} from '@sotbi/models';
 import { isAfter, isBefore, isSameDay } from 'date-fns';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
@@ -108,7 +113,10 @@ const makeEvents = (inCosts: CostReal[]): EventSourceInput => {
     for (let i = 1; i < costs.length; i++) {
       const idx = events.length - 1;
       if (isSameDay(events[idx].start as Date, costs[i].date)) {
-        if (events[idx].title === 'Отпуск' || events[idx].title === 'Больничный') {
+        if (
+          events[idx].title === 'Отпуск' ||
+          events[idx].title === 'Больничный'
+        ) {
           if (
             costs[i].debtor.name.includes('Отпуск') ||
             costs[i].debtor.name.includes('Больничный')
@@ -206,7 +214,7 @@ export class CostRealState {
   @Action(FetchCostsReal)
   public fetchItems(
     { getState, setState, patchState }: StateContext<CostRealStateModel>,
-    { payload }: FetchCostsReal,
+    { payload }: FetchCostsReal
   ) {
     patchState({ loading: true });
     const state = getState();
@@ -217,6 +225,11 @@ export class CostRealState {
       units: [],
     };
     let rowId = 0;
+    // TODO:
+    // Incorrect operator chaining syntax in `cost.state.ts` RxJS pipe
+    // The RxJS pipe has misplaced parentheses wrapping catchError and tap operators
+    // with a comma between them, creating invalid operator syntax.
+    // The pipe expects operator functions, not a comma expression result.
     return this.service.getRealCosts(filter).pipe(
       (catchError((err) => {
         console.error(err.message);
@@ -224,7 +237,12 @@ export class CostRealState {
       }),
       tap((allItems) => {
         allItems = allItems.map((el) => {
-          return { ...el, dirty: false, date: new Date(el.date), rowId: rowId++ + '' };
+          return {
+            ...el,
+            dirty: false,
+            date: new Date(el.date),
+            rowId: rowId++ + '',
+          };
         });
         setState({
           ...state,
@@ -234,14 +252,14 @@ export class CostRealState {
       })),
       finalize(() => {
         patchState({ loading: false });
-      }),
+      })
     );
   }
 
   @Action(FilterCostsReal, { cancelUncompleted: false })
   public filterItems(
     { getState, patchState, setState }: StateContext<CostRealStateModel>,
-    { payload },
+    { payload }
   ) {
     // console.log('CostRealState::FilterCostsReal', payload);
     patchState({ loading: true });
@@ -251,7 +269,12 @@ export class CostRealState {
     const items = state.allItems
       .filter((el) => interval.end >= el.date && el.date >= interval.start)
       .map((el) => {
-        return { ...el, dirty: false, date: new Date(el.date), rowId: rowId++ + '' };
+        return {
+          ...el,
+          dirty: false,
+          date: new Date(el.date),
+          rowId: rowId++ + '',
+        };
       });
     const empty = [];
     for (let index = 0; index < 10; index++) {
@@ -266,7 +289,10 @@ export class CostRealState {
   }
 
   @Action(AddCostReal)
-  public addItem({ getState, setState }: StateContext<CostRealStateModel>, { payload }) {
+  public addItem(
+    { getState, setState }: StateContext<CostRealStateModel>,
+    { payload }
+  ) {
     const { cost } = payload;
     return this.service.createCostReal(cost).pipe(
       tap((result) => {
@@ -292,14 +318,14 @@ export class CostRealState {
           saved: isAllSaved(items),
         });
       }),
-      catchError((err) => throwError(() => err)),
+      catchError((err) => throwError(() => err))
     );
   }
 
   @Action(AddAbsenceCostsReal)
   public addAbsenceItem(
     { getState, setState, dispatch }: StateContext<CostRealStateModel>,
-    { payload },
+    { payload }
   ) {
     const { days, debtor, interval } = payload;
     const state = getState();
@@ -310,7 +336,7 @@ export class CostRealState {
       const hasAbsence = state.allItems.findIndex(
         ({ date, debtor: dbt }) =>
           new Date(date)?.getDate() === day &&
-          (debtor.id === dbt.id || debtor.category_id === dbt.category_id),
+          (debtor.id === dbt.id || debtor.category_id === dbt.category_id)
       );
       if (hasAbsence > -1) {
         const rowData = state.allItems[hasAbsence];
@@ -324,7 +350,14 @@ export class CostRealState {
       } else {
         const rowData: CostReal = {
           id: 0,
-          date: new Date(interval.start.getFullYear(), interval.start.getMonth(), day, 0, 0, 0),
+          date: new Date(
+            interval.start.getFullYear(),
+            interval.start.getMonth(),
+            day,
+            0,
+            0,
+            0
+          ),
           debtor_id: debtor.id,
           user_id: null,
           work_category_id: null,
@@ -361,14 +394,21 @@ export class CostRealState {
   }
 
   @Action(AddEmptyCostsReal)
-  public addEmptyItems({ getState, setState }: StateContext<CostRealStateModel>, { payload }) {
+  public addEmptyItems(
+    { getState, setState }: StateContext<CostRealStateModel>,
+    { payload }
+  ) {
     const empty = [];
     const state = getState();
     let rowId = state.items.length;
     for (let index = 0; index < payload; index++) {
       empty.push({ ...this.rowData, rowId: rowId++ + '' });
     }
-    return setState({ ...state, items: [...state.items, ...empty], lastSaved: 0 });
+    return setState({
+      ...state,
+      items: [...state.items, ...empty],
+      lastSaved: 0,
+    });
   }
 
   @Action(EmptyCostsReal)
@@ -384,7 +424,10 @@ export class CostRealState {
   }
 
   @Action(EditCostReal)
-  public editItem({ getState, setState }: StateContext<CostRealStateModel>, { payload }) {
+  public editItem(
+    { getState, setState }: StateContext<CostRealStateModel>,
+    { payload }
+  ) {
     console.log('CostRealState::EditCostReal', payload);
     const { cost, idx } = payload;
     const state = getState();
@@ -401,7 +444,7 @@ export class CostRealState {
   @Action(CancelCostReal)
   public cancelItem(
     { getState, setState, dispatch }: StateContext<CostRealStateModel>,
-    { payload },
+    { payload }
   ) {
     // console.log('CostRealState::CancelCostReal', payload);
     const state = getState();
@@ -410,14 +453,22 @@ export class CostRealState {
       const items = [...state.items];
       const index = state.allItems.findIndex(({ id }) => id === idx);
       items[payload] = state.allItems[index];
-      return setState({ ...state, items, saved: isAllSaved(state.items), lastSaved: 0 });
+      return setState({
+        ...state,
+        items,
+        saved: isAllSaved(state.items),
+        lastSaved: 0,
+      });
     } else {
       return dispatch(new EmptyCostReal(payload));
     }
   }
 
   @Action(UpdateCostReal, { cancelUncompleted: true })
-  public updateItem({ getState, setState }: StateContext<CostRealStateModel>, { payload }) {
+  public updateItem(
+    { getState, setState }: StateContext<CostRealStateModel>,
+    { payload }
+  ) {
     // console.log('CostRealState::UpdateCostReal', payload);
     const { cost, idx } = payload;
     return this.service.updateCostReal(cost).pipe(
@@ -439,12 +490,15 @@ export class CostRealState {
       }),
       catchError((err) => {
         return throwError(() => err);
-      }),
+      })
     );
   }
 
   @Action(SaveAllCostReal)
-  public saveAllItems({ getState, patchState }: StateContext<CostRealStateModel>) {
+  public saveAllItems({
+    getState,
+    patchState,
+  }: StateContext<CostRealStateModel>) {
     patchState({ loading: true });
     const state = getState();
     // console.log('CostRealState::SaveAllCostReal', state.items);
@@ -472,7 +526,12 @@ export class CostRealState {
       }
     }
     const allItems = state.allItems.map((el, i) => {
-      return { ...el, dirty: false, date: new Date(el.date), rowId: i + '' } as CostReal;
+      return {
+        ...el,
+        dirty: false,
+        date: new Date(el.date),
+        rowId: i + '',
+      } as CostReal;
     });
     // prettier-ignore
     return this.service.batchUpdate(costs).pipe(
@@ -509,7 +568,11 @@ export class CostRealState {
   }
 
   @Action(CancelAllCostReal)
-  public cancelAll({ getState, patchState, setState }: StateContext<CostRealStateModel>) {
+  public cancelAll({
+    getState,
+    patchState,
+    setState,
+  }: StateContext<CostRealStateModel>) {
     patchState({ loading: true });
     const state = getState();
     const items = [...state.items];
@@ -532,7 +595,7 @@ export class CostRealState {
   @Action(DeleteCostReal, { cancelUncompleted: true })
   public deleteItem(
     { getState, setState, patchState }: StateContext<CostRealStateModel>,
-    { payload }: DeleteCostReal,
+    { payload }: DeleteCostReal
   ) {
     const { id } = payload;
     // const snackBarRef = this.snackBar.open(
@@ -579,7 +642,10 @@ export class CostRealState {
   }
 
   @Action(EmptyCostReal)
-  public emptyItem({ getState, setState }: StateContext<CostRealStateModel>, { payload }) {
+  public emptyItem(
+    { getState, setState }: StateContext<CostRealStateModel>,
+    { payload }
+  ) {
     // console.log('CostRealState::EmptyCostReal', payload);
     const state = getState();
     const items = [...state.items];
