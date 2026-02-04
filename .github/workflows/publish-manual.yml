@@ -1,0 +1,65 @@
+name: Publish Packages (Manual with Token)
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package to publish (or "all" for all packages)'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - utils
+          - models
+          - auth
+          - data-access
+          - state
+          - ui
+          - ui-ag-grid
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    
+    # Явно запрашиваем максимальные права
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@sotbi'
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build packages
+        run: |
+          if [ "${{ github.event.inputs.package }}" = "all" ]; then
+            npx nx run-many -t build
+          else
+            npx nx run ${{ github.event.inputs.package }}:build
+          fi
+
+      - name: Publish packages
+        run: |
+          if [ "${{ github.event.inputs.package }}" = "all" ]; then
+            npx nx run-many -t nx-release-publish
+          else
+            npx nx run ${{ github.event.inputs.package }}:nx-release-publish
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
