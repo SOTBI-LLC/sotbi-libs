@@ -22,7 +22,12 @@ jobs:
         with:
           node-version: "22"
           registry-url: "https://npm.pkg.github.com"
-          scope: "@sotbi"
+
+      - name: Configure npm authentication
+        run: |
+          echo "@sotbi:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+          cat .npmrc
 
       - name: Enable Corepack
         run: corepack enable
@@ -37,3 +42,4 @@ jobs:
         run: npx nx run-many -t nx-release-publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
