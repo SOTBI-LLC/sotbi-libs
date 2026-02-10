@@ -263,6 +263,7 @@ export { Marketplace } from './lib/marketplace';
 
 // Message models
 export {
+  BasisForChallengingTransaction,
   CreditOrganisation,
   CreditorMeetingType,
   CreditorType,

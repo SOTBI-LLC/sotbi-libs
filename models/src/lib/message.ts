@@ -58,46 +58,122 @@ export interface Message {
   /* PAYLOAD ЧАСТЬ */
   payload: {
     is_expert_report?: boolean; // нет на бэке
-    decision_at: Date;
-    illegal_action: string;
-    amount: number;
-    arbitration_manager_type: string;
-    application_by_arbitration_manager?: boolean;
-    hide_prev_message: boolean;
-    type: number;
-    meeting_start: Date;
-    meeting_place: string;
-    register_start: Date;
-    register_end: Date;
-    register_place: string;
-    acquaintance_place: string;
-    acquaintance_date: Date;
-    meeting_comments: string;
-    register_post_address_id: number;
+    /*  message_type_id = 9 + sub_message_type_id = 32 */
+    /*  message_type_id = 9 + sub_message_type_id = 33 */
+    /*  message_type_id = 9 + sub_message_type_id = 37 */
+    /*  message_type_id = 9 + sub_message_type_id = 38 */
+    /*  message_type_id = 9 + sub_message_type_id = 39 */
+    /*  message_type_id = 9 + sub_message_type_id = 40 */
+    decision_at: Date; // Дата решения | Дата получения сведений о подаче заявления(неактивно) | Дата следующего судебного заседания(38=О признании обоснованным заявления о признании гражданина банкротом и введении реструктуризации его долгов)
+    /*  message_type_id = 9 + sub_message_type_id = 32 */
+    illegal_action: string; // Тип незаконного действия | О признании действий (бездействий) арбитражного управляющего незаконным | О прекращении производства по делу
+    /*  message_type_id = 9 + sub_message_type_id = 33 */
+    /* message_type_id = 15 +  sub_message_type_id = 10 */
+    amount: number; // Размер убытков|сумма требований|второй очереди
+    /*  message_type_id = 9 + sub_message_type_id = 38 */
+    /*  message_type_id = 9 + sub_message_type_id = 39 */
+    arbitration_manager_type: string; // /** о признании обоснованным заявления о признании гражданина банкротом и введении реструктуризации его долгов */
+    /*  message_type_id = 9 + sub_message_type_id = 39 */
+    /*  message_type_id = 9 + sub_message_type_id = 40 */
+    /* message_type_id = 15 +  sub_message_type_id = 10 */
+    /* message_type_id = 16 +  sub_message_type_id = 11 */
+    application_by_arbitration_manager?: boolean; // /* Оспаривание сделки => Заявление о признании сделки должника недействительной */
+    /*  message_type_id = 12 */
+    hide_prev_message: boolean; // скрывать/не скрывать предыдущее сообщение
+    /* message_type_id = 13 +  sub_message_type_id = 3 */
+    /* message_type_id = 15 +  sub_message_type_id = 9 */
+    type: number; // 1.Юр.лицо|Очная|Собрание|АУ 2.ИП|Заочная|Третьим лицом 3.Физ лицо|Электронная 4.Иностранная компания
+    /* message_type_id = 13 +  sub_message_type_id = 3 */
+    /* message_type_id = 13 +  sub_message_type_id = 5 */
+    /* message_type_id = 15 +  sub_message_type_id = 9 */
+    /* message_type_id = 15 +  sub_message_type_id = 10 */
+    /* message_type_id = 21 */
+    meeting_start: Date; // Дата/Время начала собрания|заседания
+    /* message_type_id = 13 +  sub_message_type_id = 3 */
+    /* message_type_id = 13 +  sub_message_type_id = 5 */
+    /* message_type_id = 15 +  sub_message_type_id = 9 */
+    /* message_type_id = 21 */
+    meeting_place: string; // Место проведения собрания|заседания
+    /* message_type_id = 13 +  sub_message_type_id = 3 */
+    register_start: Date; // Дата/Время начала регистрации
+    /* message_type_id = 13 +  sub_message_type_id = 3 */
+    register_end: Date; // Дата/Время окончания регистрации|Дата/Время окончания приема бюллетеней
+    /* message_type_id = 13 +  sub_message_type_id = 3 */
+    register_place: string; // Место регистрации
+    /* message_type_id = 13 +  sub_message_type_id = 3 */
+    acquaintance_place: string; // Место и порядок ознакомления
+    /* message_type_id = 13 +  sub_message_type_id = 3 */
+    acquaintance_date: Date; // Дата ознакомления
+    /* message_type_id = 13 +  sub_message_type_id = 3 */
+    meeting_comments: string; // Комментарии - deptecated ?
+    /* message_type_id = 13 +  sub_message_type_id = 3 */
+    register_post_address_id: number; // Почтовый адрес АУ для направления бюллетеней
+    /* message_type_id = 13 +  sub_message_type_id = 3 */
     register_post_address?: PostAddress;
-    web_address: string;
-    assessment_ground: string;
-    evaluation_report_no: string;
-    evaluation_report_date: Date;
-    expert_report_no: string;
-    expert_report_date: Date;
-    appraisers: Appraiser[];
-    experts?: Appraiser[];
-    appraisal_subjects: AppraisalSubject[];
-    credit_organisation?: CreditOrganisation;
-    meeting_agenda: string;
-    present_workers_count: number;
-    receiving_at: Date;
-    creditors: Creditor[];
-    other_persons: Creditor[];
-    deliberate: number;
-    fictitious: number;
-    deliberate_reason: string;
-    fictitious_reason: string;
-    amount_financial_sanctions: number;
-    delay_salary: boolean;
-    order_of_satisfaction: TypeOrderOfSatisfaction;
-    providing_collateral: ProvidingCollateral;
+    /* message_type_id = 13 +  sub_message_type_id = 3 */
+    web_address: string; // Web-адрес для проведения электронного собрания
+    /* message_type_id = 14 +  sub_message_type_id = 8 */
+    /* message_type_id = 21 */
+    assessment_ground: string; // Основания проведения оценки / Условия обеспечения сохранности предмета залога
+    /* message_type_id = 14 +  sub_message_type_id = 8 */
+    evaluation_report_no: string; // Номер отчета об оценке
+    /* message_type_id = 14 +  sub_message_type_id = 8 */
+    evaluation_report_date: Date; // Дата отчета об оценке
+    /* message_type_id = 14 +  sub_message_type_id = 8 */
+    expert_report_no: string; // Номер экспертизы отчета об оценке
+    /* message_type_id = 14 +  sub_message_type_id = 8 */
+    expert_report_date: Date; // Дата экспертизы отчета об оценке
+    /* message_type_id = 14 +  sub_message_type_id = 8 */
+    appraisers: Appraiser[]; // Оценщик и Эксперт (если привлекался)
+    /* message_type_id = 14 +  sub_message_type_id = 8 */
+    experts?: Appraiser[]; // поле на фронте, для выделения экспертов из appraisers
+    /* message_type_id = 14 +  sub_message_type_id = 8 */
+    /* message_type_id = 21 */
+    appraisal_subjects: AppraisalSubject[]; // Отчет об оценке|Экспертиза отчета об оценке --- aka lots в ОРГАНИЗАЦИЯ И ПРОВЕДЕНИЕ РЕАЛИЗАЦИИ ИМУЩЕСТВА => ОБ ОПРЕДЕЛЕНИИ НАЧАЛЬНОЙ ПРОДАЖНОЙ ЦЕНЫ, УТВЕРЖДЕНИИ ПОРЯДКА И УСЛОВИЙ ПРОВЕДЕНИЯ ТОРГОВ ПО РЕАЛИЗАЦИИ ПРЕДМЕТА ЗАЛОГА, ПОРЯДКА И УСЛОВИЙ ОБЕСПЕЧЕНИЯ СОХРАННОСТИ ПРЕДМЕТА ЗАЛОГА
+    /* message_type_id = 14 +  sub_message_type_id = 44 */
+    credit_organisation?: CreditOrganisation; // Кредитная организация + credit_organisation.inn => Dadata используем тут
+    /* message_type_id = 15 +  sub_message_type_id = 9 */
+    meeting_agenda: string; // Повестка дня собрания
+    /* message_type_id = 15 +  sub_message_type_id = 10 */
+    present_workers_count: number; // Количество присутствовавших работников (бывших работников)  /* <- Сведения о решениях, принятых собранием работников, бывших работников должника ->*/
+    /* message_type_id = 16 +  sub_message_type_id = 11 */
+    /* message_type_id = 16 +  sub_message_type_id = 12 */
+    /* message_type_id = 16 +  sub_message_type_id = 13 */
+    /* message_type_id = 19 */
+    receiving_at: Date; // Дата получения - требований кредиторов|сведений о проведении собрания|Дата подачи заявления | Дата включения в реестр(MessageTypes.ClaimInclusionNotice, 19)
+
+    /* message_type_id = 16 +  sub_message_type_id = 11 */
+    /* message_type_id = 17 +  sub_message_type_id = 14 */
+    /* message_type_id = 17 +  sub_message_type_id = 17 */
+    /* message_type_id = 19 */
+    creditors: Creditor[] /* <- Уведомление о получении требований кредитора -> */;
+    /* message_type_id = 16 +  sub_message_type_id = 11 */
+    other_persons: Creditor[]; // поле на фронте, для выделения иных лиц(type=2) из creditors /* <- Уведомление о получении требований кредитора -> */
+    /* message_type_id = 18 +  sub_message_type_id = 22 */
+    /* message_type_id = 18 +  sub_message_type_id = 24 */
+    deliberate: number; // Признаки преднамеренного банкротства: 1. выявлены 2. не выявлены 3. проверка не проведена /* <- Сообщение об изменении сообщения о наличии или об отсутствии признаков преднамеренного или фиктивного банкротства -> */
+    /* message_type_id = 18 +  sub_message_type_id = 22 */
+    /* message_type_id = 18 +  sub_message_type_id = 24 */
+    fictitious: number; // Признаки фиктивного банкротства: 1. выявлены 2. не выявлены 3.проверка не проведена /* <- Сообщение об изменении сообщения о наличии или об отсутствии признаков преднамеренного или фиктивного банкротства -> */
+    /* message_type_id = 18 +  sub_message_type_id = 22 */
+    /* message_type_id = 18 +  sub_message_type_id = 24 */
+    deliberate_reason: string; // Признаки преднамеренного банкротства: причина // Причина отмены плана реструктуризации (39 ID) // Освобождение гражданина от обязательств(причина, ID 40) /* <- Сообщение об изменении сообщения о наличии или об отсутствии признаков преднамеренного или фиктивного банкротства -> */
+    /* message_type_id = 18 +  sub_message_type_id = 22 */
+    /* message_type_id = 18 +  sub_message_type_id = 24 */
+    fictitious_reason: string; // Признаки фиктивного банкротства: причина /* <- Сообщение об изменении сообщения о наличии или об отсутствии признаков преднамеренного или фиктивного банкротства -> */
+    /* message_type_id = 19 */
+    amount_financial_sanctions: number; // Финансовые санкции /* Сообщение о включении заявленных требований в реестр требований кредиторов = NotificationInclusionClaims */
+    /* message_type_id = 19 */
+    delay_salary: boolean; // Задолженность по заработной плате и/или выходному пособию /* Сообщение о включении заявленных требований в реестр требований кредиторов = NotificationInclusionClaims */
+    /* message_type_id = 19 */
+    order_of_satisfaction: TypeOrderOfSatisfaction; // Очередность удолетворения /* Сообщение о включении заявленных требований в реестр требований кредиторов = NotificationInclusionClaims */
+    /* message_type_id = 19 */
+    providing_collateral: ProvidingCollateral; // Обеспечение залогом /* Сообщение о включении заявленных требований в реестр требований кредиторов = NotificationInclusionClaims */
+    /* message_type_id = 16("Оспаривание сделки"), sub_message_type_id = 11 ("Заявление о признании сделки должника недействительной") */
+    there_is_no_price: boolean;
+    basis_for_challenging_the_transaction: BasisForChallengingTransaction;
+    tax_id: string;
+    name_of_company: string;
   };
 }
 
@@ -191,5 +267,13 @@ export enum ProvidingCollateral {
   PARTLY = 'Частично',
 }
 
+export enum BasisForChallengingTransaction {
+  FIRST = 'п.1. ст. 61.2 ФЗ 127',
+  SECOND = 'п.2. ст. 61.2 ФЗ 127',
+  THIRD = 'п.2. ст. 61.3 ФЗ 127',
+  FOURTH = 'п.3. ст. 61.3 ФЗ 127',
+  FIFTH = 'ст. 10 и ст. 168 ГК РФ',
+  SIXTH = 'Иное',
+}
 // Note: Form interfaces (PayloadForm, MessageForm, etc.) are moved to a separate
 // Angular-specific file since they depend on @angular/forms types
