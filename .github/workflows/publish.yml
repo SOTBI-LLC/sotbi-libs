@@ -8,11 +8,14 @@ on:
 
 permissions:
   contents: read
-  packages: write
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      NPM_REGISTRY_URL: "https://npm.bazys.io"
+      NPM_TOKEN: ${{ secrets['NPM_TOKEN'] }}
+      NODE_AUTH_TOKEN: ${{ secrets['NPM_TOKEN'] }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,16 +24,24 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-          registry-url: "https://npm.pkg.github.com"
+          cache: "yarn"
+          registry-url: "https://npm.bazys.io"
+
+      - name: Validate publish token
+        run: |
+          if [ -z "${NPM_TOKEN}" ]; then
+            echo "::error::NPM_TOKEN secret is not set"
+            exit 1
+          fi
 
       - name: Configure npm authentication
         run: |
-          cat > .npmrc << EOF
-          @sotbi:registry=https://npm.pkg.github.com
-          //npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}
+          cat > "$HOME/.npmrc" << EOF
+          registry=${NPM_REGISTRY_URL}
+          @sotbi:registry=${NPM_REGISTRY_URL}
+          //npm.bazys.io/:_authToken=${NPM_TOKEN}
+          always-auth=true
           EOF
-          echo "=== .npmrc configured ==="
-          cat .npmrc
 
       - name: Enable Corepack
         run: corepack enable
@@ -41,15 +52,5 @@ jobs:
       - name: Build all packages
         run: npx nx run-many -t build
 
-      - name: Publish packages with npm
-        run: |
-          # Copy .npmrc to root for npm to find it
-          cp .npmrc "$HOME/.npmrc"
-          
-          # Publish each package
-          for package in dist/*/package.json; do
-            dir=$(dirname "$package")
-            package_name=$(node -p "require('$package').name")
-            echo "Publishing $package_name from $dir"
-            (cd "$dir" && npm publish --verbose) || echo "Failed to publish $package_name"
-          done
+      - name: Publish packages
+        run: npx nx run-many -t nx-release-publish

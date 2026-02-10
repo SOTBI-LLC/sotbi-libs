@@ -7,7 +7,7 @@
   "types": "./src/index.d.ts",
   "packageManager": "yarn@1.22.22",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
+    "registry": "https://npm.bazys.io",
     "access": "restricted"
   },
   "repository": {

@@ -2,7 +2,7 @@
   "name": "@sotbi/ui-ag-grid",
   "version": "0.0.1",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
+    "registry": "https://npm.bazys.io",
     "access": "public"
   },
   "repository": {
@@ -18,12 +18,7 @@
     "@ngxs/store": "^21.0.0",
     "ag-grid-angular": "~34.2.0",
     "ag-grid-community": "~34.2.0",
-    "ag-grid-enterprise": "~34.2.0",
-    "@cds/angular": "^6.16.1",
-    "@cds/core": "^6.16.1",
     "@clr/angular": "^17.12.1",
-    "@clr/ui": "^17.12.1",
-    "imask": "~7.6.1",
     "@sotbi/models": "0.0.1",
     "date-fns": "^4.1.0",
     "rxjs": "^7.8.0"
