@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
-import { BidStateService } from '@services/bidstate.service';
-import { canSave, isAllSaved } from '@shared/shared-globals';
-import { BidState } from '@sotbi/models';
+import type { NgxsOnInit, StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { BidStateService } from '@sotbi/data-access';
+import type { BidState } from '@sotbi/models';
+import { canSave, isAllSaved } from '@sotbi/utils';
 import { clone } from 'ramda';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
@@ -18,7 +19,7 @@ import {
   SaveAllBidState,
   UpdateBidState,
 } from './bidstate.actions';
-import { itemMap } from './simple-edit.state.model';
+import type { itemMap } from './simple-edit.state.model';
 
 export const RequiredFields = ['name', 'order'];
 
@@ -26,8 +27,8 @@ export interface BidStateStateModel {
   allItems: BidState[];
   items: BidState[];
   mapItems: itemMap;
-  selected: BidState;
-  loading?: boolean;
+  selected: BidState | null;
+  loading: boolean;
   count: number;
   saved: boolean;
 }
@@ -96,7 +97,11 @@ export class BidStateState implements NgxsOnInit {
   }
 
   @Action(FetchBidState)
-  public fetchItems({ getState, setState, patchState }: StateContext<BidStateStateModel>) {
+  public fetchItems({
+    getState,
+    setState,
+    patchState,
+  }: StateContext<BidStateStateModel>) {
     // console.log('BidStateState::FetchBidState');
     const state = getState();
     if (!state.items.length) {
@@ -111,7 +116,9 @@ export class BidStateState implements NgxsOnInit {
               ...state,
               allItems: clone(items),
               selected: null,
-              mapItems: new Map(items.map((i): [number, string] => [i.id, i.name])),
+              mapItems: new Map(
+                items.map((i): [number, string] => [i.id, i.name ?? '']),
+              ),
               items: items.map((el) => {
                 el.dirty = false;
                 return el;
@@ -127,10 +134,14 @@ export class BidStateState implements NgxsOnInit {
         finalize(() => patchState({ loading: false })),
       );
     }
+    return patchState({ loading: false });
   }
 
   @Action(GetBidState)
-  public getItem({ patchState, getState }: StateContext<BidStateStateModel>, { payload }) {
+  public getItem(
+    { patchState, getState }: StateContext<BidStateStateModel>,
+    { payload }: GetBidState,
+  ) {
     patchState({ loading: true });
     const state = getState();
     const selected = state.items.find(({ id }) => id === payload);
@@ -140,7 +151,7 @@ export class BidStateState implements NgxsOnInit {
   @Action(AddBidState)
   public createItem(
     { getState, patchState, setState }: StateContext<BidStateStateModel>,
-    { payload },
+    { payload }: AddBidState,
   ) {
     patchState({ loading: true });
     const { item, idx } = payload;
@@ -166,29 +177,43 @@ export class BidStateState implements NgxsOnInit {
   }
 
   @Action(AddEmptyBidState)
-  public addEmptyItem({ getState, patchState }: StateContext<BidStateStateModel>) {
+  public addEmptyItem({
+    getState,
+    patchState,
+  }: StateContext<BidStateStateModel>) {
     // console.log('BidStateState::AddEmptyBidState');
     const state = getState();
     const item = Object.assign({}, this.rowData);
     state.count++;
     item.order = state.count;
-    return patchState({ items: [...state.items, item], selected: item, count: state.count });
+    return patchState({
+      items: [...state.items, item],
+      selected: item,
+      count: state.count,
+    });
   }
 
   @Action(EditBidState)
-  public editItem({ getState, patchState }: StateContext<BidStateStateModel>, { payload }) {
+  public editItem(
+    { getState, patchState }: StateContext<BidStateStateModel>,
+    { payload }: EditBidState,
+  ) {
     // console.log('BidStateState::EditBidState', payload);
     const { item, idx } = payload;
     const state = getState();
-    item.dirty = true;
-    state.items[idx] = item;
+    const updatedItem: BidState = {
+      ...state.items[idx],
+      ...item,
+      dirty: true,
+    };
+    state.items[idx] = updatedItem;
     return patchState({ items: state.items, saved: false });
   }
 
   @Action(CancelBidState)
   public cancelItem(
     { getState, patchState, dispatch }: StateContext<BidStateStateModel>,
-    { payload },
+    { payload }: CancelBidState,
   ) {
     console.log('BidStateState::CancelBidState', payload);
     const state = getState();
@@ -205,7 +230,10 @@ export class BidStateState implements NgxsOnInit {
   }
 
   @Action(EmptyBidState)
-  public emptyItem({ getState, patchState }: StateContext<BidStateStateModel>, { payload }) {
+  public emptyItem(
+    { getState, patchState }: StateContext<BidStateStateModel>,
+    { payload }: EmptyBidState,
+  ) {
     // console.log('BidStateState::EmptyBidState', payload);
     const items = getState().items;
     items.splice(payload, 1);
@@ -215,7 +243,7 @@ export class BidStateState implements NgxsOnInit {
   @Action(UpdateBidState)
   public updateItem(
     { getState, setState, patchState }: StateContext<BidStateStateModel>,
-    { payload },
+    { payload }: UpdateBidState,
   ) {
     // console.log('BidStateState::UpdateBidState', payload);
     patchState({ loading: true });
@@ -224,14 +252,16 @@ export class BidStateState implements NgxsOnInit {
       tap((selected) => {
         selected.dirty = false;
         const idx = state.items.findIndex(({ id }) => id === selected.id);
-        state.items[idx] = selected;
+        const items = [...state.items];
+        items[idx] = selected;
         const index = state.allItems.findIndex(({ id }) => id === selected.id);
-        state.allItems[index] = selected;
+        const allItems = [...state.allItems];
+        allItems[index] = selected;
         setState({
           ...state,
-          items: state.items,
+          items,
           selected,
-          allItems: state.allItems,
+          allItems,
           saved: isAllSaved(state.items),
         });
       }),
@@ -243,7 +273,10 @@ export class BidStateState implements NgxsOnInit {
   }
 
   @Action(SaveAllBidState)
-  public saveAllItems({ getState, patchState }: StateContext<BidStateStateModel>) {
+  public saveAllItems({
+    getState,
+    patchState,
+  }: StateContext<BidStateStateModel>) {
     // console.log('BidStateState::SaveAllBidState');
     patchState({ loading: true });
     const state = getState();
@@ -256,7 +289,12 @@ export class BidStateState implements NgxsOnInit {
         // для всех не сохраненных
         let filledFields = 0;
         for (const key in item) {
-          if (Object.prototype.hasOwnProperty.call(item, key) && fields.has(key) && !!item[key]) {
+          const value = item[key as keyof BidState];
+          if (
+            Object.prototype.hasOwnProperty.call(item, key) &&
+            fields.has(key) &&
+            !!value
+          ) {
             filledFields++; // считаем количество заполненных полей
           }
         }
@@ -284,7 +322,7 @@ export class BidStateState implements NgxsOnInit {
           }
           i++;
         }
-        state.items.sort((a, b) => a.order - b.order);
+        state.items.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
         return patchState({
           items: state.items,
           allItems: state.allItems,
@@ -298,7 +336,7 @@ export class BidStateState implements NgxsOnInit {
   @Action(DeleteBidState)
   public deleteItem(
     { getState, patchState, setState }: StateContext<BidStateStateModel>,
-    { payload },
+    { payload }: DeleteBidState,
   ) {
     // console.log('BidStateState::DeleteBidState', payload);
     patchState({ loading: true });

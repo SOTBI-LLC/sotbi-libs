@@ -1,7 +1,7 @@
 export interface BidState {
   id: number;
-  order: number;
-  name: string;
-  description: string;
+  order: number | null;
+  name: string | null;
+  description: string | null;
   dirty: boolean;
 }

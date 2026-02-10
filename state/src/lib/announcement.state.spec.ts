@@ -1,11 +1,19 @@
+import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Store, provideStates } from '@ngxs/store';
-import { AnnouncementService } from '@services/announcement.service';
-import { Announcement, DatePublish } from '@sotbi/models';
-import { configureTestBed } from '@test-setup';
+import { AnnouncementService } from '@sotbi/data-access';
+import type { Announcement } from '@sotbi/models';
+import { DatePublish } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
-import { AddItem, DeleteItem, FetchItems, GetItem, UpdateItem } from './announcement.actions';
-import { AnnouncementState, AnnouncementStateModel } from './announcement.state';
+import {
+  AddItem,
+  DeleteItem,
+  FetchItems,
+  GetItem,
+  UpdateItem,
+} from './announcement.actions';
+import type { AnnouncementStateModel } from './announcement.state';
+import { AnnouncementState } from './announcement.state';
 
 describe('AnnouncementState', () => {
   let store: Store;
@@ -13,6 +21,7 @@ describe('AnnouncementState', () => {
 
   const mockItem: Announcement = {
     id: 1,
+    new: false,
     title: 'Title 1',
     content: 'Content 1',
     creator_id: 10,
@@ -23,6 +32,7 @@ describe('AnnouncementState', () => {
 
   const mockItem2: Announcement = {
     id: 2,
+    new: false,
     title: 'Title 2',
     content: 'Content 2',
     creator_id: 11,
@@ -40,15 +50,18 @@ describe('AnnouncementState', () => {
       'delete',
     ]);
 
-    await configureTestBed({
+    await TestBed.configureTestingModule({
       providers: [
+        provideZonelessChangeDetection(),
         { provide: AnnouncementService, useValue: svcSpy },
         provideStates([AnnouncementState]),
       ],
     }).compileComponents();
 
     store = TestBed.inject(Store);
-    svc = TestBed.inject(AnnouncementService) as jasmine.SpyObj<AnnouncementService>;
+    svc = TestBed.inject(
+      AnnouncementService,
+    ) as jasmine.SpyObj<AnnouncementService>;
   });
 
   describe('Selectors', () => {
@@ -82,7 +95,7 @@ describe('AnnouncementState', () => {
         count: 0,
       };
 
-      expect(AnnouncementState.getLoading(state)).toBeTrue();
+      expect(AnnouncementState.getLoading(state)).toBeTruthy();
     });
   });
 
@@ -91,13 +104,26 @@ describe('AnnouncementState', () => {
       svc.getAllWithCondition.and.returnValue(of([mockItem, mockItem2]));
 
       store
-        .dispatch(new FetchItems({ all: false, refresh: true, show_planned: true, omit_img: true }))
+        .dispatch(
+          new FetchItems({
+            all: false,
+            refresh: true,
+            show_planned: true,
+            omit_img: true,
+          }),
+        )
         .subscribe(() => {
-          const state = store.selectSnapshot((s: any) => s.announcement) as AnnouncementStateModel;
-          expect(svc.getAllWithCondition).toHaveBeenCalledWith(false, true, true);
+          const state = store.selectSnapshot(
+            (s: any) => s.announcement,
+          ) as AnnouncementStateModel;
+          expect(svc.getAllWithCondition).toHaveBeenCalledWith(
+            false,
+            true,
+            true,
+          );
           expect(state.items).toEqual([mockItem, mockItem2]);
           expect(state.count).toBe(2);
-          expect(state.loading).toBeFalse();
+          expect(state.loading).toBeFalsy();
           done();
         });
     });
@@ -112,20 +138,26 @@ describe('AnnouncementState', () => {
         } as AnnouncementStateModel,
       });
 
-      store.dispatch(new FetchItems({ all: false, refresh: false })).subscribe(() => {
-        expect(svc.getAllWithCondition).not.toHaveBeenCalled();
-        done();
-      });
+      store
+        .dispatch(new FetchItems({ all: false, refresh: false }))
+        .subscribe(() => {
+          expect(svc.getAllWithCondition).not.toHaveBeenCalled();
+          done();
+        });
     });
 
     it('should set loading=false on errors', (done) => {
-      svc.getAllWithCondition.and.returnValue(throwError(() => new Error('Fetch failed')));
+      svc.getAllWithCondition.and.returnValue(
+        throwError(() => new Error('Fetch failed')),
+      );
 
       store.dispatch(new FetchItems({ all: false, refresh: true })).subscribe({
         next: () => fail('Expected error'),
         error: () => {
-          const state = store.selectSnapshot((s: any) => s.announcement) as AnnouncementStateModel;
-          expect(state.loading).toBeFalse();
+          const state = store.selectSnapshot(
+            (s: any) => s.announcement,
+          ) as AnnouncementStateModel;
+          expect(state.loading).toBeFalsy();
           done();
         },
       });
@@ -135,7 +167,9 @@ describe('AnnouncementState', () => {
   describe('GetItem', () => {
     it('should set default selected when payload is falsy (0)', () => {
       store.dispatch(new GetItem(0));
-      const state = store.selectSnapshot((s: any) => s.announcement) as AnnouncementStateModel;
+      const state = store.selectSnapshot(
+        (s: any) => s.announcement,
+      ) as AnnouncementStateModel;
       expect(state.selected).toEqual({
         id: 0,
         title: null,
@@ -146,7 +180,7 @@ describe('AnnouncementState', () => {
         end: null,
         author_id: null,
       } as any);
-      expect(state.loading).toBeFalse();
+      expect(state.loading).toBeFalsy();
     });
 
     it('should fetch and set selected when id provided', (done) => {
@@ -154,9 +188,11 @@ describe('AnnouncementState', () => {
 
       store.dispatch(new GetItem(1)).subscribe(() => {
         expect(svc.get).toHaveBeenCalledWith(1);
-        const state = store.selectSnapshot((s: any) => s.announcement) as AnnouncementStateModel;
+        const state = store.selectSnapshot(
+          (s: any) => s.announcement,
+        ) as AnnouncementStateModel;
         expect(state.selected).toEqual(mockItem);
-        expect(state.loading).toBeFalse();
+        expect(state.loading).toBeFalsy();
         done();
       });
     });
@@ -167,8 +203,10 @@ describe('AnnouncementState', () => {
       store.dispatch(new GetItem(123)).subscribe({
         next: () => fail('Expected error'),
         error: () => {
-          const state = store.selectSnapshot((s: any) => s.announcement) as AnnouncementStateModel;
-          expect(state.loading).toBeFalse();
+          const state = store.selectSnapshot(
+            (s: any) => s.announcement,
+          ) as AnnouncementStateModel;
+          expect(state.loading).toBeFalsy();
           done();
         },
       });
@@ -181,15 +219,22 @@ describe('AnnouncementState', () => {
       svc.add.and.returnValue(of(created));
 
       store.reset({
-        announcement: { items: [mockItem2], selected: null, loading: false, count: 1 },
+        announcement: {
+          items: [mockItem2],
+          selected: null,
+          loading: false,
+          count: 1,
+        },
       });
 
       store.dispatch(new AddItem(created)).subscribe(() => {
-        const state = store.selectSnapshot((s: any) => s.announcement) as AnnouncementStateModel;
+        const state = store.selectSnapshot(
+          (s: any) => s.announcement,
+        ) as AnnouncementStateModel;
         expect(state.items[0]).toEqual(created);
         expect(state.selected).toEqual(created);
         expect(state.count).toBe(2);
-        expect(state.loading).toBeFalse();
+        expect(state.loading).toBeFalsy();
         done();
       });
     });
@@ -200,8 +245,10 @@ describe('AnnouncementState', () => {
       store.dispatch(new AddItem(mockItem)).subscribe({
         next: () => fail('Expected error'),
         error: () => {
-          const state = store.selectSnapshot((s: any) => s.announcement) as AnnouncementStateModel;
-          expect(state.loading).toBeFalse();
+          const state = store.selectSnapshot(
+            (s: any) => s.announcement,
+          ) as AnnouncementStateModel;
+          expect(state.loading).toBeFalsy();
           done();
         },
       });
@@ -223,10 +270,12 @@ describe('AnnouncementState', () => {
       });
 
       store.dispatch(new UpdateItem(updated)).subscribe(() => {
-        const state = store.selectSnapshot((s: any) => s.announcement) as AnnouncementStateModel;
+        const state = store.selectSnapshot(
+          (s: any) => s.announcement,
+        ) as AnnouncementStateModel;
         expect(state.items.find((i) => i.id === 1)?.title).toBe('Updated');
         expect(state.selected).toEqual(updated);
-        expect(state.loading).toBeFalse();
+        expect(state.loading).toBeFalsy();
         done();
       });
     });
@@ -237,8 +286,10 @@ describe('AnnouncementState', () => {
       store.dispatch(new UpdateItem(mockItem)).subscribe({
         next: () => fail('Expected error'),
         error: () => {
-          const state = store.selectSnapshot((s: any) => s.announcement) as AnnouncementStateModel;
-          expect(state.loading).toBeFalse();
+          const state = store.selectSnapshot(
+            (s: any) => s.announcement,
+          ) as AnnouncementStateModel;
+          expect(state.loading).toBeFalsy();
           done();
         },
       });
@@ -259,10 +310,12 @@ describe('AnnouncementState', () => {
       });
 
       store.dispatch(new DeleteItem(1)).subscribe(() => {
-        const state = store.selectSnapshot((s: any) => s.announcement) as AnnouncementStateModel;
+        const state = store.selectSnapshot(
+          (s: any) => s.announcement,
+        ) as AnnouncementStateModel;
         expect(state.items.find((i) => i.id === 1)).toBeUndefined();
         expect(state.items.length).toBe(1);
-        expect(state.loading).toBeFalse();
+        expect(state.loading).toBeFalsy();
         done();
       });
     });
@@ -273,8 +326,10 @@ describe('AnnouncementState', () => {
       store.dispatch(new DeleteItem(1)).subscribe({
         next: () => fail('Expected error'),
         error: () => {
-          const state = store.selectSnapshot((s: any) => s.announcement) as AnnouncementStateModel;
-          expect(state.loading).toBeFalse();
+          const state = store.selectSnapshot(
+            (s: any) => s.announcement,
+          ) as AnnouncementStateModel;
+          expect(state.loading).toBeFalsy();
           done();
         },
       });

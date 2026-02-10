@@ -1,4 +1,4 @@
-import { SimpleEdit2Model } from '@sotbi/models';
+import type { SimpleEdit2Model } from '@sotbi/models';
 
 export class FetchAdvertTypes {
   public static readonly type = '[ADVERTTYPE] Fetch items';

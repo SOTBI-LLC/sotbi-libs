@@ -1,18 +1,24 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { forMap } from '@root/shared/rx-filtres';
-import { SimpleEditService, SimpleEditServiceNames } from '@services/simple-edit.service';
-import { Asset } from '@sotbi/models';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { SimpleEditService, SimpleEditServiceNames } from '@sotbi/data-access';
+import type { Asset } from '@sotbi/models';
+import { forMap } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { AddItem, DeleteItem, EditItem, FetchAssetTypes } from './assets.actions';
-import { SimpleEditStateModel } from './simple-edit.state.model';
+import {
+  AddItem,
+  DeleteItem,
+  EditItem,
+  FetchAssetTypes,
+} from './assets.actions';
+import type { SimpleEditStateModel } from './simple-edit.state.model';
 
 export class AssetStateModel {
   public items: Asset[] = [];
   public selectedItem: Asset | null = null;
-  public count: number = 0;
-  public loading: boolean = false;
+  public count = 0;
+  public loading = false;
 }
 
 @State<AssetStateModel>({
@@ -39,7 +45,10 @@ export class AssetsState {
   }
 
   @Action(FetchAssetTypes, { cancelUncompleted: true })
-  public fetchItems({ getState, setState }: StateContext<SimpleEditStateModel>) {
+  public fetchItems({
+    getState,
+    setState,
+  }: StateContext<SimpleEditStateModel>) {
     console.log('AssetsState::fetchItems() | method called');
     const state = getState();
     if (!state.items.length) {
@@ -58,30 +67,39 @@ export class AssetsState {
         }),
       );
     }
+    return undefined;
   }
 
   @Action(AddItem)
-  public addItem({ getState, setState }: StateContext<SimpleEditStateModel>, { payload }) {
+  public addItem(
+    { getState, setState }: StateContext<SimpleEditStateModel>,
+    { payload }: AddItem,
+  ) {
     const state = getState();
-    return this.itemsService.create(payload.name, SimpleEditServiceNames.ASSET).pipe(
-      tap((result) => {
-        const mapItems = state.mapItems;
-        mapItems.set(result.id, result.name);
-        setState({
-          ...state,
-          items: [...state.items, result],
-          mapItems,
-        });
-      }),
-      catchError((error) => {
-        console.error(error);
-        return throwError(() => error);
-      }),
-    );
+    return this.itemsService
+      .create(payload.name, SimpleEditServiceNames.ASSET)
+      .pipe(
+        tap((result) => {
+          const mapItems = state.mapItems;
+          mapItems.set(result.id, result.name);
+          setState({
+            ...state,
+            items: [...state.items, result],
+            mapItems,
+          });
+        }),
+        catchError((error) => {
+          console.error(error);
+          return throwError(() => error);
+        }),
+      );
   }
 
   @Action(EditItem)
-  public editItem({ getState, patchState }: StateContext<SimpleEditStateModel>, { payload }) {
+  public editItem(
+    { getState, patchState }: StateContext<SimpleEditStateModel>,
+    { payload }: EditItem,
+  ) {
     const state = getState();
     return this.itemsService.save$(payload, SimpleEditServiceNames.ASSET).pipe(
       tap(
@@ -101,7 +119,10 @@ export class AssetsState {
   }
 
   @Action(DeleteItem)
-  public deleteItem({ getState, patchState }: StateContext<SimpleEditStateModel>, { payload }) {
+  public deleteItem(
+    { getState, patchState }: StateContext<SimpleEditStateModel>,
+    { payload }: DeleteItem,
+  ) {
     const state = getState();
     return this.itemsService.delete(payload, SimpleEditServiceNames.ASSET).pipe(
       tap(() => {

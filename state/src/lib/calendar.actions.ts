@@ -1,8 +1,8 @@
-import { Calendar } from '@sotbi/models';
+import type { Calendar } from '@sotbi/models';
 
 export class GetActivePeriods {
   public static readonly type = '[CALENDAR] get active periods';
-  constructor(public payload: boolean = false) {}
+  constructor(public payload = false) {}
 }
 
 export class GetMonth {

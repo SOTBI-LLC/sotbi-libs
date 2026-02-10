@@ -35,7 +35,7 @@ export class CommonService<T> implements ICommon<T> {
   public add(item: Partial<T>): Observable<T> {
     return this.http.post<T>(this.path, item);
   }
-  public update(item: Partial<T> & { id: number }): Observable<T> {
+  public update(item: Partial<T> & { id: number | string }): Observable<T> {
     return this.http.put<T>(`${this.path}/${item.id}`, removeID(item));
   }
   public delete(id: number): Observable<void> {
@@ -43,7 +43,7 @@ export class CommonService<T> implements ICommon<T> {
   }
   public download(
     file: string | DownloadFile,
-    params = new HttpParams()
+    params = new HttpParams(),
   ): Observable<BlobPart> {
     if (typeof file === 'string') {
       return this.http.get(
@@ -51,7 +51,7 @@ export class CommonService<T> implements ICommon<T> {
         {
           params,
           responseType: 'blob',
-        }
+        },
       );
     } else {
       return this.http.post(`${this.path}/download`, file, {

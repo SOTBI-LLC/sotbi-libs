@@ -1,11 +1,12 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { forMap } from '@root/shared/rx-filtres';
-import { SimpleEditService, SimpleEditServiceNames } from '@services/simple-edit.service';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { SimpleEditService, SimpleEditServiceNames } from '@sotbi/data-access';
+import { forMap } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { AddItem, DeleteItem, EditItem, FetchClients } from './clients.actions';
-import { SimpleEditStateModel } from './simple-edit.state.model';
+import type { SimpleEditStateModel } from './simple-edit.state.model';
 
 @State<SimpleEditStateModel>({
   name: 'clients',
@@ -30,13 +31,16 @@ export class ClientsState {
   }
 
   @Action(FetchClients, { cancelUncompleted: true })
-  public fetchItems({ getState, setState }: StateContext<SimpleEditStateModel>) {
+  public fetchItems({
+    getState,
+    setState,
+  }: StateContext<SimpleEditStateModel>) {
     // console.log('ClientsState::FetchClients() | method called');
     const state = getState();
     if (!state.items.length) {
       return this.itemsService.getAll(SimpleEditServiceNames.CLIENT).pipe(
-        tap(
-          (result) => {
+        tap({
+          next: (result) => {
             const mapItems = new Map(result.map(forMap));
             setState({
               ...state,
@@ -44,38 +48,47 @@ export class ClientsState {
               mapItems,
             });
           },
-          (error) => {
+          error: (error) => {
             console.error(error.message);
           },
-        ),
+        }),
         catchError((err) => {
-          return throwError(err);
+          return throwError(() => err);
         }),
       );
     }
+    return;
   }
 
   @Action(AddItem)
-  public addItem({ getState, patchState }: StateContext<SimpleEditStateModel>, { payload }) {
+  public addItem(
+    { getState, patchState }: StateContext<SimpleEditStateModel>,
+    { payload }: AddItem,
+  ) {
     const state = getState();
-    return this.itemsService.create(payload.name, SimpleEditServiceNames.CLIENT).pipe(
-      tap((result) => {
-        const mapItems = state.mapItems;
-        mapItems.set(result.id, result.name);
-        patchState({
-          items: [...state.items, result],
-          mapItems,
-        });
-      }),
-      catchError((error) => {
-        console.error(error);
-        return throwError(() => error);
-      }),
-    );
+    return this.itemsService
+      .create(payload.name, SimpleEditServiceNames.CLIENT)
+      .pipe(
+        tap((result) => {
+          const mapItems = state.mapItems;
+          mapItems.set(result.id, result.name);
+          patchState({
+            items: [...state.items, result],
+            mapItems,
+          });
+        }),
+        catchError((error) => {
+          console.error(error);
+          return throwError(() => error);
+        }),
+      );
   }
 
   @Action(EditItem)
-  public editItem({ getState, patchState }: StateContext<SimpleEditStateModel>, { payload }) {
+  public editItem(
+    { getState, patchState }: StateContext<SimpleEditStateModel>,
+    { payload }: EditItem,
+  ) {
     const state = getState();
     return this.itemsService.save$(payload, SimpleEditServiceNames.CLIENT).pipe(
       tap(
@@ -95,21 +108,26 @@ export class ClientsState {
   }
 
   @Action(DeleteItem)
-  public deleteItem({ getState, patchState }: StateContext<SimpleEditStateModel>, { payload }) {
+  public deleteItem(
+    { getState, patchState }: StateContext<SimpleEditStateModel>,
+    { payload }: DeleteItem,
+  ) {
     const state = getState();
-    return this.itemsService.delete(payload, SimpleEditServiceNames.CLIENT).pipe(
-      tap(() => {
-        const mapItems = state.mapItems;
-        mapItems.delete(payload);
-        patchState({
-          items: state.items.filter(({ id }) => id !== payload),
-          mapItems,
-        });
-      }),
-      catchError((error) => {
-        console.error(error);
-        return throwError(() => error);
-      }),
-    );
+    return this.itemsService
+      .delete(payload, SimpleEditServiceNames.CLIENT)
+      .pipe(
+        tap(() => {
+          const mapItems = state.mapItems;
+          mapItems.delete(payload);
+          patchState({
+            items: state.items.filter(({ id }) => id !== payload),
+            mapItems,
+          });
+        }),
+        catchError((error) => {
+          console.error(error);
+          return throwError(() => error);
+        }),
+      );
   }
 }

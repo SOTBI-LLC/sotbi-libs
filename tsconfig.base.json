@@ -17,13 +17,13 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@sotbi/auth": ["auth/src/index.ts"],
+      "@sotbi/auth": ["auth/src/index"],
       "@sotbi/data-access": ["data-access/src/index.ts"],
       "@sotbi/models": ["models/src/index.ts"],
       "@sotbi/state": ["state/src/index.ts"],
       "@sotbi/ui": ["ui/src/index.ts"],
       "@sotbi/ui-ag-grid": ["ui-ag-grid/src/index.ts"],
-      "@sotbi/utils": ["utils/src/index.ts"]
+      "@sotbi/utils": ["utils/src/index"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,18 +1,26 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { CalendarService } from '@services/calendar.service';
-import { Calendar } from '@sotbi/models';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { CalendarService } from '@sotbi/data-access';
+import type { Calendar } from '@sotbi/models';
 import { isSameDay } from 'date-fns';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
-import { GetActivePeriods, GetMonth, RefreshPeriod, TogglePeriod } from './calendar.actions';
+import {
+  GetActivePeriods,
+  GetMonth,
+  RefreshPeriod,
+  TogglePeriod,
+} from './calendar.actions';
 
-const deepFlatten = <T>(arr: T[]) =>
-  [].concat(...arr.map((v) => (Array.isArray(v) ? deepFlatten(v) : v)));
+const deepFlatten = <T>(arr: (T | T[])[]): T[] =>
+  ([] as T[]).concat(
+    ...arr.map((v) => (Array.isArray(v) ? deepFlatten(v) : v)),
+  );
 
 export class SelectedCalendar {
-  selected: Calendar | null = null;
-  workingDays: number[] = [];
+  public selected: Calendar | null = null;
+  public workingDays: number[] = [];
 }
 
 export class CalendarStateModel {
@@ -20,7 +28,7 @@ export class CalendarStateModel {
   public selected: Calendar | null = null;
   public dates: Date[] = [];
   public workingDays: number[] = [];
-  public loading: boolean = false;
+  public loading = false;
 }
 
 @State<CalendarStateModel>({
@@ -90,7 +98,7 @@ export class CalendarState {
   @Action(GetActivePeriods, { cancelUncompleted: true })
   public getActivePeriods(
     { setState, getState, patchState }: StateContext<CalendarStateModel>,
-    { payload },
+    { payload }: GetActivePeriods,
   ) {
     const state = getState();
     if (payload || (!state.loading && !state.items.length)) {
@@ -122,25 +130,35 @@ export class CalendarState {
         }),
       );
     }
+    return;
   }
 
   @Action(GetMonth)
-  public getMonth({ setState, getState }: StateContext<CalendarStateModel>, { payload }) {
+  public getMonth(
+    { setState, getState }: StateContext<CalendarStateModel>,
+    { payload }: GetMonth,
+  ) {
     const state = getState();
     let holidays: Date[] = [];
     const selected = state.items.find(({ month }) => month === payload);
-    holidays = selected?.holidays.map((el) => new Date(el));
+    holidays = selected?.holidays?.map((el) => new Date(el)) ?? [];
     const workingDays =
-      selected && deepFlatten(selected?.working_days).map((el: Date) => new Date(el).getDate());
+      selected &&
+      deepFlatten(selected?.working_days).map((el: Date) =>
+        new Date(el).getDate(),
+      );
     setState({
       ...state,
-      selected: { ...selected, holidays },
-      workingDays,
+      selected: { ...selected, holidays } as Calendar,
+      workingDays: workingDays ?? [],
     });
   }
 
   @Action(TogglePeriod)
-  public togglePeriod({ patchState }: StateContext<CalendarStateModel>, { payload }) {
+  public togglePeriod(
+    { patchState }: StateContext<CalendarStateModel>,
+    { payload }: TogglePeriod,
+  ) {
     patchState({ loading: true });
     return this.itemsService.togglePeriod(payload).pipe(
       tap((result) => {
@@ -149,7 +167,9 @@ export class CalendarState {
             el.first_day_month = new Date(el.first_day_month);
             return el;
           }),
-          selected: result.find(({ month }) => month === payload),
+          selected: result.find(
+            ({ month }: Calendar) => month === payload.month,
+          ),
         });
       }),
       catchError((err) => throwError(() => err)),
@@ -160,7 +180,7 @@ export class CalendarState {
   @Action(RefreshPeriod)
   public refreshPeriod(
     { patchState, getState, setState }: StateContext<CalendarStateModel>,
-    { payload },
+    { payload }: RefreshPeriod,
   ) {
     patchState({ loading: true });
     const state = getState();

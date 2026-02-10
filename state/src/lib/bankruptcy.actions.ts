@@ -1,4 +1,4 @@
-import { Bankruptcy, InsurancePolicy } from '@sotbi/models';
+import type { Bankruptcy, InsurancePolicy } from '@sotbi/models';
 
 export class CreateBankruptcy {
   public static readonly type = '[BANKRUPTCIES] Create item';
@@ -16,7 +16,7 @@ export class GetBankruptcy {
 
 export class UpdateBankruptcy {
   public static readonly type = '[BANKRUPTCIES] Update item';
-  constructor(public payload: Partial<Bankruptcy>) {}
+  constructor(public payload: Bankruptcy) {}
 }
 
 export class ClearSelectedBankruptcy {

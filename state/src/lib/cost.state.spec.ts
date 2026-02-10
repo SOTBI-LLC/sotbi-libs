@@ -1,9 +1,9 @@
+import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store, provideStates } from '@ngxs/store';
 import { CostRealService } from '@services/cost-real.service';
-import { CostReal, CostRealFilter, Debtor, Interval } from '@sotbi/models';
-import { configureTestBed } from '@test-setup';
+import type { CostReal, CostRealFilter, Debtor, Interval } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import {
   AddAbsenceCostsReal,
@@ -19,7 +19,8 @@ import {
   SaveAllCostReal,
   UpdateCostReal,
 } from './cost.actions';
-import { CostRealState, CostRealStateModel } from './cost.state';
+import type { CostRealStateModel } from './cost.state';
+import { CostRealState } from './cost.state';
 
 describe('CostRealState', () => {
   let store: Store;
@@ -90,8 +91,9 @@ describe('CostRealState', () => {
 
     const snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
 
-    await configureTestBed({
+    await TestBed.configureTestingModule({
       providers: [
+        provideZonelessChangeDetection(),
         { provide: CostRealService, useValue: serviceSpy },
         { provide: MatSnackBar, useValue: snackBarSpy },
         provideStates([CostRealState]),
@@ -99,7 +101,9 @@ describe('CostRealState', () => {
     }).compileComponents();
 
     store = TestBed.inject(Store);
-    service = TestBed.inject(CostRealService) as jasmine.SpyObj<CostRealService>;
+    service = TestBed.inject(
+      CostRealService,
+    ) as jasmine.SpyObj<CostRealService>;
 
     // Set up default spy behaviors
     service.getRealCosts.and.returnValue(of([mockCostReal]));
@@ -133,11 +137,15 @@ describe('CostRealState', () => {
     });
 
     it('should select items', () => {
-      expect(store.selectSnapshot(CostRealState.getItems)).toEqual([mockCostReal]);
+      expect(store.selectSnapshot(CostRealState.getItems)).toEqual([
+        mockCostReal,
+      ]);
     });
 
     it('should select allItems', () => {
-      expect(store.selectSnapshot(CostRealState.getAllItems)).toEqual([mockCostReal]);
+      expect(store.selectSnapshot(CostRealState.getAllItems)).toEqual([
+        mockCostReal,
+      ]);
     });
 
     it('should select canSave state', () => {
@@ -156,7 +164,12 @@ describe('CostRealState', () => {
         const state = store.selectSnapshot((state: any) => state.costReal);
         expect(service.getRealCosts).toHaveBeenCalledWith(mockCostRealFilter);
         expect(state.allItems).toEqual([
-          { ...mockCostReal, dirty: false, date: jasmine.any(Date), rowId: '0' },
+          {
+            ...mockCostReal,
+            dirty: false,
+            date: jasmine.any(Date),
+            rowId: '0',
+          },
         ]);
         expect(state.saved).toBe(true);
         done();
@@ -164,7 +177,9 @@ describe('CostRealState', () => {
     });
 
     it('should handle fetch error', (done) => {
-      service.getRealCosts.and.returnValue(throwError(() => new Error('Fetch failed')));
+      service.getRealCosts.and.returnValue(
+        throwError(() => new Error('Fetch failed')),
+      );
 
       store.dispatch(new FetchCostsReal(mockInterval)).subscribe(
         () => {},
@@ -200,16 +215,20 @@ describe('CostRealState', () => {
     it('should add cost successfully', (done) => {
       const newCost = { ...mockCostReal, id: 0, dirty: true, rowId: '0' };
 
-      store.dispatch(new AddCostReal({ idx: 0, cost: newCost })).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.costReal);
-        expect(service.createCostReal).toHaveBeenCalledWith(newCost);
-        expect(state.allItems).toContain(jasmine.objectContaining({ id: 1 }));
-        done();
-      });
+      store
+        .dispatch(new AddCostReal({ idx: 0, cost: newCost }))
+        .subscribe(() => {
+          const state = store.selectSnapshot((state: any) => state.costReal);
+          expect(service.createCostReal).toHaveBeenCalledWith(newCost);
+          expect(state.allItems).toContain(jasmine.objectContaining({ id: 1 }));
+          done();
+        });
     });
 
     it('should handle add cost error', (done) => {
-      service.createCostReal.and.returnValue(throwError(() => new Error('Add failed')));
+      service.createCostReal.and.returnValue(
+        throwError(() => new Error('Add failed')),
+      );
 
       const newCost = { ...mockCostReal, id: 0, dirty: true };
 
@@ -261,15 +280,20 @@ describe('CostRealState', () => {
         },
       });
 
-      const updatedCost = { ...mockCostReal, description: 'Updated description' };
+      const updatedCost = {
+        ...mockCostReal,
+        description: 'Updated description',
+      };
 
-      store.dispatch(new EditCostReal({ idx: 0, cost: updatedCost })).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.costReal);
-        expect(state.items[0].description).toBe('Updated description');
-        expect(state.saved).toBe(false);
-        expect(state.lastSaved).toBe(0);
-        done();
-      });
+      store
+        .dispatch(new EditCostReal({ idx: 0, cost: updatedCost }))
+        .subscribe(() => {
+          const state = store.selectSnapshot((state: any) => state.costReal);
+          expect(state.items[0].description).toBe('Updated description');
+          expect(state.saved).toBe(false);
+          expect(state.lastSaved).toBe(0);
+          done();
+        });
     });
   });
 
@@ -311,27 +335,39 @@ describe('CostRealState', () => {
 
   describe('UpdateCostReal Action', () => {
     it('should update cost successfully', (done) => {
-      const updatedCost = { ...mockCostReal, description: 'Updated description' };
+      const updatedCost = {
+        ...mockCostReal,
+        description: 'Updated description',
+      };
 
-      store.dispatch(new UpdateCostReal({ idx: 0, cost: updatedCost })).subscribe(() => {
-        expect(service.updateCostReal).toHaveBeenCalledWith(updatedCost);
-        // The service should be called and the state should be updated
-        done();
-      });
+      store
+        .dispatch(new UpdateCostReal({ idx: 0, cost: updatedCost }))
+        .subscribe(() => {
+          expect(service.updateCostReal).toHaveBeenCalledWith(updatedCost);
+          // The service should be called and the state should be updated
+          done();
+        });
     });
 
     it('should handle update error', (done) => {
-      service.updateCostReal.and.returnValue(throwError(() => new Error('Update failed')));
-
-      const updatedCost = { ...mockCostReal, description: 'Updated description' };
-
-      store.dispatch(new UpdateCostReal({ idx: 0, cost: updatedCost })).subscribe(
-        () => {},
-        (error) => {
-          expect(error).toBeDefined();
-          done();
-        },
+      service.updateCostReal.and.returnValue(
+        throwError(() => new Error('Update failed')),
       );
+
+      const updatedCost = {
+        ...mockCostReal,
+        description: 'Updated description',
+      };
+
+      store
+        .dispatch(new UpdateCostReal({ idx: 0, cost: updatedCost }))
+        .subscribe(
+          () => {},
+          (error) => {
+            expect(error).toBeDefined();
+            done();
+          },
+        );
     });
   });
 
@@ -356,7 +392,9 @@ describe('CostRealState', () => {
     });
 
     it('should handle save all error', (done) => {
-      service.batchUpdate.and.returnValue(throwError(() => new Error('Save failed')));
+      service.batchUpdate.and.returnValue(
+        throwError(() => new Error('Save failed')),
+      );
 
       const dirtyCost = { ...mockCostReal, id: 0, dirty: true };
 
@@ -456,18 +494,24 @@ describe('CostRealState', () => {
           const state = store.selectSnapshot((state: any) => state.costReal);
           const itemToEdit = { ...state.items[0], description: 'Edited' };
 
-          store.dispatch(new EditCostReal({ idx: 0, cost: itemToEdit })).subscribe(() => {
-            const updatedState = store.selectSnapshot((state: any) => state.costReal);
-            expect(updatedState.saved).toBe(false);
+          store
+            .dispatch(new EditCostReal({ idx: 0, cost: itemToEdit }))
+            .subscribe(() => {
+              const updatedState = store.selectSnapshot(
+                (state: any) => state.costReal,
+              );
+              expect(updatedState.saved).toBe(false);
 
-            // Save all
-            store.dispatch(new SaveAllCostReal()).subscribe(() => {
-              const finalState = store.selectSnapshot((state: any) => state.costReal);
-              expect(finalState.saved).toBe(true);
-              expect(finalState.lastSaved).toBeGreaterThan(0);
-              done();
+              // Save all
+              store.dispatch(new SaveAllCostReal()).subscribe(() => {
+                const finalState = store.selectSnapshot(
+                  (state: any) => state.costReal,
+                );
+                expect(finalState.saved).toBe(true);
+                expect(finalState.lastSaved).toBeGreaterThan(0);
+                done();
+              });
             });
-          });
         });
       });
     });

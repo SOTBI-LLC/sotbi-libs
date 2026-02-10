@@ -1,9 +1,15 @@
 import { inject, Injectable } from '@angular/core';
-import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
-import { SimpleEdit2Service, SimpleEdit2ServiceNames } from '@services/simple-edit2.service';
+import type { NgxsOnInit, StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import {
+  SimpleEdit2Service,
+  SimpleEdit2ServiceNames,
+} from '@sotbi/data-access';
+import type { SimpleEdit2Model } from '@sotbi/models';
+import { removeID } from '@sotbi/utils';
 import { catchError, tap, throwError } from 'rxjs';
 import { AddItem, DeleteItem, EditItem, FetchItems } from './category.actions';
-import { itemMap, SimpleEdit2StateModel } from './simple-edit.state.model';
+import type { itemMap, SimpleEdit2StateModel } from './simple-edit.state.model';
 
 @State<SimpleEdit2StateModel>({
   name: 'category',
@@ -41,16 +47,23 @@ export class CategoryState implements NgxsOnInit {
   }
 
   @Action(FetchItems, { cancelUncompleted: true })
-  public fetchItems({ getState, patchState }: StateContext<SimpleEdit2StateModel>) {
+  public fetchItems({
+    getState,
+    patchState,
+  }: StateContext<SimpleEdit2StateModel>) {
     // console.log('CategoryState::fetchItems() -> method called');
     const state = getState();
     if (!state.items.length) {
       return this.itemsService.getAll(SimpleEdit2ServiceNames.CATEGORY).pipe(
         tap((result) => {
           const filteredT = result.filter((el) => el.kind);
-          const mapTItems = new Map(filteredT.map((i): [number, string] => [i.id, i.name]));
+          const mapTItems = new Map(
+            filteredT.map((i): [number, string] => [i.id, i.name]),
+          );
           const filteredF = result.filter((el) => !el.kind);
-          const mapFItems = new Map(filteredF.map((i): [number, string] => [i.id, i.name]));
+          const mapFItems = new Map(
+            filteredF.map((i): [number, string] => [i.id, i.name]),
+          );
           return patchState({
             items: result,
             mapTItems,
@@ -63,6 +76,7 @@ export class CategoryState implements NgxsOnInit {
         }),
       );
     }
+    return;
   }
 
   @Action(AddItem)
@@ -71,52 +85,64 @@ export class CategoryState implements NgxsOnInit {
     { payload }: AddItem,
   ) {
     const state = getState();
-    return this.itemsService.create(payload, SimpleEdit2ServiceNames.CATEGORY).pipe(
-      tap((selected) => {
-        const mapFItems = { ...state.mapFItems };
-        const mapTItems = { ...state.mapTItems };
-        if (selected.kind) {
-          mapTItems.set(selected.id, selected.name);
-        } else {
-          mapFItems.set(selected.id, selected.name);
-        }
-        setState({
-          ...state,
-          items: [...state.items, selected],
-          selected,
-          mapTItems,
-          mapFItems,
-        });
-      }),
-      catchError((err) => {
-        console.error(err.message);
-        return throwError(err);
-      }),
-    );
+    return this.itemsService
+      .create(payload, SimpleEdit2ServiceNames.CATEGORY)
+      .pipe(
+        tap((selected) => {
+          const mapFItems = { ...state.mapFItems };
+          const mapTItems = { ...state.mapTItems };
+          if (selected.kind) {
+            mapTItems.set(selected.id, selected.name);
+          } else {
+            mapFItems.set(selected.id, selected.name);
+          }
+          setState({
+            ...state,
+            items: [...state.items, selected],
+            selected,
+            mapTItems,
+            mapFItems,
+          });
+        }),
+        catchError((err) => {
+          console.error(err.message);
+          return throwError(err);
+        }),
+      );
   }
 
   @Action(EditItem)
-  public editItem({ getState, patchState }: StateContext<SimpleEdit2StateModel>, { payload }) {
+  public editItem(
+    { getState, patchState }: StateContext<SimpleEdit2StateModel>,
+    { payload }: EditItem,
+  ) {
     const state = getState();
     const { id } = payload;
-    delete payload.id;
-    return this.itemsService.save(id, payload, SimpleEdit2ServiceNames.CATEGORY).pipe(
-      tap((selected) => {
-        const mapFItems = state.mapFItems;
-        const mapTItems = state.mapTItems;
-        if (selected.kind) {
-          mapTItems.set(selected.id, selected.name);
-        } else {
-          mapFItems.set(selected.id, selected.name);
-        }
-        const items = state.items.map((el) => (el.id === selected.id ? selected : el));
-        patchState({ items, mapTItems, mapFItems, selected });
-      }),
-      catchError((err) => {
-        console.error(err.message);
-        return throwError(() => err);
-      }),
-    );
+    return this.itemsService
+      .save(
+        id,
+        removeID(payload) as SimpleEdit2Model,
+        SimpleEdit2ServiceNames.CATEGORY,
+      )
+      .pipe(
+        tap((selected) => {
+          const mapFItems = state.mapFItems;
+          const mapTItems = state.mapTItems;
+          if (selected.kind) {
+            mapTItems.set(selected.id, selected.name);
+          } else {
+            mapFItems.set(selected.id, selected.name);
+          }
+          const items = state.items.map((el) =>
+            el.id === selected.id ? selected : el,
+          );
+          patchState({ items, mapTItems, mapFItems, selected });
+        }),
+        catchError((err) => {
+          console.error(err.message);
+          return throwError(() => err);
+        }),
+      );
   }
 
   @Action(DeleteItem)
@@ -125,23 +151,25 @@ export class CategoryState implements NgxsOnInit {
     { payload }: DeleteItem,
   ) {
     const state = getState();
-    return this.itemsService.delete(payload, SimpleEdit2ServiceNames.CATEGORY).pipe(
-      tap(() => {
-        const mapFItems = { ...state.mapFItems };
-        const mapTItems = { ...state.mapTItems };
-        mapFItems.delete(payload);
-        mapTItems.delete(payload);
-        setState({
-          ...state,
-          items: state.items.filter(({ id }) => id !== payload),
-          mapTItems,
-          mapFItems,
-        });
-      }),
-      catchError((err) => {
-        console.error(err.message);
-        return throwError(() => err);
-      }),
-    );
+    return this.itemsService
+      .delete(payload, SimpleEdit2ServiceNames.CATEGORY)
+      .pipe(
+        tap(() => {
+          const mapFItems = { ...state.mapFItems };
+          const mapTItems = { ...state.mapTItems };
+          mapFItems.delete(payload);
+          mapTItems.delete(payload);
+          setState({
+            ...state,
+            items: state.items.filter(({ id }) => id !== payload),
+            mapTItems,
+            mapFItems,
+          });
+        }),
+        catchError((err) => {
+          console.error(err.message);
+          return throwError(() => err);
+        }),
+      );
   }
 }

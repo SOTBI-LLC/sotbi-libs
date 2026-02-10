@@ -1,16 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { EventInput, EventSourceInput } from '@fullcalendar/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
+import type { EventInput, EventSourceInput } from '@fullcalendar/core';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
 import { formatEventDuraton } from '@root/shared/date-func';
 import { CostRealService } from '@services/cost-real.service';
-import { canSave, isAllSaved } from '@shared/shared-globals';
-import {
-  calcSumHours,
-  CostReal,
-  CostRealFilter,
-  Interval,
-} from '@sotbi/models';
+import type { CostReal, CostRealFilter, Interval } from '@sotbi/models';
+import { calcSumHours } from '@sotbi/models';
+import { canSave, isAllSaved } from '@sotbi/utils';
 import { isAfter, isBefore, isSameDay } from 'date-fns';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
@@ -118,8 +115,8 @@ const makeEvents = (inCosts: CostReal[]): EventSourceInput => {
           events[idx].title === 'Больничный'
         ) {
           if (
-            costs[i].debtor.name.includes('Отпуск') ||
-            costs[i].debtor.name.includes('Больничный')
+            costs[i].debtor?.name.includes('Отпуск') ||
+            costs[i].debtor?.name.includes('Больничный')
           ) {
             events[idx] = mergeEvent(events[idx], costs[i]);
           } else {
@@ -141,9 +138,9 @@ const makeEvents = (inCosts: CostReal[]): EventSourceInput => {
 export class CostRealStateModel {
   public allItems: CostReal[] = [];
   public items: CostReal[] = [];
-  public loading: boolean = false;
-  public saved: boolean = true;
-  public lastSaved: number = 0;
+  public loading = false;
+  public saved = true;
+  public lastSaved = 0;
 }
 
 @State<CostRealStateModel>({
@@ -214,7 +211,7 @@ export class CostRealState {
   @Action(FetchCostsReal)
   public fetchItems(
     { getState, setState, patchState }: StateContext<CostRealStateModel>,
-    { payload }: FetchCostsReal
+    { payload }: FetchCostsReal,
   ) {
     patchState({ loading: true });
     const state = getState();
@@ -252,14 +249,14 @@ export class CostRealState {
       })),
       finalize(() => {
         patchState({ loading: false });
-      })
+      }),
     );
   }
 
   @Action(FilterCostsReal, { cancelUncompleted: false })
   public filterItems(
     { getState, patchState, setState }: StateContext<CostRealStateModel>,
-    { payload }
+    { payload },
   ) {
     // console.log('CostRealState::FilterCostsReal', payload);
     patchState({ loading: true });
@@ -291,7 +288,7 @@ export class CostRealState {
   @Action(AddCostReal)
   public addItem(
     { getState, setState }: StateContext<CostRealStateModel>,
-    { payload }
+    { payload },
   ) {
     const { cost } = payload;
     return this.service.createCostReal(cost).pipe(
@@ -318,14 +315,14 @@ export class CostRealState {
           saved: isAllSaved(items),
         });
       }),
-      catchError((err) => throwError(() => err))
+      catchError((err) => throwError(() => err)),
     );
   }
 
   @Action(AddAbsenceCostsReal)
   public addAbsenceItem(
     { getState, setState, dispatch }: StateContext<CostRealStateModel>,
-    { payload }
+    { payload },
   ) {
     const { days, debtor, interval } = payload;
     const state = getState();
@@ -336,7 +333,7 @@ export class CostRealState {
       const hasAbsence = state.allItems.findIndex(
         ({ date, debtor: dbt }) =>
           new Date(date)?.getDate() === day &&
-          (debtor.id === dbt.id || debtor.category_id === dbt.category_id)
+          (debtor.id === dbt.id || debtor.category_id === dbt.category_id),
       );
       if (hasAbsence > -1) {
         const rowData = state.allItems[hasAbsence];
@@ -356,7 +353,7 @@ export class CostRealState {
             day,
             0,
             0,
-            0
+            0,
           ),
           debtor_id: debtor.id,
           user_id: null,
@@ -396,7 +393,7 @@ export class CostRealState {
   @Action(AddEmptyCostsReal)
   public addEmptyItems(
     { getState, setState }: StateContext<CostRealStateModel>,
-    { payload }
+    { payload },
   ) {
     const empty = [];
     const state = getState();
@@ -426,7 +423,7 @@ export class CostRealState {
   @Action(EditCostReal)
   public editItem(
     { getState, setState }: StateContext<CostRealStateModel>,
-    { payload }
+    { payload },
   ) {
     console.log('CostRealState::EditCostReal', payload);
     const { cost, idx } = payload;
@@ -444,7 +441,7 @@ export class CostRealState {
   @Action(CancelCostReal)
   public cancelItem(
     { getState, setState, dispatch }: StateContext<CostRealStateModel>,
-    { payload }
+    { payload },
   ) {
     // console.log('CostRealState::CancelCostReal', payload);
     const state = getState();
@@ -467,7 +464,7 @@ export class CostRealState {
   @Action(UpdateCostReal, { cancelUncompleted: true })
   public updateItem(
     { getState, setState }: StateContext<CostRealStateModel>,
-    { payload }
+    { payload },
   ) {
     // console.log('CostRealState::UpdateCostReal', payload);
     const { cost, idx } = payload;
@@ -490,7 +487,7 @@ export class CostRealState {
       }),
       catchError((err) => {
         return throwError(() => err);
-      })
+      }),
     );
   }
 
@@ -595,7 +592,7 @@ export class CostRealState {
   @Action(DeleteCostReal, { cancelUncompleted: true })
   public deleteItem(
     { getState, setState, patchState }: StateContext<CostRealStateModel>,
-    { payload }: DeleteCostReal
+    { payload }: DeleteCostReal,
   ) {
     const { id } = payload;
     // const snackBarRef = this.snackBar.open(
@@ -644,7 +641,7 @@ export class CostRealState {
   @Action(EmptyCostReal)
   public emptyItem(
     { getState, setState }: StateContext<CostRealStateModel>,
-    { payload }
+    { payload },
   ) {
     // console.log('CostRealState::EmptyCostReal', payload);
     const state = getState();

@@ -1,4 +1,4 @@
-import { Announcement } from '@sotbi/models';
+import type { Announcement } from '@sotbi/models';
 
 export class FetchItems {
   public static readonly type = '[ANNOUNCEMENT] Fetch items';
@@ -24,7 +24,7 @@ export class AddItem {
 
 export class UpdateItem {
   public static readonly type = '[ANNOUNCEMENT] Update item';
-  constructor(public readonly payload: Partial<Announcement>) {}
+  constructor(public readonly payload: Announcement) {}
 }
 
 export class DeleteItem {

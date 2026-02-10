@@ -1,4 +1,4 @@
-import { Arbitration } from '@sotbi/models';
+import type { Arbitration } from '@sotbi/models';
 
 export class FetchArbitrations {
   public static readonly type = '[ARBITRS] Fetch items';

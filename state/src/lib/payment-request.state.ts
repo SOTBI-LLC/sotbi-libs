@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { PaymentRequestService } from '@services/payment-request.service';
-import { removeID } from '@shared/shared-globals';
-import { PaymentAttachmentType, PaymentRequest, StatusEnum } from '@sotbi/models';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { StatusEnum } from '@sotbi/models';
+import { removeID } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
@@ -17,8 +17,8 @@ import {
 export class PaymentRequestStateModel {
   public items: PaymentRequest[] = [];
   public selected: PaymentRequest | null = null;
-  public loading: boolean = false;
-  public count: number = 0;
+  public loading = false;
+  public count = 0;
 }
 
 @State<PaymentRequestStateModel>({
@@ -50,7 +50,11 @@ export class PaymentRequestState {
   }
 
   @Action(FetchItems)
-  public fetchItems({ getState, setState, patchState }: StateContext<PaymentRequestStateModel>) {
+  public fetchItems({
+    getState,
+    setState,
+    patchState,
+  }: StateContext<PaymentRequestStateModel>) {
     const state = getState();
     if (!state.items.length) {
       patchState({ loading: true });
@@ -133,7 +137,11 @@ export class PaymentRequestState {
     return this.itemsService.update(payload).pipe(
       tap((selected: PaymentRequest) => {
         const state = getState();
-        const items = [...state.items.map((item) => (item.id === selected.id ? selected : item))];
+        const items = [
+          ...state.items.map((item) =>
+            item.id === selected.id ? selected : item,
+          ),
+        ];
         setState({
           ...state,
           items,

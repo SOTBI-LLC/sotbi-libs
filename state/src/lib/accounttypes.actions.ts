@@ -1,4 +1,4 @@
-import { SimpleEditModel } from '@sotbi/models';
+import type { SimpleEditModel } from '@sotbi/models';
 
 export class FetchAccountTypes {
   public static readonly type = '[ACCOUNTTYPES] Fetch items';

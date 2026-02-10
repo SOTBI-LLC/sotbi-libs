@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
-import { ArbitrationService } from '@services/arbitration.service';
-import { Arbitration } from '@sotbi/models';
+import type { NgxsOnInit, StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { ArbitrationService } from '@sotbi/data-access';
+import type { Arbitration } from '@sotbi/models';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import {
@@ -51,12 +52,17 @@ export class ArbitrationState implements NgxsOnInit {
   }
 
   @Action(FetchArbitrations, { cancelUncompleted: true })
-  public fetchArbitrations({ getState, setState }: StateContext<ArbitrationStateModel>) {
+  public fetchArbitrations({
+    getState,
+    setState,
+  }: StateContext<ArbitrationStateModel>) {
     const state = getState();
     if (!state.items.length) {
       return this.arbitrationSrv.GetAll().pipe(
         tap((result) => {
-          const mapArbitrations = new Map(result.map((i): [string, string] => [i.id, i.name]));
+          const mapArbitrations = new Map(
+            result.map((i): [string, string] => [i.id, i.name]),
+          );
           setState({
             ...state,
             items: result,
@@ -66,6 +72,7 @@ export class ArbitrationState implements NgxsOnInit {
         catchError((err) => throwError(err)),
       );
     }
+    return undefined;
   }
 
   @Action(GetArbitration)
@@ -109,7 +116,9 @@ export class ArbitrationState implements NgxsOnInit {
         const state = getState();
         setState({
           ...state,
-          items: state.items.map((el) => (el.id === selected.id ? selected : el)),
+          items: state.items.map((el) =>
+            el.id === selected.id ? selected : el,
+          ),
           selected,
         });
       }),

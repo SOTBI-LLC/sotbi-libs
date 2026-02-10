@@ -1,4 +1,4 @@
-import { BankDetail } from '@sotbi/models';
+import type { BankDetail } from '@sotbi/models';
 
 export class GetBankDetails {
   public static readonly type = '[BANK DETAIL] Get all items';

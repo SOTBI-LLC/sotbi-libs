@@ -1,5 +1,5 @@
-import { Calendar } from '@sotbi/models';
-import { CalendarStateModel, SelectedCalendar } from './calendar.state';
+import type { Calendar } from '@sotbi/models';
+import type { CalendarStateModel, SelectedCalendar } from './calendar.state';
 
 // Mock data for testing
 const mockCalendarData: Calendar[] = [
@@ -82,18 +82,25 @@ function validateCalendarItemStatic(item: any) {
 function processWorkingDaysForStateStatic(workingDays: Date[][]): number[] {
   const deepFlatten = <T>(arr: T[]) => {
     if (!arr || !Array.isArray(arr)) return [];
-    return [].concat(...arr.map((v) => (Array.isArray(v) ? deepFlatten(v) : v)));
+    return [].concat(
+      ...arr.map((v) => (Array.isArray(v) ? deepFlatten(v) : v)),
+    );
   };
 
   const flattened = deepFlatten(workingDays);
-  return flattened.filter((el): el is Date => el instanceof Date).map((el: Date) => el.getDate());
+  return flattened
+    .filter((el): el is Date => el instanceof Date)
+    .map((el: Date) => el.getDate());
 }
 
 function formatHolidaysForStateStatic(holidays: Date[]): Date[] {
   return holidays.map((el) => new Date(el));
 }
 
-function findCalendarByMonthStatic(items: Calendar[], month: string): Calendar | undefined {
+function findCalendarByMonthStatic(
+  items: Calendar[],
+  month: string,
+): Calendar | undefined {
   return items.find((item) => item.month === month);
 }
 
@@ -104,8 +111,12 @@ function calculateHistoryPeriodsStatic(items: Calendar[]): Date[] {
   return historyDates;
 }
 
-function createSelectedCalendarStatic(selected: Calendar | null): SelectedCalendar {
-  const workingDays = selected ? processWorkingDaysForStateStatic(selected.working_days) : [];
+function createSelectedCalendarStatic(
+  selected: Calendar | null,
+): SelectedCalendar {
+  const workingDays = selected
+    ? processWorkingDaysForStateStatic(selected.working_days)
+    : [];
   return { selected, workingDays };
 }
 
@@ -114,7 +125,9 @@ function getEditableStatic(selected: Calendar | null): boolean {
 }
 
 function getWorkingDaysStatic(selected: Calendar | null): number[] {
-  return selected ? processWorkingDaysForStateStatic(selected.working_days) : [];
+  return selected
+    ? processWorkingDaysForStateStatic(selected.working_days)
+    : [];
 }
 
 function getHolidaysStatic(selected: Calendar | null): Date[] {
@@ -127,8 +140,8 @@ function getWorkDaysStatic(selected: Calendar | null): Date[][] {
 
 function processGetActivePeriodsStatic(
   items: Calendar[],
-  payload: boolean = false,
-  loading: boolean = false,
+  payload = false,
+  loading = false,
 ): CalendarStateModel {
   if (payload || (!loading && !items.length)) {
     const processedItems = items.map((el) => ({
@@ -138,7 +151,9 @@ function processGetActivePeriodsStatic(
 
     const dates = processedItems.map((el) => el.first_day_month);
     const selected = processedItems.length > 0 ? processedItems[0] : null;
-    const workingDays = selected ? processWorkingDaysForStateStatic(selected.working_days) : [];
+    const workingDays = selected
+      ? processWorkingDaysForStateStatic(selected.working_days)
+      : [];
 
     return {
       items: processedItems,
@@ -153,7 +168,10 @@ function processGetActivePeriodsStatic(
     items,
     dates: items.map((el) => el.first_day_month),
     selected: items.length > 0 ? items[0] : null,
-    workingDays: items.length > 0 ? processWorkingDaysForStateStatic(items[0].working_days) : [],
+    workingDays:
+      items.length > 0
+        ? processWorkingDaysForStateStatic(items[0].working_days)
+        : [],
     loading,
   };
 }
@@ -163,7 +181,9 @@ function processGetMonthStatic(
   payload: string,
 ): { selected: Calendar | null; workingDays: number[] } {
   const selected = items.find((item) => item.month === payload) || null;
-  const workingDays = selected ? processWorkingDaysForStateStatic(selected.working_days) : [];
+  const workingDays = selected
+    ? processWorkingDaysForStateStatic(selected.working_days)
+    : [];
 
   return { selected, workingDays };
 }
@@ -449,10 +469,18 @@ describe('CalendarState - State Management & Business Logic', () => {
       it('should handle error scenarios gracefully', () => {
         // Test that function handles edge cases without crashing
         const edgeCaseItems = [
-          { id: 999, month: 'edge-case', first_day_month: new Date('2023-01-01') },
+          {
+            id: 999,
+            month: 'edge-case',
+            first_day_month: new Date('2023-01-01'),
+          },
         ] as any;
 
-        const result = processGetActivePeriodsStatic(edgeCaseItems, false, false);
+        const result = processGetActivePeriodsStatic(
+          edgeCaseItems,
+          false,
+          false,
+        );
 
         // Function should handle the operation without crashing
         expect(result).toBeDefined();
@@ -635,10 +663,18 @@ describe('CalendarState - State Management & Business Logic', () => {
   describe('🛡️ Error Handling & Edge Cases', () => {
     it('should handle malformed API responses', () => {
       const edgeCaseData = [
-        { id: 999, month: 'edge-case', first_day_month: new Date('2023-01-01') },
+        {
+          id: 999,
+          month: 'edge-case',
+          first_day_month: new Date('2023-01-01'),
+        },
       ];
 
-      const result = processGetActivePeriodsStatic(edgeCaseData as any, false, false);
+      const result = processGetActivePeriodsStatic(
+        edgeCaseData as any,
+        false,
+        false,
+      );
 
       // Should handle edge cases gracefully
       expect(result).toBeDefined();
@@ -654,7 +690,11 @@ describe('CalendarState - State Management & Business Logic', () => {
         },
       ];
 
-      const result = processGetActivePeriodsStatic(dataWithNullDates as any, false, false);
+      const result = processGetActivePeriodsStatic(
+        dataWithNullDates as any,
+        false,
+        false,
+      );
 
       // Should handle null dates gracefully
       expect(result).toBeDefined();
@@ -669,16 +709,32 @@ describe('CalendarState - State Management & Business Logic', () => {
         },
       ];
 
-      const result = processGetActivePeriodsStatic(dataWithEmptyWorkingDays as any, false, false);
+      const result = processGetActivePeriodsStatic(
+        dataWithEmptyWorkingDays as any,
+        false,
+        false,
+      );
 
       expect(result.workingDays.length).toBe(0);
     });
 
     it('should handle concurrent operations', () => {
       // Simulate concurrent operations
-      const result1 = processGetActivePeriodsStatic(mockCalendarData, false, false);
-      const result2 = processGetActivePeriodsStatic(mockCalendarData, false, false);
-      const result3 = processGetActivePeriodsStatic(mockCalendarData, false, false);
+      const result1 = processGetActivePeriodsStatic(
+        mockCalendarData,
+        false,
+        false,
+      );
+      const result2 = processGetActivePeriodsStatic(
+        mockCalendarData,
+        false,
+        false,
+      );
+      const result3 = processGetActivePeriodsStatic(
+        mockCalendarData,
+        false,
+        false,
+      );
 
       // Should handle concurrent calls without issues
       expect(result1.items).toEqual(mockCalendarData);
@@ -691,7 +747,11 @@ describe('CalendarState - State Management & Business Logic', () => {
     it('should process service method parameters correctly', () => {
       const forceReload = true;
 
-      const result = processGetActivePeriodsStatic(mockCalendarData, forceReload, false);
+      const result = processGetActivePeriodsStatic(
+        mockCalendarData,
+        forceReload,
+        false,
+      );
 
       // Should always process when payload is true
       expect(result.items).toEqual(mockCalendarData);
@@ -701,7 +761,11 @@ describe('CalendarState - State Management & Business Logic', () => {
 
   describe('📚 Business Logic Validation', () => {
     it('should validate calendar data processing', () => {
-      const result = processGetActivePeriodsStatic(mockCalendarData, false, false);
+      const result = processGetActivePeriodsStatic(
+        mockCalendarData,
+        false,
+        false,
+      );
 
       // Validate that working days are processed correctly
       const expectedWorkingDays = processWorkingDaysForStateStatic(
@@ -718,10 +782,16 @@ describe('CalendarState - State Management & Business Logic', () => {
     });
 
     it('should validate holiday processing', () => {
-      const result = processGetActivePeriodsStatic(mockCalendarData, false, false);
+      const result = processGetActivePeriodsStatic(
+        mockCalendarData,
+        false,
+        false,
+      );
 
       // Validate that holidays are accessible
-      const expectedHolidays = formatHolidaysForStateStatic(mockCalendarData[0].holidays);
+      const expectedHolidays = formatHolidaysForStateStatic(
+        mockCalendarData[0].holidays,
+      );
       expect(result.selected?.holidays).toEqual(expectedHolidays);
     });
 
@@ -733,7 +803,9 @@ describe('CalendarState - State Management & Business Logic', () => {
     });
 
     it('should validate working days processing', () => {
-      const workingDaysResult = processWorkingDaysForStateStatic(mockCalendarData[0].working_days);
+      const workingDaysResult = processWorkingDaysForStateStatic(
+        mockCalendarData[0].working_days,
+      );
       expect(workingDaysResult).toEqual([1, 2, 3, 5, 6, 7]);
 
       const emptyWorkingDaysResult = processWorkingDaysForStateStatic([]);
@@ -741,7 +813,9 @@ describe('CalendarState - State Management & Business Logic', () => {
     });
 
     it('should validate holiday formatting', () => {
-      const formattedHolidays = formatHolidaysForStateStatic(mockCalendarData[0].holidays);
+      const formattedHolidays = formatHolidaysForStateStatic(
+        mockCalendarData[0].holidays,
+      );
       expect(formattedHolidays).toEqual([new Date('2023-06-12')]);
 
       const emptyHolidays = formatHolidaysForStateStatic([]);
@@ -752,7 +826,10 @@ describe('CalendarState - State Management & Business Logic', () => {
       const foundItem = findCalendarByMonthStatic(mockCalendarData, '2023-06');
       expect(foundItem?.id).toBe(1);
 
-      const notFoundItem = findCalendarByMonthStatic(mockCalendarData, '2023-12');
+      const notFoundItem = findCalendarByMonthStatic(
+        mockCalendarData,
+        '2023-12',
+      );
       expect(notFoundItem).toBeUndefined();
     });
   });
@@ -773,7 +850,11 @@ describe('CalendarState - State Management & Business Logic', () => {
         loading: false,
       }));
 
-      const result = processGetActivePeriodsStatic(largeCalendarData as any, false, false);
+      const result = processGetActivePeriodsStatic(
+        largeCalendarData as any,
+        false,
+        false,
+      );
 
       expect(result.items.length).toBe(100);
       expect(result.dates.length).toBe(100);
@@ -810,10 +891,18 @@ describe('CalendarState - State Management & Business Logic', () => {
 
     it('should handle mixed success and error scenarios', () => {
       // First successful operation
-      const state = processGetActivePeriodsStatic(mockCalendarData, false, false);
+      const state = processGetActivePeriodsStatic(
+        mockCalendarData,
+        false,
+        false,
+      );
 
       // Simulate error scenario
-      const errorState = processGetActivePeriodsStatic(mockCalendarData, false, true);
+      const errorState = processGetActivePeriodsStatic(
+        mockCalendarData,
+        false,
+        true,
+      );
 
       // State should remain consistent even in error scenarios
       expect(state.items).toEqual(mockCalendarData);
@@ -828,19 +917,29 @@ describe('CalendarState - State Management & Business Logic', () => {
 
       // Single item
       const singleItem = [mockCalendarData[0]];
-      const singleResult = processGetActivePeriodsStatic(singleItem, false, false);
+      const singleResult = processGetActivePeriodsStatic(
+        singleItem,
+        false,
+        false,
+      );
       expect(singleResult.items).toEqual(singleItem);
       expect(singleResult.selected).toEqual(mockCalendarData[0]);
 
       // Large working days array
-      const largeWorkingDays = Array.from({ length: 100 }, (_, i) => [new Date(2023, 0, i + 1)]);
+      const largeWorkingDays = Array.from({ length: 100 }, (_, i) => [
+        new Date(2023, 0, i + 1),
+      ]);
       const largeWorkingDaysData = [
         {
           ...mockCalendarData[0],
           working_days: largeWorkingDays,
         },
       ];
-      const largeResult = processGetActivePeriodsStatic(largeWorkingDaysData as any, false, false);
+      const largeResult = processGetActivePeriodsStatic(
+        largeWorkingDaysData as any,
+        false,
+        false,
+      );
       expect(largeResult.workingDays.length).toBe(100);
     });
   });

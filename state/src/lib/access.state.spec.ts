@@ -1,3 +1,4 @@
+import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngxs/store';
 import { AccessService } from '@sotbi/data-access';
@@ -32,13 +33,16 @@ describe('AccessState', () => {
       'delete',
     ]);
 
-    await configureTestBed({
-      providers: [{ provide: AccessService, useValue: serviceSpy }],
+    await TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: AccessService, useValue: serviceSpy },
+      ],
     }).compileComponents();
 
     store = TestBed.inject(Store);
     accessService = TestBed.inject(
-      AccessService
+      AccessService,
     ) as jasmine.SpyObj<AccessService>;
   });
 
@@ -106,8 +110,8 @@ describe('AccessState', () => {
     it('should select selected item correctly', () => {
       const selected = store.selectSnapshot(AccessState.getItem);
       expect(selected).toEqual(mockAccess[0]);
-      expect(selected.id).toBe(1);
-      expect(selected.name).toBe('Read Access');
+      expect(selected?.id).toBe(1);
+      expect(selected?.name).toBe('Read Access');
     });
 
     it('should select count correctly', () => {
@@ -230,7 +234,7 @@ describe('AccessState', () => {
       it('should handle fetch errors properly', () => {
         const errorMessage = 'Failed to fetch access items';
         accessService.GetAll.and.returnValue(
-          throwError(() => new Error(errorMessage))
+          throwError(() => new Error(errorMessage)),
         );
 
         store.dispatch(new FetchAccess()).subscribe({
@@ -287,8 +291,8 @@ describe('AccessState', () => {
 
         const selected = store.selectSnapshot(AccessState.getItem);
         expect(selected).toEqual(mockAccess[1]);
-        expect(selected.id).toBe(2);
-        expect(selected.name).toBe('Write Access');
+        expect(selected?.id).toBe(2);
+        expect(selected?.name).toBe('Write Access');
       });
 
       it('should handle non-existent item id', () => {
@@ -356,7 +360,7 @@ describe('AccessState', () => {
         const errorMessage = 'Failed to create access item';
 
         accessService.add.and.returnValue(
-          throwError(() => new Error(errorMessage))
+          throwError(() => new Error(errorMessage)),
         );
 
         store.dispatch(new CreateItem(newAccess)).subscribe({
@@ -377,7 +381,7 @@ describe('AccessState', () => {
         const errorMessage = 'Failed to update access item';
 
         accessService.update.and.returnValue(
-          throwError(() => new Error(errorMessage))
+          throwError(() => new Error(errorMessage)),
         );
 
         // Spy on console.error since the action logs errors
@@ -399,7 +403,7 @@ describe('AccessState', () => {
         const errorMessage = 'Failed to delete access item';
 
         accessService.delete.and.returnValue(
-          throwError(() => new Error(errorMessage))
+          throwError(() => new Error(errorMessage)),
         );
 
         store.dispatch(new DeleteItem(itemIdToDelete)).subscribe({
@@ -429,7 +433,11 @@ describe('AccessState', () => {
       });
 
       it('should set loading to true when UpdateItem starts', () => {
-        const updatedAccess: Partial<Access> = { id: 1, name: 'Test Update' };
+        const updatedAccess: Access = {
+          id: 1,
+          name: 'Test Update',
+          mask: 0,
+        };
         const resultAccess: Access = updatedAccess as Access;
 
         accessService.update.and.returnValue(of(resultAccess));
@@ -470,7 +478,7 @@ describe('AccessState', () => {
 
       it('should maintain loading state consistency on errors', () => {
         accessService.GetAll.and.returnValue(
-          throwError(() => new Error('Network error'))
+          throwError(() => new Error('Network error')),
         );
 
         store.dispatch(new FetchAccess()).subscribe({

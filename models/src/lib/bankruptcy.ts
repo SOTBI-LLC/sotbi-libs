@@ -7,8 +7,8 @@ export class Bankruptcy {
   public name = '';
   public surname: string | null = null;
   public patronymicname: string | null = null;
-  public inn = '';
-  public snils = '';
+  public inn: string | null = null;
+  public snils: string | null = null;
   public show: string | null = null;
   public sro_id: number | null = null;
   public sro: Sro | null = null;

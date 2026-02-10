@@ -1,4 +1,4 @@
-import { SimpleEdit2Model, SimpleEditModel } from '@sotbi/models';
+import type { SimpleEdit2Model, SimpleEditModel } from '@sotbi/models';
 
 export type itemMap = Map<number, string>;
 export type itemMapString = Map<string, number>;
@@ -15,7 +15,7 @@ export class SimpleEditStateModel {
 
 export class SimpleEdit2StateModel {
   public items: SimpleEdit2Model[] = [];
-  public mapTItems?: itemMap;
-  public mapFItems?: itemMap;
+  public mapTItems: itemMap = new Map();
+  public mapFItems: itemMap = new Map();
   public selected?: SimpleEdit2Model | null;
 }

@@ -1,16 +1,24 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { AnnouncementService } from '@services/announcement.service';
-import { removeID } from '@shared/shared-globals';
-import { Announcement, DatePublish } from '@sotbi/models';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { AnnouncementService } from '@sotbi/data-access';
+import type { Announcement } from '@sotbi/models';
+import { DatePublish } from '@sotbi/models';
+import { removeID } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
-import { AddItem, DeleteItem, FetchItems, GetItem, UpdateItem } from './announcement.actions';
+import {
+  AddItem,
+  DeleteItem,
+  FetchItems,
+  GetItem,
+  UpdateItem,
+} from './announcement.actions';
 
 export interface AnnouncementStateModel {
   items: Announcement[];
-  selected: Announcement;
-  loading?: boolean;
+  selected: Announcement | null;
+  loading: boolean;
   count: number;
 }
 
@@ -55,7 +63,11 @@ export class AnnouncementState {
     if (!state.items.length || payload.refresh) {
       patchState({ loading: true });
       return this.itemsService
-        .getAllWithCondition(payload.all, payload.show_planned, payload.omit_img)
+        .getAllWithCondition(
+          payload.all,
+          payload.show_planned,
+          payload.omit_img,
+        )
         .pipe(
           tap((items) => {
             setState({
@@ -69,6 +81,7 @@ export class AnnouncementState {
           finalize(() => patchState({ loading: false })),
         );
     }
+    return undefined;
   }
 
   @Action(GetItem)
@@ -81,13 +94,14 @@ export class AnnouncementState {
     if (!payload) {
       const selected: Announcement = {
         id: 0,
+        new: true,
         title: null,
         content: null,
-        creator_id: null,
+        creator_id: 0,
         date_publish: DatePublish.NOW,
         start: null,
         end: null,
-        author_id: null,
+        author_id: 0,
       };
       return setState({
         ...state,
@@ -142,7 +156,9 @@ export class AnnouncementState {
     const state = getState();
     return this.itemsService.update(payload).pipe(
       tap((selected) => {
-        const items = state.items.map((item) => (item.id === selected.id ? selected : item));
+        const items = state.items.map((item) =>
+          item.id === selected.id ? selected : item,
+        );
         setState({
           ...state,
           items,

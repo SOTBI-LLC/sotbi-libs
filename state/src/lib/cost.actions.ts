@@ -1,4 +1,4 @@
-import { CostReal, Debtor, Interval } from '@sotbi/models';
+import type { CostReal, Debtor, Interval } from '@sotbi/models';
 
 export class FetchCostsReal {
   public static readonly type = '[COSTREAL] Fetch items';
@@ -21,12 +21,14 @@ export class AddCostReal {
 
 export class AddEmptyCostsReal {
   public static readonly type = '[COSTREAL] Empty items';
-  constructor(public payload: number = 10) {}
+  constructor(public payload = 10) {}
 }
 
 export class AddAbsenceCostsReal {
   public static readonly type = '[COSTREAL] vacation/sick items';
-  constructor(public payload: { days: number[]; debtor: Debtor; interval: Interval }) {}
+  constructor(
+    public payload: { days: number[]; debtor: Debtor; interval: Interval },
+  ) {}
 }
 
 export class UpdateCostReal {

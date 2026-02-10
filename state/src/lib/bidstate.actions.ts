@@ -1,4 +1,4 @@
-import { BidState } from '@sotbi/models';
+import type { BidState } from '@sotbi/models';
 
 export class FetchBidState {
   public static readonly type = '[BID STATES] Fetch items';
