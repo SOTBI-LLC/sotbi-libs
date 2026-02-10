@@ -1,11 +1,6 @@
 {
   "name": "@sotbi/utils",
-  "version": "0.0.2",
-  "license": "MIT",
-  "type": "commonjs",
-  "main": "./src/index.js",
-  "types": "./src/index.d.ts",
-  "packageManager": "yarn@1.22.22",
+  "version": "0.0.3",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "restricted"
@@ -15,6 +10,7 @@
     "url": "git+https://github.com/SOTBI-LLC/sotbi-libs.git",
     "directory": "utils"
   },
+  "packageManager": "yarn@1.22.22",
   "dependencies": {
     "tslib": "^2.3.0"
   }

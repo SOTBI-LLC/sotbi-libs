@@ -24,9 +24,11 @@
         "production": {
           "tsConfig": "auth/tsconfig.lib.prod.json"
         },
-        "development": {}
+        "development": {
+          "tsConfig": "auth/tsconfig.lib.json"
+        }
       },
-      "defaultConfiguration": "production"
+      "defaultConfiguration": "development"
     },
     "nx-release-publish": {
       "options": {

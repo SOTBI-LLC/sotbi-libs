@@ -19,7 +19,7 @@
     "ag-grid-angular": "~34.2.0",
     "ag-grid-community": "~34.2.0",
     "@clr/angular": "^17.12.1",
-    "@sotbi/models": "0.0.1",
+    "@sotbi/models": "0.0.2",
     "date-fns": "^4.1.0",
     "rxjs": "^7.8.0"
   },
