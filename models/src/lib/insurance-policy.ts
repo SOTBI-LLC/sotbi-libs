@@ -4,25 +4,25 @@ import type { InsuranceAttachment } from './insurance-attachment';
 import type { InsuranceCompany } from './insurance-company';
 import type { User } from './user';
 
-export interface InsurancePolicy {
-  id: number;
-  type: InsurancePolicyType;
-  sum_insured: number;
-  insurance_premium: number;
-  insurance_company_id: number;
-  insurance_company?: InsuranceCompany;
-  from: Date;
-  to: Date;
-  contacts?: string;
-  created_at?: Date;
-  updated_at?: Date;
-  updated_by?: number;
-  updater?: User;
-  bankruptcy_manager_id: number;
-  bankruptcy_manager?: Bankruptcy;
-  debtor_id?: number;
-  debtor?: Debtor;
-  insurance_attachments: InsuranceAttachment[];
+export class InsurancePolicy {
+  public id = 0;
+  public type: InsurancePolicyType = InsurancePolicyType.ADDITIONAL;
+  public sum_insured = 0;
+  public insurance_premium = 0;
+  public insurance_company_id = 0;
+  public insurance_company: InsuranceCompany | null = null;
+  public from: Date | null = null;
+  public to: Date | null = null;
+  public contacts: string | null = null;
+  public created_at: Date | null = null;
+  public updated_at: Date | null = null;
+  public updated_by = 0;
+  public updater: User | null = null;
+  public bankruptcy_manager_id = 0;
+  public bankruptcy_manager?: Bankruptcy;
+  public debtor_id = 0;
+  public debtor: Debtor | null = null;
+  public insurance_attachments: InsuranceAttachment[] = [];
 }
 
 export enum InsurancePolicyType {
@@ -37,5 +37,5 @@ export const InsurancePolicyTypeArr: { id: InsurancePolicyType; ru: string }[] =
   ];
 
 export const InsurancePolicyTypeMap = new Map(
-  InsurancePolicyTypeArr.map((i): [string, string] => [i.id, i.ru])
+  InsurancePolicyTypeArr.map((i): [string, string] => [i.id, i.ru]),
 );

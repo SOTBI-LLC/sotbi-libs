@@ -1,18 +1,10 @@
 import { HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { EgrnRequestService } from '@services/egrn-request.service';
-import { RealEstateService } from '@services/real-estate.service';
-import { removeID } from '@shared/shared-globals';
-import {
-  EgrnAttachmentType,
-  EgrnRequest,
-  NotificationType,
-  OnBehalfOf,
-  ProvidingWay,
-  StatusEnum,
-  ViewType,
-} from '@sotbi/models';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { EgrnRequestService, RealEstateService } from '@sotbi/data-access';
+import { EgrnAttachmentType, EgrnRequest } from '@sotbi/models';
+import { removeID } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
@@ -25,11 +17,11 @@ import {
   UpdateItem,
 } from './egrn-request.actions';
 
-export interface EgrnRequestStateModel {
-  items: EgrnRequest[];
-  selected: EgrnRequest;
-  loading?: boolean;
-  count: number;
+export class EgrnRequestStateModel {
+  public items: EgrnRequest[] = [];
+  public selected: EgrnRequest | null = null;
+  public loading = false;
+  public count = 0;
 }
 
 @State<EgrnRequestStateModel>({
@@ -70,13 +62,13 @@ export class EgrnRequestState {
   @Action(FetchItems)
   public fetchItems(
     { getState, setState, patchState }: StateContext<EgrnRequestStateModel>,
-    { payload },
+    { payload }: FetchItems,
   ) {
     // console.log('EgrnState::FetchItems', payload);
     const state = getState();
     if (!state.items.length || payload.refresh) {
       patchState({ loading: true });
-      return this.itemsService.getall(new HttpParams(), payload.view).pipe(
+      this.itemsService.getall(new HttpParams(), payload.view).pipe(
         tap(({ requests, count }) => {
           setState({
             ...state,
@@ -92,33 +84,13 @@ export class EgrnRequestState {
   }
 
   @Action(GetItem)
-  public getItem({ patchState }: StateContext<EgrnRequestStateModel>, { payload }) {
+  public getItem(
+    { patchState }: StateContext<EgrnRequestStateModel>,
+    { payload }: GetItem,
+  ) {
     patchState({ loading: true });
     if (!payload) {
-      const selected: EgrnRequest = {
-        id: 0,
-        debtor_id: null,
-        project_id: null,
-        statement_type: null,
-        subtype: null,
-        start: null,
-        end: null,
-        providing_way: ProvidingWay.ELECTRONIC,
-        status: StatusEnum.DRAFT,
-        on_behalf_of: OnBehalfOf.BANKRUPTCY,
-        rightholder: null,
-        fio: null,
-        birthday: null,
-        passport: null,
-        passport_date: null,
-        description: null,
-        request_num: null,
-        notification: NotificationType.WHOLE,
-        egrn_attachments: [],
-        real_estates: [],
-        view_type: ViewType.LIST,
-        receiver_id: null,
-      };
+      const selected: EgrnRequest = new EgrnRequest();
       return patchState({ selected });
     } else {
       return this.itemsService.get(payload).pipe(
@@ -132,7 +104,7 @@ export class EgrnRequestState {
   @Action(AddItem)
   public createItem(
     { getState, patchState, setState }: StateContext<EgrnRequestStateModel>,
-    { payload },
+    { payload }: AddItem,
   ) {
     // console.log('EgrnState::AddItem', payload);
     patchState({ loading: true });
@@ -152,12 +124,15 @@ export class EgrnRequestState {
   }
 
   @Action(AddDirtyItem)
-  public AddDirtyItem({ patchState }: StateContext<EgrnRequestStateModel>, { payload }) {
+  public AddDirtyItem(
+    { patchState }: StateContext<EgrnRequestStateModel>,
+    { payload }: AddDirtyItem,
+  ) {
     return this.itemsService.get(payload).pipe(
-      tap((item) => {
-        delete item.request_num;
-        delete item.key;
-        delete item.doer_comment;
+      tap((item: EgrnRequest) => {
+        item.request_num = null;
+        item.key = null;
+        item.doer_comment = null;
         // удаляю перед дублированием файл результата
         item.egrn_attachments = item.egrn_attachments?.filter(
           (elem) => elem.type !== this.egrnAttachmentType.RESULT,
@@ -169,7 +144,7 @@ export class EgrnRequestState {
         }
         if (item.real_estates) {
           for (const realEstate of item.real_estates) {
-            delete realEstate.id;
+            realEstate.id = 0;
             delete realEstate.file;
             delete realEstate.original_file_name;
             realEstate.request_num = null;
@@ -186,12 +161,12 @@ export class EgrnRequestState {
   @Action(UpdateItem)
   public updateItem(
     { getState, setState, patchState }: StateContext<EgrnRequestStateModel>,
-    { payload },
+    { payload }: UpdateItem,
   ) {
     // console.log('EgrnState::UpdateItem', payload);
     patchState({ loading: true });
     const state = getState();
-    delete payload.request_type;
+    // delete payload.request_type;
     return this.itemsService.update(payload).pipe(
       tap((selected) => {
         const idx = state.items.findIndex(({ id }) => id === selected.id);
@@ -210,7 +185,7 @@ export class EgrnRequestState {
   @Action(DeleteItem)
   public deleteItem(
     { getState, patchState, setState }: StateContext<EgrnRequestStateModel>,
-    { payload },
+    { payload }: DeleteItem,
   ) {
     // console.log('EgrnState::DeleteItem', payload);
     patchState({ loading: true });
@@ -231,7 +206,7 @@ export class EgrnRequestState {
   @Action(RemoveRealEstate)
   public removeRealEstate(
     { getState, patchState, setState }: StateContext<EgrnRequestStateModel>,
-    { payload },
+    { payload }: RemoveRealEstate,
   ) {
     const { /*idx,*/ id } = payload;
     // console.log('EgrnState::RemoveRealEstate', idx, id);
@@ -239,15 +214,18 @@ export class EgrnRequestState {
     return this.realEstateServ.delete(id).pipe(
       tap(() => {
         const state = getState();
-        const item = state.selected;
-        item.real_estates = item.real_estates.filter((el) => el.id === id);
-        const ind = state.items.findIndex((el) => el.id === item.id);
-        state.items[ind] = item;
-        setState({
-          ...state,
-          items: state.items,
-          selected: item,
-        });
+        if (state.selected) {
+          const item = structuredClone(state.selected);
+          item.real_estates =
+            item.real_estates.filter((el) => el.id === id) ?? [];
+          const ind = state.items.findIndex((el) => el.id === item.id);
+          state.items[ind] = item;
+          setState({
+            ...state,
+            items: state.items,
+            selected: item,
+          });
+        }
       }),
       catchError((err) => throwError(() => err)),
       finalize(() => patchState({ loading: false })),

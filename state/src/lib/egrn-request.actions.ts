@@ -1,9 +1,12 @@
-import { EgrnRequest } from '@sotbi/models';
+import type { EgrnRequest } from '@sotbi/models';
 
 export class FetchItems {
   public static readonly type = '[EGRN REQUEST] Fetch items';
   constructor(
-    public readonly payload: { refresh: boolean; view: boolean } = { refresh: false, view: false },
+    public readonly payload: { refresh: boolean; view: boolean } = {
+      refresh: false,
+      view: false,
+    },
   ) {}
 }
 
@@ -24,7 +27,7 @@ export class AddDirtyItem {
 
 export class UpdateItem {
   public static readonly type = '[EGRN REQUEST] Update item';
-  constructor(public readonly payload: Partial<EgrnRequest>) {}
+  constructor(public readonly payload: EgrnRequest) {}
 }
 
 export class DeleteItem {

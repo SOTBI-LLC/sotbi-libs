@@ -28,7 +28,7 @@ export class AddItem {
 
 export class UpdateItem {
   public static readonly type = '[DEBTORS] Edit item';
-  constructor(public payload: Partial<Debtor>) {}
+  constructor(public payload: Debtor) {}
 }
 
 export class DeleteItem {

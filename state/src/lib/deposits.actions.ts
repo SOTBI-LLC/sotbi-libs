@@ -1,8 +1,7 @@
-import { Deposit } from '@sotbi/models';
+import type { Deposit } from '@sotbi/models';
 
 export class FetchDeposits {
   public static readonly type = '[DEPOSITS] Fetch items';
-  // constructor(public payload: { type: string }) {}
 }
 
 export class GetDeposit {
@@ -12,12 +11,12 @@ export class GetDeposit {
 
 export class AddDeposit {
   public static readonly type = '[DEPOSITS] Add item';
-  constructor(public payload: Partial<Deposit>) {}
+  constructor(public payload: Deposit) {}
 }
 
 export class EditDeposit {
   public static readonly type = '[DEPOSITS] Edit item';
-  constructor(public payload: Partial<Deposit>) {}
+  constructor(public payload: Deposit) {}
 }
 
 export class DeleteDeposit {

@@ -3,7 +3,7 @@ import type { BankDetail } from './bankdetail';
 import type { Bidding } from './bidding';
 
 export class Initiator {
-  public id: number | null = null;
+  public id = 0;
   public name = '';
   public type = false;
   public is_bankruptcy = false;

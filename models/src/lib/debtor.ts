@@ -66,7 +66,7 @@ export interface Debtor {
 }
 
 export interface DebtorsList {
-  id?: number;
+  id: number;
   name: string; // Должник (наименование)
   debtor_created_at: Date;
   full_name: string;

@@ -1,4 +1,4 @@
-import { Debtor } from '@sotbi/models';
+import type { Debtor } from '@sotbi/models';
 
 export class FavoritesAddItems {
   public static readonly type = '[Favorites] Add items';

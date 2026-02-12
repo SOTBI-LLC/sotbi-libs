@@ -164,8 +164,8 @@ export class DebtorsState {
     old: Debtor,
     current: Debtor,
     nullables: Set<string>,
-  ): Partial<Debtor> {
-    const update: Partial<Debtor> = {};
+  ): Partial<Debtor> | null {
+    const update: Record<string, unknown> = {};
     for (const prop in current) {
       const key = prop as keyof Debtor;
       if (Object.prototype.hasOwnProperty.call(current, prop)) {
@@ -225,6 +225,7 @@ export class DebtorsState {
         }),
       );
     }
+    return;
   }
 
   @Action(FetchDebtors, { cancelUncompleted: false })
@@ -259,12 +260,13 @@ export class DebtorsState {
           }),
         );
     }
+    return;
   }
 
   @Action(FetchPage, { cancelUncompleted: true })
   public fetchPage(
     { getState, setState }: StateContext<DebtorStateModel>,
-    { payload },
+    { payload }: FetchPage,
   ) {
     console.log('DebtorsState::FetchPage', getState().debtors.length);
     return this.debtorSrv
@@ -292,14 +294,12 @@ export class DebtorsState {
   @Action(GetDebtor, { cancelUncompleted: true })
   public getItem(
     { setState, getState }: StateContext<DebtorStateModel>,
-    { payload },
+    { payload }: GetDebtor,
   ) {
-    const state = getState();
-    let selected: Debtor;
     if (payload === 0) {
-      selected = { id: 0, inn: null } as Debtor;
-      return setState({ ...state, selected });
+      return;
     } else {
+      const state = getState();
       if (
         (!state.loading && !state.selected) ||
         (state.selected && payload !== state.selected.id)
@@ -315,6 +315,7 @@ export class DebtorsState {
         );
       }
     }
+    return;
   }
 
   @Action(ClearSelected)
@@ -325,16 +326,17 @@ export class DebtorsState {
   @Action(AddItem)
   public addItem(
     { getState, patchState }: StateContext<DebtorStateModel>,
-    { payload },
+    { payload }: AddItem,
   ) {
     patchState({ loading: true });
-    const state = getState();
     return this.debtorSrv.add(payload).pipe(
       tap((selected: Debtor) => {
         const debtor = DebtorsState.debtorConvertFunction(selected);
-        patchState({ selected, debtors: [debtor, ...state.debtors] });
+        if (debtor) {
+          patchState({ selected, debtors: [debtor, ...getState().debtors] });
+        }
       }),
-      catchError((err) => throwError(err)),
+      catchError((err) => throwError(() => err)),
       finalize(() => patchState({ loading: false })),
     );
   }
@@ -342,7 +344,7 @@ export class DebtorsState {
   @Action(UpdateItem)
   public updateItem(
     { patchState, getState, setState }: StateContext<DebtorStateModel>,
-    { payload },
+    { payload }: UpdateItem,
   ) {
     patchState({ loading: true });
     const state = getState();
@@ -350,7 +352,10 @@ export class DebtorsState {
     return this.debtorSrv.update(payload).pipe(
       tap((selected) => {
         const idx = debtors.findIndex((el) => el.id === selected.id);
-        debtors[idx] = DebtorsState.debtorConvertFunction(selected);
+        const debtor = DebtorsState.debtorConvertFunction(selected);
+        if (idx && debtor) {
+          debtors[idx] = debtor;
+        }
         setState({
           ...state,
           selected,
@@ -365,7 +370,7 @@ export class DebtorsState {
   @Action(DeleteItem)
   public deleteItem(
     { getState, patchState, dispatch }: StateContext<DebtorStateModel>,
-    { payload },
+    { payload }: DeleteItem,
   ) {
     patchState({ loading: true });
     const state = getState();
@@ -402,7 +407,7 @@ export class DebtorsState {
   @Action(RestoreItem)
   public restoreItem(
     { getState, patchState, setState }: StateContext<DebtorStateModel>,
-    { payload },
+    { payload }: RestoreItem,
   ) {
     patchState({ loading: true });
     const state = getState();
@@ -427,46 +432,52 @@ export class DebtorsState {
   @Action(UpdateDebtorPolicy)
   public updatePolicy(
     { getState, patchState, dispatch }: StateContext<DebtorStateModel>,
-    { payload },
+    { payload }: UpdateDebtorPolicy,
   ) {
     patchState({ loading: true });
     const state = getState();
     const selected = state.selected;
-    if (state.selected.insurance_policies.length > 0) {
+    if (selected?.insurance_policies) {
       const idx = selected.insurance_policies.findIndex(
         (el) => el.id === payload.id,
       );
       selected.insurance_policies[idx] = payload;
+      patchState({ selected, loading: false });
     } else {
-      return dispatch(new AddDebtorPolicy(payload));
+      dispatch(new AddDebtorPolicy(payload));
     }
-    patchState({ selected, loading: false });
   }
 
   @Action(AddDebtorPolicy)
   public addPolicy(
     { getState, patchState, setState }: StateContext<DebtorStateModel>,
-    { payload },
+    { payload }: AddDebtorPolicy,
   ) {
     patchState({ loading: true });
     const state = getState();
-    const selected = clone(state.selected);
-    selected.insurance_policies.push(payload);
-    setState({ ...state, selected, loading: false });
+    if (state.selected) {
+      const selected = structuredClone(state.selected);
+      selected.insurance_policies?.push(payload);
+      setState({ ...state, selected, loading: false });
+    }
   }
 
   @Action(DeleteDebtorPolicy)
   public deletePolicy(
     { getState, patchState }: StateContext<DebtorStateModel>,
-    { payload },
+    { payload }: DeleteDebtorPolicy,
   ) {
     patchState({ loading: true });
     const state = getState();
-    const selected = clone(state.selected);
-    const idx = selected.insurance_policies.findIndex(
-      (el) => el.id === payload,
-    );
-    selected.insurance_policies.splice(idx, 1);
-    patchState({ selected, loading: false });
+    if (state.selected) {
+      const selected = structuredClone(state.selected);
+      const idx = selected.insurance_policies?.findIndex(
+        (el) => el.id === payload.id,
+      );
+      if (idx) {
+        selected.insurance_policies?.splice(idx, 1);
+      }
+      patchState({ selected, loading: false });
+    }
   }
 }

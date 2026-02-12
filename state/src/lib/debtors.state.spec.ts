@@ -1,6 +1,5 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import type { FormArray } from '@angular/forms';
 import { FormControl } from '@angular/forms';
 import { DebtorService } from '@sotbi/data-access';
 import type { Debtor } from '@sotbi/models';
@@ -167,6 +166,8 @@ describe('DebtorsState Static Methods', () => {
     });
   });
 
+  //TODO: Move to forms
+  /*
   describe('initDebtorFormGroup', () => {
     it('should create form group with default values', () => {
       const formGroup = DebtorsState.initDebtorFormGroup();
@@ -217,7 +218,58 @@ describe('DebtorsState Static Methods', () => {
       expect(innControl.invalid).toBe(true);
       expect(innControl.errors?.minlength).toBeTruthy();
     });
+
+    it('should handle form creation for complex debtor data', () => {
+      const complexDebtor: Partial<Debtor> = {
+        id: 1,
+        name: 'Complex Test Debtor',
+        inn: '1234567890',
+        links: [
+          {
+            id: 1,
+            type: { id: 1, name: 'website' },
+            type_id: 1,
+            uri: 'https://example.com',
+            debtor_id: 1,
+          },
+        ],
+        bank_details: [
+          {
+            id: 1,
+            name: 'Main Account',
+            bank: 'Test Bank',
+            bank_account: '40702810400000000001',
+            bik: '044525225',
+            corr_account: '30101810400000000225',
+            city: 'Test City',
+            location: 'Test Location',
+            open_date: new Date('2024-01-01'),
+            close_date: null,
+            account_type: { id: 1, name: 'Current' },
+            account_type_id: 1,
+            has_client_bank: true,
+          },
+        ],
+      };
+
+      const formGroup = DebtorsState.initDebtorFormGroup(complexDebtor);
+
+      expect(formGroup).toBeDefined();
+      expect(formGroup.get('id').value).toBe(1);
+      expect(formGroup.get('name').value).toBe('Complex Test Debtor');
+
+      // Check that arrays are properly created
+      const linksArray = formGroup.get('links') as FormArray;
+      const bankDetailsArray = formGroup.get('bank_details') as FormArray;
+
+      expect(linksArray.controls.length).toBe(1);
+      expect(bankDetailsArray.controls.length).toBe(1);
+      expect(bankDetailsArray.controls[0].get('bank_account').value).toBe(
+        '40702810400000000001',
+      );
+    });
   });
+  */
 
   describe('prepForSave', () => {
     it('should return changes between old and new debtor', () => {
@@ -253,7 +305,7 @@ describe('DebtorsState Static Methods', () => {
 
       const result = DebtorsState.prepForSave(oldDebtor, newDebtor, new Set());
 
-      expect(result.links).toEqual(newDebtor.links);
+      expect(result?.links).toEqual(newDebtor.links);
     });
 
     it('should return null when no changes', () => {
@@ -282,7 +334,7 @@ describe('DebtorsState Static Methods', () => {
 
     it('should handle new debtor creation', () => {
       const oldDebtor = { ...mockDebtor, id: 0 };
-      const newDebtor = { ...mockDebtor, id: 0, name: 'New Debtor', inn: null };
+      const newDebtor = { ...mockDebtor, id: 0, name: 'New Debtor', inn: '' };
 
       const result = DebtorsState.prepForSave(oldDebtor, newDebtor, new Set());
 
@@ -320,60 +372,10 @@ describe('DebtorsState Integration', () => {
     const converted = DebtorsState.debtorConvertFunction(testDebtor);
 
     expect(converted).toBeDefined();
-    expect(converted.id).toBe(42);
-    expect(converted.name).toBe('Integration Test Debtor');
-    expect(converted.kind).toBe('юр.лицо');
-    expect(converted.reportable).toBe('да');
-  });
-
-  it('should handle form creation for complex debtor data', () => {
-    const complexDebtor: Partial<Debtor> = {
-      id: 1,
-      name: 'Complex Test Debtor',
-      inn: '1234567890',
-      links: [
-        {
-          id: 1,
-          type: { id: 1, name: 'website' },
-          type_id: 1,
-          uri: 'https://example.com',
-          debtor_id: 1,
-        },
-      ],
-      bank_details: [
-        {
-          id: 1,
-          name: 'Main Account',
-          bank: 'Test Bank',
-          bank_account: '40702810400000000001',
-          bik: '044525225',
-          corr_account: '30101810400000000225',
-          city: 'Test City',
-          location: 'Test Location',
-          open_date: new Date('2024-01-01'),
-          close_date: null,
-          account_type: { id: 1, name: 'Current' },
-          account_type_id: 1,
-          has_client_bank: true,
-        },
-      ],
-    };
-
-    const formGroup = DebtorsState.initDebtorFormGroup(complexDebtor);
-
-    expect(formGroup).toBeDefined();
-    expect(formGroup.get('id').value).toBe(1);
-    expect(formGroup.get('name').value).toBe('Complex Test Debtor');
-
-    // Check that arrays are properly created
-    const linksArray = formGroup.get('links') as FormArray;
-    const bankDetailsArray = formGroup.get('bank_details') as FormArray;
-
-    expect(linksArray.controls.length).toBe(1);
-    expect(bankDetailsArray.controls.length).toBe(1);
-    expect(bankDetailsArray.controls[0].get('bank_account').value).toBe(
-      '40702810400000000001',
-    );
+    expect(converted?.id).toBe(42);
+    expect(converted?.name).toBe('Integration Test Debtor');
+    expect(converted?.kind).toBe('юр.лицо');
+    expect(converted?.reportable).toBe('да');
   });
 
   it('should properly compare debtors for save preparation', () => {

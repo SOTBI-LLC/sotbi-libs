@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { HelpFileService } from '@services/help-file.service';
-import { removeID } from '@shared/shared-globals';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { HelpFileService } from '@sotbi/data-access';
 import { HelpFile } from '@sotbi/models';
+import { removeID } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
@@ -16,7 +17,7 @@ import {
 
 export interface HelpFileStateModel {
   items: HelpFile[];
-  loading?: boolean;
+  loading: boolean;
   count: number;
 }
 
@@ -32,14 +33,7 @@ export interface HelpFileStateModel {
 export class HelpFileState {
   private readonly itemsService = inject(HelpFileService);
 
-  private readonly rowData: HelpFile = {
-    id: 0,
-    original_file_name: '',
-    file: '',
-    description: null,
-    link_name: null,
-    dirty: true,
-  };
+  private readonly rowData = new HelpFile();
 
   @Selector()
   public static getLoading(state: HelpFileStateModel): boolean {
@@ -56,12 +50,16 @@ export class HelpFileState {
   }
 
   @Action(FetchItems)
-  public FetchItems({ getState, setState, patchState }: StateContext<HelpFileStateModel>) {
+  public FetchItems({
+    getState,
+    setState,
+    patchState,
+  }: StateContext<HelpFileStateModel>) {
     // console.log('HelpFileStateModel::FetchItems');
     const state = getState();
     if (!state.items.length) {
       patchState({ loading: true });
-      return this.itemsService.GetAll().pipe(
+      this.itemsService.GetAll().pipe(
         tap((items) => {
           items = items.map((el) => {
             el.dirty = false;
@@ -82,7 +80,7 @@ export class HelpFileState {
   @Action(AddItem)
   public createItem(
     { getState, patchState, setState }: StateContext<HelpFileStateModel>,
-    { payload },
+    { payload }: AddItem,
   ) {
     // console.log('HelpFileStateModel::AddItem', payload);
     patchState({ loading: true });
@@ -106,7 +104,10 @@ export class HelpFileState {
   }
 
   @Action(AddEmptyItem)
-  public addEmptyItem({ getState, patchState }: StateContext<HelpFileStateModel>) {
+  public addEmptyItem({
+    getState,
+    patchState,
+  }: StateContext<HelpFileStateModel>) {
     const state = getState();
     const item = Object.assign({}, this.rowData);
     state.count++;
@@ -116,7 +117,7 @@ export class HelpFileState {
   @Action(UpdateItem)
   public UpdateItem(
     { getState, setState, patchState }: StateContext<HelpFileStateModel>,
-    { payload },
+    { payload }: UpdateItem,
   ) {
     // console.log('HelpFileStateModel::UpdateItem', payload);
     patchState({ loading: true });
@@ -140,7 +141,10 @@ export class HelpFileState {
   }
 
   @Action(StartEditItem)
-  public editItem({ getState, patchState }: StateContext<HelpFileStateModel>, { payload }) {
+  public editItem(
+    { getState, patchState }: StateContext<HelpFileStateModel>,
+    { payload }: StartEditItem,
+  ) {
     const state = getState();
     if (payload > 0) {
       state.items[payload - 1].dirty = true;
@@ -151,7 +155,7 @@ export class HelpFileState {
   @Action(DeleteItem)
   public deleteItem(
     { getState, patchState, setState }: StateContext<HelpFileStateModel>,
-    { payload },
+    { payload }: DeleteItem,
   ) {
     // console.log('HelpFileStateModel::DeleteItem', payload);
     patchState({ loading: true });
@@ -165,7 +169,7 @@ export class HelpFileState {
         });
       }),
       catchError((err) => {
-        return throwError(err);
+        return throwError(() => err);
       }),
       finalize(() => patchState({ loading: false })),
     );

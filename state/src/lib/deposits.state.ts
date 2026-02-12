@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
-import { forMap } from '@root/shared/rx-filtres';
-import { DepositService } from '@services/deposit.service';
-import { Deposit } from '@sotbi/models';
+import type { NgxsOnInit, StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { DepositService } from '@sotbi/data-access';
+import type { Deposit } from '@sotbi/models';
+import { forMap } from '@sotbi/utils';
 import { catchError, tap, throwError } from 'rxjs';
 import {
   AddDeposit,
@@ -11,12 +12,12 @@ import {
   FetchDeposits,
   GetDeposit,
 } from './deposits.actions';
-import { itemMap } from './simple-edit.state.model';
+import type { itemMap } from './simple-edit.state.model';
 
 export class DepositStateModel {
-  public items: Deposit[];
-  public map: itemMap;
-  public selected: Deposit;
+  public items: Deposit[] = [];
+  public map: itemMap = new Map();
+  public selected: Deposit | null = null;
 }
 
 @State<DepositStateModel>({
@@ -56,7 +57,7 @@ export class DepositsState implements NgxsOnInit {
   public fetchItems({ getState, setState }: StateContext<DepositStateModel>) {
     const state = getState();
     if (!state.items.length) {
-      return this.DepositSrv.getAll().pipe(
+      this.DepositSrv.getAll().pipe(
         tap((result) => {
           const mapItems = new Map(result.map(forMap));
           setState({
@@ -74,7 +75,10 @@ export class DepositsState implements NgxsOnInit {
   }
 
   @Action(GetDeposit)
-  public getItem({ setState, getState }: StateContext<DepositStateModel>, { payload }: GetDeposit) {
+  public getItem(
+    { setState, getState }: StateContext<DepositStateModel>,
+    { payload }: GetDeposit,
+  ) {
     const state = getState();
     const items = [...state.items];
     const idx = items.findIndex(({ id }) => payload === id);
@@ -97,13 +101,21 @@ export class DepositsState implements NgxsOnInit {
   }
 
   @Action(AddDeposit)
-  public addItem({ getState, setState }: StateContext<DepositStateModel>, { payload }) {
+  public addItem(
+    { getState, setState }: StateContext<DepositStateModel>,
+    { payload }: AddDeposit,
+  ) {
     return this.DepositSrv.create(payload).pipe(
       tap((selected) => {
         const state = getState();
         const map = { ...state.map };
         map.set(selected.id, selected.name);
-        setState({ ...state, items: [selected, ...state.items], map, selected });
+        setState({
+          ...state,
+          items: [selected, ...state.items],
+          map,
+          selected,
+        });
       }),
       catchError((err) => {
         console.error(err.message);
@@ -113,25 +125,33 @@ export class DepositsState implements NgxsOnInit {
   }
 
   @Action(EditDeposit)
-  public editItem({ getState, setState }: StateContext<DepositStateModel>, { payload }) {
+  public editItem(
+    { getState, setState }: StateContext<DepositStateModel>,
+    { payload }: EditDeposit,
+  ) {
     const { id, ...rest } = payload;
-    return this.DepositSrv.save(id, rest).pipe(
-      tap((selected: Deposit) => {
-        const state = getState();
-        const map = { ...state.map };
-        map.set(id, selected.name);
-        const items = state.items.map((el) => (el.id === id ? selected : el));
-        setState({ ...state, items, map, selected });
-      }),
-      catchError((err) => {
-        console.error(err.message);
-        return throwError(() => err);
-      }),
-    );
+    if (id) {
+      this.DepositSrv.save(id, rest).pipe(
+        tap((selected: Deposit) => {
+          const state = getState();
+          const map = { ...state.map };
+          map.set(id, selected.name);
+          const items = state.items.map((el) => (el.id === id ? selected : el));
+          setState({ ...state, items, map, selected });
+        }),
+        catchError((err) => {
+          console.error(err.message);
+          return throwError(() => err);
+        }),
+      );
+    }
   }
 
   @Action(DeleteDeposit)
-  public deleteItem({ getState, setState }: StateContext<DepositStateModel>, { payload }) {
+  public deleteItem(
+    { getState, setState }: StateContext<DepositStateModel>,
+    { payload }: DeleteDeposit,
+  ) {
     return this.DepositSrv.delete(payload).pipe(
       tap(() => {
         const state = getState();

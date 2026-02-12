@@ -71,7 +71,7 @@ export class CounterpartyBankDetailService extends CommonService<BankDetail> {
 @Injectable({
   providedIn: 'root',
 })
-export class EmployeeService extends CommonService<Employee> {
+export class CounterpartyEmployeeService extends CommonService<Employee> {
   public override readonly http: HttpClient;
 
   public override readonly path = '/api/counterparties';

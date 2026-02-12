@@ -1,4 +1,4 @@
-import { HelpFile } from '@sotbi/models';
+import type { HelpFile } from '@sotbi/models';
 
 export class FetchItems {
   public static readonly type = '[HELP FILE] Fetch items';
@@ -15,7 +15,7 @@ export class AddEmptyItem {
 
 export class UpdateItem {
   public static readonly type = '[HELP FILE] Update item';
-  constructor(public payload: Partial<HelpFile>) {}
+  constructor(public payload: HelpFile) {}
 }
 
 export class StartEditItem {

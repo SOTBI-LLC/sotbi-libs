@@ -1,4 +1,4 @@
-import { Employee } from '@sotbi/models';
+import type { Employee } from '@sotbi/models';
 
 export class GetEmployees {
   public static readonly type = '[EMPLOYEE] Get all items';

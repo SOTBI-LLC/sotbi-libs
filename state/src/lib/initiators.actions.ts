@@ -1,4 +1,4 @@
-import { Initiator } from '@sotbi/models';
+import type { Initiator } from '@sotbi/models';
 
 export class FetchInitiators {
   public static readonly type = '[INITIATORS] Fetch items';

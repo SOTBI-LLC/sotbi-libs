@@ -1,16 +1,23 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
-import { LabelService } from '@services/label.service';
-import { Label } from '@sotbi/models';
+import type { NgxsOnInit, StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { LabelService } from '@sotbi/data-access';
+import type { Label } from '@sotbi/models';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { AddLabel, DeleteLabel, EditLabel, FetchLabels, GetLabel } from './labels.actions';
-import { itemMap } from './simple-edit.state.model';
+import {
+  AddLabel,
+  DeleteLabel,
+  EditLabel,
+  FetchLabels,
+  GetLabel,
+} from './labels.actions';
+import type { itemMap } from './simple-edit.state.model';
 
 export class LabelStateModel {
-  public items: Label[];
-  public map: itemMap;
-  public selected: Label;
+  public items: Label[] = [];
+  public map: itemMap = new Map();
+  public selected: Label | null = null;
 }
 
 @State<LabelStateModel>({
@@ -51,45 +58,52 @@ export class LabelsState implements NgxsOnInit {
     // console.log('LabelsState::FetchLabels');
     const state = getState();
     if (!state.items.length) {
-      return this.service.getAll().pipe(
+      this.service.getAll().pipe(
         catchError((err) => {
           return throwError(() => err);
         }),
-        tap(
-          (items) => {
-            const map = new Map(items.map((i): [number, string] => [i.id, i.name]));
+        tap({
+          next: (items) => {
+            const map = new Map(
+              items.map((i): [number, string] => [i.id, i.name]),
+            );
             setState({
               ...state,
               items,
               map,
             });
           },
-          (error) => {
+          error: (error) => {
             console.error(error.message);
           },
-        ),
+        }),
       );
     }
   }
 
   @Action(GetLabel)
-  public getItem({ patchState, getState }: StateContext<LabelStateModel>, { payload }) {
+  public getItem(
+    { patchState, getState }: StateContext<LabelStateModel>,
+    { payload }: GetLabel,
+  ) {
     const state = getState();
-    let selected: Label;
     const items = [...state.items];
     const idx = items.findIndex(({ id }) => payload === id);
     if (!items[idx].name) {
-      this.service.get(payload).subscribe((selected) => {
+      this.service.get(payload).subscribe((selected: Label) => {
         items[idx] = selected;
+        patchState({ items, selected });
       });
     } else {
-      selected = state.items[idx];
+      patchState({ items, selected: state.items[idx] });
     }
-    patchState({ items, selected });
   }
 
   @Action(AddLabel)
-  public addItem({ getState, patchState }: StateContext<LabelStateModel>, { payload }) {
+  public addItem(
+    { getState, patchState }: StateContext<LabelStateModel>,
+    { payload }: AddLabel,
+  ) {
     return this.service.create(payload).pipe(
       tap((result) => {
         const state = getState();
@@ -102,10 +116,12 @@ export class LabelsState implements NgxsOnInit {
   }
 
   @Action(EditLabel)
-  public editItem({ getState, patchState }: StateContext<LabelStateModel>, { payload }) {
+  public editItem(
+    { getState, patchState }: StateContext<LabelStateModel>,
+    { payload }: EditLabel,
+  ) {
     const { id } = payload;
-    delete payload.id;
-    return this.service.update(payload, id).pipe(
+    this.service.update(id, payload).pipe(
       tap((selected: Label) => {
         const state = getState();
         const map = state.map;
@@ -120,7 +136,10 @@ export class LabelsState implements NgxsOnInit {
   }
 
   @Action(DeleteLabel)
-  public deleteItem({ getState, setState }: StateContext<LabelStateModel>, { payload }) {
+  public deleteItem(
+    { getState, setState }: StateContext<LabelStateModel>,
+    { payload }: DeleteLabel,
+  ) {
     return this.service.delete(payload).pipe(
       tap(() => {
         const state = getState();

@@ -1,15 +1,15 @@
 import type { InsurancePolicy } from './insurance-policy';
 import type { User } from './user';
 
-export interface InsuranceCompany {
-  id: number;
-  name: string;
-  inn: string;
-  created_at?: Date;
-  updated_at?: Date;
-  updated_by?: number;
-  updater?: User;
-  insurance_policies?: InsurancePolicy[];
+export class InsuranceCompany {
+  public id = 0;
+  public name: string | null = null;
+  public inn: string | null = null;
+  public created_at: Date | null = null;
+  public updated_at: Date | null = null;
+  public updated_by = 0;
+  public updater: User | null = null;
+  public insurance_policies: InsurancePolicy[] = [];
 }
 
 export enum InsuranceActive {

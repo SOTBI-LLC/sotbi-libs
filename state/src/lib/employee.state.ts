@@ -1,17 +1,17 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { EmployeeService } from '@services/counterparty.service';
-import { LoggerService } from '@services/logger.service';
-import { fromBase62 } from '@shared/shared-globals';
-import { Employee } from '@sotbi/models';
-import { GetEmployees, UpdateEmployees } from '@store/employee.actions';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { CounterpartyEmployeeService } from '@sotbi/data-access';
+import type { Employee } from '@sotbi/models';
+import { fromBase62 } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
+import { GetEmployees, UpdateEmployees } from './employee.actions';
 
 export class EmployeeStateModel {
-  public current_counterparty_id: number | null;
-  public items: Employee[];
-  public loading: boolean;
+  public current_counterparty_id: number | null = null;
+  public items: Employee[] = [];
+  public loading = false;
 }
 
 @State<EmployeeStateModel>({
@@ -24,8 +24,7 @@ export class EmployeeStateModel {
 })
 @Injectable()
 export class EmployeeState {
-  private readonly srv = inject(EmployeeService);
-  private readonly log = inject(LoggerService);
+  private readonly srv = inject(CounterpartyEmployeeService);
 
   @Selector()
   public static loading(state: EmployeeStateModel) {
@@ -37,14 +36,16 @@ export class EmployeeState {
   }
 
   @Action(GetEmployees, { cancelUncompleted: true })
-  public getEmployees({ getState, patchState }: StateContext<EmployeeStateModel>, { payload }) {
-    this.log.debug(`EmployeeState::GetEmployees(${payload}) -> method called`);
+  public getEmployees(
+    { getState, patchState }: StateContext<EmployeeStateModel>,
+    { payload }: GetEmployees,
+  ) {
     const state = getState();
     // if (state.items.length < 1) {
     const id = fromBase62(payload);
-    if (id !== +state.current_counterparty_id) {
+    if (id !== +(state.current_counterparty_id ?? 0)) {
       patchState({ loading: true });
-      return this.srv.GetAll(id).pipe(
+      this.srv.GetAll(id).pipe(
         catchError((err) => {
           return throwError(() => err);
         }),
@@ -62,11 +63,13 @@ export class EmployeeState {
   }
 
   @Action(UpdateEmployees)
-  public updateEmployees({ patchState, getState }: StateContext<EmployeeStateModel>, { payload }) {
+  public updateEmployees(
+    { patchState, getState }: StateContext<EmployeeStateModel>,
+    { payload }: UpdateEmployees,
+  ) {
     patchState({ loading: true });
-    this.log.debug(`EmployeeState::UpdateEmployees() -> method called`, payload);
     const state = getState();
-    return this.srv.updateAll(+state.current_counterparty_id, payload).pipe(
+    this.srv.updateAll(+(state.current_counterparty_id ?? 0), payload).pipe(
       tap((items) => {
         patchState({ items });
       }),

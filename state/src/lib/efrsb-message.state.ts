@@ -1,16 +1,24 @@
 import { HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { EfrsbMessageService } from '@services/efrsb-message.service';
-import { Message, StatusEnum } from '@sotbi/models';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { EfrsbMessageService } from '@sotbi/data-access';
+import type { Message } from '@sotbi/models';
+import { StatusEnum } from '@sotbi/models';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
-import { AddItem, DeleteItem, FetchItems, GetItem, UpdateItem } from './efrsb-message.actions';
+import {
+  AddItem,
+  DeleteItem,
+  FetchItems,
+  GetItem,
+  UpdateItem,
+} from './efrsb-message.actions';
 
-export interface EfrsbMessageStateModel {
-  items: Message[];
-  selected: Message;
-  loading?: boolean;
+export class EfrsbMessageStateModel {
+  public items: Message[] = [];
+  public selected: Message | null = null;
+  public loading = false;
 }
 
 @State<EfrsbMessageStateModel>({
@@ -25,7 +33,10 @@ export interface EfrsbMessageStateModel {
 export class EfrsbMessageState {
   private readonly itemsService = inject(EfrsbMessageService);
 
-  private readonly empty: Message = { id: 0, status: StatusEnum.DRAFT } as Message;
+  private readonly empty: Message = {
+    id: 0,
+    status: StatusEnum.DRAFT,
+  } as Message;
 
   @Selector()
   public static getLoading(state: EfrsbMessageStateModel): boolean {
@@ -43,12 +54,16 @@ export class EfrsbMessageState {
   }
 
   @Action(FetchItems)
-  public fetchItems({ getState, setState, patchState }: StateContext<EfrsbMessageStateModel>) {
+  public fetchItems({
+    getState,
+    setState,
+    patchState,
+  }: StateContext<EfrsbMessageStateModel>) {
     const state = getState();
     if (!state.items.length) {
       patchState({ loading: true });
       // по факту отдаёт только 25 элементов
-      return this.itemsService.getAllMessages(new HttpParams()).pipe(
+      this.itemsService.getAllMessages(new HttpParams()).pipe(
         tap((res) => {
           setState({
             ...state,
@@ -70,9 +85,10 @@ export class EfrsbMessageState {
     patchState({ loading: true });
     const state = getState();
     if (payload === 0) {
-      return patchState({ selected: this.empty, loading: false });
+      patchState({ selected: this.empty, loading: false });
+      return;
     }
-    return this.itemsService.get(payload).pipe(
+    this.itemsService.get(payload).pipe(
       tap((item) => {
         setState({
           ...state,
@@ -90,7 +106,7 @@ export class EfrsbMessageState {
     { payload }: AddItem,
   ) {
     patchState({ loading: true });
-    return this.itemsService.add(payload).pipe(
+    this.itemsService.add(payload).pipe(
       tap((result) => {
         const state = getState();
         setState({
@@ -111,11 +127,13 @@ export class EfrsbMessageState {
   ) {
     patchState({ loading: true });
     const state = getState();
-    return this.itemsService.update(payload).pipe(
+    this.itemsService.update(payload).pipe(
       tap((selected) => {
         setState({
           ...state,
-          items: state.items.map((el) => (el.id === selected.id ? selected : el)),
+          items: state.items.map((el) =>
+            el.id === selected.id ? selected : el,
+          ),
           selected: selected,
         });
       }),
@@ -130,7 +148,7 @@ export class EfrsbMessageState {
     { payload }: DeleteItem,
   ) {
     patchState({ loading: true });
-    return this.itemsService.delete(payload).pipe(
+    this.itemsService.delete(payload).pipe(
       tap(() => {
         const state = getState();
         setState({

@@ -5,12 +5,12 @@ import type { User } from './user';
 export interface RealEstate extends IAttachment {
   id: number;
   egrn_request_id: number;
-  egrn_request?: EgrnRequest;
-  cadastral_no?: string;
-  parameters?: string;
-  request_num?: string;
-  key?: string;
-  description?: string;
+  egrn_request: EgrnRequest | null;
+  cadastral_no: string | null;
+  parameters: string | null;
+  request_num: string | null;
+  key: string | null;
+  description: string | null;
   doer_id: number;
-  doer?: User;
+  doer: User | null;
 }

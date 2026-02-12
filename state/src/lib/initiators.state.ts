@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { InitiatorService } from '@services/initiator.service';
-import { Initiator } from '@sotbi/models';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { InitiatorService } from '@sotbi/data-access';
+import type { Initiator } from '@sotbi/models';
 import { catchError, tap, throwError } from 'rxjs';
 import {
   AddInintiator,
@@ -33,15 +34,20 @@ export class InitiatorsState {
   }
 
   @Selector()
-  public static getItem(state: InitiatorsStateModel): Partial<Initiator> | null {
+  public static getItem(
+    state: InitiatorsStateModel,
+  ): Partial<Initiator> | null {
     return state.selected;
   }
 
   @Action(FetchInitiators, { cancelUncompleted: true })
-  public fetchItems({ getState, patchState }: StateContext<InitiatorsStateModel>) {
+  public fetchItems({
+    getState,
+    patchState,
+  }: StateContext<InitiatorsStateModel>) {
     const state = getState();
     if (!state.items.length) {
-      return this.initiatorSrv.GetAll().pipe(
+      this.initiatorSrv.GetAll().pipe(
         tap((items) => {
           patchState({ items, selected: null });
         }),

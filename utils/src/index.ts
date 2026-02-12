@@ -27,7 +27,6 @@ export {
   deepFlatten,
   fromBase62,
   getDiff,
-  insurancePolicyArray,
   isAllSaved,
   notifyError,
   removeID,

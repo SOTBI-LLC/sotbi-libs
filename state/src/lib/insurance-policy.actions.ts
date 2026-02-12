@@ -1,4 +1,4 @@
-import { InsurancePolicy } from '@sotbi/models';
+import type { InsurancePolicy } from '@sotbi/models';
 
 export class FetchItems {
   public static readonly type = '[INSURANCE POLICY] Fetch items';
@@ -16,7 +16,7 @@ export class AddItem {
 
 export class UpdateItem {
   public static readonly type = '[INSURANCE POLICY] Update item';
-  constructor(public payload: Partial<InsurancePolicy>) {}
+  constructor(public payload: InsurancePolicy) {}
 }
 
 export class DeleteItem {

@@ -1,16 +1,23 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { DefraymentService } from '@services/defrayment.service';
-import { removeID } from '@shared/shared-globals';
-import { Defrayment } from '@sotbi/models';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { DefraymentService } from '@sotbi/data-access';
+import type { Defrayment } from '@sotbi/models';
+import { removeID } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
-import { AddItem, DeleteItem, GetAllItems, GetItem, UpdateItem } from './defrayment.actions';
+import {
+  AddItem,
+  DeleteItem,
+  GetAllItems,
+  GetItem,
+  UpdateItem,
+} from './defrayment.actions';
 
 export interface DefraymentStateModel {
   items: Defrayment[];
-  selected: Defrayment;
-  loading?: boolean;
+  selected: Defrayment | null;
+  loading: boolean;
   count: number;
 }
 
@@ -45,13 +52,13 @@ export class DefraymentState {
   @Action(GetAllItems)
   public GetAllItems(
     { getState, setState, patchState }: StateContext<DefraymentStateModel>,
-    { payload },
+    { payload }: GetAllItems,
   ) {
     // console.log('DefraymentState::FetchItems');
     const state = getState();
     if (!state.items.length) {
       patchState({ loading: true });
-      return this.itemsService.GetAll(payload).pipe(
+      this.itemsService.GetAll(payload).pipe(
         tap((items) => {
           setState({
             ...state,
@@ -67,16 +74,19 @@ export class DefraymentState {
   }
 
   @Action(GetItem)
-  public getItem({ patchState }: StateContext<DefraymentStateModel>, { payload }) {
+  public getItem(
+    { patchState }: StateContext<DefraymentStateModel>,
+    { payload }: GetItem,
+  ) {
     patchState({ loading: true });
     if (!payload) {
       const selected: Defrayment = {
         id: 0,
         payment_request_id: 0,
         summ: 0,
-        payment_purpose: null,
+        payment_purpose: '',
         priority: 5,
-        creator_id: null,
+        creator_id: 0,
       };
       return patchState({ selected });
     } else {
@@ -91,7 +101,7 @@ export class DefraymentState {
   @Action(AddItem)
   public createItem(
     { getState, patchState, setState }: StateContext<DefraymentStateModel>,
-    { payload },
+    { payload }: AddItem,
   ) {
     // console.log('DefraymentState::AddItem', payload);
     patchState({ loading: true });
@@ -115,7 +125,7 @@ export class DefraymentState {
   @Action(UpdateItem)
   public UpdateItem(
     { getState, setState, patchState }: StateContext<DefraymentStateModel>,
-    { payload },
+    { payload }: UpdateItem,
   ) {
     // console.log('DefraymentState::UpdateItem', payload);
     patchState({ loading: true });
@@ -141,7 +151,7 @@ export class DefraymentState {
   @Action(DeleteItem)
   public deleteItem(
     { getState, patchState, setState }: StateContext<DefraymentStateModel>,
-    { payload },
+    { payload }: DeleteItem,
   ) {
     // console.log('DefraymentState::DeleteItem', payload);
     patchState({ loading: true });
@@ -155,7 +165,7 @@ export class DefraymentState {
         });
       }),
       catchError((err) => {
-        return throwError(err);
+        return throwError(() => err);
       }),
       finalize(() => patchState({ loading: false })),
     );
