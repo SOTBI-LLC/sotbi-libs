@@ -1,3 +1,18 @@
+export { getDateDifference } from './lib/date-func/difference';
+export {
+  dateValueFormatter,
+  DD_MM_YY,
+  DD_MM_YY_HH_MM,
+  DD_MM_YYYY,
+  DD_MM_YYYY_HH_MM,
+  DD_MM_YYYY_HH_MM_SS,
+  formatEventDuraton,
+  FormatMonth,
+  getMonthNameFunction,
+  HH_MM,
+  MM_YYYY,
+} from './lib/date-func/format';
+export { parseStrToDate } from './lib/date-func/parse';
 export {
   forMap,
   forMapStringNumber,
@@ -8,9 +23,13 @@ export {
 export {
   bankruptcyManagerFormatter,
   canSave,
+  deepEqual,
+  deepFlatten,
   fromBase62,
   getDiff,
+  insurancePolicyArray,
   isAllSaved,
+  notifyError,
   removeID,
   toBase62,
 } from './lib/utils';

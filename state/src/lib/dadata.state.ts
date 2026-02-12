@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { DadataService } from '@root/service/dadata.service';
-import { Dadata } from '@sotbi/models';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { DadataService } from '@sotbi/data-access';
+import type { Dadata } from '@sotbi/models';
 import { tap } from 'rxjs/operators';
 import { GetDadataInformationByInn } from './dadata.actions';
 
@@ -30,7 +31,9 @@ export class DadataState {
     return this.itemsService.getDataByInn(inn).pipe(
       tap((value) => {
         const firstLetters = inn.toString().substring(0, 2);
-        const neededValue = value.find((item) => item.data?.kpp?.startsWith(firstLetters));
+        const neededValue = value.find((item) =>
+          item.data?.kpp?.startsWith(firstLetters),
+        );
         patchState({ selectedObject: neededValue || value[0] });
       }),
     );

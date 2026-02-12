@@ -1,4 +1,5 @@
 import type { Calendar } from '@sotbi/models';
+import { deepFlatten } from '@sotbi/utils';
 import type { CalendarStateModel, SelectedCalendar } from './calendar.state';
 
 // Mock data for testing
@@ -66,7 +67,7 @@ function validateStateStructureStatic(state: CalendarStateModel) {
   };
 }
 
-function validateCalendarItemStatic(item: any) {
+function validateCalendarItemStatic(item: Calendar) {
   return {
     hasId: typeof item.id === 'number',
     hasMonth: typeof item.month === 'string',
@@ -80,13 +81,6 @@ function validateCalendarItemStatic(item: any) {
 }
 
 function processWorkingDaysForStateStatic(workingDays: Date[][]): number[] {
-  const deepFlatten = <T>(arr: T[]) => {
-    if (!arr || !Array.isArray(arr)) return [];
-    return [].concat(
-      ...arr.map((v) => (Array.isArray(v) ? deepFlatten(v) : v)),
-    );
-  };
-
   const flattened = deepFlatten(workingDays);
   return flattened
     .filter((el): el is Date => el instanceof Date)

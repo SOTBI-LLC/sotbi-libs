@@ -1694,6 +1694,13 @@
     "@eslint/core" "^0.17.0"
     levn "^0.4.1"
 
+"@fullcalendar/core@^6.1.20":
+  version "6.1.20"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/core/-/core-6.1.20.tgz#e4cfa767a9b8b7dad015b33fcb8acb0fac986a85"
+  integrity sha512-1cukXLlePFiJ8YKXn/4tMKsy0etxYLCkXk8nUCFi11nRONF2Ba2CD5b21/ovtOO2tL6afTJfwmc1ed3HG7eB1g==
+  dependencies:
+    preact "~10.12.1"
+
 "@hono/node-server@^1.19.7":
   version "1.19.8"
   resolved "https://registry.yarnpkg.com/@hono/node-server/-/node-server-1.19.8.tgz#3944fc44a682ce8f770fb94c4eda527f88c1a615"
@@ -2902,7 +2909,7 @@
     proc-log "^5.0.0"
     which "^5.0.0"
 
-"@nx/angular@22.5.0":
+"@nx/angular@^22.5.0":
   version "22.5.0"
   resolved "https://registry.yarnpkg.com/@nx/angular/-/angular-22.5.0.tgz#a80e1eddfc73029152cabc10d4feeb9bbf3e74fe"
   integrity sha512-HKSMe1vQSCCgqe4ljbZkXcqPZS4/hbtCcRGkgbm9KJL9YH7gfXZF823Ff66MGTL2rkVixXlaJlHVWZlN7tOhVQ==
@@ -11018,6 +11025,11 @@ postcss@^8.4.24, postcss@^8.4.33, postcss@^8.4.38, postcss@^8.4.47, postcss@^8.5
     nanoid "^3.3.11"
     picocolors "^1.1.1"
     source-map-js "^1.2.1"
+
+preact@~10.12.1:
+  version "10.12.1"
+  resolved "https://registry.yarnpkg.com/preact/-/preact-10.12.1.tgz#8f9cb5442f560e532729b7d23d42fd1161354a21"
+  integrity sha512-l8386ixSsBdbreOAkqtrwqHwdvR35ID8c3rKPa8lCWuO86dBi32QWHV4vfsZK1utLLFMvw+Z5Ad4XLkZzchscg==
 
 prelude-ls@^1.2.1:
   version "1.2.1"

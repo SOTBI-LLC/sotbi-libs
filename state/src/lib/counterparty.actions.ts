@@ -1,13 +1,8 @@
-import { Counterparty } from '@sotbi/models';
+import type { Counterparty } from '@sotbi/models';
 
 /** GetCounterparties Action Class */
 export class GetCounterparties {
   public static readonly type = '[COUNTERPARTY] get counterparties';
-  /**
-   * Get Counterparties from backend if not in cache
-   * @constructor
-   */
-  constructor() {}
 }
 
 /** GetCounterparty Action Class */
@@ -40,7 +35,7 @@ export class UpdateCounterparty {
    * @constructor
    * @param {Partial<Counterparty>} payload - Counterparty object
    */
-  constructor(public readonly payload: Partial<Counterparty>) {}
+  constructor(public readonly payload: Counterparty) {}
 }
 
 /** DeleteCounterparty Action Class */

@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
+import type { NgxsOnInit, StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
 import { PositionService } from '@services/position.service';
 import { canSave, isAllSaved } from '@shared/shared-globals';
-import { Position } from '@sotbi/models';
-import { clone } from 'ramda';
+import type { Position } from '@sotbi/models';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
@@ -18,7 +18,10 @@ import {
   UpdatePosition,
 } from './positions.actions';
 
-export const RequiredFields = ['name', 'user_group_id' /* 'settings', 'staff_type_id' */];
+export const RequiredFields = [
+  'name',
+  'user_group_id' /* 'settings', 'staff_type_id' */,
+];
 
 export interface PositionStateModel {
   allItems: Position[];
@@ -82,7 +85,11 @@ export class PositionState implements NgxsOnInit {
   }
 
   @Action(FetchPositions)
-  public fetchItems({ getState, setState, patchState }: StateContext<PositionStateModel>) {
+  public fetchItems({
+    getState,
+    setState,
+    patchState,
+  }: StateContext<PositionStateModel>) {
     // console.log('PositionState::FetchPositions');
     const state = getState();
     if (!state.items.length) {
@@ -90,14 +97,14 @@ export class PositionState implements NgxsOnInit {
       return this.itemsService.getAll(-1).pipe(
         catchError((err) => throwError(() => err)),
         tap({
-          next: (items) => {
+          next: (items: Position[]) => {
             items = items.map((el) => {
               el.dirty = false;
               return el;
             });
             setState({
               ...state,
-              allItems: clone(items),
+              allItems: structuredClone(items),
               items: [...items /* , Object.assign({}, this.rowData) */],
               count: items.length,
               saved: true,
@@ -139,14 +146,22 @@ export class PositionState implements NgxsOnInit {
   }
 
   @Action(AddEmptyPosition)
-  public addEmptyItem({ getState, patchState }: StateContext<PositionStateModel>) {
+  public addEmptyItem({
+    getState,
+    patchState,
+  }: StateContext<PositionStateModel>) {
     console.log('PositionState::AddEmptyPosition');
     const state = getState();
-    return patchState({ items: [...state.items, Object.assign({}, this.rowData)] });
+    return patchState({
+      items: [...state.items, Object.assign({}, this.rowData)],
+    });
   }
 
   @Action(EditPosition)
-  public editItem({ getState, patchState }: StateContext<PositionStateModel>, { payload }) {
+  public editItem(
+    { getState, patchState }: StateContext<PositionStateModel>,
+    { payload },
+  ) {
     // console.log('PositionState::EditPosition', payload);
     const { position, idx } = payload;
     const state = getState();
@@ -156,7 +171,10 @@ export class PositionState implements NgxsOnInit {
   }
 
   @Action(CancelPosition)
-  public cancelItem({ getState, patchState }: StateContext<PositionStateModel>, { payload }) {
+  public cancelItem(
+    { getState, patchState }: StateContext<PositionStateModel>,
+    { payload },
+  ) {
     console.log('PositionState::CancelPosition', payload);
     const state = getState();
     const idx = state.items[payload].id;
@@ -167,7 +185,10 @@ export class PositionState implements NgxsOnInit {
   }
 
   @Action(UpdatePosition)
-  public updateItem({ getState, patchState }: StateContext<PositionStateModel>, { payload }) {
+  public updateItem(
+    { getState, patchState }: StateContext<PositionStateModel>,
+    { payload },
+  ) {
     // console.log('PositionState::UpdatePosition', payload);
     const { idx, position } = payload;
     const state = getState();
@@ -190,7 +211,10 @@ export class PositionState implements NgxsOnInit {
   }
 
   @Action(SaveAllPositions)
-  public saveAllItems({ getState, patchState }: StateContext<PositionStateModel>) {
+  public saveAllItems({
+    getState,
+    patchState,
+  }: StateContext<PositionStateModel>) {
     console.log('PositionState::SaveAllPositions');
     patchState({ loading: true });
     const state = getState();
@@ -203,7 +227,11 @@ export class PositionState implements NgxsOnInit {
         // для всех не сохраненных
         let filledFields = 0;
         for (const key in item) {
-          if (Object.prototype.hasOwnProperty.call(item, key) && fields.has(key) && !!item[key]) {
+          if (
+            Object.prototype.hasOwnProperty.call(item, key) &&
+            fields.has(key) &&
+            !!item[key]
+          ) {
             filledFields++; // считаем количество заполненных полей
           }
         }

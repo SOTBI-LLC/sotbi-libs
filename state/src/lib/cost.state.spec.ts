@@ -2,7 +2,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store, provideStates } from '@ngxs/store';
-import { CostRealService } from '@services/cost-real.service';
+import { CostRealService } from '@sotbi/data-access';
 import type { CostReal, CostRealFilter, Debtor, Interval } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import {
@@ -36,6 +36,9 @@ describe('CostRealState', () => {
     work_category_id: 789,
     dirty: false,
     rowId: '1',
+    user: null,
+    debtor: null,
+    work_category: null,
   };
 
   const mockDebtor: Debtor = {

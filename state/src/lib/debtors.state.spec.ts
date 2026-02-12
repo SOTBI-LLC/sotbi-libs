@@ -1,8 +1,9 @@
+import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { FormArray, FormControl } from '@angular/forms';
-import { DebtorService } from '@services/debtor.service';
-import { Debtor } from '@sotbi/models';
-import { configureTestBed } from '@test-setup';
+import type { FormArray } from '@angular/forms';
+import { FormControl } from '@angular/forms';
+import { DebtorService } from '@sotbi/data-access';
+import type { Debtor } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import { DebtorsState, UniqueDebtorINNValidator } from './debtors.state';
 
@@ -13,12 +14,18 @@ describe('UniqueDebtorINNValidator', () => {
   beforeEach(async () => {
     const serviceSpy = jasmine.createSpyObj('DebtorService', ['checkInn']);
 
-    await configureTestBed({
-      providers: [{ provide: DebtorService, useValue: serviceSpy }, UniqueDebtorINNValidator],
+    await TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: DebtorService, useValue: serviceSpy },
+        UniqueDebtorINNValidator,
+      ],
     }).compileComponents();
 
     validator = TestBed.inject(UniqueDebtorINNValidator);
-    debtorService = TestBed.inject(DebtorService) as jasmine.SpyObj<DebtorService>;
+    debtorService = TestBed.inject(
+      DebtorService,
+    ) as jasmine.SpyObj<DebtorService>;
   });
 
   it('should be created', () => {
@@ -67,7 +74,9 @@ describe('UniqueDebtorINNValidator', () => {
   it('should handle service errors gracefully', () => {
     const control = new FormControl('1234567890');
     control.markAsDirty();
-    debtorService.checkInn.and.returnValue(throwError(() => new Error('Service error')));
+    debtorService.checkInn.and.returnValue(
+      throwError(() => new Error('Service error')),
+    );
     spyOn(console, 'error');
 
     validator.validate(control).subscribe((result) => {
@@ -122,39 +131,39 @@ describe('DebtorsState Static Methods', () => {
       const result = DebtorsState.debtorConvertFunction(mockDebtor);
 
       expect(result).toBeDefined();
-      expect(result.id).toBe(mockDebtor.id);
-      expect(result.name).toBe(mockDebtor.name);
-      expect(result.full_name).toBe(mockDebtor.full_name);
-      expect(result.inn).toBe(mockDebtor.inn);
-      expect(result.kind).toBe('юр.лицо');
-      expect(result.reportable).toBe('да');
+      expect(result?.id).toBe(mockDebtor.id);
+      expect(result?.name).toBe(mockDebtor.name);
+      expect(result?.full_name).toBe(mockDebtor.full_name);
+      expect(result?.inn).toBe(mockDebtor.inn);
+      expect(result?.kind).toBe('юр.лицо');
+      expect(result?.reportable).toBe('да');
     });
 
     it('should handle physical person type correctly', () => {
       const physicalDebtor = { ...mockDebtor, kind: true };
       const result = DebtorsState.debtorConvertFunction(physicalDebtor);
 
-      expect(result.kind).toBe('физ.лицо');
+      expect(result?.kind).toBe('физ.лицо');
     });
 
     it('should handle non-reportable debtor correctly', () => {
       const nonReportableDebtor = { ...mockDebtor, reportable: false };
       const result = DebtorsState.debtorConvertFunction(nonReportableDebtor);
 
-      expect(result.reportable).toBe('нет');
+      expect(result?.reportable).toBe('нет');
     });
 
     it('should handle null input', () => {
-      const result = DebtorsState.debtorConvertFunction(null);
+      const result = DebtorsState.debtorConvertFunction(undefined);
       expect(result).toBeNull();
     });
 
     it('should handle empty object', () => {
       const result = DebtorsState.debtorConvertFunction({});
       expect(result).toBeDefined();
-      expect(result.category_name).toBe('');
-      expect(result.kind).toBe('юр.лицо');
-      expect(result.reportable).toBe('нет');
+      expect(result?.category_name).toBe('');
+      expect(result?.kind).toBe('юр.лицо');
+      expect(result?.reportable).toBe('нет');
     });
   });
 
@@ -213,7 +222,11 @@ describe('DebtorsState Static Methods', () => {
   describe('prepForSave', () => {
     it('should return changes between old and new debtor', () => {
       const oldDebtor = { ...mockDebtor };
-      const newDebtor = { ...mockDebtor, name: 'Updated Name', inn: '0987654321' };
+      const newDebtor = {
+        ...mockDebtor,
+        name: 'Updated Name',
+        inn: '0987654321',
+      };
 
       const result = DebtorsState.prepForSave(oldDebtor, newDebtor, new Set());
 
@@ -244,14 +257,22 @@ describe('DebtorsState Static Methods', () => {
     });
 
     it('should return null when no changes', () => {
-      const result = DebtorsState.prepForSave(mockDebtor, mockDebtor, new Set());
+      const result = DebtorsState.prepForSave(
+        mockDebtor,
+        mockDebtor,
+        new Set(),
+      );
 
       expect(result).toBeNull();
     });
 
     it('should ignore nullable fields', () => {
       const oldDebtor = { ...mockDebtor };
-      const newDebtor = { ...mockDebtor, name: 'Updated Name', inn: 'different' };
+      const newDebtor = {
+        ...mockDebtor,
+        name: 'Updated Name',
+        inn: 'different',
+      };
       const nullables = new Set(['inn']);
 
       const result = DebtorsState.prepForSave(oldDebtor, newDebtor, nullables);
@@ -350,7 +371,9 @@ describe('DebtorsState Integration', () => {
 
     expect(linksArray.controls.length).toBe(1);
     expect(bankDetailsArray.controls.length).toBe(1);
-    expect(bankDetailsArray.controls[0].get('bank_account').value).toBe('40702810400000000001');
+    expect(bankDetailsArray.controls[0].get('bank_account').value).toBe(
+      '40702810400000000001',
+    );
   });
 
   it('should properly compare debtors for save preparation', () => {
@@ -382,7 +405,11 @@ describe('DebtorsState Integration', () => {
       profit_cat: { id: 2, name: 'High' },
     };
 
-    const changes = DebtorsState.prepForSave(originalDebtor, modifiedDebtor, new Set());
+    const changes = DebtorsState.prepForSave(
+      originalDebtor,
+      modifiedDebtor,
+      new Set(),
+    );
 
     expect(changes).toEqual({
       name: 'Modified Name',

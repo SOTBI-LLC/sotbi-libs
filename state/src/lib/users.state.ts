@@ -1,12 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
 import { extractProperty, notifyError } from '@root/shared/shared-globals';
 import { LoggerService } from '@services/logger.service';
 import { UserPositionService } from '@services/user-position.service';
 import { generateAvatarSvgUrl } from '@shared/avatars';
 import { UserService } from '@sotbi/data-access';
-import {
+import type {
   HeadDepartment,
   HeadDepartmentChef,
   Staff,
@@ -14,10 +15,10 @@ import {
   UserPosition,
   UserShort,
 } from '@sotbi/models';
-import { clone } from 'ramda';
-import { Observable, of, throwError } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
-import { itemMapPair, Pair } from './simple-edit.state.model';
+import type { itemMapPair, Pair } from './simple-edit.state.model';
 import { EditStaff } from './staffs.actions';
 import {
   AddDirtyItem,
@@ -36,7 +37,7 @@ import {
 } from './users.actions';
 
 export class UsersStateModel {
-  public loading: boolean = false;
+  public loading = false;
   public items: User[] = [];
   public selected: User | null = null;
   public shortItems: UserShort[] = [];
@@ -153,12 +154,18 @@ export class UsersState {
   }
 
   // Validation helpers
-  private isValidPositionIndex(positions: UserPosition[], index: number): boolean {
+  private isValidPositionIndex(
+    positions: UserPosition[],
+    index: number,
+  ): boolean {
     return index >= 0 && index < positions.length && positions[index] != null;
   }
 
   @Action(FillUsersShort)
-  public fillUsersShort({ getState, patchState }: StateContext<UsersStateModel>) {
+  public fillUsersShort({
+    getState,
+    patchState,
+  }: StateContext<UsersStateModel>) {
     const state = getState();
     // this.log.debug('UsersState::FillUsersShort →', state.avatars);
 
@@ -176,7 +183,9 @@ export class UsersState {
           patchState({ shortItems, avatars });
         }),
         finalize(() => patchState({ loading: false })),
-        catchError((err) => this.handleLoadingError(patchState, 'FILL_USERS_SHORT_FAILED', err)),
+        catchError((err) =>
+          this.handleLoadingError(patchState, 'FILL_USERS_SHORT_FAILED', err),
+        ),
       );
     }
 
@@ -184,7 +193,10 @@ export class UsersState {
   }
 
   @Action(FilterUsers)
-  public filterItems({ patchState }: StateContext<UsersStateModel>, { payload }: FilterUsers) {
+  public filterItems(
+    { patchState }: StateContext<UsersStateModel>,
+    { payload }: FilterUsers,
+  ) {
     // this.log.debug('UsersState::FilterUsers →', payload);
     if (payload.size > 0) {
       patchState({ toFilter: payload });
@@ -207,7 +219,9 @@ export class UsersState {
           patchState({ items });
         }),
         finalize(() => patchState({ loading: false })),
-        catchError((err) => this.handleLoadingError(patchState, 'FETCH_USERS_FAILED', err)),
+        catchError((err) =>
+          this.handleLoadingError(patchState, 'FETCH_USERS_FAILED', err),
+        ),
       );
     } else {
       patchState({ loading: false }); // ✅ Reset loading when no fetch needed
@@ -216,7 +230,10 @@ export class UsersState {
   }
 
   @Action(GetUser, { cancelUncompleted: true })
-  public getItem({ getState, patchState }: StateContext<UsersStateModel>, { payload }: GetUser) {
+  public getItem(
+    { getState, patchState }: StateContext<UsersStateModel>,
+    { payload }: GetUser,
+  ) {
     // this.log.debug(`UsersState::GetUser →`, payload);
     patchState({ loading: true });
 
@@ -235,7 +252,10 @@ export class UsersState {
       if (selected) {
         return patchState({ selected, loading: false });
       } else {
-        this.log.warn('User not found in state, fetching from server', payload.id);
+        this.log.warn(
+          'User not found in state, fetching from server',
+          payload.id,
+        );
         // Fall through to API call
       }
     }
@@ -246,12 +266,17 @@ export class UsersState {
         patchState({ selected: item });
       }),
       finalize(() => patchState({ loading: false })),
-      catchError((err) => this.handleLoadingError(patchState, 'GET_USER_FAILED', err)),
+      catchError((err) =>
+        this.handleLoadingError(patchState, 'GET_USER_FAILED', err),
+      ),
     );
   }
 
   @Action(AddUser)
-  public addItem({ getState, setState }: StateContext<UsersStateModel>, { payload }: AddUser) {
+  public addItem(
+    { getState, setState }: StateContext<UsersStateModel>,
+    { payload }: AddUser,
+  ) {
     return this.userSrv.create(payload).pipe(
       tap((result: User) => {
         this.ensureAvatar(result); // ✅ Ensure avatar is set
@@ -285,21 +310,29 @@ export class UsersState {
     // ✅ Create immutable copy instead of mutating
     const selected = {
       ...state.selected,
-      users_positions: [...(state.selected?.users_positions || []), payload as UserPosition],
+      users_positions: [
+        ...(state.selected?.users_positions || []),
+        payload as UserPosition,
+      ],
     };
 
     return patchState({ selected });
   }
 
   @Action(ClearDirtyPositions)
-  public clearDirtyPositions({ getState, patchState }: StateContext<UsersStateModel>) {
+  public clearDirtyPositions({
+    getState,
+    patchState,
+  }: StateContext<UsersStateModel>) {
     const state = getState();
 
     // ✅ Create immutable copy
     const selected = {
       ...state.selected,
       users_positions:
-        state.selected?.users_positions?.filter((item: UserPosition) => item.id) || [],
+        state.selected?.users_positions?.filter(
+          (item: UserPosition) => item.id,
+        ) || [],
     };
 
     this.log.debug('ClearDirtyPositions: updated selected user', selected); // ✅ Use proper logging
@@ -363,11 +396,19 @@ export class UsersState {
             this.ensureAvatar(selected); // ✅ Ensure avatar
 
             const state = getState();
-            const items = [...state.items.map((el) => (el.id === selected.id ? selected : el))];
+            const items = [
+              ...state.items.map((el) =>
+                el.id === selected.id ? selected : el,
+              ),
+            ];
             const shortItems = [
               ...state.shortItems.map((el) =>
                 el.id === selected.id
-                  ? { id: selected.id, user: selected.user, avatar: selected.avatar }
+                  ? {
+                      id: selected.id,
+                      user: selected.user,
+                      avatar: selected.avatar,
+                    }
                   : el,
               ),
             ];
@@ -382,10 +423,14 @@ export class UsersState {
               loading: false,
             });
           }),
-          catchError((err) => this.handleLoadingError(patchState, 'EDIT_USER_FAILED', err)),
+          catchError((err) =>
+            this.handleLoadingError(patchState, 'EDIT_USER_FAILED', err),
+          ),
         );
       }),
-      catchError((err) => this.handleLoadingError(patchState, 'EDIT_USER_FAILED', err)),
+      catchError((err) =>
+        this.handleLoadingError(patchState, 'EDIT_USER_FAILED', err),
+      ),
     );
   }
 
@@ -454,12 +499,16 @@ export class UsersState {
         patchState({ headDepartment: headDepartmentValue });
       }),
       finalize(() => patchState({ loading: false })),
-      catchError((err) => this.handleLoadingError(patchState, 'GET_USER_FAILED', err)),
+      catchError((err) =>
+        this.handleLoadingError(patchState, 'GET_USER_FAILED', err),
+      ),
     );
   }
 
   @Action(ResetUserHeadDepartment)
-  public resetUserHeadDepartment({ patchState }: StateContext<UsersStateModel>) {
+  public resetUserHeadDepartment({
+    patchState,
+  }: StateContext<UsersStateModel>) {
     patchState({ headDepartment: null });
   }
 }

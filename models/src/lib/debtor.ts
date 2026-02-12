@@ -11,7 +11,7 @@ import type { SimpleEdit2Model, SimpleEditModel } from './simple-edit';
 import type { ClrSelectedState } from './staff';
 
 export interface Debtor {
-  id?: number;
+  id: number;
   name: string; // Должник (наименование)
   full_name: string;
   inn: string;
@@ -23,7 +23,7 @@ export interface Debtor {
   arbitration?: Arbitration;
   arbitration_id: string;
   case_no: string;
-  decision_date: Date;
+  decision_date?: Date;
   initiation_date?: Date;
   procedure_date?: Date;
   bankruptcy_manager_id: number;
@@ -32,7 +32,7 @@ export interface Debtor {
   contacts?: string;
   bank_details?: BankDetail[];
   project_id: number;
-  project: Project;
+  project?: Project;
   project_name?: string;
   stage_id?: number; // Стадия
   stage?: SimpleEditModel;
@@ -42,7 +42,7 @@ export interface Debtor {
   category?: SimpleEdit2Model;
   procedure_id?: number;
   procedure?: SimpleEdit2Model;
-  links: Link[]; // Таблица ссылок: Тип | Значение
+  links?: Link[]; // Таблица ссылок: Тип | Значение
   registry?: number; //          Общий РТК (все очереди)
   deposit?: number; //           Общая сумма сопровождаемых требований
   not_deposit?: number; //       Сумма сопровождаемых требований, обеспеченных залогом
@@ -56,7 +56,7 @@ export interface Debtor {
   expenses?: SimpleEdit2Model[]; //  Статьи расходов
   income_date?: Date; //    Плановая дата получения прибыли
   comments?: string; //     Комментарий к финансовому плану
-  profit_cat: SimpleEditModel; // Категория прибыльности
+  profit_cat?: SimpleEditModel; // Категория прибыльности
   profit_cat_id?: number;
   created_at?: Date; // Дата добавления должника в базу
   action_plans?: ActionPlan[]; // Планируемые процедуры

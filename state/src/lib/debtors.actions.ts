@@ -1,4 +1,4 @@
-import { Debtor, InsurancePolicy } from '@sotbi/models';
+import type { Debtor, InsurancePolicy } from '@sotbi/models';
 
 export class FetchDebtors {
   public static readonly type = '[DEBTORS] Fetch items';

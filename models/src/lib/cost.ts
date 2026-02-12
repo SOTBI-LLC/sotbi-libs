@@ -47,16 +47,16 @@ export interface ResultUserCost {
 export interface CostReal {
   id: number;
   date: Date;
-  user_id: number;
-  user?: User;
+  user_id: number | null;
+  user: User | null;
   debtor_id: number;
-  debtor?: Debtor;
+  debtor: Debtor | null;
   minutes_costs: number;
-  description: string;
+  description: string | null;
   work_category_id: number;
-  work_category?: WorkCategory;
+  work_category: WorkCategory | null;
   dirty: boolean;
-  rowId?: string;
+  rowId: string | null;
 }
 
 export interface CostRealAnalyticsMonth extends CostReal {
@@ -76,22 +76,21 @@ export interface CostRealAnalyticsMonth extends CostReal {
   total_percent: number;
 }
 
-export interface CostMonitoring
-  extends Omit<
-    CostRealAnalyticsMonth,
-    | 'id'
-    | 'date'
-    | 'debtor_id'
-    | 'description'
-    | 'work_category_id'
-    | 'project_id'
-    | 'project_name'
-    | 'rpg_id'
-    | 'rpg'
-    | 'debtor_name'
-    | 'total_seconds'
-    | 'total_percent'
-  > {
+export interface CostMonitoring extends Omit<
+  CostRealAnalyticsMonth,
+  | 'id'
+  | 'date'
+  | 'debtor_id'
+  | 'description'
+  | 'work_category_id'
+  | 'project_id'
+  | 'project_name'
+  | 'rpg_id'
+  | 'rpg'
+  | 'debtor_name'
+  | 'total_seconds'
+  | 'total_percent'
+> {
   tasks_count: number;
   minutes_costs: number;
   minutes_costs_min: number;
@@ -107,7 +106,7 @@ export interface ResponseCostMonitoring {
 }
 
 export class CostRealFilter {
-  public period?: Interval;
+  public period: Interval = { start: new Date(), end: new Date() };
   public users: Uint16Array | number[] = [];
   public debtors: Uint32Array | number[] = [];
   public units: Uint16Array | number[] = [];

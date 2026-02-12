@@ -16,7 +16,7 @@ export class EmptyCostsReal {
 
 export class AddCostReal {
   public static readonly type = '[COSTREAL] Add item';
-  constructor(public payload: { idx: number; cost: Partial<CostReal> }) {}
+  constructor(public payload: { idx: number; cost: CostReal }) {}
 }
 
 export class AddEmptyCostsReal {
@@ -53,7 +53,7 @@ export class CancelAllCostReal {
 
 export class EditCostReal {
   public static readonly type = '[COSTREAL] Edit item';
-  constructor(public payload: { idx: number; cost: Partial<CostReal> }) {}
+  constructor(public payload: { idx: number; cost: CostReal }) {}
 }
 
 export class DeleteCostReal {

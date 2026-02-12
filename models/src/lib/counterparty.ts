@@ -10,7 +10,7 @@ export interface Counterparty {
   kpp: string;
   ogrn: string;
   address: string;
-  post_address?: string;
+  post_address: string | null;
   contacts: string;
   email: string;
   links: CounterpartyLink[] | null;

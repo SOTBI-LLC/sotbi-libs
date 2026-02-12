@@ -3,6 +3,7 @@ import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { CalendarService } from '@sotbi/data-access';
 import type { Calendar } from '@sotbi/models';
+import { deepFlatten } from '@sotbi/utils';
 import { isSameDay } from 'date-fns';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
@@ -12,11 +13,6 @@ import {
   RefreshPeriod,
   TogglePeriod,
 } from './calendar.actions';
-
-const deepFlatten = <T>(arr: (T | T[])[]): T[] =>
-  ([] as T[]).concat(
-    ...arr.map((v) => (Array.isArray(v) ? deepFlatten(v) : v)),
-  );
 
 export class SelectedCalendar {
   public selected: Calendar | null = null;

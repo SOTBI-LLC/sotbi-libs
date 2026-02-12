@@ -4,7 +4,6 @@ import { Action, Selector, State } from '@ngxs/store';
 import { BidStateService } from '@sotbi/data-access';
 import type { BidState } from '@sotbi/models';
 import { canSave, isAllSaved } from '@sotbi/utils';
-import { clone } from 'ramda';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
@@ -114,7 +113,7 @@ export class BidStateState implements NgxsOnInit {
           (items) => {
             setState({
               ...state,
-              allItems: clone(items),
+              allItems: structuredClone(items),
               selected: null,
               mapItems: new Map(
                 items.map((i): [number, string] => [i.id, i.name ?? '']),

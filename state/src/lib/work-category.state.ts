@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
 import { WorkCategoryService } from '@services/work-category.service';
 import { canSave, isAllSaved } from '@shared/shared-globals';
-import { WorkCategory } from '@sotbi/models';
-import { clone } from 'ramda';
+import type { WorkCategory } from '@sotbi/models';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
@@ -45,7 +45,7 @@ export interface WorkCategoryStateModel {
 export class WorkCategoryState {
   private readonly itemsService = inject(WorkCategoryService);
 
-  private limit: number = -1;
+  private limit = -1;
   private readonly rowData: WorkCategory = {
     id: 0,
     name: null,
@@ -155,10 +155,15 @@ export class WorkCategoryState {
   }
 
   @Action(AddEmptyWorkCategory)
-  public addEmptyItem({ getState, patchState }: StateContext<WorkCategoryStateModel>) {
+  public addEmptyItem({
+    getState,
+    patchState,
+  }: StateContext<WorkCategoryStateModel>) {
     // console.log('WorkCategoryState::AddEmptyWorkCategory');
     const state = getState();
-    return patchState({ items: [...state.items, Object.assign({}, this.rowData)] });
+    return patchState({
+      items: [...state.items, Object.assign({}, this.rowData)],
+    });
   }
 
   @Action(EditWorkCategory)
@@ -225,7 +230,10 @@ export class WorkCategoryState {
   }
 
   @Action(SaveAllWorkCategory)
-  public saveAllItems({ getState, patchState }: StateContext<WorkCategoryStateModel>) {
+  public saveAllItems({
+    getState,
+    patchState,
+  }: StateContext<WorkCategoryStateModel>) {
     // console.log('WorkCategoryState::SaveAllWorkCategory');
     patchState({ loading: true });
     const items: WorkCategory[] = getState().items;

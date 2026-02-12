@@ -1,11 +1,16 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
+import type { NgxsOnInit, StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
 import { forMap } from '@root/shared/rx-filtres';
 import { ProjectService } from '@services/project.service';
-import { Project } from '@sotbi/models';
-import { clone } from 'ramda';
+import type { Project } from '@sotbi/models';
 import { throwError } from 'rxjs';
-import { catchError, distinctUntilChanged, finalize, tap } from 'rxjs/operators';
+import {
+  catchError,
+  distinctUntilChanged,
+  finalize,
+  tap,
+} from 'rxjs/operators';
 import {
   AddItem,
   DeleteItem,
@@ -14,10 +19,10 @@ import {
   FetchProjects,
   GetItem,
 } from './projects.actions';
-import { itemMap } from './simple-edit.state.model';
+import type { itemMap } from './simple-edit.state.model';
 
 export class ProjectStateModel {
-  public loading: boolean = false;
+  public loading = false;
   public items: Project[] = [];
   public shortItems: Partial<Project>[] = [];
   public selected: Project = { id: 0, name: '' };
@@ -69,7 +74,11 @@ export class ProjectsState implements NgxsOnInit {
   }
 
   @Action(FetchProjects, { cancelUncompleted: true })
-  public fetchItems({ getState, setState, patchState }: StateContext<ProjectStateModel>) {
+  public fetchItems({
+    getState,
+    setState,
+    patchState,
+  }: StateContext<ProjectStateModel>) {
     const state = getState();
     if (!state.items.length) {
       return this.prjSrv.getAll$().pipe(
@@ -95,7 +104,10 @@ export class ProjectsState implements NgxsOnInit {
   }
 
   @Action(FetchAllProjects, { cancelUncompleted: true })
-  public fetchAllItems({ getState, setState }: StateContext<ProjectStateModel>) {
+  public fetchAllItems({
+    getState,
+    setState,
+  }: StateContext<ProjectStateModel>) {
     const state = getState();
     if (!state.shortItems.length) {
       return this.prjSrv.getAll$({ short: true }).pipe(
@@ -126,7 +138,10 @@ export class ProjectsState implements NgxsOnInit {
     patchState({ loading: true });
     const state = getState();
     if (payload === 0) {
-      return patchState({ loading: false, selected: Object.assign({}, this.rowData) });
+      return patchState({
+        loading: false,
+        selected: Object.assign({}, this.rowData),
+      });
     }
     if (state.items.length > 0) {
       const selected = state.items.find(({ id }) => id === payload);
@@ -143,13 +158,19 @@ export class ProjectsState implements NgxsOnInit {
   }
 
   @Action(AddItem)
-  public addItem({ getState, setState }: StateContext<ProjectStateModel>, { payload }: AddItem) {
+  public addItem(
+    { getState, setState }: StateContext<ProjectStateModel>,
+    { payload }: AddItem,
+  ) {
     return this.prjSrv.create(payload).pipe(
       tap((result) => {
         const state = getState();
         const maps = clone(state.maps);
         maps.set(result.id, result.name);
-        const shortItem: Partial<Project> = { id: result.id, name: result.name };
+        const shortItem: Partial<Project> = {
+          id: result.id,
+          name: result.name,
+        };
         setState({
           ...state,
           items: [result, ...state.items],
@@ -166,16 +187,24 @@ export class ProjectsState implements NgxsOnInit {
   }
 
   @Action(EditItem)
-  public editItem({ getState, setState }: StateContext<ProjectStateModel>, { payload }: EditItem) {
+  public editItem(
+    { getState, setState }: StateContext<ProjectStateModel>,
+    { payload }: EditItem,
+  ) {
     const { id } = payload;
     delete payload.id;
     const state = getState();
     return this.prjSrv.save(id, payload).pipe(
       tap((selected: Project) => {
-        const items = [...state.items.map((el) => (el.id === selected.id ? selected : el))];
+        const items = [
+          ...state.items.map((el) => (el.id === selected.id ? selected : el)),
+        ];
         const maps = clone(state.maps);
         maps.set(selected.id, selected.name);
-        const shortItem: Partial<Project> = { id: selected.id, name: selected.name };
+        const shortItem: Partial<Project> = {
+          id: selected.id,
+          name: selected.name,
+        };
         setState({
           ...state,
           items,

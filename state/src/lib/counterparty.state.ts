@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { CounterpartyService } from '@root/service/counterparty.service';
-import { LoggerService } from '@root/service/logger.service';
-import { fromBase62, notifyError, removeID } from '@root/shared/shared-globals';
-import { Counterparty } from '@sotbi/models';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { CounterpartyService } from '@sotbi/data-access';
+import type { Counterparty } from '@sotbi/models';
+import { fromBase62, notifyError, removeID } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
@@ -17,9 +17,9 @@ import {
 
 export class CounterpartyStateModel {
   public items: Counterparty[] = [];
-  public selected: Partial<Counterparty> | null;
-  public loading: boolean;
-  public count: number;
+  public selected: Counterparty | null = null;
+  public loading = false;
+  public count = 0;
 }
 
 @State<CounterpartyStateModel>({
@@ -34,7 +34,6 @@ export class CounterpartyStateModel {
 @Injectable()
 export class CounterpartyState {
   private readonly itemsSvc = inject(CounterpartyService);
-  private readonly log = inject(LoggerService);
   private readonly snackBar = inject(MatSnackBar);
 
   @Selector()
@@ -43,7 +42,9 @@ export class CounterpartyState {
   }
 
   @Selector()
-  public static getItem(state: CounterpartyStateModel): Partial<Counterparty> {
+  public static getItem(
+    state: CounterpartyStateModel,
+  ): Partial<Counterparty> | null {
     return state.selected;
   }
 
@@ -71,7 +72,10 @@ export class CounterpartyState {
           });
         }),
         catchError((err) => {
-          console.error('CounterpartyState::GetCounterparties() -> Error:', err);
+          console.error(
+            'CounterpartyState::GetCounterparties() -> Error:',
+            err,
+          );
           return throwError(() => err);
         }),
         finalize(() => {
@@ -79,6 +83,7 @@ export class CounterpartyState {
         }),
       );
     }
+    return;
   }
 
   @Action(GetCounterparty)
@@ -88,17 +93,29 @@ export class CounterpartyState {
   ) {
     const state = getState();
     if (!payload) {
-      const selected: Partial<Counterparty> = {
+      const selected: Counterparty = {
         id: 0,
         name: '',
         kind: true,
         links: null,
         created_at: new Date(),
+        full_name: '',
+        alias: '',
+        inn: '',
+        kpp: '',
+        ogrn: '',
+        address: '',
+        contacts: '',
+        email: '',
+        ceo: '',
+        chief_accountant: '',
+        access: [],
+        post_address: null,
       };
       return patchState({ selected, loading: false });
     }
     const id = fromBase62(payload);
-    if (id !== +state.selected?.id) {
+    if (id !== +(state.selected?.id ?? 0)) {
       patchState({ loading: true });
       return this.itemsSvc.get(id).pipe(
         tap((selected) => {

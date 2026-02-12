@@ -3,11 +3,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import type { EventInput, EventSourceInput } from '@fullcalendar/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
-import { formatEventDuraton } from '@root/shared/date-func';
-import { CostRealService } from '@services/cost-real.service';
+import { CostRealService } from '@sotbi/data-access';
 import type { CostReal, CostRealFilter, Interval } from '@sotbi/models';
 import { calcSumHours } from '@sotbi/models';
-import { canSave, isAllSaved } from '@sotbi/utils';
+import { canSave, formatEventDuraton, isAllSaved } from '@sotbi/utils';
 import { isAfter, isBefore, isSameDay } from 'date-fns';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
@@ -45,15 +44,18 @@ const makeEvent = (cost: CostReal): EventInput => {
       duration: cost.minutes_costs,
     },
   } as EventInput;
-  if (cost.debtor.name.includes('Отпуск')) {
+  if (cost.debtor?.name.includes('Отпуск')) {
     res.title = 'Отпуск';
-    res.extendedProps.duration = 0;
-    // res.rendering = 'background';
-    res.eventColor = '#a6adb4';
-  } else if (cost.debtor.name.includes('Больничный')) {
+    if (res.extendedProps) {
+      res.extendedProps['duration'] = 0;
+    }
+    res['eventColor'] = '#a6adb4';
+  } else if (cost.debtor?.name.includes('Больничный')) {
     res.title = 'Больничный';
-    res.extendedProps.duration = 0;
-    res.eventColor = '#a6adb4';
+    if (res.extendedProps) {
+      res.extendedProps['duration'] = 0;
+    }
+    res['eventColor'] = '#a6adb4';
   } else {
     res.title = formatEventDuraton(cost.minutes_costs);
   }
@@ -61,7 +63,8 @@ const makeEvent = (cost: CostReal): EventInput => {
 };
 
 const mergeEvent = (old: EventInput, cost: CostReal): EventInput => {
-  const newDuration = +old.extendedProps.duration + cost.minutes_costs;
+  const newDuration =
+    +(old.extendedProps?.['duration'] ?? 0) + cost.minutes_costs;
   const res = {
     id: old.id,
     start: old.start,
@@ -72,7 +75,9 @@ const mergeEvent = (old: EventInput, cost: CostReal): EventInput => {
     },
   } as EventInput;
   if (old.title === 'Отпуск' || old.title === 'Больничный') {
-    res.extendedProps.duration = 0;
+    if (res.extendedProps) {
+      res.extendedProps['duration'] = 0;
+    }
     res.title = old.title;
     // res.rendering = 'background';
     res.backgroundColor = '#a6adb4';
@@ -90,16 +95,17 @@ const compareCost = (a: CostReal, b: CostReal): number => {
     return -1;
   }
   if (isSameDay(aDate, bDate)) {
-    if (a.debtor.name < b.debtor.name) {
+    if ((a.debtor?.name ?? '') < (b.debtor?.name ?? '')) {
       return -1;
     }
-    if (a.debtor.name > b.debtor.name) {
+    if ((a.debtor?.name ?? '') > (b.debtor?.name ?? '')) {
       return 1;
     }
-    if (a.debtor.name === b.debtor.name) {
+    if ((a.debtor?.name ?? '') === (b.debtor?.name ?? '')) {
       return 0;
     }
   }
+  return 0;
 };
 
 const makeEvents = (inCosts: CostReal[]): EventSourceInput => {
@@ -160,13 +166,17 @@ export class CostRealState {
 
   private readonly rowData: CostReal = {
     id: 0,
-    date: null,
-    debtor_id: null,
+    date: new Date(),
+    debtor_id: 0,
     user_id: null,
-    work_category_id: null,
+    work_category_id: 0,
     description: null,
     minutes_costs: 0,
     dirty: true,
+    user: null,
+    debtor: null,
+    work_category: null,
+    rowId: null,
   };
 
   @Selector()
@@ -256,7 +266,7 @@ export class CostRealState {
   @Action(FilterCostsReal, { cancelUncompleted: false })
   public filterItems(
     { getState, patchState, setState }: StateContext<CostRealStateModel>,
-    { payload },
+    { payload }: FilterCostsReal,
   ) {
     // console.log('CostRealState::FilterCostsReal', payload);
     patchState({ loading: true });
@@ -288,7 +298,7 @@ export class CostRealState {
   @Action(AddCostReal)
   public addItem(
     { getState, setState }: StateContext<CostRealStateModel>,
-    { payload },
+    { payload }: AddCostReal,
   ) {
     const { cost } = payload;
     return this.service.createCostReal(cost).pipe(
@@ -298,7 +308,7 @@ export class CostRealState {
           ...result,
           dirty: false,
           date: new Date(result.date),
-          description: result.description ?? ' ',
+          description: result.description,
           rowId: cost.rowId,
         };
         const items = state.items.map((item) => {
@@ -322,7 +332,7 @@ export class CostRealState {
   @Action(AddAbsenceCostsReal)
   public addAbsenceItem(
     { getState, setState, dispatch }: StateContext<CostRealStateModel>,
-    { payload },
+    { payload }: AddAbsenceCostsReal,
   ) {
     const { days, debtor, interval } = payload;
     const state = getState();
@@ -333,7 +343,7 @@ export class CostRealState {
       const hasAbsence = state.allItems.findIndex(
         ({ date, debtor: dbt }) =>
           new Date(date)?.getDate() === day &&
-          (debtor.id === dbt.id || debtor.category_id === dbt.category_id),
+          (debtor.id === dbt?.id || debtor.category_id === dbt?.category_id),
       );
       if (hasAbsence > -1) {
         const rowData = state.allItems[hasAbsence];
@@ -341,8 +351,8 @@ export class CostRealState {
         costs.push({
           ...rowData,
           minutes_costs: 8 * 60,
-          work_category_id: null,
-          debtor_id: debtor.id,
+          work_category_id: 0,
+          debtor_id: debtor.id ?? 0,
         });
       } else {
         const rowData: CostReal = {
@@ -355,12 +365,16 @@ export class CostRealState {
             0,
             0,
           ),
-          debtor_id: debtor.id,
+          debtor_id: debtor.id ?? 0,
           user_id: null,
-          work_category_id: null,
+          work_category_id: 0,
           minutes_costs: 8 * 60,
           description: null,
-          dirty: false,
+          dirty: true,
+          user: null,
+          debtor: null,
+          work_category: null,
+          rowId: null,
         };
         costs.push(rowData);
       }
@@ -371,7 +385,7 @@ export class CostRealState {
       tap((items: CostReal[]) => {
         for (const item of items) {
           if (idxs.has(item.id)) {
-            allItems[idxs.get(item.id)] = item; // если ранее был сохранен, то обновляем
+            allItems[idxs.get(item.id) ?? 0] = item; // если ранее был сохранен, то обновляем
           } else {
             allItems.push(item); // иначе добавляем
           }
@@ -393,7 +407,7 @@ export class CostRealState {
   @Action(AddEmptyCostsReal)
   public addEmptyItems(
     { getState, setState }: StateContext<CostRealStateModel>,
-    { payload },
+    { payload }: AddEmptyCostsReal,
   ) {
     const empty = [];
     const state = getState();
@@ -423,7 +437,7 @@ export class CostRealState {
   @Action(EditCostReal)
   public editItem(
     { getState, setState }: StateContext<CostRealStateModel>,
-    { payload },
+    { payload }: EditCostReal,
   ) {
     console.log('CostRealState::EditCostReal', payload);
     const { cost, idx } = payload;
@@ -441,7 +455,7 @@ export class CostRealState {
   @Action(CancelCostReal)
   public cancelItem(
     { getState, setState, dispatch }: StateContext<CostRealStateModel>,
-    { payload },
+    { payload }: CancelCostReal,
   ) {
     // console.log('CostRealState::CancelCostReal', payload);
     const state = getState();
@@ -464,7 +478,7 @@ export class CostRealState {
   @Action(UpdateCostReal, { cancelUncompleted: true })
   public updateItem(
     { getState, setState }: StateContext<CostRealStateModel>,
-    { payload },
+    { payload }: UpdateCostReal,
   ) {
     // console.log('CostRealState::UpdateCostReal', payload);
     const { cost, idx } = payload;
@@ -509,7 +523,7 @@ export class CostRealState {
         let filledFields = 0;
         for (const key of fields) {
           if (Object.prototype.hasOwnProperty.call(item, key)) {
-            const v = (item as CostReal)[key];
+            const v = item[key as keyof CostReal];
             if (v !== null && v !== undefined && v !== '' && v !== 0) {
               filledFields++; // считаем количество заполненных полей
             }
@@ -518,7 +532,7 @@ export class CostRealState {
         // если все обязательные поля заполнены
         if (filledFields >= fields.size) {
           costs.push(item); // заполняем массив для отправки на сервре для сохранения
-          idxs.set(+item.rowId, item.id); // запоминаем какому индексу в ag-grid соответствует id в таблице
+          idxs.set(+(item.rowId ?? 0), item.id); // запоминаем какому индексу в ag-grid соответствует id в таблице
         }
       }
     }
@@ -641,7 +655,7 @@ export class CostRealState {
   @Action(EmptyCostReal)
   public emptyItem(
     { getState, setState }: StateContext<CostRealStateModel>,
-    { payload },
+    { payload }: EmptyCostReal,
   ) {
     // console.log('CostRealState::EmptyCostReal', payload);
     const state = getState();

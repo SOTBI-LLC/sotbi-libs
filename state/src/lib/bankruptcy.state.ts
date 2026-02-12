@@ -2,9 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { BankruptcyService } from '@sotbi/data-access';
-import type { Bankruptcy, PostAddress } from '@sotbi/models';
+import type { Bankruptcy, InsurancePolicy, PostAddress } from '@sotbi/models';
 import { bankruptcyManagerFormatter, getDiff } from '@sotbi/utils';
-import { clone } from 'ramda';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
@@ -249,10 +248,10 @@ export class BankruptcyState implements NgxsOnInit {
       patchState({ loading: false });
       return;
     }
-    const selected = clone(state.selected);
+    const selected = structuredClone(state.selected);
     if (state.selected.insurance_policies.length > 0) {
       const idx = selected.insurance_policies.findIndex(
-        ({ id }: Bankruptcy) => id === payload.id,
+        ({ id }: InsurancePolicy) => id === payload.id,
       );
       selected.insurance_policies[idx] = payload;
     } else {
@@ -268,7 +267,11 @@ export class BankruptcyState implements NgxsOnInit {
   ) {
     patchState({ loading: true });
     const state = getState();
-    const selected = clone(state.selected);
+    if (!state.selected) {
+      patchState({ loading: false });
+      return;
+    }
+    const selected = structuredClone(state.selected);
     selected.insurance_policies.push(payload);
     patchState({ selected, loading: false });
   }
@@ -280,9 +283,13 @@ export class BankruptcyState implements NgxsOnInit {
   ) {
     patchState({ loading: true });
     const state = getState();
-    const selected = clone(state.selected);
+    if (!state.selected) {
+      patchState({ loading: false });
+      return;
+    }
+    const selected = structuredClone(state.selected);
     const idx = selected.insurance_policies.findIndex(
-      ({ id }: Bankruptcy) => id === payload,
+      ({ id }: InsurancePolicy) => id === payload,
     );
     selected.insurance_policies.splice(idx, 1);
     patchState({ selected, loading: false });

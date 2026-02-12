@@ -5,7 +5,13 @@ export { BankDetailService } from './lib/bankdetail.service';
 export { BankruptcyService } from './lib/bankruptcy.service';
 export { BidStateService } from './lib/bidstate.service';
 export { CalendarService } from './lib/calendar.service';
-export { CounterpartyBankDetailService } from './lib/counterparty.service';
+export { CostRealService } from './lib/cost-real.service';
+export {
+  CounterpartyBankDetailService,
+  CounterpartyService,
+} from './lib/counterparty.service';
+export { DadataService } from './lib/dadata.service';
+export { DebtorService } from './lib/debtor.service';
 export {
   SimpleEditService,
   SimpleEditServiceNames,
