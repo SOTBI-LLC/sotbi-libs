@@ -1,7 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
-import { StatusEnum } from '@sotbi/models';
+import { PaymentRequestService } from '@sotbi/data-access';
+import {
+  PaymentAttachmentType,
+  PaymentRequest,
+  StatusEnum,
+} from '@sotbi/models';
 import { removeID } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
@@ -16,7 +21,7 @@ import {
 
 export class PaymentRequestStateModel {
   public items: PaymentRequest[] = [];
-  public selected: PaymentRequest | null = null;
+  public selected: PaymentRequest | null | undefined = null;
   public loading = false;
   public count = 0;
 }
@@ -58,7 +63,7 @@ export class PaymentRequestState {
     const state = getState();
     if (!state.items.length) {
       patchState({ loading: true });
-      return this.itemsService.getAllWithParams().pipe(
+      this.itemsService.getAllWithParams().pipe(
         tap(({ requests, count }) => {
           setState({
             ...state,
@@ -80,17 +85,7 @@ export class PaymentRequestState {
   ) {
     patchState({ loading: true });
     if (!payload) {
-      const selected: PaymentRequest = {
-        id: 0,
-        status: StatusEnum.DRAFT,
-        debtor_id: null,
-        bank_detail_id: null,
-        target: null,
-        request_type: null,
-        defrayments: [],
-        payment_attachments: [],
-        worked_by_id: null,
-      };
+      const selected = new PaymentRequest();
       return patchState({ selected, loading: false });
     } else {
       const state = getState();
@@ -184,10 +179,10 @@ export class PaymentRequestState {
     patchState({ loading: true });
     return this.itemsService.get(payload).pipe(
       tap((item: PaymentRequest) => {
-        delete item.status;
-        delete item.doer_comment;
-        delete item.id;
-        delete item.histories;
+        item.status = StatusEnum.DRAFT;
+        item.doer_comment = '';
+        item.id = 0;
+        item.histories = [];
         item.payment_attachments =
           item.payment_attachments?.filter(
             (elem) =>
@@ -200,12 +195,12 @@ export class PaymentRequestState {
           ) || [];
         if (item.payment_attachments) {
           for (const paymentAttachment of item.payment_attachments) {
-            delete paymentAttachment.id;
+            paymentAttachment.id = 0;
           }
         }
         if (item.defrayments) {
           for (const defrayment of item.defrayments) {
-            delete defrayment.id;
+            defrayment.id = 0;
           }
         }
         patchState({ selected: item, loading: false });

@@ -23,7 +23,14 @@ export { InitiatorService } from './lib/initiator.service';
 export { InsuranceCompanyService } from './lib/insurance-company.service';
 export { InsurancePolicyService } from './lib/insurance-policy.service';
 export { LabelService } from './lib/label.service';
+export { MessageTypeService } from './lib/message-type.service';
+export { PaymentAttachmentService } from './lib/payment-attachment.service';
+export { PaymentRequestService } from './lib/payment-request.service';
+export { PaymentService } from './lib/payment.service';
+export { PositionService } from './lib/position.service';
+export { ProjectService } from './lib/project.service';
 export { RealEstateService } from './lib/real-estate.service';
+export { RequestTypeService } from './lib/request-type.service';
 export {
   SimpleEditService,
   SimpleEditServiceNames,
@@ -32,4 +39,12 @@ export {
   SimpleEdit2Service,
   SimpleEdit2ServiceNames,
 } from './lib/simple-edit2.service';
+export { SroService } from './lib/sro.service';
+export { StaffTypeService } from './lib/staff-type.service';
+export { StaffService } from './lib/staff.service';
+export { SubMessageTypeService } from './lib/sub-message-type.service';
+export { TransitionService } from './lib/transition.service';
+export { UserPositionService } from './lib/user-position.service';
 export { UserService } from './lib/user.service';
+export { UsergroupService } from './lib/usergroup.service';
+export { WorkCategoryService } from './lib/work-category.service';

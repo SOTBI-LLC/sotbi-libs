@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
-import { WorkCategoryService } from '@services/work-category.service';
-import { canSave, isAllSaved } from '@shared/shared-globals';
+import { WorkCategoryService } from '@sotbi/data-access';
 import type { WorkCategory } from '@sotbi/models';
+import { canSave, isAllSaved } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
@@ -92,7 +92,7 @@ export class WorkCategoryState {
     if (this.limit !== payload /*|| !state.items.length*/) {
       this.limit = payload;
       patchState({ loading: true });
-      return this.itemsService.getAll(payload).pipe(
+      this.itemsService.getAll(payload).pipe(
         catchError((err) => {
           console.error(err);
           return throwError(() => err);
@@ -104,7 +104,7 @@ export class WorkCategoryState {
           });
           setState({
             ...state,
-            allItems: clone(items),
+            allItems: structuredClone(items),
             items: [...items /* , Object.assign({}, this.rowData) */],
             count: items.length,
             saved: true,

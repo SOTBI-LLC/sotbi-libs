@@ -35,10 +35,10 @@ export enum MessageTypes {
   PropertyDisposal = 21,
 }
 
-export interface MessageType {
-  id?: number;
-  name: string;
-  short: string;
-  sub_message_types: SubMessageType[];
-  deleted_at?: Date;
+export class MessageType {
+  public id = 0;
+  public name = '';
+  public short = '';
+  public sub_message_types: SubMessageType[] = [];
+  public deleted_at: Date | null = null;
 }

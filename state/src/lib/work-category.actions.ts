@@ -1,8 +1,8 @@
-import { WorkCategory } from '@sotbi/models';
+import type { WorkCategory } from '@sotbi/models';
 
 export class FetchWorkCategory {
   public static readonly type = '[WORKCATEGORIES] Fetch items';
-  constructor(public payload: number = 0) {}
+  constructor(public payload = 0) {}
 }
 export class GetWorkCategory {
   public static readonly type = '[WORKCATEGORIES] Get item';

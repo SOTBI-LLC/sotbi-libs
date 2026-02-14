@@ -1,4 +1,4 @@
-import { UserGroup } from '@sotbi/models';
+import type { UserGroup } from '@sotbi/models';
 
 export class CreateItem {
   public static readonly type = '[USER_GROUP] Create item';

@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
-import { PositionService } from '@services/position.service';
-import { canSave, isAllSaved } from '@shared/shared-globals';
-import type { Position } from '@sotbi/models';
+import { PositionService } from '@sotbi/data-access';
+import { Position } from '@sotbi/models';
+import { canSave, isAllSaved } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
@@ -26,7 +26,7 @@ export const RequiredFields = [
 export interface PositionStateModel {
   allItems: Position[];
   items: Position[];
-  loading?: boolean;
+  loading: boolean;
   count: number;
   saved: boolean;
 }
@@ -45,15 +45,7 @@ export interface PositionStateModel {
 export class PositionState implements NgxsOnInit {
   private readonly itemsService = inject(PositionService);
 
-  private readonly rowData: Position = {
-    id: 0,
-    name: null,
-    user_group_id: null,
-    settings: 0,
-    staff_type_id: 0,
-    updated_by: null,
-    dirty: false,
-  };
+  private readonly rowData = new Position();
 
   @Selector()
   public static getLoading(state: PositionStateModel): boolean {
@@ -94,7 +86,7 @@ export class PositionState implements NgxsOnInit {
     const state = getState();
     if (!state.items.length) {
       patchState({ loading: true });
-      return this.itemsService.getAll(-1).pipe(
+      this.itemsService.getAll(-1).pipe(
         catchError((err) => throwError(() => err)),
         tap({
           next: (items: Position[]) => {
@@ -122,7 +114,7 @@ export class PositionState implements NgxsOnInit {
   @Action(AddPosition)
   public createItem(
     { getState, patchState, setState }: StateContext<PositionStateModel>,
-    { payload },
+    { payload }: AddPosition,
   ) {
     console.log('PositionState::AddPosition', payload);
     patchState({ loading: true });
@@ -160,7 +152,7 @@ export class PositionState implements NgxsOnInit {
   @Action(EditPosition)
   public editItem(
     { getState, patchState }: StateContext<PositionStateModel>,
-    { payload },
+    { payload }: EditPosition,
   ) {
     // console.log('PositionState::EditPosition', payload);
     const { position, idx } = payload;
@@ -173,7 +165,7 @@ export class PositionState implements NgxsOnInit {
   @Action(CancelPosition)
   public cancelItem(
     { getState, patchState }: StateContext<PositionStateModel>,
-    { payload },
+    { payload }: CancelPosition,
   ) {
     console.log('PositionState::CancelPosition', payload);
     const state = getState();
@@ -187,7 +179,7 @@ export class PositionState implements NgxsOnInit {
   @Action(UpdatePosition)
   public updateItem(
     { getState, patchState }: StateContext<PositionStateModel>,
-    { payload },
+    { payload }: UpdatePosition,
   ) {
     // console.log('PositionState::UpdatePosition', payload);
     const { idx, position } = payload;
@@ -205,7 +197,7 @@ export class PositionState implements NgxsOnInit {
         });
       }),
       catchError((err) => {
-        return throwError(err);
+        return throwError(() => err);
       }),
     );
   }
@@ -230,7 +222,7 @@ export class PositionState implements NgxsOnInit {
           if (
             Object.prototype.hasOwnProperty.call(item, key) &&
             fields.has(key) &&
-            !!item[key]
+            !!item[key as keyof Position]
           ) {
             filledFields++; // считаем количество заполненных полей
           }
@@ -272,7 +264,7 @@ export class PositionState implements NgxsOnInit {
   @Action(DeletePosition)
   public deleteItem(
     { getState, patchState, setState }: StateContext<PositionStateModel>,
-    { payload },
+    { payload }: DeletePosition,
   ) {
     // console.log('PositionState::DeletePosition', payload);
     patchState({ loading: true });
@@ -288,7 +280,7 @@ export class PositionState implements NgxsOnInit {
         });
       }),
       catchError((err) => {
-        return throwError(err);
+        return throwError(() => err);
       }),
       finalize(() => patchState({ loading: false })),
     );

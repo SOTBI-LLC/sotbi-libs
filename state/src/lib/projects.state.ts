@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
-import { forMap } from '@root/shared/rx-filtres';
-import { ProjectService } from '@services/project.service';
+import { ProjectService } from '@sotbi/data-access';
 import type { Project } from '@sotbi/models';
+import { forMap } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import {
   catchError,
@@ -25,7 +25,7 @@ export class ProjectStateModel {
   public loading = false;
   public items: Project[] = [];
   public shortItems: Partial<Project>[] = [];
-  public selected: Project = { id: 0, name: '' };
+  public selected: Project | null | undefined = null;
   public maps: itemMap = new Map();
 }
 
@@ -81,7 +81,7 @@ export class ProjectsState implements NgxsOnInit {
   }: StateContext<ProjectStateModel>) {
     const state = getState();
     if (!state.items.length) {
-      return this.prjSrv.getAll$().pipe(
+      this.prjSrv.getAll$().pipe(
         tap({
           next: (result) => {
             if (!state.maps.size) {
@@ -110,7 +110,7 @@ export class ProjectsState implements NgxsOnInit {
   }: StateContext<ProjectStateModel>) {
     const state = getState();
     if (!state.shortItems.length) {
-      return this.prjSrv.getAll$({ short: true }).pipe(
+      this.prjSrv.getAll$({ short: true }).pipe(
         distinctUntilChanged(),
         catchError((err) => throwError(() => err)),
         tap({
@@ -165,7 +165,7 @@ export class ProjectsState implements NgxsOnInit {
     return this.prjSrv.create(payload).pipe(
       tap((result) => {
         const state = getState();
-        const maps = clone(state.maps);
+        const maps = structuredClone(state.maps);
         maps.set(result.id, result.name);
         const shortItem: Partial<Project> = {
           id: result.id,
@@ -192,14 +192,13 @@ export class ProjectsState implements NgxsOnInit {
     { payload }: EditItem,
   ) {
     const { id } = payload;
-    delete payload.id;
     const state = getState();
     return this.prjSrv.save(id, payload).pipe(
       tap((selected: Project) => {
         const items = [
           ...state.items.map((el) => (el.id === selected.id ? selected : el)),
         ];
-        const maps = clone(state.maps);
+        const maps = structuredClone(state.maps);
         maps.set(selected.id, selected.name);
         const shortItem: Partial<Project> = {
           id: selected.id,
@@ -228,7 +227,7 @@ export class ProjectsState implements NgxsOnInit {
     return this.prjSrv.delete(payload).pipe(
       tap(() => {
         const state = getState();
-        const maps = clone(state.maps);
+        const maps = structuredClone(state.maps);
         maps.delete(payload);
         setState({
           ...state,

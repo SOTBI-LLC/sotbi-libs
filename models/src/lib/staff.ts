@@ -7,24 +7,24 @@ import type { User } from './user';
  */
 export type ClrSelectedState = boolean | 'indeterminate';
 
-export interface Staff {
-  id: number;
-  parent_id: number;
-  name: string;
-  type?: number;
-  staff_type?: SimpleEdit2Model;
-  user_id?: number;
-  user?: User;
-  user_name?: string;
-  active?: boolean;
-  path?: string;
-  children?: Staff[];
-  idArr?: number[];
-  selected?: ClrSelectedState;
-  staffs_histories?: StaffHistory[];
-  updated_at?: Date;
-  updated_by?: User;
-  updated_by_id?: number;
+export class Staff {
+  public id = 0;
+  public parent_id: number | null = null;
+  public name = '';
+  public type = 0;
+  public staff_type: SimpleEdit2Model | null = null;
+  public user_id = 0;
+  public user: User | null = null;
+  public user_name = '';
+  public active = false;
+  public path = '';
+  public children: Staff[] = [];
+  public idArr: number[] = [];
+  public selected: ClrSelectedState = false;
+  public staffs_histories: StaffHistory[] = [];
+  public updated_at: Date | null = null;
+  public updated_by: User | null = null;
+  public updated_by_id = 0;
 }
 
 export interface StaffFlat {
@@ -114,5 +114,5 @@ export const StaffTypeArr: { id: StaffType; ru: string }[] = [
 ];
 
 export const StaffTypeMap = new Map(
-  StaffTypeArr.map((i): [number, string] => [i.id, i.ru])
+  StaffTypeArr.map((i): [number, string] => [i.id, i.ru]),
 );

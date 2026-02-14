@@ -1,10 +1,17 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { StaffService } from '@root/service/staff.service';
-import { Staff, StaffFlat, StaffGroupType } from '@sotbi/models';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { StaffService } from '@sotbi/data-access';
+import type { Staff, StaffFlat } from '@sotbi/models';
+import { StaffGroupType } from '@sotbi/models';
 import { throwError } from 'rxjs';
-import { catchError, distinctUntilChanged, finalize, tap } from 'rxjs/operators';
-import { itemMap } from './simple-edit.state.model';
+import {
+  catchError,
+  distinctUntilChanged,
+  finalize,
+  tap,
+} from 'rxjs/operators';
+import type { itemMap } from './simple-edit.state.model';
 import {
   AddStaff,
   DeleteStaff,
@@ -18,12 +25,12 @@ import {
 import { FetchUsers } from './users.actions';
 
 export class StaffStateModel {
-  public items: Staff[];
-  public tree: Staff[];
-  public maps: Map<number, itemMap>;
-  public flatItems: StaffFlat[];
-  public selectedItem: Staff;
-  public loading?: boolean;
+  public items: Staff[] = [];
+  public tree: Staff[] = [];
+  public maps: Map<number, itemMap> = new Map();
+  public flatItems: StaffFlat[] = [];
+  public selectedItem: Staff | null | undefined = null;
+  public loading = false;
 }
 
 @State<StaffStateModel>({
@@ -74,7 +81,7 @@ export class StaffsState {
   @Action(FetchStaffs, { cancelUncompleted: true })
   public fetchItems(
     { getState, setState, patchState }: StateContext<StaffStateModel>,
-    { payload },
+    { payload }: FetchStaffs,
   ) {
     // console.log('StaffsState::FetchStaffs', payload);
     const state = getState();
@@ -94,11 +101,19 @@ export class StaffsState {
           );
           const maps = new Map();
           maps.set(0, res);
-          let filtered = items.filter((el) => el.type === StaffGroupType.WORKGROUP);
-          res = new Map(filtered.map((i): [number, string] => [i.id, i.user?.user]));
+          let filtered = items.filter(
+            (el) => el.type === StaffGroupType.WORKGROUP,
+          );
+          res = new Map(
+            filtered.map((i): [number, string] => [i.id, i.user?.user ?? '']),
+          );
           maps.set(StaffGroupType.WORKGROUP, res);
-          filtered = items.filter((el) => el.type === StaffGroupType.DEPARTMENT);
-          res = new Map(filtered.map((i): [number, string] => [i.id, i.user?.user]));
+          filtered = items.filter(
+            (el) => el.type === StaffGroupType.DEPARTMENT,
+          );
+          res = new Map(
+            filtered.map((i): [number, string] => [i.id, i.user?.user ?? '']),
+          );
           maps.set(StaffGroupType.DEPARTMENT, res);
           setState({
             ...state,
@@ -111,13 +126,17 @@ export class StaffsState {
         },
       }),
       catchError((err) => {
-        return throwError(err);
+        return throwError(() => err);
       }),
     );
   }
 
   @Action(FetchRPG, { cancelUncompleted: true })
-  public fetchRPGs({ getState, setState, patchState }: StateContext<StaffStateModel>) {
+  public fetchRPGs({
+    getState,
+    setState,
+    patchState,
+  }: StateContext<StaffStateModel>) {
     console.log('StaffsState::FetchRPG');
     const state = getState();
     patchState({ loading: true });
@@ -125,11 +144,17 @@ export class StaffsState {
       distinctUntilChanged(),
       tap((items) => {
         const maps = new Map();
-        let filtered = items.filter((el) => el.type === StaffGroupType.WORKGROUP);
-        let res = new Map(filtered.map((i): [number, string] => [i.id, i.user?.user]));
+        let filtered = items.filter(
+          (el) => el.type === StaffGroupType.WORKGROUP,
+        );
+        let res = new Map(
+          filtered.map((i): [number, string] => [i.id, i.user?.user ?? '']),
+        );
         maps.set(StaffGroupType.WORKGROUP, res);
         filtered = items.filter((el) => el.type === StaffGroupType.DEPARTMENT);
-        res = new Map(filtered.map((i): [number, string] => [i.id, i.user?.user]));
+        res = new Map(
+          filtered.map((i): [number, string] => [i.id, i.user?.user ?? '']),
+        );
         maps.set(StaffGroupType.DEPARTMENT, res);
         setState({
           ...state,
@@ -138,7 +163,7 @@ export class StaffsState {
         });
       }),
       catchError((err) => {
-        return throwError(err);
+        return throwError(() => err);
       }),
     );
   }
@@ -174,14 +199,17 @@ export class StaffsState {
   }
 
   @Action(GetStaff, { cancelUncompleted: true })
-  public getItem({ getState, patchState }: StateContext<StaffStateModel>, { payload }) {
+  public getItem(
+    { getState, patchState }: StateContext<StaffStateModel>,
+    { payload }: GetStaff,
+  ) {
     patchState({ loading: true });
     if (payload === 0) {
       const staff = { id: 0, parent_id: 0, name: '', active: true } as Staff;
       return patchState({ selectedItem: staff, loading: false });
     }
     const state = getState();
-    let selected: Staff;
+    let selected: Staff | undefined;
     if (state.items.length > 0) {
       selected = state.items.find(({ id }) => id === payload);
       return patchState({ selectedItem: selected, loading: false });
@@ -191,13 +219,16 @@ export class StaffsState {
           patchState({ selectedItem: item });
         }),
         finalize(() => patchState({ loading: false })),
-        catchError((err) => throwError(err)),
+        catchError((err) => throwError(() => err)),
       );
     }
   }
 
   @Action(AddStaff)
-  public addStaff({ dispatch, patchState }: StateContext<StaffStateModel>, { payload }) {
+  public addStaff(
+    { dispatch, patchState }: StateContext<StaffStateModel>,
+    { payload }: AddStaff,
+  ) {
     console.log('StaffsState::AddStaff', payload);
     patchState({ loading: true });
     return this.staffService.create(payload).pipe(
@@ -212,7 +243,10 @@ export class StaffsState {
   }
 
   @Action(EditStaff)
-  public editStaff({ dispatch, patchState }: StateContext<StaffStateModel>, { payload }) {
+  public editStaff(
+    { dispatch, patchState }: StateContext<StaffStateModel>,
+    { payload }: EditStaff,
+  ) {
     console.log('StaffsState::EditStaff', payload);
     patchState({ loading: true });
     return this.staffService.save$(payload).pipe(
@@ -224,12 +258,15 @@ export class StaffsState {
         dispatch(new FetchUsers({ loadFired: true, refresh: true }));
         patchState({ loading: false });
       }),
-      catchError((err) => throwError(err)),
+      catchError((err) => throwError(() => err)),
     );
   }
 
   @Action(DeleteStaff)
-  public deleteStaff({ dispatch, patchState }: StateContext<StaffStateModel>, { payload }) {
+  public deleteStaff(
+    { dispatch, patchState }: StateContext<StaffStateModel>,
+    { payload }: DeleteStaff,
+  ) {
     console.log('StaffsState::DeleteStaff', payload);
     patchState({ loading: true });
     return this.staffService.delete(payload).pipe(
@@ -239,7 +276,7 @@ export class StaffsState {
       }),
       catchError((err) => {
         patchState({ loading: false });
-        return throwError(err);
+        return throwError(() => err);
       }),
     );
   }

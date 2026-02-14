@@ -1,24 +1,14 @@
 import type { User, UserGroup } from './user';
 
-export interface Position {
-  id: number;
-  name: string;
-  description?: string;
-  user_group_id: number;
-  user_group?: UserGroup;
-  settings: number;
-  staff_type_id: number;
-  updated_by: number;
-  updated?: User;
-  dirty: boolean;
+export class Position {
+  public id = 0;
+  public name = '';
+  public description = '';
+  public user_group_id = 0;
+  public user_group: UserGroup | null = null;
+  public settings = 0;
+  public staff_type_id = 0;
+  public updated_by = 0;
+  public updated: User | null = null;
+  public dirty = false;
 }
-
-export const emptyPosition: Position = {
-  id: null as unknown as number,
-  name: '',
-  settings: null as unknown as number,
-  updated_by: null as unknown as number,
-  user_group_id: null as unknown as number,
-  staff_type_id: null as unknown as number,
-  dirty: false,
-};

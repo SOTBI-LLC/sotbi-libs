@@ -1,4 +1,4 @@
-import { SimpleEdit2Model } from '@sotbi/models';
+import type { SimpleEdit2Model } from '@sotbi/models';
 
 export class FetchStaffTypes {
   public static readonly type = '[STAFF TYPE] Fetch items';

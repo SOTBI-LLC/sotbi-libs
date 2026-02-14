@@ -1,17 +1,23 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { MessageTypeService } from '@services/message-type.service';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { MessageTypeService } from '@sotbi/data-access';
 import { MessageType } from '@sotbi/models';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { AddItem, DeleteItem, FetchMessageTypes, UpdateItem } from './message-type.actions';
-import { itemMap } from './simple-edit.state.model';
+import {
+  AddItem,
+  DeleteItem,
+  FetchMessageTypes,
+  UpdateItem,
+} from './message-type.actions';
+import type { itemMap } from './simple-edit.state.model';
 
-export interface EfrsbMessageTypeStateModel {
-  items: Partial<MessageType>[];
-  selected: MessageType;
-  maps: itemMap;
-  subMaps: Map<number, itemMap>;
+export class EfrsbMessageTypeStateModel {
+  public items: MessageType[] = [];
+  public selected: MessageType | null = null;
+  public maps: itemMap = new Map();
+  public subMaps: Map<number, itemMap> = new Map();
 }
 
 @State<EfrsbMessageTypeStateModel>({
@@ -27,9 +33,7 @@ export interface EfrsbMessageTypeStateModel {
 export class EfrsbMessageTypeState {
   private readonly itemsService = inject(MessageTypeService);
 
-  private readonly empty: Partial<MessageType> = {
-    id: 0,
-  };
+  private readonly empty = new MessageType();
 
   @Selector()
   public static getSelected(state: EfrsbMessageTypeStateModel) {
@@ -37,7 +41,9 @@ export class EfrsbMessageTypeState {
   }
 
   @Selector()
-  public static getItems(state: EfrsbMessageTypeStateModel): Partial<MessageType>[] {
+  public static getItems(
+    state: EfrsbMessageTypeStateModel,
+  ): Partial<MessageType>[] {
     return state.items;
   }
 
@@ -56,17 +62,23 @@ export class EfrsbMessageTypeState {
   }
 
   @Action(FetchMessageTypes, { cancelUncompleted: true })
-  public fetchMessageTypes({ getState, setState }: StateContext<EfrsbMessageTypeStateModel>) {
+  public fetchMessageTypes({
+    getState,
+    setState,
+  }: StateContext<EfrsbMessageTypeStateModel>) {
     const state = getState();
     // console.log('EfrsbMessageTypeState::FetchItems', state);
     if (!state.items.length) {
-      return this.itemsService.GetAll().pipe(
+      this.itemsService.GetAll().pipe(
         tap((items) => {
           const subMaps = new Map<number, itemMap>();
           const maps = new Map();
           for (const item of items) {
             maps.set(item.id, item.name);
-            subMaps.set(item.id, new Map(item.sub_message_types?.map((a) => [a.id, a.name])));
+            subMaps.set(
+              item.id,
+              new Map(item.sub_message_types.map((a) => [a.id, a.name])),
+            );
           }
           setState({
             ...state,
@@ -82,7 +94,10 @@ export class EfrsbMessageTypeState {
   }
 
   @Action(AddItem)
-  public createItem({ getState, setState }: StateContext<EfrsbMessageTypeStateModel>, { payload }) {
+  public createItem(
+    { getState, setState }: StateContext<EfrsbMessageTypeStateModel>,
+    { payload }: AddItem,
+  ) {
     // console.log('EfrsbMessageTypeState::AddItem', payload);
     return this.itemsService.add(payload).pipe(
       tap((result) => {
@@ -102,7 +117,10 @@ export class EfrsbMessageTypeState {
   }
 
   @Action(UpdateItem)
-  public updateItem({ getState, setState }: StateContext<EfrsbMessageTypeStateModel>, { payload }) {
+  public updateItem(
+    { getState, setState }: StateContext<EfrsbMessageTypeStateModel>,
+    { payload }: UpdateItem,
+  ) {
     // console.log('EfrsbMessageTypeState::UpdateItem', payload);
     const state = getState();
     return this.itemsService.update(payload).pipe(
@@ -123,7 +141,10 @@ export class EfrsbMessageTypeState {
   }
 
   @Action(DeleteItem)
-  public deleteItem({ getState, setState }: StateContext<EfrsbMessageTypeStateModel>, { payload }) {
+  public deleteItem(
+    { getState, setState }: StateContext<EfrsbMessageTypeStateModel>,
+    { payload }: DeleteItem,
+  ) {
     // console.log('EfrsbMessageTypeState::DeleteItem', payload);
     return this.itemsService.delete(payload).pipe(
       tap(() => {

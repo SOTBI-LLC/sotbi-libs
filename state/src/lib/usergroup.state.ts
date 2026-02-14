@@ -1,16 +1,23 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, NgxsOnInit, Selector, State, StateContext, Store } from '@ngxs/store';
-import { UsergroupService } from '@services/usergroup.service';
+import type { NgxsOnInit, StateContext } from '@ngxs/store';
+import { Action, Selector, State, Store } from '@ngxs/store';
 import { AuthState } from '@sotbi/auth';
-import { UserGroup } from '@sotbi/models';
+import { UsergroupService } from '@sotbi/data-access';
+import type { UserGroup } from '@sotbi/models';
 import { throwError } from 'rxjs';
 import { catchError, finalize, map, tap } from 'rxjs/operators';
-import { CreateItem, DeleteItem, FetchGroups, GetItem, UpdateItem } from './usergroup.actions';
+import {
+  CreateItem,
+  DeleteItem,
+  FetchGroups,
+  GetItem,
+  UpdateItem,
+} from './usergroup.actions';
 
 export class UserGroupStateModel {
   public items: UserGroup[] = [];
   public selected: UserGroup | null = null;
-  public count: number = 0;
+  public count = 0;
   public loading?: boolean;
 }
 
@@ -53,13 +60,16 @@ export class UserGroupState implements NgxsOnInit {
   }
 
   @Action(FetchGroups, { cancelUncompleted: false })
-  public fetchGroups({ patchState, getState }: StateContext<UserGroupStateModel>) {
+  public fetchGroups({
+    patchState,
+    getState,
+  }: StateContext<UserGroupStateModel>) {
     const state = getState();
     const isAdmin = this.store.selectSnapshot(AuthState.isAdmin);
     const notAdminFilter = (ug: UserGroup) => isAdmin || ug.level !== 256; // https://ourzoo.online:8443/browse/BH-304
     if (!state.loading && !state.items.length) {
       patchState({ loading: true });
-      return this.itemsService.getAll().pipe(
+      this.itemsService.getAll().pipe(
         map((res) => res.filter(notAdminFilter)),
         tap((result) => {
           patchState({ items: result, count: result.length });
@@ -100,7 +110,7 @@ export class UserGroupState implements NgxsOnInit {
         });
       }),
       catchError((err) => {
-        return throwError(err);
+        return throwError(() => err);
       }),
       finalize(() => patchState({ loading: false })),
     );
@@ -120,7 +130,7 @@ export class UserGroupState implements NgxsOnInit {
         patchState({ items, selected });
       }),
       catchError((err) => {
-        return throwError(err);
+        return throwError(() => err);
       }),
     );
   }
@@ -145,7 +155,7 @@ export class UserGroupState implements NgxsOnInit {
         });
       }),
       catchError((err) => {
-        return throwError(err);
+        return throwError(() => err);
       }),
       finalize(() => patchState({ loading: false })),
     );

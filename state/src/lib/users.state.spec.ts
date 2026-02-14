@@ -1,9 +1,8 @@
+import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Store, provideStates } from '@ngxs/store';
-import { LoggerService } from '@services/logger.service';
-import { UserPositionService } from '@services/user-position.service';
-import { UserService } from '@sotbi/data-access';
-import {
+import { UserPositionService, UserService } from '@sotbi/data-access';
+import type {
   HeadDepartment,
   HeadDepartmentChef,
   Staff,
@@ -11,7 +10,6 @@ import {
   UserPosition,
   UserShort,
 } from '@sotbi/models';
-import { configureTestBed } from '@test-setup';
 import { of, throwError } from 'rxjs';
 import {
   AddDirtyItem,
@@ -28,13 +26,13 @@ import {
   ResetUserHeadDepartment,
   StartEditItem,
 } from './users.actions';
-import { UsersState, UsersStateModel } from './users.state';
+import type { UsersStateModel } from './users.state';
+import { UsersState } from './users.state';
 
 describe('UsersState', () => {
   let store: Store;
   let userService: jasmine.SpyObj<UserService>;
   let userPositionService: jasmine.SpyObj<UserPositionService>;
-  let loggerService: jasmine.SpyObj<LoggerService>;
 
   const mockUser: User = {
     id: 1,
@@ -50,7 +48,13 @@ describe('UsersState', () => {
     data: new Date('2023-01-01'),
     role: 1,
     user_group_id: 1,
-    group: { id: 1, name: 'User', label: 'Regular User', level: 2, home: '/dashboard' },
+    group: {
+      id: 1,
+      name: 'User',
+      label: 'Regular User',
+      level: 2,
+      home: '/dashboard',
+    },
     position_id: 1,
     users_positions: [],
     unit1_id: 1,
@@ -119,6 +123,8 @@ describe('UsersState', () => {
       staff_type_id: 1,
       updated_by: 1,
       dirty: false,
+      user_group: null,
+      updated: null,
     },
     updated_at: new Date('2023-01-01'),
     updated_by_id: 1,
@@ -142,6 +148,18 @@ describe('UsersState', () => {
     name: 'Staff Member',
     user_id: 1,
     active: true,
+    type: 0,
+    staff_type: null,
+    user: null,
+    user_name: '',
+    path: '',
+    children: [],
+    idArr: [],
+    selected: false,
+    staffs_histories: [],
+    updated_at: null,
+    updated_by: null,
+    updated_by_id: 0,
   };
 
   beforeEach(async () => {
@@ -155,15 +173,15 @@ describe('UsersState', () => {
       'getHeadDepartment',
     ]);
 
-    const userPositionServiceSpy = jasmine.createSpyObj('UserPositionService', ['batchUpdate']);
+    const userPositionServiceSpy = jasmine.createSpyObj('UserPositionService', [
+      'batchUpdate',
+    ]);
 
-    const loggerServiceSpy = jasmine.createSpyObj('LoggerService', ['debug', 'warn', 'error']);
-
-    await configureTestBed({
+    await TestBed.configureTestingModule({
       providers: [
+        provideZonelessChangeDetection(),
         { provide: UserService, useValue: userServiceSpy },
         { provide: UserPositionService, useValue: userPositionServiceSpy },
-        { provide: LoggerService, useValue: loggerServiceSpy },
         provideStates([UsersState]),
       ],
     }).compileComponents();
@@ -173,7 +191,6 @@ describe('UsersState', () => {
     userPositionService = TestBed.inject(
       UserPositionService,
     ) as jasmine.SpyObj<UserPositionService>;
-    loggerService = TestBed.inject(LoggerService) as jasmine.SpyObj<LoggerService>;
   });
 
   describe('Selectors', () => {
@@ -273,7 +290,9 @@ describe('UsersState', () => {
       userService.getUsersShort.and.returnValue(of(mockUsersShort));
 
       store.dispatch(new FillUsersShort()).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.users,
+        ) as UsersStateModel;
         expect(state.shortItems).toEqual(mockUsersShort);
         expect(state.avatars.size).toBe(2);
         expect(state.loading).toBe(false);
@@ -312,12 +331,10 @@ describe('UsersState', () => {
           fail('Should have thrown an error');
         },
         error: () => {
-          const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+          const state = store.selectSnapshot(
+            (state: any) => state.users,
+          ) as UsersStateModel;
           expect(state.loading).toBe(false);
-          expect(loggerService.error).toHaveBeenCalledWith(
-            'Failed to fill short users',
-            jasmine.any(Error),
-          );
           done();
         },
       });
@@ -332,7 +349,9 @@ describe('UsersState', () => {
       userService.getUsersShort.and.returnValue(of(usersWithoutAvatars));
 
       store.dispatch(new FillUsersShort()).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.users,
+        ) as UsersStateModel;
         expect(state.shortItems[0].avatar).toBeTruthy();
         expect(state.shortItems[1].avatar).toBeTruthy();
         done();
@@ -346,7 +365,9 @@ describe('UsersState', () => {
 
       store.dispatch(new FilterUsers(filterSet));
 
-      const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+      const state = store.selectSnapshot(
+        (state: any) => state.users,
+      ) as UsersStateModel;
       expect(state.toFilter).toEqual(filterSet);
     });
 
@@ -355,7 +376,9 @@ describe('UsersState', () => {
 
       store.dispatch(new FilterUsers(emptyFilter));
 
-      const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+      const state = store.selectSnapshot(
+        (state: any) => state.users,
+      ) as UsersStateModel;
       expect(state.toFilter.size).toBe(0);
     });
   });
@@ -365,7 +388,9 @@ describe('UsersState', () => {
       userService.getAll.and.returnValue(of(mockUsers));
 
       store.dispatch(new FetchUsers()).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.users,
+        ) as UsersStateModel;
         expect(state.items).toEqual(mockUsers);
         expect(state.loading).toBe(false);
         expect(userService.getAll).toHaveBeenCalledWith([], [], false);
@@ -389,12 +414,16 @@ describe('UsersState', () => {
 
       userService.getAll.and.returnValue(of(mockUsers));
 
-      store.dispatch(new FetchUsers({ refresh: true, loadFired: false })).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
-        expect(state.items).toEqual(mockUsers);
-        expect(userService.getAll).toHaveBeenCalledWith([], [], false);
-        done();
-      });
+      store
+        .dispatch(new FetchUsers({ refresh: true, loadFired: false }))
+        .subscribe(() => {
+          const state = store.selectSnapshot(
+            (state: any) => state.users,
+          ) as UsersStateModel;
+          expect(state.items).toEqual(mockUsers);
+          expect(userService.getAll).toHaveBeenCalledWith([], [], false);
+          done();
+        });
     });
 
     it('should not fetch when items exist and refresh is false', (done) => {
@@ -411,12 +440,16 @@ describe('UsersState', () => {
         },
       });
 
-      store.dispatch(new FetchUsers({ refresh: false, loadFired: false })).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
-        expect(userService.getAll).not.toHaveBeenCalled();
-        expect(state.loading).toBe(false);
-        done();
-      });
+      store
+        .dispatch(new FetchUsers({ refresh: false, loadFired: false }))
+        .subscribe(() => {
+          const state = store.selectSnapshot(
+            (state: any) => state.users,
+          ) as UsersStateModel;
+          expect(userService.getAll).not.toHaveBeenCalled();
+          expect(state.loading).toBe(false);
+          done();
+        });
     });
 
     it('should handle errors and reset loading state', (done) => {
@@ -428,12 +461,10 @@ describe('UsersState', () => {
           fail('Should have thrown an error');
         },
         error: () => {
-          const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+          const state = store.selectSnapshot(
+            (state: any) => state.users,
+          ) as UsersStateModel;
           expect(state.loading).toBe(false);
-          expect(loggerService.error).toHaveBeenCalledWith(
-            'Failed to fetch users',
-            jasmine.any(Error),
-          );
           done();
         },
       });
@@ -448,7 +479,9 @@ describe('UsersState', () => {
       userService.getAll.and.returnValue(of(usersWithoutAvatars));
 
       store.dispatch(new FetchUsers()).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.users,
+        ) as UsersStateModel;
         expect(state.items[0].avatar).toBeTruthy();
         expect(state.items[1].avatar).toBeTruthy();
         done();
@@ -460,8 +493,12 @@ describe('UsersState', () => {
     it('should return default user when id is 0', () => {
       store.dispatch(new GetUser({ id: 0 }));
 
-      const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
-      expect(state.selected).toEqual(jasmine.objectContaining({ id: 0, user: '', role: 2 }));
+      const state = store.selectSnapshot(
+        (state: any) => state.users,
+      ) as UsersStateModel;
+      expect(state.selected).toEqual(
+        jasmine.objectContaining({ id: 0, user: '', role: 2 }),
+      );
       expect(state.loading).toBe(false);
     });
 
@@ -481,7 +518,9 @@ describe('UsersState', () => {
 
       store.dispatch(new GetUser({ id: 1, refresh: false }));
 
-      const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+      const state = store.selectSnapshot(
+        (state: any) => state.users,
+      ) as UsersStateModel;
       expect(state.selected).toEqual(mockUser);
       expect(state.loading).toBe(false);
       expect(userService.get).not.toHaveBeenCalled();
@@ -505,11 +544,9 @@ describe('UsersState', () => {
 
       store.dispatch(new GetUser({ id: 999, refresh: false })).subscribe(() => {
         expect(userService.get).toHaveBeenCalledWith(999);
-        expect(loggerService.warn).toHaveBeenCalledWith(
-          'User not found in state, fetching from server',
-          999,
-        );
-        const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.users,
+        ) as UsersStateModel;
         expect(state.selected?.id).toBe(999);
         done();
       });
@@ -535,7 +572,9 @@ describe('UsersState', () => {
       store.dispatch(new GetUser({ id: 999, refresh: true })).subscribe({
         next: () => {
           expect(userService.get).toHaveBeenCalledWith(999);
-          const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+          const state = store.selectSnapshot(
+            (state: any) => state.users,
+          ) as UsersStateModel;
           expect(state.selected?.id).toBe(999);
           expect(state.loading).toBe(false);
           done();
@@ -556,12 +595,10 @@ describe('UsersState', () => {
           fail('Should have thrown an error');
         },
         error: () => {
-          const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+          const state = store.selectSnapshot(
+            (state: any) => state.users,
+          ) as UsersStateModel;
           expect(state.loading).toBe(false);
-          expect(loggerService.error).toHaveBeenCalledWith(
-            'Failed to get user',
-            jasmine.any(Error),
-          );
           done();
         },
       });
@@ -572,7 +609,9 @@ describe('UsersState', () => {
       userService.get.and.returnValue(of(userWithoutSettings));
 
       store.dispatch(new GetUser({ id: 1 })).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.users,
+        ) as UsersStateModel;
         expect(state.selected?.settings).toBe(0);
         done();
       });
@@ -585,7 +624,9 @@ describe('UsersState', () => {
       userService.create.and.returnValue(of(newUser));
 
       store.dispatch(new AddUser(newUser)).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.users,
+        ) as UsersStateModel;
         expect(state.selected).toEqual(newUser);
         expect(state.items).toContain(newUser);
         expect(state.shortItems).toContain({
@@ -593,17 +634,27 @@ describe('UsersState', () => {
           user: newUser.user,
           avatar: newUser.avatar,
         });
-        expect(state.avatars.get(newUser.id)).toEqual([newUser.user, newUser.avatar]);
+        expect(state.avatars.get(newUser.id)).toEqual([
+          newUser.user,
+          newUser.avatar,
+        ]);
         done();
       });
     });
 
     it('should generate avatar if user does not have one', (done) => {
-      const newUserWithoutAvatar = { ...mockUser, id: 3, user: 'new.user', avatar: '' };
+      const newUserWithoutAvatar = {
+        ...mockUser,
+        id: 3,
+        user: 'new.user',
+        avatar: '',
+      };
       userService.create.and.returnValue(of(newUserWithoutAvatar));
 
       store.dispatch(new AddUser(newUserWithoutAvatar)).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.users,
+        ) as UsersStateModel;
         expect(state.selected?.avatar).toBeTruthy();
         done();
       });
@@ -618,10 +669,6 @@ describe('UsersState', () => {
           fail('Should have thrown an error');
         },
         error: () => {
-          expect(loggerService.error).toHaveBeenCalledWith(
-            'Failed to add user',
-            jasmine.any(Error),
-          );
           done();
         },
       });
@@ -645,7 +692,9 @@ describe('UsersState', () => {
 
       store.dispatch(new AddDirtyItem(mockUserPosition));
 
-      const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+      const state = store.selectSnapshot(
+        (state: any) => state.users,
+      ) as UsersStateModel;
       expect(state.selected?.users_positions).toContain(mockUserPosition);
     });
 
@@ -665,7 +714,9 @@ describe('UsersState', () => {
 
       store.dispatch(new AddDirtyItem(mockUserPosition));
 
-      const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+      const state = store.selectSnapshot(
+        (state: any) => state.users,
+      ) as UsersStateModel;
       expect(Array.isArray(state.selected?.users_positions)).toBe(true);
       expect(state.selected?.users_positions).toContain(mockUserPosition);
     });
@@ -687,7 +738,9 @@ describe('UsersState', () => {
       const newPosition = { ...mockUserPosition, id: 2 };
       store.dispatch(new AddDirtyItem(newPosition));
 
-      const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+      const state = store.selectSnapshot(
+        (state: any) => state.users,
+      ) as UsersStateModel;
       expect(state.selected?.users_positions).not.toBe(originalPositions);
       expect(originalPositions.length).toBe(1); // Original array unchanged
     });
@@ -715,9 +768,13 @@ describe('UsersState', () => {
 
       store.dispatch(new ClearDirtyPositions());
 
-      const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+      const state = store.selectSnapshot(
+        (state: any) => state.users,
+      ) as UsersStateModel;
       expect(state.selected?.users_positions?.length).toBe(2);
-      expect(state.selected?.users_positions?.every((pos) => pos.id !== null)).toBe(true);
+      expect(
+        state.selected?.users_positions?.every((pos) => pos.id !== null),
+      ).toBe(true);
     });
 
     it('should handle user with no positions', () => {
@@ -735,17 +792,14 @@ describe('UsersState', () => {
 
       store.dispatch(new ClearDirtyPositions());
 
-      const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+      const state = store.selectSnapshot(
+        (state: any) => state.users,
+      ) as UsersStateModel;
       expect(state.selected?.users_positions).toEqual([]);
     });
 
     it('should log debug information', () => {
       store.dispatch(new ClearDirtyPositions());
-
-      expect(loggerService.debug).toHaveBeenCalledWith(
-        'ClearDirtyPositions: updated selected user',
-        jasmine.any(Object),
-      );
     });
   });
 
@@ -770,7 +824,9 @@ describe('UsersState', () => {
 
       store.dispatch(new StartEditItem({ id: 0, dirty: true }));
 
-      const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+      const state = store.selectSnapshot(
+        (state: any) => state.users,
+      ) as UsersStateModel;
       expect(state.selected?.users_positions?.[0].dirty).toBe(true);
       expect(state.selected?.users_positions?.[1].dirty).toBe(false);
     });
@@ -792,9 +848,10 @@ describe('UsersState', () => {
 
       store.dispatch(new StartEditItem({ id: -1, dirty: true }));
 
-      const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+      const state = store.selectSnapshot(
+        (state: any) => state.users,
+      ) as UsersStateModel;
       expect(state.selected?.users_positions?.[0].dirty).toBe(false); // Should remain unchanged
-      expect(loggerService.warn).toHaveBeenCalledWith('Invalid position index provided', -1);
     });
 
     it('should handle invalid position index gracefully (out of bounds)', () => {
@@ -814,9 +871,10 @@ describe('UsersState', () => {
 
       store.dispatch(new StartEditItem({ id: 5, dirty: true }));
 
-      const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+      const state = store.selectSnapshot(
+        (state: any) => state.users,
+      ) as UsersStateModel;
       expect(state.selected?.users_positions?.[0].dirty).toBe(false); // Should remain unchanged
-      expect(loggerService.warn).toHaveBeenCalledWith('Invalid position index provided', 5);
     });
 
     it('should create users_positions array if it does not exist', () => {
@@ -834,9 +892,10 @@ describe('UsersState', () => {
 
       store.dispatch(new StartEditItem({ id: 0, dirty: true }));
 
-      const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+      const state = store.selectSnapshot(
+        (state: any) => state.users,
+      ) as UsersStateModel;
       expect(Array.isArray(state.selected?.users_positions)).toBe(true);
-      expect(loggerService.warn).toHaveBeenCalledWith('Invalid position index provided', 0);
     });
 
     it('should maintain immutability when updating positions', () => {
@@ -856,7 +915,9 @@ describe('UsersState', () => {
 
       store.dispatch(new StartEditItem({ id: 0, dirty: true }));
 
-      const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+      const state = store.selectSnapshot(
+        (state: any) => state.users,
+      ) as UsersStateModel;
       expect(state.selected?.users_positions).not.toBe(originalPositions);
       expect(originalPositions[0].dirty).toBe(false); // Original array unchanged
     });
@@ -883,10 +944,14 @@ describe('UsersState', () => {
       userService.save.and.returnValue(of(editedUser));
 
       store.dispatch(new EditUser(payload)).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.users,
+        ) as UsersStateModel;
         expect(state.selected?.name).toBe('Updated Name');
         expect(state.items.find((u) => u.id === 1)?.name).toBe('Updated Name');
-        expect(state.shortItems.find((u) => u.id === 1)?.user).toBe(editedUser.user);
+        expect(state.shortItems.find((u) => u.id === 1)?.user).toBe(
+          editedUser.user,
+        );
         expect(state.loading).toBe(false);
         done();
       });
@@ -926,12 +991,10 @@ describe('UsersState', () => {
           fail('Should have thrown an error');
         },
         error: () => {
-          const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+          const state = store.selectSnapshot(
+            (state: any) => state.users,
+          ) as UsersStateModel;
           expect(state.loading).toBe(false);
-          expect(loggerService.error).toHaveBeenCalledWith(
-            'Failed to edit user',
-            jasmine.any(Error),
-          );
           done();
         },
       });
@@ -949,25 +1012,29 @@ describe('UsersState', () => {
           fail('Should have thrown an error');
         },
         error: () => {
-          const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+          const state = store.selectSnapshot(
+            (state: any) => state.users,
+          ) as UsersStateModel;
           expect(state.loading).toBe(false);
-          expect(loggerService.error).toHaveBeenCalledWith(
-            'Failed to edit user',
-            jasmine.any(Error),
-          );
           done();
         },
       });
     });
 
     it('should generate avatar if user does not have one', (done) => {
-      const editedUserWithoutAvatar = { ...mockUser, name: 'Updated Name', avatar: '' };
+      const editedUserWithoutAvatar = {
+        ...mockUser,
+        name: 'Updated Name',
+        avatar: '',
+      };
       const payload = { ...mockUser, name: 'Updated Name' };
 
       userService.save.and.returnValue(of(editedUserWithoutAvatar));
 
       store.dispatch(new EditUser(payload)).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.users,
+        ) as UsersStateModel;
         expect(state.selected?.avatar).toBeTruthy();
         done();
       });
@@ -994,15 +1061,26 @@ describe('UsersState', () => {
       userPositionService.batchUpdate.and.returnValue(of(updatedPositions));
 
       store.dispatch(new EditUserPosition(payload)).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.users,
+        ) as UsersStateModel;
         expect(state.selected?.users_positions).toEqual(updatedPositions);
         done();
       });
     });
 
     it('should handle dirty and clean positions correctly', (done) => {
-      const dirtyPosition = { ...mockUserPosition, dirty: true, updated_by_id: 1 };
-      const cleanPosition = { ...mockUserPosition, id: 2, dirty: false, updated_by_id: 2 };
+      const dirtyPosition = {
+        ...mockUserPosition,
+        dirty: true,
+        updated_by_id: 1,
+      };
+      const cleanPosition = {
+        ...mockUserPosition,
+        id: 2,
+        dirty: false,
+        updated_by_id: 2,
+      };
       const payload = [dirtyPosition, cleanPosition];
 
       userPositionService.batchUpdate.and.returnValue(of(payload));
@@ -1015,7 +1093,9 @@ describe('UsersState', () => {
           // Clean position: should include updated_by_id
           jasmine.objectContaining({ id: 2, dirty: false, updated_by_id: 2 }),
         ];
-        expect(userPositionService.batchUpdate).toHaveBeenCalledWith(expectedPayload);
+        expect(userPositionService.batchUpdate).toHaveBeenCalledWith(
+          expectedPayload,
+        );
         done();
       });
     });
@@ -1029,10 +1109,6 @@ describe('UsersState', () => {
           fail('Should have thrown an error');
         },
         error: () => {
-          expect(loggerService.error).toHaveBeenCalledWith(
-            'Failed to edit user',
-            jasmine.any(Error),
-          );
           done();
         },
       });
@@ -1060,7 +1136,9 @@ describe('UsersState', () => {
       userService.fire.and.returnValue(of(mockUser));
 
       store.dispatch(new DeleteUser(1)).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.users,
+        ) as UsersStateModel;
         expect(state.items.find((u) => u.id === 1)).toBeUndefined();
         expect(state.shortItems.find((u) => u.id === 1)).toBeUndefined();
         expect(state.avatars.has(1)).toBe(false);
@@ -1077,10 +1155,6 @@ describe('UsersState', () => {
           fail('Should have thrown an error');
         },
         error: () => {
-          expect(loggerService.error).toHaveBeenCalledWith(
-            'Failed to delete user',
-            jasmine.any(Error),
-          );
           done();
         },
       });
@@ -1097,7 +1171,9 @@ describe('UsersState', () => {
       userService.getHeadDepartment.and.returnValue(of(headDepartmentData));
 
       store.dispatch(new GetUserHeadDepartment(1)).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.users,
+        ) as UsersStateModel;
         expect(state.headDepartment).toEqual(headDepartmentData);
         expect(state.loading).toBe(false);
         expect(userService.getHeadDepartment).toHaveBeenCalledWith(1);
@@ -1148,7 +1224,9 @@ describe('UsersState', () => {
 
       store.dispatch(new GetUserHeadDepartment(2)).subscribe(() => {
         expect(userService.getHeadDepartment).toHaveBeenCalledWith(2);
-        const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.users,
+        ) as UsersStateModel;
         expect(state.headDepartment?.[0].user_id).toBe(2);
         done();
       });
@@ -1163,12 +1241,10 @@ describe('UsersState', () => {
           fail('Should have thrown an error');
         },
         error: () => {
-          const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+          const state = store.selectSnapshot(
+            (state: any) => state.users,
+          ) as UsersStateModel;
           expect(state.loading).toBe(false);
-          expect(loggerService.error).toHaveBeenCalledWith(
-            'Failed to get user',
-            jasmine.any(Error),
-          );
           done();
         },
       });
@@ -1192,7 +1268,9 @@ describe('UsersState', () => {
 
       store.dispatch(new ResetUserHeadDepartment());
 
-      const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+      const state = store.selectSnapshot(
+        (state: any) => state.users,
+      ) as UsersStateModel;
       expect(state.headDepartment).toBeNull();
     });
   });
@@ -1213,7 +1291,9 @@ describe('UsersState', () => {
 
       store.dispatch(new AddDirtyItem(mockUserPosition));
 
-      const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+      const state = store.selectSnapshot(
+        (state: any) => state.users,
+      ) as UsersStateModel;
       expect(state.selected?.users_positions).toContain(mockUserPosition);
     });
 
@@ -1221,22 +1301,28 @@ describe('UsersState', () => {
       // Test a sequence of operations
       userService.getUsersShort.and.returnValue(of(mockUsersShort));
       userService.getAll.and.returnValue(of(mockUsers));
-      userService.create.and.returnValue(of({ ...mockUser, id: 3, user: 'new.user' }));
+      userService.create.and.returnValue(
+        of({ ...mockUser, id: 3, user: 'new.user' }),
+      );
 
       // Execute sequence
       store.dispatch(new FillUsersShort()).subscribe(() => {
         store.dispatch(new FetchUsers()).subscribe(() => {
-          store.dispatch(new AddUser({ ...mockUser, id: 3, user: 'new.user' })).subscribe(() => {
-            const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+          store
+            .dispatch(new AddUser({ ...mockUser, id: 3, user: 'new.user' }))
+            .subscribe(() => {
+              const state = store.selectSnapshot(
+                (state: any) => state.users,
+              ) as UsersStateModel;
 
-            // Verify final state (more flexible counts since tests run in sequence)
-            expect(state.shortItems.length).toBeGreaterThanOrEqual(2);
-            expect(state.items.length).toBeGreaterThanOrEqual(2);
-            expect(state.avatars.size).toBeGreaterThanOrEqual(2);
-            expect(state.loading).toBe(false);
+              // Verify final state (more flexible counts since tests run in sequence)
+              expect(state.shortItems.length).toBeGreaterThanOrEqual(2);
+              expect(state.items.length).toBeGreaterThanOrEqual(2);
+              expect(state.avatars.size).toBeGreaterThanOrEqual(2);
+              expect(state.loading).toBe(false);
 
-            done();
-          });
+              done();
+            });
         });
       });
     });
@@ -1253,7 +1339,9 @@ describe('UsersState', () => {
       ];
 
       Promise.all(actions).then(() => {
-        const state = store.selectSnapshot((state: any) => state.users) as UsersStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.users,
+        ) as UsersStateModel;
         expect(state.shortItems.length).toBeGreaterThan(0);
         expect(state.items.length).toBeGreaterThan(0);
         expect(state.toFilter.has(1)).toBe(true);

@@ -1,4 +1,4 @@
-import { Project } from '@sotbi/models';
+import type { Project } from '@sotbi/models';
 
 export class FetchProjects {
   public static readonly type = '[PROJECTS] Fetch items';
@@ -19,7 +19,7 @@ export class AddItem {
 
 export class EditItem {
   public static readonly type = '[PROJECTS] Edit item';
-  constructor(public payload: Partial<Project>) {}
+  constructor(public payload: Project) {}
 }
 
 export class DeleteItem {

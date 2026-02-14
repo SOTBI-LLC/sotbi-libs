@@ -1,4 +1,4 @@
-import { CostRealFilter } from '@sotbi/models';
+import type { CostRealFilter } from '@sotbi/models';
 
 export class FetchSubordinatesCosts {
   public static readonly type = '[subordinates_costs] Read items';

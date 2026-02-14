@@ -147,12 +147,13 @@ export const InformationCreditInstitution =
 
 export const informationCreditInstitutionOrResultsReviewApplicationsChallengingTransactions =
   InformationCreditInstitution |
-  (1n << BigInt(SubMessageTypes.ResultsReviewApplicationsChallengingTransactions));
+  (1n <<
+    BigInt(SubMessageTypes.ResultsReviewApplicationsChallengingTransactions));
 
-export interface SubMessageType {
-  id?: number;
-  name: string;
-  short: string;
-  message_type_id?: number;
-  deleted_at?: Date;
+export class SubMessageType {
+  public id = 0;
+  public name = '';
+  public short = '';
+  public message_type_id = 0;
+  public deleted_at: Date | null = null;
 }

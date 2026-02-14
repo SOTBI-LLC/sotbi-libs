@@ -1,16 +1,19 @@
+import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngxs/store';
-import { PaymentRequestService } from '@services/payment-request.service';
-import {
+import { PaymentRequestService } from '@sotbi/data-access';
+import type {
   PaymentAttachment,
+  PaymentRequestHistory,
+  User,
+} from '@sotbi/models';
+import {
   PaymentAttachmentType,
   PaymentRequest,
   PaymentRequestTarget,
   PaymentRequestType,
   StatusEnum,
-  User,
 } from '@sotbi/models';
-import { configureTestBed } from '@test-setup';
 import { of, throwError } from 'rxjs';
 import {
   AddDirtyItem,
@@ -20,7 +23,8 @@ import {
   GetItem,
   UpdateItem,
 } from './payment-request.actions';
-import { PaymentRequestState, PaymentRequestStateModel } from './payment-request.state';
+import type { PaymentRequestStateModel } from './payment-request.state';
+import { PaymentRequestState } from './payment-request.state';
 
 describe('PaymentRequestState', () => {
   let store: Store;
@@ -40,7 +44,13 @@ describe('PaymentRequestState', () => {
     data: new Date('2023-01-01'),
     role: 1,
     user_group_id: 1,
-    group: { id: 1, name: 'User', label: 'Regular User', level: 2, home: '/dashboard' },
+    group: {
+      id: 1,
+      name: 'User',
+      label: 'Regular User',
+      level: 2,
+      home: '/dashboard',
+    },
     position_id: 1,
     users_positions: [],
     unit1_id: 1,
@@ -92,6 +102,24 @@ describe('PaymentRequestState', () => {
     },
   ];
 
+  const history: PaymentRequestHistory = {
+    ...new PaymentRequest(),
+    ...{
+      id: 1,
+      created_at: new Date('2024-01-01'),
+      revision: 1,
+      action: 'created',
+      status: StatusEnum.OPEN,
+      debtor_id: 1,
+      bank_detail_id: 1,
+      target: PaymentRequestTarget.PAY,
+      request_type: PaymentRequestType.FORM,
+      worked_by_id: 1,
+      defrayments: [],
+      payment_attachments: [],
+    },
+  };
+
   const mockPaymentRequest: PaymentRequest = {
     id: 1,
     status: StatusEnum.OPEN,
@@ -129,28 +157,18 @@ describe('PaymentRequestState', () => {
     worked_by_name: 'Jane Smith',
     project_owner_id: 1,
     doer_comment: 'Processing payment request',
-    histories: [
-      {
-        id: 1,
-        created_at: new Date('2024-01-01'),
-        revision: 1,
-        action: 'created',
-        status: StatusEnum.OPEN,
-        debtor_id: 1,
-        bank_detail_id: 1,
-        target: PaymentRequestTarget.PAY,
-        request_type: PaymentRequestType.FORM,
-        worked_by_id: 1,
-        defrayments: [],
-        payment_attachments: [],
-      },
-    ],
+    debtor: null,
+    bank_detail: null,
+    bank_detail_bik: '',
+    worked_by: null,
+    updated_by_id: 0,
+    histories: [history],
     updated_by: mockUser,
   };
 
-  const mockPaymentRequests: PaymentRequest[] = [
-    mockPaymentRequest,
-    {
+  const mockPaymentRequest2 = {
+    ...new PaymentRequest(),
+    ...{
       id: 2,
       status: StatusEnum.WORK,
       debtor_id: 2,
@@ -168,6 +186,11 @@ describe('PaymentRequestState', () => {
       worked_by_name: 'Alice Johnson',
       project_owner_id: 2,
     },
+  };
+
+  const mockPaymentRequests: PaymentRequest[] = [
+    mockPaymentRequest,
+    mockPaymentRequest2,
   ];
 
   beforeEach(async () => {
@@ -179,12 +202,17 @@ describe('PaymentRequestState', () => {
       'delete',
     ]);
 
-    await configureTestBed({
-      providers: [{ provide: PaymentRequestService, useValue: serviceSpy }],
+    await TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: PaymentRequestService, useValue: serviceSpy },
+      ],
     }).compileComponents();
 
     store = TestBed.inject(Store);
-    service = TestBed.inject(PaymentRequestService) as jasmine.SpyObj<PaymentRequestService>;
+    service = TestBed.inject(
+      PaymentRequestService,
+    ) as jasmine.SpyObj<PaymentRequestService>;
   });
 
   it('should have initial state', () => {
@@ -299,7 +327,9 @@ describe('PaymentRequestState', () => {
 
       store.dispatch(new GetItem(1)).subscribe({
         next: () => {
-          const selected = store.selectSnapshot(PaymentRequestState.getSelected);
+          const selected = store.selectSnapshot(
+            PaymentRequestState.getSelected,
+          );
           const loading = store.selectSnapshot(PaymentRequestState.getLoading);
 
           expect(selected).toEqual(mockPaymentRequest);
@@ -315,8 +345,8 @@ describe('PaymentRequestState', () => {
       });
     });
 
-    it('should create new item when payload is null or undefined', () => {
-      store.dispatch(new GetItem(null));
+    it('should create new item when payload is 0', () => {
+      store.dispatch(new GetItem(0));
 
       const selected = store.selectSnapshot(PaymentRequestState.getSelected);
 
@@ -345,7 +375,7 @@ describe('PaymentRequestState', () => {
     });
 
     it('should set loading to false when creating new item', () => {
-      store.dispatch(new GetItem(null));
+      store.dispatch(new GetItem(0));
 
       const loading = store.selectSnapshot(PaymentRequestState.getLoading);
       expect(loading).toBe(false);
@@ -451,29 +481,36 @@ describe('PaymentRequestState', () => {
 
       service.update.and.returnValue(of(updatedItem));
 
-      store
-        .dispatch(new UpdateItem({ id: 1, description: 'Updated description' }))
-        .subscribe(() => {
-          const items = store.selectSnapshot(PaymentRequestState.getItems);
-          const selected = store.selectSnapshot(PaymentRequestState.getSelected);
-          const loading = store.selectSnapshot(PaymentRequestState.getLoading);
+      const update = {
+        ...new PaymentRequest(),
+        ...{ id: 1, description: 'Updated description' },
+      };
 
-          expect(items[0]).toEqual(updatedItem);
-          expect(selected).toEqual(updatedItem);
-          expect(loading).toBe(false);
-          expect(service.update).toHaveBeenCalledWith({
-            id: 1,
-            description: 'Updated description',
-          });
-          done();
+      store.dispatch(new UpdateItem(update)).subscribe(() => {
+        const items = store.selectSnapshot(PaymentRequestState.getItems);
+        const selected = store.selectSnapshot(PaymentRequestState.getSelected);
+        const loading = store.selectSnapshot(PaymentRequestState.getLoading);
+
+        expect(items[0]).toEqual(updatedItem);
+        expect(selected).toEqual(updatedItem);
+        expect(loading).toBe(false);
+        expect(service.update).toHaveBeenCalledWith({
+          id: 1,
+          description: 'Updated description',
         });
+        done();
+      });
     });
 
     it('should handle update item error', (done) => {
       const errorResponse = new Error('Update item failed');
       service.update.and.returnValue(throwError(() => errorResponse));
 
-      store.dispatch(new UpdateItem({ id: 1, description: 'Updated description' })).subscribe({
+      const update = {
+        ...new PaymentRequest(),
+        ...{ id: 1, description: 'Updated description' },
+      };
+      store.dispatch(new UpdateItem(update)).subscribe({
         next: () => {
           // NGXS actions complete even when service calls fail due to finalize()
           const loading = store.selectSnapshot(PaymentRequestState.getLoading);
@@ -496,27 +533,29 @@ describe('PaymentRequestState', () => {
       };
 
       service.update.and.returnValue(of(updatedSecondItem));
+      const update = {
+        ...new PaymentRequest(),
+        ...{ id: 2, description: 'Updated second item' },
+      };
 
-      store
-        .dispatch(new UpdateItem({ id: 2, description: 'Updated second item' }))
-        .subscribe(() => {
-          const items = store.selectSnapshot(PaymentRequestState.getItems);
+      store.dispatch(new UpdateItem(update)).subscribe(() => {
+        const items = store.selectSnapshot(PaymentRequestState.getItems);
 
-          // Check that we have the expected number of items
-          expect(items.length).toBe(2);
+        // Check that we have the expected number of items
+        expect(items.length).toBe(2);
 
-          // Check that the second item was updated
-          const updatedItem = items.find((item) => item.id === 2);
-          expect(updatedItem).toBeDefined();
-          expect(updatedItem.description).toBe('Updated second item');
+        // Check that the second item was updated
+        const updatedItem = items.find((item) => item.id === 2);
+        expect(updatedItem).toBeDefined();
+        expect(updatedItem?.description).toBe('Updated second item');
 
-          // Check that the first item remains unchanged
-          const firstItem = items.find((item) => item.id === 1);
-          expect(firstItem).toBeDefined();
-          expect(firstItem.description).toBe(mockPaymentRequest.description);
+        // Check that the first item remains unchanged
+        const firstItem = items.find((item) => item.id === 1);
+        expect(firstItem).toBeDefined();
+        expect(firstItem?.description).toBe(mockPaymentRequest.description);
 
-          done();
-        });
+        done();
+      });
     });
   });
 
@@ -570,7 +609,9 @@ describe('PaymentRequestState', () => {
     it('should not affect other items when deleting', (done) => {
       service.delete.and.returnValue(of(undefined));
 
-      const initialCount = store.selectSnapshot(PaymentRequestState.getItems).length;
+      const initialCount = store.selectSnapshot(
+        PaymentRequestState.getItems,
+      ).length;
 
       store.dispatch(new DeleteItem(1)).subscribe(() => {
         const items = store.selectSnapshot(PaymentRequestState.getItems);
@@ -663,20 +704,22 @@ describe('PaymentRequestState', () => {
         const selected = store.selectSnapshot(PaymentRequestState.getSelected);
 
         // Check that sensitive data is removed
-        expect(selected.id).toBeUndefined();
-        expect(selected.status).toBeUndefined();
-        expect(selected.doer_comment).toBeUndefined();
-        expect(selected.histories).toBeUndefined();
+        expect(selected?.id).toBeUndefined();
+        expect(selected?.status).toBeUndefined();
+        expect(selected?.doer_comment).toBeUndefined();
+        expect(selected?.histories).toBeUndefined();
 
         // Check that filtered attachment types are removed
-        expect(selected.payment_attachments.length).toBe(1);
-        expect(selected.payment_attachments[0].type).toBe(PaymentAttachmentType.REQUEST);
-        expect(selected.payment_attachments[0].id).toBeUndefined();
+        expect(selected?.payment_attachments.length).toBe(1);
+        expect(selected?.payment_attachments[0].type).toBe(
+          PaymentAttachmentType.REQUEST,
+        );
+        expect(selected?.payment_attachments[0].id).toBeUndefined();
 
         // Check that defrayment IDs are removed
-        expect(selected.defrayments.length).toBe(2);
-        expect(selected.defrayments[0].id).toBeUndefined();
-        expect(selected.defrayments[1].id).toBeUndefined();
+        expect(selected?.defrayments.length).toBe(2);
+        expect(selected?.defrayments[0].id).toBeUndefined();
+        expect(selected?.defrayments[1].id).toBeUndefined();
 
         expect(service.get).toHaveBeenCalledWith(1);
         done();
@@ -712,7 +755,7 @@ describe('PaymentRequestState', () => {
 
       store.dispatch(new AddDirtyItem(1)).subscribe(() => {
         const selected = store.selectSnapshot(PaymentRequestState.getSelected);
-        expect(selected.defrayments).toBeNull();
+        expect(selected?.defrayments).toBeNull();
         done();
       });
     });
@@ -757,7 +800,9 @@ describe('PaymentRequestState', () => {
     });
 
     it('should handle concurrent actions properly', () => {
-      service.getAllWithParams.and.returnValue(of({ requests: mockPaymentRequests, count: 2 }));
+      service.getAllWithParams.and.returnValue(
+        of({ requests: mockPaymentRequests, count: 2 }),
+      );
       service.get.and.returnValue(of(mockPaymentRequest));
 
       // Dispatch multiple actions
@@ -789,7 +834,12 @@ describe('PaymentRequestState', () => {
 
       service.update.and.returnValue(of(nonExistentItem));
 
-      store.dispatch(new UpdateItem({ id: 999, description: 'Updated description' }));
+      const update = {
+        ...new PaymentRequest(),
+        ...{ id: 999, description: 'Updated description' },
+      };
+
+      store.dispatch(new UpdateItem(update));
 
       const items = store.selectSnapshot(PaymentRequestState.getItems);
       // The item won't be found in the array, so original items remain unchanged
@@ -803,10 +853,14 @@ describe('PaymentRequestState', () => {
       expect(store.selectSnapshot(PaymentRequestState.getItems)).toEqual([]);
 
       // Step 1: Fetch items
-      service.getAllWithParams.and.returnValue(of({ requests: mockPaymentRequests, count: 2 }));
+      service.getAllWithParams.and.returnValue(
+        of({ requests: mockPaymentRequests, count: 2 }),
+      );
 
       store.dispatch(new FetchItems()).subscribe(() => {
-        expect(store.selectSnapshot(PaymentRequestState.getItems).length).toBe(2);
+        expect(store.selectSnapshot(PaymentRequestState.getItems).length).toBe(
+          2,
+        );
 
         // Step 2: Add item
         const newItem: PaymentRequest = {
@@ -816,21 +870,31 @@ describe('PaymentRequestState', () => {
         };
         service.add.and.returnValue(of(newItem));
 
-        store.dispatch(new AddItem({ description: 'New item' })).subscribe(() => {
-          expect(store.selectSnapshot(PaymentRequestState.getItems).length).toBe(3);
-          expect(store.selectSnapshot(PaymentRequestState.getItems)[0]).toEqual(newItem);
-
-          // Step 3: Delete item
-          service.delete.and.returnValue(of(undefined));
-
-          store.dispatch(new DeleteItem(3)).subscribe(() => {
-            expect(store.selectSnapshot(PaymentRequestState.getItems).length).toBe(2);
+        store
+          .dispatch(new AddItem({ description: 'New item' }))
+          .subscribe(() => {
             expect(
-              store.selectSnapshot(PaymentRequestState.getItems).find((i) => i.id === 3),
-            ).toBeUndefined();
-            done();
+              store.selectSnapshot(PaymentRequestState.getItems).length,
+            ).toBe(3);
+            expect(
+              store.selectSnapshot(PaymentRequestState.getItems)[0],
+            ).toEqual(newItem);
+
+            // Step 3: Delete item
+            service.delete.and.returnValue(of(undefined));
+
+            store.dispatch(new DeleteItem(3)).subscribe(() => {
+              expect(
+                store.selectSnapshot(PaymentRequestState.getItems).length,
+              ).toBe(2);
+              expect(
+                store
+                  .selectSnapshot(PaymentRequestState.getItems)
+                  .find((i) => i.id === 3),
+              ).toBeUndefined();
+              done();
+            });
           });
-        });
       });
     });
   });

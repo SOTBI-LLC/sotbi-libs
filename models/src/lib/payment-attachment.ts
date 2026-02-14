@@ -1,11 +1,11 @@
-import type { IAttachment } from './egrn-attachment';
+import { IAttachment } from './egrn-attachment';
 import type { User } from './user';
 
-export interface PaymentAttachment extends IAttachment {
-  type: PaymentAttachmentType;
-  payment_request_id: number;
-  creator_id: number;
-  creator?: User;
+export class PaymentAttachment extends IAttachment {
+  public override type: PaymentAttachmentType = PaymentAttachmentType.REQUEST;
+  public payment_request_id = 0;
+  public creator_id = 0;
+  public creator: User | null = null;
 }
 
 export enum PaymentAttachmentType {
@@ -28,5 +28,5 @@ export const PaymentAttachmentTypeArr: {
 ];
 
 export const PaymentAttachmentTypeMap = new Map(
-  PaymentAttachmentTypeArr.map((i): [string, string] => [i.id, i.ru])
+  PaymentAttachmentTypeArr.map((i): [string, string] => [i.id, i.ru]),
 );

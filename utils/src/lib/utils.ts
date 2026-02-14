@@ -6,33 +6,11 @@ export const removeProperty =
     rest;
 export const removeID = removeProperty('id');
 
-export const CHARSET =
-  '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-export const toBase62 = (int: number): string => {
-  if (int === 0) {
-    return CHARSET[0];
-  }
-
-  let res = '';
-  while (int > 0) {
-    res = CHARSET[int % 62] + res;
-    int = Math.floor(int / 62);
-  }
-  return res;
-};
-
-export const fromBase62 = (value: string): number => {
-  let decoded = 0;
-  for (let i = 0; i < value.length; i++) {
-    const idx = value.length - i - 1;
-    const n = CHARSET.indexOf(value[idx]);
-    if (n === -1) {
-      throw new Error('not a base-62 input');
-    }
-    decoded += n * Math.pow(62, i);
-  }
-  return decoded;
+export const extractProperty = <T, K extends keyof T>(
+  items: T[],
+  key: K,
+): T[K][] => {
+  return items.map((item) => item[key]);
 };
 
 export const bankruptcyManagerFormatter = (item: Bankruptcy | null): string => {
@@ -194,3 +172,14 @@ export const notifyError = (err: unknown): string => {
   }
   return 'Произошла ошибка';
 };
+
+export const uniqueElementsBy = <T>(
+  arr: T[],
+  fn: (a: T, b: T) => boolean,
+): T[] =>
+  arr.reduce((acc: T[], v: T) => {
+    if (!acc.some((x: T) => fn(v, x))) {
+      acc.push(v);
+    }
+    return acc;
+  }, []);

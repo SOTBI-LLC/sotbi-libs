@@ -80,7 +80,7 @@ export { Announcement, DatePublish } from './lib/announcement';
 export { Defrayment } from './lib/defrayment';
 export { Favorite } from './lib/favorite';
 export { MessageAttachment } from './lib/message-attachment';
-export { emptyPosition, Position } from './lib/position';
+export { Position } from './lib/position';
 export { Responsible } from './lib/responsible';
 export {
   ClrSelectedState,

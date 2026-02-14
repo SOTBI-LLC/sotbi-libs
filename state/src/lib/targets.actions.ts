@@ -1,4 +1,4 @@
-import { SimpleEditModel } from '@sotbi/models';
+import type { SimpleEditModel } from '@sotbi/models';
 
 export class FetchTargetTypes {
   public static readonly type = '[TARGETS] Fetch target types';

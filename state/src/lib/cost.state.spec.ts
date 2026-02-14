@@ -184,13 +184,12 @@ describe('CostRealState', () => {
         throwError(() => new Error('Fetch failed')),
       );
 
-      store.dispatch(new FetchCostsReal(mockInterval)).subscribe(
-        () => {},
-        (error) => {
+      store.dispatch(new FetchCostsReal(mockInterval)).subscribe({
+        error: (error) => {
           expect(error).toBeDefined();
           done();
         },
-      );
+      });
     });
   });
 
@@ -235,13 +234,12 @@ describe('CostRealState', () => {
 
       const newCost = { ...mockCostReal, id: 0, dirty: true };
 
-      store.dispatch(new AddCostReal({ idx: 0, cost: newCost })).subscribe(
-        () => {},
-        (error) => {
+      store.dispatch(new AddCostReal({ idx: 0, cost: newCost })).subscribe({
+        error: (error) => {
           expect(error).toBeDefined();
           done();
         },
-      );
+      });
     });
   });
 
@@ -364,13 +362,12 @@ describe('CostRealState', () => {
 
       store
         .dispatch(new UpdateCostReal({ idx: 0, cost: updatedCost }))
-        .subscribe(
-          () => {},
-          (error) => {
+        .subscribe({
+          error: (error) => {
             expect(error).toBeDefined();
             done();
           },
-        );
+        });
     });
   });
 
@@ -408,16 +405,15 @@ describe('CostRealState', () => {
         },
       });
 
-      store.dispatch(new SaveAllCostReal()).subscribe(
-        () => {},
-        (error) => {
+      store.dispatch(new SaveAllCostReal()).subscribe({
+        error: (error) => {
           expect(error).toBeDefined();
           const state = store.selectSnapshot((state: any) => state.costReal);
           expect(state.loading).toBe(false);
           expect(state.lastSaved).toBe(0);
           done();
         },
-      );
+      });
     });
   });
 

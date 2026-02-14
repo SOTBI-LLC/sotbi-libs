@@ -1,4 +1,4 @@
-import { MessageType } from '@sotbi/models';
+import type { MessageType } from '@sotbi/models';
 
 export class FetchMessageTypes {
   public static readonly type = '[EFRSB MESSAGE TYPE] Fetch items';

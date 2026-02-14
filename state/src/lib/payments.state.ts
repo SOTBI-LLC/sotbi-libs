@@ -1,19 +1,19 @@
 import { formatDate } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { DD_MM_YYYY_HH_MM_SS } from '@root/shared/shared-globals';
-import { LoggerService } from '@services/logger.service';
-import { PaymentService } from '@services/payment.service';
-import { IPaymentDocumentFilter, PaymentDocument } from '@sotbi/models';
-import { GetDebtorPayments } from '@store/payments.actions';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { PaymentService } from '@sotbi/data-access';
+import type { IPaymentDocumentFilter, PaymentDocument } from '@sotbi/models';
+import { DD_MM_YYYY_HH_MM_SS } from '@sotbi/utils';
 import { catchError, finalize, tap, throwError } from 'rxjs';
 import { GetItem } from './payment-request.actions';
+import { GetDebtorPayments } from './payments.actions';
 
 export interface PaymentDocumentsStateModel {
   items: PaymentDocument[];
   selected: PaymentDocument | null;
-  loading?: boolean;
+  loading: boolean;
   count: number;
 }
 
@@ -29,7 +29,6 @@ export interface PaymentDocumentsStateModel {
 @Injectable()
 export class PaymentDocumentsState {
   private readonly paymentSrv = inject(PaymentService);
-  private readonly log = inject(LoggerService);
 
   public static getHttpParams(filter: IPaymentDocumentFilter): HttpParams {
     if (filter.start) {
@@ -45,10 +44,16 @@ export class PaymentDocumentsState {
       //   params = params.set('accounts', actuals.map((el) => el) + '');
     }
     if (filter.start) {
-      params = params.set('start', formatDate(filter.start, DD_MM_YYYY_HH_MM_SS, 'ru-Ru'));
+      params = params.set(
+        'start',
+        formatDate(filter.start, DD_MM_YYYY_HH_MM_SS, 'ru-Ru'),
+      );
     }
     if (filter.end) {
-      params = params.set('end', formatDate(filter.end, DD_MM_YYYY_HH_MM_SS, 'ru-Ru'));
+      params = params.set(
+        'end',
+        formatDate(filter.end, DD_MM_YYYY_HH_MM_SS, 'ru-Ru'),
+      );
     }
     if (filter.query) {
       params = params.set('query', filter.query);
@@ -76,10 +81,9 @@ export class PaymentDocumentsState {
 
   @Action(GetDebtorPayments)
   public getDebtorPayments(
-    { getState, patchState }: StateContext<PaymentDocumentsStateModel>,
-    { payload },
+    { patchState }: StateContext<PaymentDocumentsStateModel>,
+    { payload }: GetDebtorPayments,
   ) {
-    this.log.debug('PaymentRequestState::GetDebtorPayments', payload);
     if (payload.bank_detail_id.length === 0) {
       patchState({
         items: [],
@@ -90,31 +94,34 @@ export class PaymentDocumentsState {
     }
     patchState({ loading: true });
 
-    return this.paymentSrv.getDebtorsPayments(PaymentDocumentsState.getHttpParams(payload)).pipe(
-      tap(({ payments, count }) => {
-        patchState({
-          selected: null,
-          items: payments,
-          count,
-        });
-      }),
-      catchError((err) => {
-        console.error(err);
-        return throwError(() => err);
-      }),
-      finalize(() => {
-        patchState({ loading: false });
-        this.log.debug(getState());
-      }),
-    );
+    this.paymentSrv
+      .getDebtorsPayments(PaymentDocumentsState.getHttpParams(payload))
+      .pipe(
+        tap(({ payments, count }) => {
+          patchState({
+            selected: null,
+            items: payments,
+            count,
+          });
+        }),
+        catchError((err) => {
+          console.error(err);
+          return throwError(() => err);
+        }),
+        finalize(() => {
+          patchState({ loading: false });
+        }),
+      );
   }
 
   @Action(GetItem)
-  public getItem({ patchState }: StateContext<PaymentDocumentsStateModel>, { payload }) {
-    this.log.debug('PaymentRequestState::GetItem', payload);
+  public getItem(
+    { patchState }: StateContext<PaymentDocumentsStateModel>,
+    { payload }: GetItem,
+  ) {
     patchState({ loading: true });
     if (payload) {
-      return this.paymentSrv.getItem(payload).pipe(
+      this.paymentSrv.getItem(payload).pipe(
         tap((selected: PaymentDocument) => {
           patchState({ selected });
         }),

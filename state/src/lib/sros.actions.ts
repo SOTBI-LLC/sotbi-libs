@@ -1,4 +1,4 @@
-import { Sro } from '@sotbi/models';
+import type { Sro } from '@sotbi/models';
 
 export class FetchSros {
   public static readonly type = '[SROS] Fetch items';
@@ -17,7 +17,7 @@ export class AddSro {
 
 export class EditSro {
   public static readonly type = '[SROS] Edit item';
-  constructor(public payload: Partial<Sro>) {}
+  constructor(public payload: Sro) {}
 }
 
 export class DeleteSro {

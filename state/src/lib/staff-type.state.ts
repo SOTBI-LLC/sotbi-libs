@@ -1,10 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
-import { StaffTypeService } from '@services/staff-type.service';
-import { emptySimpleEdit2, SimpleEdit2Model } from '@sotbi/models';
+import type { NgxsOnInit, StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { StaffTypeService } from '@sotbi/data-access';
+import type { SimpleEdit2Model } from '@sotbi/models';
+import { emptySimpleEdit2 } from '@sotbi/models';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { itemMap, SimpleEdit2StateModel } from './simple-edit.state.model';
+import type { itemMap, SimpleEdit2StateModel } from './simple-edit.state.model';
 import {
   AddStaffItem,
   DeleteStaffItem,
@@ -51,16 +53,23 @@ export class StaffTypeState implements NgxsOnInit {
   }
 
   @Action(FetchStaffTypes, { cancelUncompleted: true })
-  public fetchItems({ getState, setState }: StateContext<SimpleEdit2StateModel>) {
+  public fetchItems({
+    getState,
+    setState,
+  }: StateContext<SimpleEdit2StateModel>) {
     // console.log('StaffTypeState::FetchStaffTypes');
     const state = getState();
     if (!state.items.length) {
-      return this.staffTypeService.getAll().pipe(
+      this.staffTypeService.getAll().pipe(
         tap((items) => {
           const filteredT = items.filter((el) => el.kind);
-          const mapTItems = new Map(filteredT.map((i): [number, string] => [i.id, i.name]));
+          const mapTItems = new Map(
+            filteredT.map((i): [number, string] => [i.id, i.name]),
+          );
           const filteredF = items.filter((el) => !el.kind);
-          const mapFItems = new Map(filteredF.map((i): [number, string] => [i.id, i.name]));
+          const mapFItems = new Map(
+            filteredF.map((i): [number, string] => [i.id, i.name]),
+          );
           setState({
             ...state,
             items: [...items, Object.assign({}, emptySimpleEdit2)],
@@ -75,7 +84,10 @@ export class StaffTypeState implements NgxsOnInit {
   }
 
   @Action(AddStaffItem)
-  public addItem({ getState, patchState }: StateContext<SimpleEdit2StateModel>, { payload }) {
+  public addItem(
+    { getState, patchState }: StateContext<SimpleEdit2StateModel>,
+    { payload }: AddStaffItem,
+  ) {
     // console.log('StaffTypeState::AddStaffItem', payload);
     return this.staffTypeService.create(payload).pipe(
       tap((item) => {
@@ -98,12 +110,15 @@ export class StaffTypeState implements NgxsOnInit {
   }
 
   @Action(EditStaffItem)
-  public editItem({ getState, patchState }: StateContext<SimpleEdit2StateModel>, { payload }) {
+  public editItem(
+    { getState, patchState }: StateContext<SimpleEdit2StateModel>,
+    { payload }: EditStaffItem,
+  ) {
     // console.log('StaffTypeState::EditStaffItem', payload);
     return this.staffTypeService.update(payload).pipe(
       tap((item) => {
         const state = getState();
-        const idx = state.items.findIndex(({ id }) => id === payload);
+        const idx = state.items.findIndex(({ id }) => id === payload.id);
         state.items[idx] = item;
         if (item.kind) {
           state.mapTItems.set(item.id, item.name);
@@ -122,7 +137,10 @@ export class StaffTypeState implements NgxsOnInit {
   }
 
   @Action(DeleteStaffItem)
-  public deleteItem({ getState, patchState }: StateContext<SimpleEdit2StateModel>, { payload }) {
+  public deleteItem(
+    { getState, patchState }: StateContext<SimpleEdit2StateModel>,
+    { payload }: DeleteStaffItem,
+  ) {
     // console.log('StaffTypeState::DeleteStaffItem', payload);
     return this.staffTypeService.delete(payload).pipe(
       tap(() => {
@@ -143,9 +161,12 @@ export class StaffTypeState implements NgxsOnInit {
   }
 
   @Action(GetStaffType, { cancelUncompleted: true })
-  public getItem({ getState, patchState }: StateContext<SimpleEdit2StateModel>, { payload }) {
+  public getItem(
+    { getState, patchState }: StateContext<SimpleEdit2StateModel>,
+    { payload }: GetStaffType,
+  ) {
     // console.log('StaffTypeState::GetStaffType', payload);
-    let selected: SimpleEdit2Model;
+    let selected: SimpleEdit2Model | undefined;
     if (payload === 0) {
       selected = { id: 0, name: '', kind: false };
       return patchState({ selected });

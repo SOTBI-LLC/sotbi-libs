@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { PaymentAttachmentService } from '@services/payment-attachment.service';
-import { removeID } from '@shared/shared-globals';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { PaymentAttachmentService } from '@sotbi/data-access';
 import { PaymentAttachment } from '@sotbi/models';
+import { removeID } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
@@ -14,11 +15,11 @@ import {
   UpdateItem,
 } from './payment-attachment.actions';
 
-export interface PaymentAttachmentStateModel {
-  items: PaymentAttachment[];
-  selected: PaymentAttachment;
-  loading?: boolean;
-  count: number;
+export class PaymentAttachmentStateModel {
+  public items: PaymentAttachment[] = [];
+  public selected: PaymentAttachment | null = null;
+  public loading = false;
+  public count = 0;
 }
 
 @State<PaymentAttachmentStateModel>({
@@ -45,20 +46,26 @@ export class PaymentAttachmentState {
   }
 
   @Selector()
-  public static getItems(state: PaymentAttachmentStateModel): PaymentAttachment[] {
+  public static getItems(
+    state: PaymentAttachmentStateModel,
+  ): PaymentAttachment[] {
     return state.items;
   }
 
   @Action(GetAllItems)
   public GetAllItems(
-    { getState, setState, patchState }: StateContext<PaymentAttachmentStateModel>,
-    { payload },
+    {
+      getState,
+      setState,
+      patchState,
+    }: StateContext<PaymentAttachmentStateModel>,
+    { payload }: GetAllItems,
   ) {
     // console.log('PaymentAttachmentState::FetchItems');
     const state = getState();
     if (!state.items.length) {
       patchState({ loading: true });
-      return this.itemsService.GetAll(payload).pipe(
+      this.itemsService.GetAll(payload).pipe(
         tap((items) => {
           setState({
             ...state,
@@ -74,21 +81,26 @@ export class PaymentAttachmentState {
   }
 
   @Action(GetItem)
-  public getItem({ patchState }: StateContext<PaymentAttachmentStateModel>, { payload }) {
+  public getItem(
+    { patchState, getState }: StateContext<PaymentAttachmentStateModel>,
+    { payload }: GetItem,
+  ) {
     patchState({ loading: true });
     if (!payload) {
-      const selected: PaymentAttachment = {
-        id: 0,
-        type: null,
-        payment_request_id: 0,
-        creator_id: null,
-        original_file_name: null,
-        file: null,
-      };
-      return patchState({ selected, loading: false });
+      patchState({ selected: new PaymentAttachment(), loading: false });
     } else {
-      return this.itemsService.get(payload).pipe(
-        tap((item) => patchState({ selected: item })),
+      const state = getState();
+      if (state.items.length > 0) {
+        const selected = state.items.find(
+          (item: PaymentAttachment) => item.id === payload,
+        );
+        if (selected) {
+          patchState({ selected, loading: false });
+          return;
+        }
+      }
+      this.itemsService.get(payload).pipe(
+        tap((item: PaymentAttachment) => patchState({ selected: item })),
         catchError((err) => throwError(() => err)),
         finalize(() => patchState({ loading: false })),
       );
@@ -97,8 +109,12 @@ export class PaymentAttachmentState {
 
   @Action(AddItem)
   public createItem(
-    { getState, patchState, setState }: StateContext<PaymentAttachmentStateModel>,
-    { payload },
+    {
+      getState,
+      patchState,
+      setState,
+    }: StateContext<PaymentAttachmentStateModel>,
+    { payload }: AddItem,
   ) {
     // console.log('PaymentAttachmentState::AddItem', payload);
     patchState({ loading: true });
@@ -119,8 +135,12 @@ export class PaymentAttachmentState {
 
   @Action(UpdateItem)
   public updateItem(
-    { getState, setState, patchState }: StateContext<PaymentAttachmentStateModel>,
-    { payload },
+    {
+      getState,
+      setState,
+      patchState,
+    }: StateContext<PaymentAttachmentStateModel>,
+    { payload }: UpdateItem,
   ) {
     // console.log('PaymentAttachmentState::UpdateItem', payload);
     patchState({ loading: true });
@@ -145,8 +165,12 @@ export class PaymentAttachmentState {
 
   @Action(DeleteItem)
   public deleteItem(
-    { getState, patchState, setState }: StateContext<PaymentAttachmentStateModel>,
-    { payload },
+    {
+      getState,
+      patchState,
+      setState,
+    }: StateContext<PaymentAttachmentStateModel>,
+    { payload }: DeleteItem,
   ) {
     // console.log('PaymentAttachmentState::DeleteItem', payload);
     patchState({ loading: true });
@@ -165,7 +189,10 @@ export class PaymentAttachmentState {
   }
 
   @Action(DeleteItems)
-  public deleteItems({ patchState }: StateContext<PaymentAttachmentStateModel>, { payload }) {
+  public deleteItems(
+    { patchState }: StateContext<PaymentAttachmentStateModel>,
+    { payload }: DeleteItems,
+  ) {
     // console.log('PaymentAttachmentState::DeleteItems', payload);
     patchState({ loading: true });
     return this.itemsService.deleteMultiple(payload).pipe(

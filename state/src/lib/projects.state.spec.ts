@@ -1,8 +1,8 @@
+import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Store, provideStates } from '@ngxs/store';
-import { ProjectService } from '@services/project.service';
-import { Project } from '@sotbi/models';
-import { configureTestBed } from '@test-setup';
+import { ProjectService } from '@sotbi/data-access';
+import type { Project } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import {
   AddItem,
@@ -12,7 +12,8 @@ import {
   FetchProjects,
   GetItem,
 } from './projects.actions';
-import { ProjectStateModel, ProjectsState } from './projects.state';
+import type { ProjectStateModel } from './projects.state';
+import { ProjectsState } from './projects.state';
 
 describe('ProjectsState', () => {
   let store: Store;
@@ -61,15 +62,18 @@ describe('ProjectsState', () => {
     projectServiceSpy.save.and.returnValue(of(mockProject));
     projectServiceSpy.delete.and.returnValue(of(undefined));
 
-    await configureTestBed({
+    await TestBed.configureTestingModule({
       providers: [
+        provideZonelessChangeDetection(),
         { provide: ProjectService, useValue: projectServiceSpy },
         provideStates([ProjectsState]),
       ],
     }).compileComponents();
 
     store = TestBed.inject(Store);
-    projectService = TestBed.inject(ProjectService) as jasmine.SpyObj<ProjectService>;
+    projectService = TestBed.inject(
+      ProjectService,
+    ) as jasmine.SpyObj<ProjectService>;
   });
 
   describe('Selectors', () => {
@@ -162,7 +166,9 @@ describe('ProjectsState', () => {
       projectService.getAll$.and.returnValue(of(mockProjects));
 
       store.dispatch(new FetchProjects()).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.items).toEqual(mockProjects);
         expect(state.maps.size).toBe(2);
         expect(state.maps.get(1)).toBe('Test Project');
@@ -187,7 +193,9 @@ describe('ProjectsState', () => {
       projectService.getAll$.and.returnValue(of(mockProjects));
 
       store.dispatch(new FetchProjects()).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.maps.size).toBe(2);
         expect(state.maps.get(1)).toBe('Test Project');
         expect(state.maps.get(2)).toBe('Another Project');
@@ -211,7 +219,9 @@ describe('ProjectsState', () => {
       projectService.getAll$.and.returnValue(of(mockProjects));
 
       store.dispatch(new FetchProjects()).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.items).toEqual(mockProjects);
         // Maps should remain the same
         expect(state.maps).toBe(existingMaps);
@@ -288,7 +298,9 @@ describe('ProjectsState', () => {
       projectService.getAll$.and.returnValue(of(mockShortProjects));
 
       store.dispatch(new FetchAllProjects()).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.shortItems).toEqual(mockShortProjects);
         expect(state.maps.size).toBe(3);
         expect(state.maps.get(1)).toBe('Test Project');
@@ -359,7 +371,9 @@ describe('ProjectsState', () => {
       projectService.getAll$.and.returnValue(of(mockShortProjects));
 
       store.dispatch(new FetchAllProjects()).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.shortItems).toBeTruthy();
         done();
       });
@@ -369,7 +383,9 @@ describe('ProjectsState', () => {
   describe('GetItem Action', () => {
     it('should return default project when id is 0', (done) => {
       store.dispatch(new GetItem(0)).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.selected).toEqual({ id: 0, name: '' });
         expect(state.loading).toBe(false);
         done();
@@ -392,7 +408,9 @@ describe('ProjectsState', () => {
       projectService.get.calls.reset();
 
       store.dispatch(new GetItem(1)).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.selected).toEqual(mockProject);
         expect(state.loading).toBe(false);
         expect(projectService.get).not.toHaveBeenCalled();
@@ -415,7 +433,9 @@ describe('ProjectsState', () => {
       projectService.get.and.returnValue(of(mockProject));
 
       store.dispatch(new GetItem(1)).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.selected).toEqual(mockProject);
         expect(state.loading).toBe(false);
         expect(projectService.get).toHaveBeenCalledWith(1);
@@ -439,7 +459,9 @@ describe('ProjectsState', () => {
 
       store.dispatch(new GetItem(1)).subscribe(() => {
         // After the operation completes, loading should be false
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.loading).toBe(false);
         done();
       });
@@ -451,7 +473,9 @@ describe('ProjectsState', () => {
 
       store.dispatch(new GetItem(1)).subscribe({
         error: () => {
-          const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+          const state = store.selectSnapshot(
+            (state: any) => state.projects,
+          ) as ProjectStateModel;
           expect(state.loading).toBe(false);
           done();
         },
@@ -471,7 +495,9 @@ describe('ProjectsState', () => {
       });
 
       store.dispatch(new GetItem(2)).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.selected?.id).toBe(2);
         expect(state.selected?.name).toBe('Another Project');
         done();
@@ -485,12 +511,17 @@ describe('ProjectsState', () => {
       projectService.create.and.returnValue(of(newProject));
 
       store.dispatch(new AddItem({ name: 'New Project' })).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.selected).toEqual(newProject);
         expect(state.items).toContain(newProject);
         expect(state.items[0]).toEqual(newProject); // Should be prepended
         expect(state.shortItems).toContain(
-          jasmine.objectContaining({ id: newProject.id, name: newProject.name }),
+          jasmine.objectContaining({
+            id: newProject.id,
+            name: newProject.name,
+          }),
         );
         expect(state.maps.get(newProject.id)).toBe(newProject.name);
         done();
@@ -513,7 +544,9 @@ describe('ProjectsState', () => {
       projectService.create.and.returnValue(of(newProject));
 
       store.dispatch(new AddItem({ name: 'Newest Project' })).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.items[0]).toEqual(newProject);
         expect(state.items[1]).toEqual(mockProject);
         done();
@@ -524,11 +557,15 @@ describe('ProjectsState', () => {
       const newProject = { ...mockProject, id: 10, name: 'Map Test Project' };
       projectService.create.and.returnValue(of(newProject));
 
-      store.dispatch(new AddItem({ name: 'Map Test Project' })).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
-        expect(state.maps.get(10)).toBe('Map Test Project');
-        done();
-      });
+      store
+        .dispatch(new AddItem({ name: 'Map Test Project' }))
+        .subscribe(() => {
+          const state = store.selectSnapshot(
+            (state: any) => state.projects,
+          ) as ProjectStateModel;
+          expect(state.maps.get(10)).toBe('Map Test Project');
+          done();
+        });
     });
 
     it('should handle errors and propagate them', (done) => {
@@ -556,7 +593,9 @@ describe('ProjectsState', () => {
       projectService.create.and.returnValue(of(complexProject));
 
       store.dispatch(new AddItem({ name: 'Complex Project' })).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         const shortItem = state.shortItems.find((item) => item.id === 5);
         expect(shortItem).toEqual({ id: 5, name: 'Complex Project' });
         done();
@@ -580,18 +619,28 @@ describe('ProjectsState', () => {
       const editedProject = { ...mockProject, name: 'Updated Project' };
       projectService.save.and.returnValue(of(editedProject));
 
-      store.dispatch(new EditItem({ id: 1, name: 'Updated Project' })).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
-        expect(state.selected?.name).toBe('Updated Project');
-        expect(state.items.find((p) => p.id === 1)?.name).toBe('Updated Project');
-        expect(state.maps.get(1)).toBe('Updated Project');
-        done();
-      });
+      store
+        .dispatch(new EditItem({ id: 1, name: 'Updated Project' }))
+        .subscribe(() => {
+          const state = store.selectSnapshot(
+            (state: any) => state.projects,
+          ) as ProjectStateModel;
+          expect(state.selected?.name).toBe('Updated Project');
+          expect(state.items.find((p) => p.id === 1)?.name).toBe(
+            'Updated Project',
+          );
+          expect(state.maps.get(1)).toBe('Updated Project');
+          done();
+        });
     });
 
     it('should remove id from payload before saving', (done) => {
       const payload = { id: 1, name: 'Updated Name', client_id: 5 };
-      const editedProject = { ...mockProject, name: 'Updated Name', client_id: 5 };
+      const editedProject = {
+        ...mockProject,
+        name: 'Updated Name',
+        client_id: 5,
+      };
       projectService.save.and.returnValue(of(editedProject));
 
       store.dispatch(new EditItem(payload)).subscribe(() => {
@@ -621,12 +670,18 @@ describe('ProjectsState', () => {
       const editedProject = { ...mockProjects[1], name: 'Modified Project' };
       projectService.save.and.returnValue(of(editedProject));
 
-      store.dispatch(new EditItem({ id: 2, name: 'Modified Project' })).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
-        expect(state.items.find((p) => p.id === 2)?.name).toBe('Modified Project');
-        expect(state.items.find((p) => p.id === 1)).toEqual(mockProject); // Other items unchanged
-        done();
-      });
+      store
+        .dispatch(new EditItem({ id: 2, name: 'Modified Project' }))
+        .subscribe(() => {
+          const state = store.selectSnapshot(
+            (state: any) => state.projects,
+          ) as ProjectStateModel;
+          expect(state.items.find((p) => p.id === 2)?.name).toBe(
+            'Modified Project',
+          );
+          expect(state.items.find((p) => p.id === 1)).toEqual(mockProject); // Other items unchanged
+          done();
+        });
     });
 
     it('should prepend shortItem to shortItems array', (done) => {
@@ -644,12 +699,16 @@ describe('ProjectsState', () => {
       const editedProject = { ...mockProject, name: 'New Name' };
       projectService.save.and.returnValue(of(editedProject));
 
-      store.dispatch(new EditItem({ id: 1, name: 'New Name' })).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
-        expect(state.shortItems[0]).toEqual({ id: 1, name: 'New Name' });
-        expect(state.shortItems.length).toBe(2); // Old one still there
-        done();
-      });
+      store
+        .dispatch(new EditItem({ id: 1, name: 'New Name' }))
+        .subscribe(() => {
+          const state = store.selectSnapshot(
+            (state: any) => state.projects,
+          ) as ProjectStateModel;
+          expect(state.shortItems[0]).toEqual({ id: 1, name: 'New Name' });
+          expect(state.shortItems.length).toBe(2); // Old one still there
+          done();
+        });
     });
 
     it('should handle errors and propagate them', (done) => {
@@ -681,11 +740,15 @@ describe('ProjectsState', () => {
       const editedProject = { ...mockProject, name: 'Brand New Name' };
       projectService.save.and.returnValue(of(editedProject));
 
-      store.dispatch(new EditItem({ id: 1, name: 'Brand New Name' })).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
-        expect(state.maps.get(1)).toBe('Brand New Name');
-        done();
-      });
+      store
+        .dispatch(new EditItem({ id: 1, name: 'Brand New Name' }))
+        .subscribe(() => {
+          const state = store.selectSnapshot(
+            (state: any) => state.projects,
+          ) as ProjectStateModel;
+          expect(state.maps.get(1)).toBe('Brand New Name');
+          done();
+        });
     });
   });
 
@@ -709,7 +772,9 @@ describe('ProjectsState', () => {
       projectService.delete.and.returnValue(of(undefined));
 
       store.dispatch(new DeleteItem(1)).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.items.find((p) => p.id === 1)).toBeUndefined();
         expect(state.shortItems.find((p) => p.id === 1)).toBeUndefined();
         expect(state.maps.has(1)).toBe(false);
@@ -734,7 +799,9 @@ describe('ProjectsState', () => {
       projectService.delete.and.returnValue(of(undefined));
 
       store.dispatch(new DeleteItem(2)).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.items.find((p) => p.id === 2)).toBeUndefined();
         expect(state.items.find((p) => p.id === 1)).toBeDefined(); // Other items remain
         done();
@@ -756,7 +823,9 @@ describe('ProjectsState', () => {
       projectService.delete.and.returnValue(of(undefined));
 
       store.dispatch(new DeleteItem(2)).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.shortItems.find((p) => p.id === 2)).toBeUndefined();
         expect(state.shortItems.length).toBe(2);
         done();
@@ -782,7 +851,9 @@ describe('ProjectsState', () => {
       projectService.delete.and.returnValue(of(undefined));
 
       store.dispatch(new DeleteItem(2)).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.maps.has(2)).toBe(false);
         expect(state.maps.has(1)).toBe(true);
         expect(state.maps.has(3)).toBe(true);
@@ -822,7 +893,9 @@ describe('ProjectsState', () => {
       projectService.delete.and.returnValue(of(undefined));
 
       store.dispatch(new DeleteItem(1)).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.items).not.toBe(originalItems);
         expect(state.shortItems).not.toBe(originalShortItems);
         // Original arrays should remain unchanged
@@ -835,7 +908,9 @@ describe('ProjectsState', () => {
 
   describe('Edge Cases and Integration Tests', () => {
     it('should handle empty state correctly', () => {
-      const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+      const state = store.selectSnapshot(
+        (state: any) => state.projects,
+      ) as ProjectStateModel;
       expect(state.items).toEqual([]);
       expect(state.shortItems).toEqual([]);
       expect(state.selected).toBeNull();
@@ -854,21 +929,27 @@ describe('ProjectsState', () => {
         },
       });
 
-      const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+      const state = store.selectSnapshot(
+        (state: any) => state.projects,
+      ) as ProjectStateModel;
       expect(state.selected).toBeNull();
     });
 
     it('should maintain state consistency across multiple operations', (done) => {
       // Test a sequence of operations
       projectService.getAll$.and.returnValue(of(mockShortProjects));
-      projectService.create.and.returnValue(of({ ...mockProject, id: 10, name: 'Created' }));
+      projectService.create.and.returnValue(
+        of({ ...mockProject, id: 10, name: 'Created' }),
+      );
       projectService.delete.and.returnValue(of(undefined));
 
       // Execute sequence
       store.dispatch(new FetchAllProjects()).subscribe(() => {
         store.dispatch(new AddItem({ name: 'Created' })).subscribe(() => {
           store.dispatch(new DeleteItem(10)).subscribe(() => {
-            const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+            const state = store.selectSnapshot(
+              (state: any) => state.projects,
+            ) as ProjectStateModel;
 
             // Verify final state
             expect(state.shortItems.length).toBeGreaterThanOrEqual(3);
@@ -886,7 +967,9 @@ describe('ProjectsState', () => {
       projectService.create.and.returnValue(of(minimalProject));
 
       store.dispatch(new AddItem({ name: 'Minimal' })).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.selected).toEqual(minimalProject);
         expect(state.items).toContain(minimalProject);
         done();
@@ -907,7 +990,9 @@ describe('ProjectsState', () => {
       projectService.create.and.returnValue(of(fullProject));
 
       store.dispatch(new AddItem(fullProject)).subscribe(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         expect(state.selected).toEqual(fullProject);
         done();
       });
@@ -926,10 +1011,15 @@ describe('ProjectsState', () => {
       });
 
       // Dispatch multiple GetItem actions
-      const actions = [store.dispatch(new GetItem(1)), store.dispatch(new GetItem(2))];
+      const actions = [
+        store.dispatch(new GetItem(1)),
+        store.dispatch(new GetItem(2)),
+      ];
 
       Promise.all(actions).then(() => {
-        const state = store.selectSnapshot((state: any) => state.projects) as ProjectStateModel;
+        const state = store.selectSnapshot(
+          (state: any) => state.projects,
+        ) as ProjectStateModel;
         // The last action should win
         expect(state.selected).toBeDefined();
         expect([1, 2]).toContain(state.selected?.id);

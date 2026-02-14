@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { Action, createSelector, Selector, State, StateContext } from '@ngxs/store';
-import { TransitionService } from '@root/service/transition.service';
-import { RequestType, StatusEnum, Transition } from '@sotbi/models';
+import type { StateContext } from '@ngxs/store';
+import { Action, createSelector, Selector, State } from '@ngxs/store';
+import { TransitionService } from '@sotbi/data-access';
+import type { RequestType, StatusEnum, Transition } from '@sotbi/models';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
   AddEmptyTransition,
@@ -17,7 +18,7 @@ import StateMachine from 'javascript-state-machine';
 export class TransitionStateModel {
   public items: Transition[] = [];
   public selected: Partial<Transition> | null = null;
-  public loading: boolean = false;
+  public loading = false;
 }
 
 @State<TransitionStateModel>({
@@ -104,7 +105,7 @@ export class TransitionState {
       selected = state.items.find(({ id }) => id === payload) ?? {};
       patchState({ selected, loading: false });
     } else {
-      return this.itemsService.get(payload).pipe(
+      this.itemsService.get(payload).pipe(
         tap((selected) => {
           patchState({ selected });
         }),

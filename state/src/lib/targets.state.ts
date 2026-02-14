@@ -1,10 +1,16 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { SimpleEditService, SimpleEditServiceNames } from '@services/simple-edit.service';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { SimpleEditService, SimpleEditServiceNames } from '@sotbi/data-access';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { SimpleEditStateModel } from './simple-edit.state.model';
-import { AddItem, DeleteItem, EditItem, FetchTargetTypes } from './targets.actions';
+import type { SimpleEditStateModel } from './simple-edit.state.model';
+import {
+  AddItem,
+  DeleteItem,
+  EditItem,
+  FetchTargetTypes,
+} from './targets.actions';
 
 @State<SimpleEditStateModel>({
   name: 'targets',
@@ -29,14 +35,19 @@ export class TargetsState {
   }
 
   @Action(FetchTargetTypes, { cancelUncompleted: true })
-  public fetchItems({ getState, setState }: StateContext<SimpleEditStateModel>) {
+  public fetchItems({
+    getState,
+    setState,
+  }: StateContext<SimpleEditStateModel>) {
     // console.log('TargetsState::fetchItems() | method called');
     const state = getState();
     if (!state.items.length) {
-      return this.itemsService.getAll(SimpleEditServiceNames.TARGET).pipe(
+      this.itemsService.getAll(SimpleEditServiceNames.TARGET).pipe(
         tap(
           (result) => {
-            const mapItems = new Map(result.map((i): [number, string] => [i.id ?? 0, i.name]));
+            const mapItems = new Map(
+              result.map((i): [number, string] => [i.id ?? 0, i.name]),
+            );
             setState({
               ...state,
               items: result,
@@ -60,20 +71,22 @@ export class TargetsState {
     { payload }: AddItem,
   ) {
     const state = getState();
-    return this.itemsService.create(payload.name, SimpleEditServiceNames.TARGET).pipe(
-      tap((result) => {
-        const mapItems = state.mapItems;
-        mapItems.set(result.id ?? 0, result.name);
-        patchState({
-          items: [...state.items, result],
-          mapItems,
-        });
-      }),
-      catchError((error) => {
-        console.error(error);
-        return throwError(() => error);
-      }),
-    );
+    return this.itemsService
+      .create(payload.name, SimpleEditServiceNames.TARGET)
+      .pipe(
+        tap((result) => {
+          const mapItems = state.mapItems;
+          mapItems.set(result.id ?? 0, result.name);
+          patchState({
+            items: [...state.items, result],
+            mapItems,
+          });
+        }),
+        catchError((error) => {
+          console.error(error);
+          return throwError(() => error);
+        }),
+      );
   }
 
   @Action(EditItem)

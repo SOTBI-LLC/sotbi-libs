@@ -2,11 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
-import { extractProperty, notifyError } from '@root/shared/shared-globals';
-import { LoggerService } from '@services/logger.service';
-import { UserPositionService } from '@services/user-position.service';
-import { generateAvatarSvgUrl } from '@shared/avatars';
-import { UserService } from '@sotbi/data-access';
+import { UserPositionService, UserService } from '@sotbi/data-access';
 import type {
   HeadDepartment,
   HeadDepartmentChef,
@@ -15,6 +11,11 @@ import type {
   UserPosition,
   UserShort,
 } from '@sotbi/models';
+import {
+  extractProperty,
+  generateAvatarSvgUrl,
+  notifyError,
+} from '@sotbi/utils';
 import type { Observable } from 'rxjs';
 import { of, throwError } from 'rxjs';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
@@ -62,7 +63,6 @@ export class UsersStateModel {
 export class UsersState {
   private readonly userSrv = inject(UserService);
   private readonly userPosSrv = inject(UserPositionService);
-  private readonly log = inject(LoggerService);
   private readonly snackBar = inject(MatSnackBar);
 
   // Error messages for consistent logging
@@ -127,7 +127,6 @@ export class UsersState {
     error: unknown,
   ): Observable<never> {
     const message = this.ERROR_MESSAGES[operation];
-    this.log.error(message, error);
     const errorMessage = error instanceof Error ? error.message : String(error);
 
     // show snackbar
@@ -252,7 +251,7 @@ export class UsersState {
       if (selected) {
         return patchState({ selected, loading: false });
       } else {
-        this.log.warn(
+        console.error(
           'User not found in state, fetching from server',
           payload.id,
         );
@@ -310,11 +309,8 @@ export class UsersState {
     // ✅ Create immutable copy instead of mutating
     const selected = {
       ...state.selected,
-      users_positions: [
-        ...(state.selected?.users_positions || []),
-        payload as UserPosition,
-      ],
-    };
+      users_positions: [...(state.selected?.users_positions ?? []), payload],
+    } as User;
 
     return patchState({ selected });
   }
@@ -325,19 +321,20 @@ export class UsersState {
     patchState,
   }: StateContext<UsersStateModel>) {
     const state = getState();
+    if (state.selected) {
+      // ✅ Create immutable copy
+      const selected: User = {
+        ...state.selected,
+        users_positions:
+          state.selected?.users_positions?.filter(
+            (item: UserPosition) => item.id,
+          ) || [],
+      };
 
-    // ✅ Create immutable copy
-    const selected = {
-      ...state.selected,
-      users_positions:
-        state.selected?.users_positions?.filter(
-          (item: UserPosition) => item.id,
-        ) || [],
-    };
+      console.debug('ClearDirtyPositions: updated selected user', selected); // ✅ Use proper logging
 
-    this.log.debug('ClearDirtyPositions: updated selected user', selected); // ✅ Use proper logging
-
-    return patchState({ selected });
+      return patchState({ selected });
+    }
   }
 
   @Action(StartEditItem)
@@ -346,23 +343,23 @@ export class UsersState {
     { payload }: StartEditItem,
   ) {
     const state = getState();
-    const selected = { ...state.selected };
+    if (state.selected) {
+      const selected: User = { ...state.selected };
 
-    if (!selected.users_positions) {
-      selected.users_positions = [] as UserPosition[];
+      if (!selected.users_positions) {
+        selected.users_positions = [] as UserPosition[];
+      }
+
+      // ✅ Robust bounds checking with validation
+      if (this.isValidPositionIndex(selected.users_positions, payload.id)) {
+        // ✅ Create immutable copy of the array
+        selected.users_positions = selected.users_positions.map((pos, index) =>
+          index === payload.id ? { ...pos, dirty: payload.dirty } : pos,
+        );
+      }
+
+      return patchState({ selected });
     }
-
-    // ✅ Robust bounds checking with validation
-    if (this.isValidPositionIndex(selected.users_positions, payload.id)) {
-      // ✅ Create immutable copy of the array
-      selected.users_positions = selected.users_positions.map((pos, index) =>
-        index === payload.id ? { ...pos, dirty: payload.dirty } : pos,
-      );
-    } else {
-      this.log.warn(this.ERROR_MESSAGES.INVALID_POSITION_INDEX, payload.id);
-    }
-
-    return patchState({ selected });
   }
 
   @Action(EditUser)
@@ -378,7 +375,7 @@ export class UsersState {
     let staff$: Observable<void | Staff[]>;
 
     if (payload.staffs) {
-      staff = clone(payload.staffs);
+      staff = structuredClone(payload.staffs);
       staff$ = dispatch(new EditStaff(staff));
       delete payload.staffs;
     } else {
@@ -440,24 +437,26 @@ export class UsersState {
     { payload }: EditUserPosition,
   ) {
     const state = getState();
-    const selected = { ...state.selected };
+    if (state.selected) {
+      const selected: User = { ...state.selected };
 
-    payload = payload.map((item: UserPosition) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { updated_by, position, updated_by_id, ...rest } = item;
-      return item.dirty ? rest : { ...rest, updated_by_id };
-    });
+      payload = payload.map((item: UserPosition) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { updated_by, position, updated_by_id, ...rest } = item;
+        return item.dirty ? rest : { ...rest, updated_by_id };
+      });
 
-    return this.userPosSrv.batchUpdate(payload).pipe(
-      tap((res) => {
-        selected.users_positions = res;
-        setState({
-          ...state,
-          selected,
-        });
-      }),
-      catchError((err) => this.handleError('EDIT_USER_FAILED', err)),
-    );
+      this.userPosSrv.batchUpdate(payload).pipe(
+        tap((res) => {
+          selected.users_positions = res;
+          setState({
+            ...state,
+            selected,
+          });
+        }),
+        catchError((err) => this.handleError('EDIT_USER_FAILED', err)),
+      );
+    }
   }
 
   @Action(DeleteUser)
@@ -465,7 +464,7 @@ export class UsersState {
     { getState, setState }: StateContext<UsersStateModel>,
     { payload }: DeleteUser,
   ) {
-    return this.userSrv.fire(payload).pipe(
+    this.userSrv.fire(payload).pipe(
       tap(() => {
         const state = getState();
         const avatars = new Map(state.avatars); // ✅ Create new Map
@@ -490,11 +489,11 @@ export class UsersState {
     const { headDepartment, selected } = getState();
 
     if (headDepartment && payload === selected?.id) {
-      return of(null); // ✅ Return observable for consistency
+      return;
     }
 
     patchState({ loading: true });
-    return this.userSrv.getHeadDepartment(payload).pipe(
+    this.userSrv.getHeadDepartment(payload).pipe(
       tap((headDepartmentValue) => {
         patchState({ headDepartment: headDepartmentValue });
       }),

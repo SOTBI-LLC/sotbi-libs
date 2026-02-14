@@ -8544,6 +8544,11 @@ jake@^10.8.5:
     filelist "^1.0.4"
     picocolors "^1.1.1"
 
+javascript-state-machine@~2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/javascript-state-machine/-/javascript-state-machine-2.4.0.tgz#d8be31ec38f24ac1a1832f0b672fc3cd5f79c96e"
+  integrity sha512-N5ebPfbgUPBQgu+Q3km/EAxFdG7sS9b+upP3917F/xvH+QES55ba9TfayJJqUQ1OdEuHqwqdadiyqYfalucBvw==
+
 jest-changed-files@30.2.0:
   version "30.2.0"
   resolved "https://registry.yarnpkg.com/jest-changed-files/-/jest-changed-files-30.2.0.tgz#602266e478ed554e1e1469944faa7efd37cee61c"

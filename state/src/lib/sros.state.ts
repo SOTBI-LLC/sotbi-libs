@@ -1,17 +1,19 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
-import { forMap } from '@root/shared/rx-filtres';
-import { SroService } from '@services/sro.service';
-import { Sro } from '@sotbi/models';
+import type { NgxsOnInit, StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { SroService } from '@sotbi/data-access';
+import type { Sro } from '@sotbi/models';
+import { forMap } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { itemMap } from './simple-edit.state.model';
+import type { itemMap } from './simple-edit.state.model';
 import { AddSro, DeleteSro, EditSro, FetchSros, GetSro } from './sros.actions';
 
 export class SroStateModel {
-  public items: Sro[];
-  public mapSros: itemMap;
-  public selectedSro: Sro;
+  public items: Sro[] = [];
+  public mapSros: itemMap = new Map();
+  public selectedSro: Sro | null | undefined = null;
+  public loading = false;
 }
 
 @State<SroStateModel>({
@@ -20,6 +22,7 @@ export class SroStateModel {
     items: [],
     mapSros: new Map(),
     selectedSro: null,
+    loading: false,
   },
 })
 @Injectable()
@@ -48,7 +51,7 @@ export class SrosState implements NgxsOnInit {
     // console.log('SrosState::FetchSros');
     const state = getState();
     if (!state.items.length) {
-      return this.sroSrv.getAll().pipe(
+      this.sroSrv.getAll().pipe(
         catchError((err) => {
           return throwError(err);
         }),
@@ -70,22 +73,31 @@ export class SrosState implements NgxsOnInit {
   }
 
   @Action(GetSro)
-  public async getSro({ patchState, getState }: StateContext<SroStateModel>, { payload }) {
+  public getSro(
+    { patchState, getState }: StateContext<SroStateModel>,
+    { payload }: GetSro,
+  ) {
+    patchState({ loading: true });
     const state = getState();
     let result: Sro;
     const items = state.items;
     const idx = items.findIndex(({ id }) => payload === id);
     if (!items[idx].full_name) {
-      result = await this.sroSrv.get(payload);
-      items[idx] = result;
+      this.sroSrv.get(payload).subscribe((result) => {
+        items[idx] = result;
+        patchState({ items, selectedSro: result, loading: false });
+      });
     } else {
       result = state.items[idx];
+      patchState({ items, selectedSro: result, loading: false });
     }
-    patchState({ items, selectedSro: result });
   }
 
   @Action(AddSro)
-  public addSro({ getState, patchState }: StateContext<SroStateModel>, { payload }) {
+  public addSro(
+    { getState, patchState }: StateContext<SroStateModel>,
+    { payload }: AddSro,
+  ) {
     return this.sroSrv.create(payload).pipe(
       tap((result) => {
         const state = getState();
@@ -93,14 +105,16 @@ export class SrosState implements NgxsOnInit {
         mapSros.set(result.id, result.name);
         patchState({ items: [result, ...state.items], mapSros });
       }),
-      catchError((err) => throwError(err)),
+      catchError((err) => throwError(() => err)),
     );
   }
 
   @Action(EditSro)
-  public editSro({ getState, patchState }: StateContext<SroStateModel>, { payload }) {
+  public editSro(
+    { getState, patchState }: StateContext<SroStateModel>,
+    { payload }: EditSro,
+  ) {
     const { id } = payload;
-    delete payload.id;
     return this.sroSrv.save(payload, id).pipe(
       tap((result: Sro) => {
         const state = getState();
@@ -111,12 +125,15 @@ export class SrosState implements NgxsOnInit {
         items[idx] = result;
         patchState({ items, mapSros, selectedSro: result });
       }),
-      catchError((err) => throwError(err)),
+      catchError((err) => throwError(() => err)),
     );
   }
 
   @Action(DeleteSro)
-  public deleteSro({ getState, setState }: StateContext<SroStateModel>, { payload }) {
+  public deleteSro(
+    { getState, setState }: StateContext<SroStateModel>,
+    { payload }: DeleteSro,
+  ) {
     return this.sroSrv.delete(payload).pipe(
       tap(() => {
         const state = getState();

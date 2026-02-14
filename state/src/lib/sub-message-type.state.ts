@@ -1,15 +1,21 @@
 import { inject, Injectable } from '@angular/core';
-import { Action, createSelector, Selector, State, StateContext } from '@ngxs/store';
-import { SubMessageTypeService } from '@services/sub-message-type.service';
-import { SubMessageType } from '@sotbi/models';
+import type { StateContext } from '@ngxs/store';
+import { Action, createSelector, Selector, State } from '@ngxs/store';
+import { SubMessageTypeService } from '@sotbi/data-access';
+import type { SubMessageType } from '@sotbi/models';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { itemMap } from './simple-edit.state.model';
-import { AddItem, DeleteItem, FetchSubMessageTypes, UpdateItem } from './sub-message-type.actions';
+import type { itemMap } from './simple-edit.state.model';
+import {
+  AddItem,
+  DeleteItem,
+  FetchSubMessageTypes,
+  UpdateItem,
+} from './sub-message-type.actions';
 
 export interface EfrsbSubMessageTypeStateModel {
   items: SubMessageType[];
-  selected: SubMessageType;
+  selected: SubMessageType | null | undefined;
   maps: itemMap;
 }
 
@@ -36,7 +42,9 @@ export class EfrsbSubMessageTypeState {
   }
 
   @Selector()
-  public static getItems(state: EfrsbSubMessageTypeStateModel): SubMessageType[] {
+  public static getItems(
+    state: EfrsbSubMessageTypeStateModel,
+  ): SubMessageType[] {
     return state.items;
   }
 
@@ -47,7 +55,9 @@ export class EfrsbSubMessageTypeState {
 
   public static filtered(typeId: number) {
     return createSelector([EfrsbSubMessageTypeState], ({ items }) => {
-      return items.filter((item: SubMessageType) => item.message_type_id === typeId);
+      return items.filter(
+        (item: SubMessageType) => item.message_type_id === typeId,
+      );
     });
   }
 
@@ -56,7 +66,10 @@ export class EfrsbSubMessageTypeState {
   }
 
   @Action(FetchSubMessageTypes)
-  public fetchSubMessageTypes({ getState, setState }: StateContext<EfrsbSubMessageTypeStateModel>) {
+  public fetchSubMessageTypes({
+    getState,
+    setState,
+  }: StateContext<EfrsbSubMessageTypeStateModel>) {
     const state = getState();
     // console.log('EfrsbSubMessageTypeState::FetchItems', state);
     if (!state.items.length) {
@@ -78,7 +91,7 @@ export class EfrsbSubMessageTypeState {
   @Action(AddItem)
   public createItem(
     { getState, setState }: StateContext<EfrsbSubMessageTypeStateModel>,
-    { payload },
+    { payload }: AddItem,
   ) {
     // console.log('EfrsbSubMessageTypeState::AddItem', payload);
     return this.itemsService.add(payload).pipe(
@@ -101,7 +114,7 @@ export class EfrsbSubMessageTypeState {
   @Action(UpdateItem)
   public updateItem(
     { getState, setState }: StateContext<EfrsbSubMessageTypeStateModel>,
-    { payload },
+    { payload }: UpdateItem,
   ) {
     // console.log('EfrsbSubMessageTypeState::UpdateItem', payload);
     const state = getState();
@@ -125,7 +138,7 @@ export class EfrsbSubMessageTypeState {
   @Action(DeleteItem)
   public deleteItem(
     { getState, setState }: StateContext<EfrsbSubMessageTypeStateModel>,
-    { payload },
+    { payload }: DeleteItem,
   ) {
     // console.log('EfrsbSubMessageTypeState::DeleteItem', payload);
     return this.itemsService.delete(payload).pipe(

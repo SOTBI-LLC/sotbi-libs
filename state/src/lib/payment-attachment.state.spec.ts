@@ -1,8 +1,9 @@
+import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideStates, Store } from '@ngxs/store';
-import { PaymentAttachmentService } from '@services/payment-attachment.service';
-import { PaymentAttachment, PaymentAttachmentType, User } from '@sotbi/models';
-import { configureTestBed } from '@test-setup';
+import { PaymentAttachmentService } from '@sotbi/data-access';
+import type { PaymentAttachment, User } from '@sotbi/models';
+import { PaymentAttachmentType } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import {
   AddItem,
@@ -12,7 +13,8 @@ import {
   GetItem,
   UpdateItem,
 } from './payment-attachment.actions';
-import { PaymentAttachmentState, PaymentAttachmentStateModel } from './payment-attachment.state';
+import type { PaymentAttachmentStateModel } from './payment-attachment.state';
+import { PaymentAttachmentState } from './payment-attachment.state';
 
 describe('PaymentAttachmentState', () => {
   let store: Store;
@@ -32,7 +34,13 @@ describe('PaymentAttachmentState', () => {
     data: new Date('2023-01-01'),
     role: 1,
     user_group_id: 1,
-    group: { id: 1, name: 'User', label: 'Regular User', level: 2, home: '/dashboard' },
+    group: {
+      id: 1,
+      name: 'User',
+      label: 'Regular User',
+      level: 2,
+      home: '/dashboard',
+    },
     position_id: 1,
     users_positions: [],
     unit1_id: 1,
@@ -96,15 +104,18 @@ describe('PaymentAttachmentState', () => {
       'deleteMultiple',
     ]);
 
-    await configureTestBed({
+    await TestBed.configureTestingModule({
       providers: [
+        provideZonelessChangeDetection(),
         { provide: PaymentAttachmentService, useValue: serviceSpy },
         provideStates([PaymentAttachmentState]),
       ],
     }).compileComponents();
 
     store = TestBed.inject(Store);
-    service = TestBed.inject(PaymentAttachmentService) as jasmine.SpyObj<PaymentAttachmentService>;
+    service = TestBed.inject(
+      PaymentAttachmentService,
+    ) as jasmine.SpyObj<PaymentAttachmentService>;
   });
 
   it('should have initial state', () => {
@@ -127,8 +138,12 @@ describe('PaymentAttachmentState', () => {
       };
 
       expect(PaymentAttachmentState.getLoading(mockState)).toBe(true);
-      expect(PaymentAttachmentState.getSelected(mockState)).toEqual(mockAttachment);
-      expect(PaymentAttachmentState.getItems(mockState)).toEqual(mockAttachments);
+      expect(PaymentAttachmentState.getSelected(mockState)).toEqual(
+        mockAttachment,
+      );
+      expect(PaymentAttachmentState.getItems(mockState)).toEqual(
+        mockAttachments,
+      );
     });
   });
 
@@ -162,7 +177,9 @@ describe('PaymentAttachmentState', () => {
     });
 
     it('should handle fetch error and reset loading', () => {
-      service.GetAll.and.returnValue(throwError(() => new Error('Fetch failed')));
+      service.GetAll.and.returnValue(
+        throwError(() => new Error('Fetch failed')),
+      );
 
       store.dispatch(new GetAllItems(1));
 
@@ -177,8 +194,12 @@ describe('PaymentAttachmentState', () => {
 
       store.dispatch(new GetItem(1)).subscribe({
         next: () => {
-          const selected = store.selectSnapshot(PaymentAttachmentState.getSelected);
-          const loading = store.selectSnapshot(PaymentAttachmentState.getLoading);
+          const selected = store.selectSnapshot(
+            PaymentAttachmentState.getSelected,
+          );
+          const loading = store.selectSnapshot(
+            PaymentAttachmentState.getLoading,
+          );
 
           expect(service.get).toHaveBeenCalledWith(1);
           expect(selected).toEqual(mockAttachment);
@@ -192,8 +213,8 @@ describe('PaymentAttachmentState', () => {
       });
     });
 
-    it('should create new default item when payload is null/undefined/0 (edge case)', () => {
-      store.dispatch(new GetItem(null));
+    it('should create new default item when payload is 0 (edge case)', () => {
+      store.dispatch(new GetItem(0));
 
       const selected = store.selectSnapshot(PaymentAttachmentState.getSelected);
       const loading = store.selectSnapshot(PaymentAttachmentState.getLoading);
@@ -210,8 +231,10 @@ describe('PaymentAttachmentState', () => {
 
       // zero should be treated as falsy new-item case as well
       store.dispatch(new GetItem(0));
-      const selectedZero = store.selectSnapshot(PaymentAttachmentState.getSelected);
-      expect(selectedZero.id).toBe(0);
+      const selectedZero = store.selectSnapshot(
+        PaymentAttachmentState.getSelected,
+      );
+      expect(selectedZero?.id).toBe(0);
     });
 
     it('should handle get item error and reset loading', () => {
@@ -247,7 +270,9 @@ describe('PaymentAttachmentState', () => {
 
       store.dispatch(new AddItem(newItem)).subscribe(() => {
         const items = store.selectSnapshot(PaymentAttachmentState.getItems);
-        const selected = store.selectSnapshot(PaymentAttachmentState.getSelected);
+        const selected = store.selectSnapshot(
+          PaymentAttachmentState.getSelected,
+        );
         const state = store.selectSnapshot(
           (s) => s.payment_attachment as PaymentAttachmentStateModel,
         );
@@ -263,16 +288,22 @@ describe('PaymentAttachmentState', () => {
     it('should handle add item error and reset loading', (done) => {
       service.add.and.returnValue(throwError(() => new Error('Add failed')));
 
-      const newItem: Partial<PaymentAttachment> = { type: PaymentAttachmentType.REQUEST };
+      const newItem: Partial<PaymentAttachment> = {
+        type: PaymentAttachmentType.REQUEST,
+      };
 
       store.dispatch(new AddItem(newItem)).subscribe({
         next: () => {
-          const loading = store.selectSnapshot(PaymentAttachmentState.getLoading);
+          const loading = store.selectSnapshot(
+            PaymentAttachmentState.getLoading,
+          );
           expect(loading).toBe(false);
           done();
         },
         error: () => {
-          const loading = store.selectSnapshot(PaymentAttachmentState.getLoading);
+          const loading = store.selectSnapshot(
+            PaymentAttachmentState.getLoading,
+          );
           expect(loading).toBe(false);
           done();
         },
@@ -301,18 +332,40 @@ describe('PaymentAttachmentState', () => {
 
       const itemsBefore = store.selectSnapshot(PaymentAttachmentState.getItems);
 
-      store.dispatch(new UpdateItem({ id: 1, link_name: 'Updated Name' })).subscribe(() => {
-        const itemsAfter = store.selectSnapshot(PaymentAttachmentState.getItems);
-        const selected = store.selectSnapshot(PaymentAttachmentState.getSelected);
-        const loading = store.selectSnapshot(PaymentAttachmentState.getLoading);
+      store
+        .dispatch(
+          new UpdateItem({
+            id: 1,
+            link_name: 'Updated Name',
+            type: PaymentAttachmentType.REQUEST,
+            payment_request_id: 0,
+            creator_id: 0,
+            creator: null,
+            original_file_name: null,
+            file: null,
+          }),
+        )
+        .subscribe(() => {
+          const itemsAfter = store.selectSnapshot(
+            PaymentAttachmentState.getItems,
+          );
+          const selected = store.selectSnapshot(
+            PaymentAttachmentState.getSelected,
+          );
+          const loading = store.selectSnapshot(
+            PaymentAttachmentState.getLoading,
+          );
 
-        expect(itemsAfter[0]).toEqual(updated);
-        expect(selected).toEqual(updated);
-        expect(loading).toBe(false);
-        expect(itemsAfter).not.toBe(itemsBefore); // immutability check
-        expect(service.update).toHaveBeenCalledWith({ id: 1, link_name: 'Updated Name' });
-        done();
-      });
+          expect(itemsAfter[0]).toEqual(updated);
+          expect(selected).toEqual(updated);
+          expect(loading).toBe(false);
+          expect(itemsAfter).not.toBe(itemsBefore); // immutability check
+          expect(service.update).toHaveBeenCalledWith({
+            id: 1,
+            link_name: 'Updated Name',
+          });
+          done();
+        });
     });
 
     it('should not modify items when updating non-existent item (edge case)', (done) => {
@@ -325,28 +378,60 @@ describe('PaymentAttachmentState', () => {
 
       const before = store.selectSnapshot(PaymentAttachmentState.getItems);
 
-      store.dispatch(new UpdateItem({ id: 999, link_name: 'Does Not Exist' })).subscribe(() => {
-        const after = store.selectSnapshot(PaymentAttachmentState.getItems);
-        expect(after).toEqual(before);
-        done();
-      });
+      store
+        .dispatch(
+          new UpdateItem({
+            id: 999,
+            link_name: 'Does Not Exist',
+            type: PaymentAttachmentType.REQUEST,
+            payment_request_id: 0,
+            creator_id: 0,
+            creator: null,
+            original_file_name: null,
+            file: null,
+          }),
+        )
+        .subscribe(() => {
+          const after = store.selectSnapshot(PaymentAttachmentState.getItems);
+          expect(after).toEqual(before);
+          done();
+        });
     });
 
     it('should handle update error and reset loading', (done) => {
-      service.update.and.returnValue(throwError(() => new Error('Update failed')));
+      service.update.and.returnValue(
+        throwError(() => new Error('Update failed')),
+      );
 
-      store.dispatch(new UpdateItem({ id: 1, link_name: 'X' })).subscribe({
-        next: () => {
-          const loading = store.selectSnapshot(PaymentAttachmentState.getLoading);
-          expect(loading).toBe(false);
-          done();
-        },
-        error: () => {
-          const loading = store.selectSnapshot(PaymentAttachmentState.getLoading);
-          expect(loading).toBe(false);
-          done();
-        },
-      });
+      store
+        .dispatch(
+          new UpdateItem({
+            id: 1,
+            link_name: 'X',
+            type: PaymentAttachmentType.REQUEST,
+            payment_request_id: 0,
+            creator_id: 0,
+            creator: null,
+            original_file_name: null,
+            file: null,
+          }),
+        )
+        .subscribe({
+          next: () => {
+            const loading = store.selectSnapshot(
+              PaymentAttachmentState.getLoading,
+            );
+            expect(loading).toBe(false);
+            done();
+          },
+          error: () => {
+            const loading = store.selectSnapshot(
+              PaymentAttachmentState.getLoading,
+            );
+            expect(loading).toBe(false);
+            done();
+          },
+        });
     });
   });
 
@@ -378,16 +463,22 @@ describe('PaymentAttachmentState', () => {
     });
 
     it('should handle delete error and reset loading', (done) => {
-      service.delete.and.returnValue(throwError(() => new Error('Delete failed')));
+      service.delete.and.returnValue(
+        throwError(() => new Error('Delete failed')),
+      );
 
       store.dispatch(new DeleteItem(1)).subscribe({
         next: () => {
-          const loading = store.selectSnapshot(PaymentAttachmentState.getLoading);
+          const loading = store.selectSnapshot(
+            PaymentAttachmentState.getLoading,
+          );
           expect(loading).toBe(false);
           done();
         },
         error: () => {
-          const loading = store.selectSnapshot(PaymentAttachmentState.getLoading);
+          const loading = store.selectSnapshot(
+            PaymentAttachmentState.getLoading,
+          );
           expect(loading).toBe(false);
           done();
         },
@@ -409,16 +500,22 @@ describe('PaymentAttachmentState', () => {
     });
 
     it('should handle bulk delete error and reset loading', (done) => {
-      service.deleteMultiple.and.returnValue(throwError(() => new Error('Bulk failed')));
+      service.deleteMultiple.and.returnValue(
+        throwError(() => new Error('Bulk failed')),
+      );
 
       store.dispatch(new DeleteItems(['x'])).subscribe({
         next: () => {
-          const loading = store.selectSnapshot(PaymentAttachmentState.getLoading);
+          const loading = store.selectSnapshot(
+            PaymentAttachmentState.getLoading,
+          );
           expect(loading).toBe(false);
           done();
         },
         error: () => {
-          const loading = store.selectSnapshot(PaymentAttachmentState.getLoading);
+          const loading = store.selectSnapshot(
+            PaymentAttachmentState.getLoading,
+          );
           expect(loading).toBe(false);
           done();
         },
@@ -431,22 +528,36 @@ describe('PaymentAttachmentState', () => {
       // Fetch
       service.GetAll.and.returnValue(of(mockAttachments));
       store.dispatch(new GetAllItems(1)).subscribe(() => {
-        expect(store.selectSnapshot(PaymentAttachmentState.getItems).length).toBe(2);
+        expect(
+          store.selectSnapshot(PaymentAttachmentState.getItems).length,
+        ).toBe(2);
 
         // Add
-        const created: PaymentAttachment = { ...mockAttachment, id: 3, link_name: 'New' };
+        const created: PaymentAttachment = {
+          ...mockAttachment,
+          id: 3,
+          link_name: 'New',
+        };
         service.add.and.returnValue(of(created));
 
         store.dispatch(new AddItem({ link_name: 'New' })).subscribe(() => {
-          expect(store.selectSnapshot(PaymentAttachmentState.getItems).length).toBe(3);
-          expect(store.selectSnapshot(PaymentAttachmentState.getItems)[0]).toEqual(created);
+          expect(
+            store.selectSnapshot(PaymentAttachmentState.getItems).length,
+          ).toBe(3);
+          expect(
+            store.selectSnapshot(PaymentAttachmentState.getItems)[0],
+          ).toEqual(created);
 
           // Delete
           service.delete.and.returnValue(of(undefined));
           store.dispatch(new DeleteItem(3)).subscribe(() => {
-            expect(store.selectSnapshot(PaymentAttachmentState.getItems).length).toBe(2);
             expect(
-              store.selectSnapshot(PaymentAttachmentState.getItems).find((i) => i.id === 3),
+              store.selectSnapshot(PaymentAttachmentState.getItems).length,
+            ).toBe(2);
+            expect(
+              store
+                .selectSnapshot(PaymentAttachmentState.getItems)
+                .find((i) => i.id === 3),
             ).toBeUndefined();
             done();
           });

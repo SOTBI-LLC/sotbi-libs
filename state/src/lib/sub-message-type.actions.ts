@@ -1,4 +1,4 @@
-import { SubMessageType } from '@sotbi/models';
+import type { SubMessageType } from '@sotbi/models';
 
 export class FetchSubMessageTypes {
   public static readonly type = '[EFRSB SUB MESSAGE TYPE] Fetch items';

@@ -1,3 +1,5 @@
+export { generateAvatarSvgUrl } from './lib/avatars/generate';
+export { fromBase62, toBase62 } from './lib/base62';
 export { getDateDifference } from './lib/date-func/difference';
 export {
   dateValueFormatter,
@@ -25,10 +27,10 @@ export {
   canSave,
   deepEqual,
   deepFlatten,
-  fromBase62,
+  extractProperty,
   getDiff,
   isAllSaved,
   notifyError,
   removeID,
-  toBase62,
+  uniqueElementsBy,
 } from './lib/utils';

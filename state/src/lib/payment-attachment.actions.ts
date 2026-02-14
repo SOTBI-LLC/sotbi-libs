@@ -1,4 +1,4 @@
-import { PaymentAttachment } from '@sotbi/models';
+import type { PaymentAttachment } from '@sotbi/models';
 
 export class GetAllItems {
   public static readonly type = '[PAYMENT ATTACHMENT] Get all items';
@@ -17,7 +17,7 @@ export class AddItem {
 
 export class UpdateItem {
   public static readonly type = '[PAYMENT ATTACHMENT] Update item';
-  constructor(public readonly payload: Partial<PaymentAttachment>) {}
+  constructor(public readonly payload: PaymentAttachment) {}
 }
 
 export class DeleteItem {

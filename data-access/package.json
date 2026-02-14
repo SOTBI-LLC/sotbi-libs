@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/data-access",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "public"
@@ -11,13 +11,14 @@
     "directory": "data-access"
   },
   "peerDependencies": {
+    "@sotbi/models": "0.0.4",
+    "@sotbi/utils": "0.0.4",
     "@angular/common": "^20.3.0",
     "@angular/core": "^20.3.0",
     "rxjs": "^7.8.0",
-    "@sotbi/models": "0.0.1",
-    "@sotbi/utils": "0.0.2",
     "jest": "^30.2.0",
-    "jest-preset-angular": "^16.0.0"
+    "@ngxs/store": "^21.0.0",
+    "date-fns": "^4.1.0"
   },
   "sideEffects": false
 }

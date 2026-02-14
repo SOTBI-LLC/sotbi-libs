@@ -1,9 +1,12 @@
-import { User, UserPosition } from '@sotbi/models';
+import type { User, UserPosition } from '@sotbi/models';
 
 export class FetchUsers {
   public static readonly type = '[USERS] Fetch items';
   constructor(
-    public payload: { loadFired: boolean; refresh: boolean } = { loadFired: false, refresh: false },
+    public payload: { loadFired: boolean; refresh: boolean } = {
+      loadFired: false,
+      refresh: false,
+    },
   ) {}
 }
 
@@ -18,7 +21,12 @@ export class FilterUsers {
 
 export class GetUser {
   public static readonly type = '[USERS] Get item';
-  constructor(public payload: { id: number; refresh?: boolean } = { id: 0, refresh: false }) {}
+  constructor(
+    public payload: { id: number; refresh?: boolean } = {
+      id: 0,
+      refresh: false,
+    },
+  ) {}
 }
 
 export class AddUser {
@@ -28,7 +36,7 @@ export class AddUser {
 
 export class AddDirtyItem {
   public static readonly type = '[USERS] Add dirty edit item';
-  constructor(public payload: Partial<UserPosition>) {}
+  constructor(public payload: UserPosition) {}
 }
 
 export class ClearDirtyPositions {

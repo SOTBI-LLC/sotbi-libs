@@ -1,12 +1,19 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
-import { SimpleEditService, SimpleEditServiceNames } from '@root/service/simple-edit.service';
-import { forMap } from '@root/shared/rx-filtres';
-import { SimpleEditModel } from '@sotbi/models';
+import type { NgxsOnInit, StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { SimpleEditService, SimpleEditServiceNames } from '@sotbi/data-access';
+import type { SimpleEditModel } from '@sotbi/models';
+import { forMap } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { AddItem, DeleteItem, EditItem, FetchLinkTypes, GetItem } from './links.actions';
-import { SimpleEditStateModel } from './simple-edit.state.model';
+import {
+  AddItem,
+  DeleteItem,
+  EditItem,
+  FetchLinkTypes,
+  GetItem,
+} from './links.actions';
+import type { SimpleEditStateModel } from './simple-edit.state.model';
 
 @State<SimpleEditStateModel>({
   name: 'links',
@@ -35,7 +42,10 @@ export class LinkState implements NgxsOnInit {
   }
 
   @Action(FetchLinkTypes, { cancelUncompleted: true })
-  public fetchItems({ getState, setState }: StateContext<SimpleEditStateModel>) {
+  public fetchItems({
+    getState,
+    setState,
+  }: StateContext<SimpleEditStateModel>) {
     const state = getState();
     if (!state.items.length) {
       return this.linkService.getAll(SimpleEditServiceNames.LINK).pipe(
@@ -55,7 +65,10 @@ export class LinkState implements NgxsOnInit {
   }
 
   @Action(GetItem)
-  public getItem({ patchState }: StateContext<SimpleEditStateModel>, { payload }) {
+  public getItem(
+    { patchState }: StateContext<SimpleEditStateModel>,
+    { payload }: GetItem,
+  ) {
     return this.linkService.get(SimpleEditServiceNames.LINK, payload).pipe(
       tap((result) => {
         patchState({ selected: result });
@@ -67,7 +80,10 @@ export class LinkState implements NgxsOnInit {
   }
 
   @Action(AddItem)
-  public addItem({ getState, setState }: StateContext<SimpleEditStateModel>, { payload }) {
+  public addItem(
+    { getState, setState }: StateContext<SimpleEditStateModel>,
+    { payload }: AddItem,
+  ) {
     return this.linkService.create(payload, SimpleEditServiceNames.LINK).pipe(
       tap((result) => {
         const state = getState();
@@ -87,7 +103,10 @@ export class LinkState implements NgxsOnInit {
   }
 
   @Action(EditItem)
-  public editItem({ getState, patchState }: StateContext<SimpleEditStateModel>, { payload }) {
+  public editItem(
+    { getState, patchState }: StateContext<SimpleEditStateModel>,
+    { payload }: EditItem,
+  ) {
     return this.linkService.save$(payload, SimpleEditServiceNames.LINK).pipe(
       tap((result: SimpleEditModel) => {
         const state = getState();
@@ -105,7 +124,10 @@ export class LinkState implements NgxsOnInit {
   }
 
   @Action(DeleteItem)
-  public deleteItem({ getState, setState }: StateContext<SimpleEditStateModel>, { payload }) {
+  public deleteItem(
+    { getState, setState }: StateContext<SimpleEditStateModel>,
+    { payload }: DeleteItem,
+  ) {
     return this.linkService.delete(payload, SimpleEditServiceNames.LINK).pipe(
       tap(() => {
         const state = getState();

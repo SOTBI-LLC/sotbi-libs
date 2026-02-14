@@ -1,4 +1,4 @@
-import { Position } from '@sotbi/models';
+import type { Position } from '@sotbi/models';
 
 export class FetchPositions {
   public static readonly type = '[POSITIONS] Fetch items';
@@ -11,12 +11,12 @@ export class GetPosition {
 
 export class EditPosition {
   public static readonly type = '[POSITIONS] Edit item';
-  constructor(public payload: { idx: number; position: Partial<Position> }) {}
+  constructor(public payload: { idx: number; position: Position }) {}
 }
 
 export class AddPosition {
   public static readonly type = '[POSITIONS] Add item';
-  constructor(public payload: { idx: number; position: Partial<Position> }) {}
+  constructor(public payload: { idx: number; position: Position }) {}
 }
 
 export class AddEmptyPosition {

@@ -1,19 +1,29 @@
 import { inject, Injectable } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
 import { patch } from '@ngxs/store/operators';
-import { CostRealService } from '@root/service/cost-real.service';
-import { formatEventDuraton } from '@root/shared/date-func';
-import { uniqueElementsBy } from '@shared/shared-globals';
-import { calcSumHours, CostReal, CostRealFilter, Project, Staff } from '@sotbi/models';
+import { CostRealService } from '@sotbi/data-access';
+import type {
+  CostReal,
+  CostRealFilter,
+  Debtor,
+  Project,
+  Staff,
+} from '@sotbi/models';
+import { calcSumHours } from '@sotbi/models';
+import { formatEventDuraton, uniqueElementsBy } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
-import { FetchSubordinatesCosts, SetSubordinatesFilter } from './subordinates-costs.actions';
+import {
+  FetchSubordinatesCosts,
+  SetSubordinatesFilter,
+} from './subordinates-costs.actions';
 
 export class SubordinatesCostsStateModel {
   public items: CostReal[] = [];
   public filter: CostRealFilter | null = null;
-  public count: number = 0;
-  public loading?: boolean;
+  public count = 0;
+  public loading = false;
 }
 
 @State<SubordinatesCostsStateModel>({
@@ -27,9 +37,9 @@ export class SubordinatesCostsStateModel {
         start: new Date(),
         end: new Date(),
       },
-      users: [] as number[],
-      debtors: [] as number[],
-      units: [] as number[],
+      users: [],
+      debtors: [],
+      units: [],
     },
   },
 })
@@ -61,35 +71,48 @@ export class SubordinatesCostsState {
   public static getUnits(state: SubordinatesCostsStateModel): Staff[] {
     // console.log(state.filter);
     const allUsers = uniqueElementsBy(
-      state.items.map((el) => el.user),
+      state.items.map((el: CostReal) => el.user),
       (a, b) => a?.id === b?.id,
     );
     const units = allUsers.map((el) => {
-      return { unit1_id: el?.unit1_id, unit1: el?.unit1, unit2_id: el?.unit2_id, unit2: el?.unit2 };
-    });
-    const subunits = uniqueElementsBy(units, (a, b) => a.unit2_id === b.unit2_id).filter(
-      (el) => !!el.unit2,
-    );
-    // console.log(units, subunits);
-    return uniqueElementsBy(units, (a, b) => a.unit1_id === b.unit1_id).map((el) => {
       return {
-        id: el.unit1_id,
-        name: el.unit1,
-        parent_id: 0,
-        children: subunits
-          .filter((item) => item.unit1_id === el.unit1_id)
-          .map((r) => {
-            return { id: r.unit2_id, name: r.unit2, parent_id: r.unit1_id, selected: false };
-          }),
-        selected: false,
-      } as Staff;
+        unit1_id: el?.unit1_id,
+        unit1: el?.unit1,
+        unit2_id: el?.unit2_id,
+        unit2: el?.unit2,
+      };
     });
+    const subunits = uniqueElementsBy(
+      units,
+      (a, b) => a.unit2_id === b.unit2_id,
+    ).filter((el) => !!el.unit2);
+    // console.log(units, subunits);
+    return uniqueElementsBy(units, (a, b) => a.unit1_id === b.unit1_id).map(
+      (el) => {
+        return {
+          id: el.unit1_id,
+          name: el.unit1,
+          parent_id: 0,
+          children: subunits
+            .filter((item) => item.unit1_id === el.unit1_id)
+            .map((r) => {
+              return {
+                id: r.unit2_id,
+                name: r.unit2,
+                parent_id: r.unit1_id,
+                selected: false,
+              };
+            }),
+          selected: false,
+        } as Staff;
+      },
+    );
   }
 
   @Selector()
   public static getProjects(state: SubordinatesCostsStateModel): Project[] {
     const allDebtors = uniqueElementsBy(
-      state.items.map((el) => el.debtor).filter(Boolean),
+      state.items.map((el) => el.debtor).filter(Boolean) as Debtor[],
       (a, b) => a?.id === b?.id,
     );
 
@@ -104,7 +127,9 @@ export class SubordinatesCostsState {
     }
 
     const items = new Set(
-      allDebtors.map(({ id }) => id).filter((id): id is number => !!id && id > 1000000),
+      allDebtors
+        .map(({ id }) => id)
+        .filter((id): id is number => !!id && id > 1000000),
     );
 
     return allDebtors
@@ -114,7 +139,11 @@ export class SubordinatesCostsState {
           id: el?.id ?? 0,
           name: el?.project_name ?? '',
           debtors: allDebtors
-            .filter((item) => item?.project_id === el?.project_id && (item?.id ?? 0) < 1000000)
+            .filter(
+              (item) =>
+                item?.project_id === el?.project_id &&
+                (item?.id ?? 0) < 1000000,
+            )
             .map((debtor) => ({
               ...debtor, // копия, не ссылка из state
               selected: false,
@@ -137,7 +166,7 @@ export class SubordinatesCostsState {
     const state = getState();
     if (!state.loading) {
       patchState({ loading: true, filter: payload });
-      return this.costsService.getSubordinatesCosts(payload).pipe(
+      this.costsService.getSubordinatesCosts(payload).pipe(
         tap(
           (result) => {
             patchState({ items: result, count: result.length });
@@ -163,7 +192,6 @@ export class SubordinatesCostsState {
       debtors: Array.from(payload.debtors ?? []),
       units: Array.from(payload.units ?? []),
     };
-    return setState(patch({ filter: safePayload }));
-    // return patchState({ filter: payload });
+    setState(patch({ filter: safePayload }));
   }
 }

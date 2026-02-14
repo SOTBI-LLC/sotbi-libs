@@ -1,4 +1,4 @@
-import { IPaymentDocumentFilter } from '@sotbi/models';
+import type { IPaymentDocumentFilter } from '@sotbi/models';
 
 export class GetDebtorPayments {
   public static readonly type = '[PAYMENTS] Get Debtor payments';

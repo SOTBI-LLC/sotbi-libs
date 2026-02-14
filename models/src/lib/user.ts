@@ -9,7 +9,7 @@ export class UserShort {
 }
 
 export interface User extends UserShort {
-  uuid: Uint16Array;
+  uuid: Uint16Array | null;
   name: string;
   email: string;
   phone: string;

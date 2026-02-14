@@ -1,12 +1,19 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
-import { SimpleEditService, SimpleEditServiceNames } from '@root/service/simple-edit.service';
-import { forMap } from '@root/shared/rx-filtres';
-import { SimpleEditModel } from '@sotbi/models';
+import type { NgxsOnInit, StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
+import { SimpleEditService, SimpleEditServiceNames } from '@sotbi/data-access';
+import type { SimpleEditModel } from '@sotbi/models';
+import { forMap } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { SimpleEditStateModel } from './simple-edit.state.model';
-import { AddItem, DeleteItem, EditItem, FetchStages, GetItem } from './stages.actions';
+import type { SimpleEditStateModel } from './simple-edit.state.model';
+import {
+  AddItem,
+  DeleteItem,
+  EditItem,
+  FetchStages,
+  GetItem,
+} from './stages.actions';
 
 @State<SimpleEditStateModel>({
   name: 'simpleedit',
@@ -35,16 +42,19 @@ export class StageState implements NgxsOnInit {
   }
 
   @Action(FetchStages)
-  public fetchItems({ getState, setState }: StateContext<SimpleEditStateModel>) {
+  public fetchItems({
+    getState,
+    setState,
+  }: StateContext<SimpleEditStateModel>) {
     // console.log('StageState::FetchStages');
     const state = getState();
     if (!state.items.length) {
-      return this.itemsService.getAll(SimpleEditServiceNames.STAGE).pipe(
+      this.itemsService.getAll(SimpleEditServiceNames.STAGE).pipe(
         catchError((err) => {
           return throwError(err);
         }),
-        tap(
-          (result) => {
+        tap({
+          next: (result) => {
             const mapItems = new Map(result.map(forMap));
             setState({
               ...state,
@@ -52,16 +62,19 @@ export class StageState implements NgxsOnInit {
               mapItems,
             });
           },
-          (error) => {
+          error: (error) => {
             console.error(error.message);
           },
-        ),
+        }),
       );
     }
   }
 
   @Action(GetItem)
-  public getItem({ patchState }: StateContext<SimpleEditStateModel>, { payload }) {
+  public getItem(
+    { patchState }: StateContext<SimpleEditStateModel>,
+    { payload }: GetItem,
+  ) {
     return this.itemsService.get(SimpleEditServiceNames.STAGE, payload).pipe(
       tap((result) => {
         patchState({ selected: result });
@@ -73,7 +86,10 @@ export class StageState implements NgxsOnInit {
   }
 
   @Action(AddItem)
-  public addItem({ getState, setState }: StateContext<SimpleEditStateModel>, { payload }) {
+  public addItem(
+    { getState, setState }: StateContext<SimpleEditStateModel>,
+    { payload }: AddItem,
+  ) {
     return this.itemsService.create(payload, SimpleEditServiceNames.STAGE).pipe(
       tap((result) => {
         const state = getState();
@@ -93,7 +109,10 @@ export class StageState implements NgxsOnInit {
   }
 
   @Action(EditItem)
-  public editItem({ getState, patchState }: StateContext<SimpleEditStateModel>, { payload }) {
+  public editItem(
+    { getState, patchState }: StateContext<SimpleEditStateModel>,
+    { payload }: EditItem,
+  ) {
     return this.itemsService.save$(payload, SimpleEditServiceNames.STAGE).pipe(
       tap((result: SimpleEditModel) => {
         const state = getState();
@@ -111,7 +130,10 @@ export class StageState implements NgxsOnInit {
   }
 
   @Action(DeleteItem)
-  public deleteItem({ getState, setState }: StateContext<SimpleEditStateModel>, { payload }) {
+  public deleteItem(
+    { getState, setState }: StateContext<SimpleEditStateModel>,
+    { payload }: DeleteItem,
+  ) {
     return this.itemsService.delete(payload, SimpleEditServiceNames.STAGE).pipe(
       tap(() => {
         const state = getState();
