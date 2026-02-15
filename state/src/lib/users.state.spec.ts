@@ -629,8 +629,8 @@ describe('UsersState', () => {
           (state: any) => state.users,
         ) as UsersStateModel;
         expect(state.selected).toEqual(newUser);
-        expect(state.items).toContain(newUser);
-        expect(state.shortItems).toContain({
+        expect(state.items).toContainEqual(newUser);
+        expect(state.shortItems).toContainEqual({
           id: newUser.id,
           user: newUser.user,
           avatar: newUser.avatar,
@@ -696,7 +696,7 @@ describe('UsersState', () => {
       const state = store.selectSnapshot(
         (state: any) => state.users,
       ) as UsersStateModel;
-      expect(state.selected?.users_positions).toContain(mockUserPosition);
+      expect(state.selected?.users_positions).toContainEqual(mockUserPosition);
     });
 
     it('should create users_positions array if it does not exist', () => {
@@ -719,7 +719,7 @@ describe('UsersState', () => {
         (state: any) => state.users,
       ) as UsersStateModel;
       expect(Array.isArray(state.selected?.users_positions)).toBe(true);
-      expect(state.selected?.users_positions).toContain(mockUserPosition);
+      expect(state.selected?.users_positions).toContainEqual(mockUserPosition);
     });
 
     it('should maintain immutability', () => {
@@ -1084,6 +1084,18 @@ describe('UsersState', () => {
       };
       const payload = [dirtyPosition, cleanPosition];
 
+      store.reset({
+        users: {
+          loading: false,
+          items: [],
+          selected: { ...mockUser, users_positions: [mockUserPosition] },
+          shortItems: [],
+          avatars: new Map(),
+          toFilter: new Set(),
+          headDepartment: null,
+        },
+      });
+
       userPositionService.batchUpdate.mockReturnValue(of(payload));
 
       store.dispatch(new EditUserPosition(payload)).subscribe(() => {
@@ -1104,6 +1116,18 @@ describe('UsersState', () => {
     it('should handle errors', (done) => {
       const error = new Error('Position update failed');
       userPositionService.batchUpdate.mockReturnValue(throwError(() => error));
+
+      store.reset({
+        users: {
+          loading: false,
+          items: [],
+          selected: { ...mockUser, users_positions: [mockUserPosition] },
+          shortItems: [],
+          avatars: new Map(),
+          toFilter: new Set(),
+          headDepartment: null,
+        },
+      });
 
       store.dispatch(new EditUserPosition([mockUserPosition])).subscribe({
         next: () => {
@@ -1295,7 +1319,7 @@ describe('UsersState', () => {
       const state = store.selectSnapshot(
         (state: any) => state.users,
       ) as UsersStateModel;
-      expect(state.selected?.users_positions).toContain(mockUserPosition);
+      expect(state.selected?.users_positions).toContainEqual(mockUserPosition);
     });
 
     it('should maintain state consistency across multiple operations', (done) => {

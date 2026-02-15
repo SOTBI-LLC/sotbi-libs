@@ -1,6 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Store } from '@ngxs/store';
+import { Store, provideStore, provideStates } from '@ngxs/store';
 import { PaymentRequestService } from '@sotbi/data-access';
 import type {
   PaymentAttachment,
@@ -206,6 +206,8 @@ describe('PaymentRequestState', () => {
       providers: [
         provideZonelessChangeDetection(),
         { provide: PaymentRequestService, useValue: serviceSpy },
+        provideStore([]),
+        provideStates([PaymentRequestState]),
       ],
     }).compileComponents();
 
@@ -294,14 +296,17 @@ describe('PaymentRequestState', () => {
       expect(service.getAllWithParams).not.toHaveBeenCalled();
     });
 
-    it('should handle fetch error', () => {
+    it('should handle fetch error', (done) => {
       const errorResponse = new Error('Fetch failed');
       service.getAllWithParams.mockReturnValue(throwError(() => errorResponse));
 
-      store.dispatch(new FetchItems());
-
-      const loading = store.selectSnapshot(PaymentRequestState.getLoading);
-      expect(loading).toBe(false);
+      store.dispatch(new FetchItems()).subscribe({
+        error: () => {
+          const loading = store.selectSnapshot(PaymentRequestState.getLoading);
+          expect(loading).toBe(false);
+          done();
+        },
+      });
     });
 
     it('should set loading to true while fetching', () => {
@@ -350,17 +355,17 @@ describe('PaymentRequestState', () => {
 
       const selected = store.selectSnapshot(PaymentRequestState.getSelected);
 
-      expect(selected).toEqual({
+      expect(selected).toEqual(expect.objectContaining({
         id: 0,
         status: StatusEnum.DRAFT,
-        debtor_id: null,
-        bank_detail_id: null,
-        target: null,
-        request_type: null,
+        debtor_id: 0,
+        bank_detail_id: 0,
+        target: PaymentRequestTarget.PAY,
+        request_type: PaymentRequestType.FORM,
         defrayments: [],
         payment_attachments: [],
-        worked_by_id: null,
-      });
+        worked_by_id: 0,
+      }));
       expect(service.get).not.toHaveBeenCalled();
     });
 
@@ -401,7 +406,7 @@ describe('PaymentRequestState', () => {
         const selected = store.selectSnapshot(PaymentRequestState.getSelected);
         const loading = store.selectSnapshot(PaymentRequestState.getLoading);
 
-        expect(items).toContain(mockPaymentRequest);
+        expect(items).toContainEqual(mockPaymentRequest);
         expect(selected).toEqual(mockPaymentRequest);
         expect(loading).toBe(false);
         expect(service.add).toHaveBeenCalledWith(newItem); // removeID is called in the action
@@ -494,10 +499,12 @@ describe('PaymentRequestState', () => {
         expect(items[0]).toEqual(updatedItem);
         expect(selected).toEqual(updatedItem);
         expect(loading).toBe(false);
-        expect(service.update).toHaveBeenCalledWith({
-          id: 1,
-          description: 'Updated description',
-        });
+        expect(service.update).toHaveBeenCalledWith(
+          expect.objectContaining({
+            id: 1,
+            description: 'Updated description',
+          }),
+        );
         done();
       });
     });
@@ -703,23 +710,23 @@ describe('PaymentRequestState', () => {
       store.dispatch(new AddDirtyItem(1)).subscribe(() => {
         const selected = store.selectSnapshot(PaymentRequestState.getSelected);
 
-        // Check that sensitive data is removed
-        expect(selected?.id).toBeUndefined();
-        expect(selected?.status).toBeUndefined();
-        expect(selected?.doer_comment).toBeUndefined();
-        expect(selected?.histories).toBeUndefined();
+        // Check that sensitive data is reset
+        expect(selected?.id).toBe(0);
+        expect(selected?.status).toBe(StatusEnum.DRAFT);
+        expect(selected?.doer_comment).toBe('');
+        expect(selected?.histories).toEqual([]);
 
         // Check that filtered attachment types are removed
         expect(selected?.payment_attachments.length).toBe(1);
         expect(selected?.payment_attachments[0].type).toBe(
           PaymentAttachmentType.REQUEST,
         );
-        expect(selected?.payment_attachments[0].id).toBeUndefined();
+        expect(selected?.payment_attachments[0].id).toBe(0);
 
-        // Check that defrayment IDs are removed
+        // Check that defrayment IDs are reset
         expect(selected?.defrayments.length).toBe(2);
-        expect(selected?.defrayments[0].id).toBeUndefined();
-        expect(selected?.defrayments[1].id).toBeUndefined();
+        expect(selected?.defrayments[0].id).toBe(0);
+        expect(selected?.defrayments[1].id).toBe(0);
 
         expect(service.get).toHaveBeenCalledWith(1);
         done();

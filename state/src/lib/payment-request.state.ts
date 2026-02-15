@@ -63,7 +63,7 @@ export class PaymentRequestState {
     const state = getState();
     if (!state.items.length) {
       patchState({ loading: true });
-      this.itemsService.getAllWithParams().pipe(
+      return this.itemsService.getAllWithParams().pipe(
         tap(({ requests, count }) => {
           setState({
             ...state,
@@ -76,6 +76,7 @@ export class PaymentRequestState {
         finalize(() => patchState({ loading: false })),
       );
     }
+    return;
   }
 
   @Action(GetItem)

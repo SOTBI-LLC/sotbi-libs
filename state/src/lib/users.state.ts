@@ -446,7 +446,7 @@ export class UsersState {
         return item.dirty ? rest : { ...rest, updated_by_id };
       });
 
-      this.userPosSrv.batchUpdate(payload).pipe(
+      return this.userPosSrv.batchUpdate(payload).pipe(
         tap((res) => {
           selected.users_positions = res;
           setState({
@@ -457,6 +457,7 @@ export class UsersState {
         catchError((err) => this.handleError('EDIT_USER_FAILED', err)),
       );
     }
+    return;
   }
 
   @Action(DeleteUser)
@@ -464,7 +465,7 @@ export class UsersState {
     { getState, setState }: StateContext<UsersStateModel>,
     { payload }: DeleteUser,
   ) {
-    this.userSrv.fire(payload).pipe(
+    return this.userSrv.fire(payload).pipe(
       tap(() => {
         const state = getState();
         const avatars = new Map(state.avatars); // ✅ Create new Map
@@ -493,7 +494,7 @@ export class UsersState {
     }
 
     patchState({ loading: true });
-    this.userSrv.getHeadDepartment(payload).pipe(
+    return this.userSrv.getHeadDepartment(payload).pipe(
       tap((headDepartmentValue) => {
         patchState({ headDepartment: headDepartmentValue });
       }),

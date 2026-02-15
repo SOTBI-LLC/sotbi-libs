@@ -65,7 +65,7 @@ export class PaymentAttachmentState {
     const state = getState();
     if (!state.items.length) {
       patchState({ loading: true });
-      this.itemsService.GetAll(payload).pipe(
+      return this.itemsService.GetAll(payload).pipe(
         tap((items) => {
           setState({
             ...state,
@@ -78,6 +78,7 @@ export class PaymentAttachmentState {
         finalize(() => patchState({ loading: false })),
       );
     }
+    return;
   }
 
   @Action(GetItem)
@@ -87,7 +88,7 @@ export class PaymentAttachmentState {
   ) {
     patchState({ loading: true });
     if (!payload) {
-      patchState({ selected: new PaymentAttachment(), loading: false });
+      return patchState({ selected: new PaymentAttachment(), loading: false });
     } else {
       const state = getState();
       if (state.items.length > 0) {
@@ -99,7 +100,7 @@ export class PaymentAttachmentState {
           return;
         }
       }
-      this.itemsService.get(payload).pipe(
+      return this.itemsService.get(payload).pipe(
         tap((item: PaymentAttachment) => patchState({ selected: item })),
         catchError((err) => throwError(() => err)),
         finalize(() => patchState({ loading: false })),

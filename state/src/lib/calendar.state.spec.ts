@@ -467,6 +467,8 @@ describe('CalendarState - State Management & Business Logic', () => {
             id: 999,
             month: 'edge-case',
             first_day_month: new Date('2023-01-01'),
+            working_days: [],
+            holidays: [],
           },
         ] as any;
 
@@ -661,6 +663,8 @@ describe('CalendarState - State Management & Business Logic', () => {
           id: 999,
           month: 'edge-case',
           first_day_month: new Date('2023-01-01'),
+          working_days: [],
+          holidays: [],
         },
       ];
 

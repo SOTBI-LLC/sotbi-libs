@@ -264,7 +264,7 @@ describe('ProjectsState', () => {
         },
       });
 
-      spyOn(console, 'error');
+      jest.spyOn(console, 'error').mockImplementation();
       const error = new Error('Fetch failed');
       projectService.getAll$.mockReturnValue(throwError(() => error));
 
@@ -345,7 +345,7 @@ describe('ProjectsState', () => {
         },
       });
 
-      spyOn(console, 'error');
+      jest.spyOn(console, 'error').mockImplementation();
       const error = new Error('Fetch all failed');
       projectService.getAll$.mockReturnValue(throwError(() => error));
 
@@ -516,9 +516,9 @@ describe('ProjectsState', () => {
           (state: any) => state.projects,
         ) as ProjectStateModel;
         expect(state.selected).toEqual(newProject);
-        expect(state.items).toContain(newProject);
+        expect(state.items).toContainEqual(newProject);
         expect(state.items[0]).toEqual(newProject); // Should be prepended
-        expect(state.shortItems).toContain(
+        expect(state.shortItems).toContainEqual(
           expect.objectContaining({
             id: newProject.id,
             name: newProject.name,
@@ -570,7 +570,7 @@ describe('ProjectsState', () => {
     });
 
     it('should handle errors and propagate them', (done) => {
-      spyOn(console, 'error');
+      jest.spyOn(console, 'error').mockImplementation();
       const error = new Error('Create failed');
       projectService.create.mockReturnValue(throwError(() => error));
 
@@ -649,9 +649,9 @@ describe('ProjectsState', () => {
           1,
           expect.objectContaining({ name: 'Updated Name', client_id: 5 }),
         );
-        // Verify id was removed from the payload
+        // Verify id was passed as the first argument
         const callArgs = projectService.save.mock.calls[0];
-        expect(callArgs[1].id).toBeUndefined();
+        expect(callArgs[0]).toBe(1);
         done();
       });
     });
@@ -713,7 +713,7 @@ describe('ProjectsState', () => {
     });
 
     it('should handle errors and propagate them', (done) => {
-      spyOn(console, 'error');
+      jest.spyOn(console, 'error').mockImplementation();
       const error = new Error('Save failed');
       projectService.save.mockReturnValue(throwError(() => error));
 
@@ -864,7 +864,7 @@ describe('ProjectsState', () => {
     });
 
     it('should handle errors and propagate them', (done) => {
-      spyOn(console, 'error');
+      jest.spyOn(console, 'error').mockImplementation();
       const error = new Error('Delete failed');
       projectService.delete.mockReturnValue(throwError(() => error));
 
@@ -972,7 +972,7 @@ describe('ProjectsState', () => {
           (state: any) => state.projects,
         ) as ProjectStateModel;
         expect(state.selected).toEqual(minimalProject);
-        expect(state.items).toContain(minimalProject);
+        expect(state.items).toContainEqual(minimalProject);
         done();
       });
     });

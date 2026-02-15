@@ -223,7 +223,7 @@ describe('CostRealState', () => {
         .subscribe(() => {
           const state = store.selectSnapshot((state: any) => state.costReal);
           expect(service.createCostReal).toHaveBeenCalledWith(newCost);
-          expect(state.allItems).toContain(expect.objectContaining({ id: 1 }));
+          expect(state.allItems).toContainEqual(expect.objectContaining({ id: 1 }));
           done();
         });
     });

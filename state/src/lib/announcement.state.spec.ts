@@ -173,13 +173,14 @@ describe('AnnouncementState', () => {
       ) as AnnouncementStateModel;
       expect(state.selected).toEqual({
         id: 0,
+        new: true,
         title: null,
         content: null,
-        creator_id: null,
+        creator_id: 0,
         date_publish: DatePublish.NOW,
         start: null,
         end: null,
-        author_id: null,
+        author_id: 0,
       } as any);
       expect(state.loading).toBeFalsy();
     });

@@ -81,7 +81,7 @@ export class ProjectsState implements NgxsOnInit {
   }: StateContext<ProjectStateModel>) {
     const state = getState();
     if (!state.items.length) {
-      this.prjSrv.getAll$().pipe(
+      return this.prjSrv.getAll$().pipe(
         tap({
           next: (result) => {
             if (!state.maps.size) {
@@ -101,6 +101,7 @@ export class ProjectsState implements NgxsOnInit {
         }),
       );
     }
+    return;
   }
 
   @Action(FetchAllProjects, { cancelUncompleted: true })
@@ -110,7 +111,7 @@ export class ProjectsState implements NgxsOnInit {
   }: StateContext<ProjectStateModel>) {
     const state = getState();
     if (!state.shortItems.length) {
-      this.prjSrv.getAll$({ short: true }).pipe(
+      return this.prjSrv.getAll$({ short: true }).pipe(
         distinctUntilChanged(),
         catchError((err) => throwError(() => err)),
         tap({
@@ -128,6 +129,7 @@ export class ProjectsState implements NgxsOnInit {
         }),
       );
     }
+    return;
   }
 
   @Action(GetItem)

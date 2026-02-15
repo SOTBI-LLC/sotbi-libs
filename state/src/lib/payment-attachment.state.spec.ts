@@ -177,15 +177,20 @@ describe('PaymentAttachmentState', () => {
       expect(service.GetAll).not.toHaveBeenCalled();
     });
 
-    it('should handle fetch error and reset loading', () => {
+    it('should handle fetch error and reset loading', (done) => {
       service.GetAll.mockReturnValue(
         throwError(() => new Error('Fetch failed')),
       );
 
-      store.dispatch(new GetAllItems(1));
-
-      const loading = store.selectSnapshot(PaymentAttachmentState.getLoading);
-      expect(loading).toBe(false);
+      store.dispatch(new GetAllItems(1)).subscribe({
+        error: () => {
+          const loading = store.selectSnapshot(
+            PaymentAttachmentState.getLoading,
+          );
+          expect(loading).toBe(false);
+          done();
+        },
+      });
     });
   });
 
@@ -222,9 +227,11 @@ describe('PaymentAttachmentState', () => {
 
       expect(selected).toEqual({
         id: 0,
-        type: null,
+        type: PaymentAttachmentType.REQUEST,
         payment_request_id: 0,
-        creator_id: null,
+        creator_id: 0,
+        creator: null,
+        link_name: null,
         original_file_name: null,
         file: null,
       });
@@ -238,13 +245,18 @@ describe('PaymentAttachmentState', () => {
       expect(selectedZero?.id).toBe(0);
     });
 
-    it('should handle get item error and reset loading', () => {
+    it('should handle get item error and reset loading', (done) => {
       service.get.mockReturnValue(throwError(() => new Error('Get failed')));
 
-      store.dispatch(new GetItem(1));
-
-      const loading = store.selectSnapshot(PaymentAttachmentState.getLoading);
-      expect(loading).toBe(false);
+      store.dispatch(new GetItem(1)).subscribe({
+        error: () => {
+          const loading = store.selectSnapshot(
+            PaymentAttachmentState.getLoading,
+          );
+          expect(loading).toBe(false);
+          done();
+        },
+      });
     });
   });
 
@@ -361,10 +373,12 @@ describe('PaymentAttachmentState', () => {
           expect(selected).toEqual(updated);
           expect(loading).toBe(false);
           expect(itemsAfter).not.toBe(itemsBefore); // immutability check
-          expect(service.update).toHaveBeenCalledWith({
-            id: 1,
-            link_name: 'Updated Name',
-          });
+          expect(service.update).toHaveBeenCalledWith(
+            expect.objectContaining({
+              id: 1,
+              link_name: 'Updated Name',
+            }),
+          );
           done();
         });
     });

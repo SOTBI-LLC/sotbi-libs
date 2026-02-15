@@ -1,6 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Store } from '@ngxs/store';
+import { Store, provideStore, provideStates } from '@ngxs/store';
 import { AccessService } from '@sotbi/data-access';
 import type { Access } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
@@ -37,6 +37,8 @@ describe('AccessState', () => {
       providers: [
         provideZonelessChangeDetection(),
         { provide: AccessService, useValue: serviceSpy },
+        provideStore([]),
+        provideStates([AccessState]),
       ],
     }).compileComponents();
 
@@ -385,7 +387,7 @@ describe('AccessState', () => {
         );
 
         // Spy on console.error since the action logs errors
-        spyOn(console, 'error');
+        jest.spyOn(console, 'error').mockImplementation();
 
         store.dispatch(new UpdateItem(updatedAccess)).subscribe({
           error: (error) => {
