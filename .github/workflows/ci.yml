@@ -36,6 +36,9 @@ jobs:
           node-version: '20'
           cache: 'yarn'
 
+      - name: Install NX
+        run: yarn global add nx
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
@@ -43,7 +46,7 @@ jobs:
         uses: nrwl/nx-set-shas@v4
 
       - name: Check formatting
-        run: yarn format:check
+        run: yarn nx format:check
         if: always()
 
       - name: Run ESLint on affected projects
