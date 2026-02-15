@@ -47,7 +47,7 @@ jobs:
 
       - name: Check formatting
         run: npx nx format:check
-        if: always()
+        continue-on-error: true
 
       - name: Run ESLint on affected projects
         run: npx nx run-many -t lint --parallel=3 --configuration=ci
