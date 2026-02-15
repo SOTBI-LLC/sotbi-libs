@@ -1,8 +1,7 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import type { GridApi, IToolPanel, IToolPanelParams } from 'ag-grid-community';
 
 @Component({
-  selector: 'app-right-side-bar-ag-grid',
   template: `
     <div class="tool-panel">
       <div class="buttons-group  tool-panel__item">
@@ -77,56 +76,57 @@ import type { GridApi, IToolPanel, IToolPanelParams } from 'ag-grid-community';
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
 export class RightSideBarAgGridComponent implements IToolPanel {
-  gridApi: GridApi;
-  showButtonResetFilterAndSort = true;
+  private gridApi: GridApi | null = null;
+  protected showButtonResetFilterAndSort = true;
 
-  constructor(/*private readonly actRouter: ActivatedRoute, private readonly router: Router*/) {}
-
-  agInit(params: IToolPanelParams): void {
+  public agInit(params: IToolPanelParams): void {
     this.gridApi = params.api;
   }
 
-  refresh(): void {}
+  public refresh(): boolean {
+    return false;
+  }
 
-  autosizeAllColumns() {
-    const allColumnIds = [];
-    this.gridApi.getColumns().forEach((column) => {
+  protected autosizeAllColumns() {
+    const allColumnIds: string[] = [];
+    this.gridApi?.getColumns()?.forEach((column) => {
       allColumnIds.push(column.getColId());
     });
-    this.gridApi.autoSizeColumns(allColumnIds, true);
-    this.gridApi.closeToolPanel();
+    this.gridApi?.autoSizeColumns(allColumnIds, true);
+    this.gridApi?.closeToolPanel();
   }
 
-  resetFilterAndSort() {
-    const filter = this.gridApi.getFilterModel();
+  protected resetFilterAndSort() {
+    const filter = this.gridApi?.getFilterModel();
     if (!Object.prototype.hasOwnProperty.call(filter, 'inn')) {
-      this.gridApi.setFilterModel(null);
+      this.gridApi?.setFilterModel(null);
     }
-    this.gridApi.applyColumnState({
+    this.gridApi?.applyColumnState({
       defaultState: { sort: null },
     });
-    this.gridApi.closeToolPanel();
+    this.gridApi?.closeToolPanel();
   }
 
-  resetColumns() {
-    this.gridApi.resetColumnState();
-    this.gridApi.closeToolPanel();
+  protected resetColumns() {
+    this.gridApi?.resetColumnState();
+    this.gridApi?.closeToolPanel();
   }
-  onBtExport(): void {
+  protected onBtExport(): void {
     const params = {
       columnGroups: true,
       onlyVisible: false,
       allColumns: true,
       fileName: 'TradeReporting(all)',
     };
-    this.gridApi.exportDataAsExcel(params);
+    this.gridApi?.exportDataAsExcel(params);
   }
 
-  exportExcel() {
-    this.gridApi.exportDataAsExcel({
+  protected exportExcel() {
+    this.gridApi?.exportDataAsExcel({
       fileName: 'TradeReporting',
     });
   }

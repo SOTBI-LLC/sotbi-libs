@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import type { ICellEditorAngularComp } from 'ag-grid-angular';
-import type { Column, GridApi, RowNode } from 'ag-grid-community';
 import { NgStyle } from '@angular/common';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ClrIconModule } from '@clr/angular';
+import type { ICellEditorAngularComp } from 'ag-grid-angular';
+import type { Column, GridApi, RowNode } from 'ag-grid-community';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -105,14 +105,14 @@ import { ClrIconModule } from '@clr/angular';
   imports: [NgStyle, FormsModule, ClrIconModule],
 })
 export class TextareaEditor implements ICellEditorAngularComp {
-  value: string;
-  show = false;
-  private api: GridApi;
+  protected value = '';
+  protected show = false;
+  private api: GridApi | null = null;
   cellWidth: string;
   cellWidthTextareaReadonly: string;
   cellHeightTextareaReadonly: string;
   cellHeightTextarea: string;
-  upOrDown: number;
+  protected upOrDown = 0;
   bottom: string;
   altState = false;
 

@@ -1,13 +1,17 @@
 import type { OnDestroy } from '@angular/core';
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngxs/store';
 import type { CostReal } from '@sotbi/models';
 import { calcSumHours } from '@sotbi/models';
-import { CalendarState } from '@store/calendar.state';
+import { formatEventDuraton } from '@sotbi/utils';
 import type { IStatusPanelAngularComp } from 'ag-grid-angular';
-import type { GridApi, IStatusPanelParams, RowNode } from 'ag-grid-community';
-import { formatEventDuraton } from '../date-func';
+import type { GridApi, IRowNode, IStatusPanelParams } from 'ag-grid-community';
 
 @Component({
   template: `
@@ -17,34 +21,35 @@ import { formatEventDuraton } from '../date-func';
     </div>
   `,
   styles: [],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
 export class AggregationStatusBarComponent implements OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
 
-  count = 0;
-  text: string;
-  private api: GridApi;
+  protected count = 0;
+  protected text = '';
+  private api: GridApi | null = null;
 
-  agInit({ api, text }): void {
+  public agInit({ api, text }): void {
     this.api = api;
     this.text = text;
     api.addEventListener('modelUpdated', this.modelUpdated.bind(this));
   }
 
-  modelUpdated() {
-    this.count = this.api.getDisplayedRowCount();
+  private modelUpdated() {
+    this.count = this.api?.getDisplayedRowCount() ?? 0;
     this.cdr.detectChanges();
   }
 
-  ngOnDestroy(): void {
-    this.api.removeEventListener('modelUpdated', this.modelUpdated.bind(this));
+  public ngOnDestroy(): void {
+    this.api?.removeEventListener('modelUpdated', this.modelUpdated.bind(this));
   }
 }
 
 @Component({
   template: `
-    @if (editable()) {
+    @if (editable) {
       <div class="ag-name-value p-0">
         <button
           type="button"
@@ -70,23 +75,25 @@ export class AggregationStatusBarComponent implements OnDestroy {
     }
   `,
   styles: [],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule],
 })
 export class AddRowsStatusBarComponent implements IStatusPanelAngularComp {
   private readonly store = inject(Store);
 
-  protected readonly editable = this.store.selectSignal(CalendarState.editable);
+  protected editable = true;
 
-  private params: IStatusPanelParams;
-  count = 10;
+  private params: IStatusPanelParams | null = null;
+  protected count = 10;
 
-  agInit(params: IStatusPanelParams): void {
+  public agInit(params: IStatusPanelParams): void {
     this.params = params;
+    this.editable = params['editable'];
   }
 
-  inputClicked(count = 1) {
-    if (!!this.params['onAdd'] && count && count > 0) {
-      return this.params['onAdd'](count);
+  protected inputClicked(count = 1) {
+    if (!!this.params?.['onAdd'] && count && count > 0) {
+      return this.params?.['onAdd'](count);
     }
   }
 }
@@ -99,6 +106,7 @@ export class AddRowsStatusBarComponent implements IStatusPanelAngularComp {
     </div>
   `,
   styles: [],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
 export class SumHourStatusBarComponent
@@ -106,24 +114,26 @@ export class SumHourStatusBarComponent
 {
   private readonly cdr = inject(ChangeDetectorRef);
 
-  hours: string;
-  private api: GridApi;
+  protected hours = '';
+  private api: GridApi | null = null;
 
-  agInit({ api }: IStatusPanelParams): void {
+  public agInit({ api }: IStatusPanelParams): void {
     this.api = api;
     api.addEventListener('modelUpdated', this.modelUpdated.bind(this));
   }
 
-  modelUpdated() {
+  private modelUpdated() {
     const costs: CostReal[] = [];
-    this.api.forEachNodeAfterFilterAndSort((row: RowNode) => {
-      costs.push(row.data);
+    this.api?.forEachNodeAfterFilterAndSort(({ data }: IRowNode<CostReal>) => {
+      if (data) {
+        costs.push(data);
+      }
     });
     this.hours = formatEventDuraton(calcSumHours(costs));
     this.cdr.detectChanges();
   }
 
-  ngOnDestroy(): void {
-    this.api.removeEventListener('modelUpdated', this.modelUpdated.bind(this));
+  public ngOnDestroy(): void {
+    this.api?.removeEventListener('modelUpdated', this.modelUpdated.bind(this));
   }
 }

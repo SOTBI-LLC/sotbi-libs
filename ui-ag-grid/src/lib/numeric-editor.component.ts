@@ -1,5 +1,10 @@
 import type { AfterViewInit } from '@angular/core';
-import { Component, ViewContainerRef, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ViewContainerRef,
+  viewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import type { ICellEditorAngularComp } from 'ag-grid-angular';
 import type { ICellEditorParams } from 'ag-grid-community';
@@ -7,7 +12,7 @@ import { IMaskDirective } from 'angular-imask';
 import { maskForSumm } from '../shared-globals';
 
 @Component({
-  selector: 'numeric-cell',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <input
       #input
@@ -139,7 +144,7 @@ export class NumericEditor<T> implements ICellEditorAngularComp, AfterViewInit {
 }
 
 @Component({
-  selector: 'simple-numeric-cell',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <input
       #input

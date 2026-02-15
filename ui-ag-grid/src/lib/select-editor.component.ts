@@ -1,13 +1,17 @@
 import type { AfterViewInit } from '@angular/core';
-import { Component, ViewContainerRef, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ViewContainerRef,
+  viewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ClrSelectModule } from '@clr/angular';
-import type { itemMap } from '@root/store/simple-edit.state.model';
+import type { itemMap } from '@sotbi/state';
 import type { ICellEditorAngularComp } from 'ag-grid-angular';
 import type { ICellEditorParams } from 'ag-grid-community';
 
 @Component({
-  selector: 'select-cell',
   template: `
     <div class="select">
       <select
@@ -27,15 +31,20 @@ import type { ICellEditorParams } from 'ag-grid-community';
     </div>
   `,
   styleUrls: ['./select-editor.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, ClrSelectModule],
 })
-export class SelectEditor implements ICellEditorAngularComp, AfterViewInit {
-  protected item$: itemMap | Map<string, string>;
-  protected value: number;
-  readonly input = viewChild('select', { read: ViewContainerRef });
-  private params: ICellEditorParams;
+export class SelectEditorComponent
+  implements ICellEditorAngularComp, AfterViewInit
+{
+  protected item$: itemMap | Map<string, string> = new Map();
+  protected value = 0;
+  protected readonly input = viewChild.required('select', {
+    read: ViewContainerRef,
+  });
+  private params: ICellEditorParams | null = null;
 
-  agInit(params: ICellEditorParams): void {
+  public agInit(params: ICellEditorParams): void {
     this.params = params;
     if (params['items']) {
       this.item$ = params['items'];
@@ -43,15 +52,15 @@ export class SelectEditor implements ICellEditorAngularComp, AfterViewInit {
     this.value = this.params.value;
   }
 
-  getValue(): number {
+  public getValue(): number {
     return this.value;
   }
 
-  onSelect() {
-    this.params.api.stopEditing();
+  public onSelect() {
+    this.params?.api?.stopEditing();
   }
 
-  ngAfterViewInit() {
+  public ngAfterViewInit() {
     setTimeout(() => {
       this.input().element.nativeElement.focus();
     });

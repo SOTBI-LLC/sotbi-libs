@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 
 @Component({
-  selector: 'app-request-status',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="wrap">
       <div class="cycle" [style.background-color]="color"></div>
@@ -29,15 +29,15 @@ import type { ICellRendererAngularComp } from 'ag-grid-angular';
   ],
 })
 export class RequestStatusComponent implements ICellRendererAngularComp {
-  color: string;
-  name: string;
+  protected color = '';
+  protected name = '';
 
-  agInit(params) {
+  public agInit(params) {
     this.name = params.name ?? 'Черновик';
     this.color = params.color ?? '#000000';
   }
 
-  refresh(): boolean {
+  public refresh(): boolean {
     return false;
   }
 }

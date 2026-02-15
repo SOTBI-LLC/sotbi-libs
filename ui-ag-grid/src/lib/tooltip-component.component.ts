@@ -1,9 +1,8 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import type { ITooltipAngularComp } from 'ag-grid-angular';
 import type { ITooltipParams } from 'ag-grid-community';
 
 @Component({
-  selector: 'app-tooltip-component',
   template: `@if (show) {
     <div class="custom-tooltip">
       <span
@@ -31,13 +30,14 @@ import type { ITooltipParams } from 'ag-grid-community';
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
 export class TooltipComponent implements ITooltipAngularComp {
-  private params: ITooltipParams;
+  private params: ITooltipParams | null = null;
   protected show = false;
 
-  agInit(params: ITooltipParams): void {
+  public agInit(params: ITooltipParams): void {
     this.params = params;
     if (
       this.params.data.account_statement_requests ||
