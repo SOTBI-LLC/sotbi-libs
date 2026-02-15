@@ -25,6 +25,7 @@ import type { Column, GridApi, RowNode } from 'ag-grid-community';
       <textarea
         (click)="expand()"
         (mouseover)="mouseover($event)"
+        (focus)="mouseover($event)"
         (keydown)="noEnter($event)"
         (keyup)="keyup()"
         [(ngModel)]="value"
@@ -37,14 +38,12 @@ import type { Column, GridApi, RowNode } from 'ag-grid-community';
       ></textarea>
       @if (!show) {
         <span
-          (click)="delete()"
-          class="ng-clear-wrapper ng-star-inserted clear"
-          title="Очистить поле"
-          ><span aria-hidden="true" class="ng-clear x-clear">×</span></span
-        >
-      }
-      @if (!show) {
-        <span (click)="expand()" class="ng-arrow-wrapper down-arrow"
+          (click)="expand()"
+          (keydown.enter)="expand()"
+          (keydown.space)="expand()"
+          class="ng-arrow-wrapper down-arrow"
+          tabindex="0"
+          role="button"
           ><span class="ng-arrow"></span
         ></span>
       }
@@ -108,45 +107,49 @@ export class TextareaEditor implements ICellEditorAngularComp {
   protected value = '';
   protected show = false;
   private api: GridApi | null = null;
-  cellWidth: string;
-  cellWidthTextareaReadonly: string;
-  cellHeightTextareaReadonly: string;
-  cellHeightTextarea: string;
+  protected cellWidth = '';
+  protected cellWidthTextareaReadonly = '';
+  protected cellHeightTextareaReadonly = '';
+  protected cellHeightTextarea = '';
   protected upOrDown = 0;
-  bottom: string;
-  altState = false;
+  protected bottom = '';
+  protected altState = false;
 
-  agInit({ api, column, value, node }): void {
+  public agInit({ api, column, value, node }): void {
     this.api = api;
     const columnGrid: Column = column;
     const nodeGrid: RowNode = node;
 
-    const sumRows = this.api?.getDisplayedRowCount() + 1;
+    const sumRows = api.getDisplayedRowCount() + 1;
     const currentRow = Number(nodeGrid.rowIndex) + 1;
     this.upOrDown = currentRow / sumRows;
 
     this.value = value;
     this.cellWidth = columnGrid.getActualWidth() - 2 + 'px';
     this.cellWidthTextareaReadonly = columnGrid.getActualWidth() - 35 + 'px';
-    this.cellHeightTextareaReadonly = nodeGrid.rowHeight - 3 + 'px';
-    this.cellHeightTextarea = nodeGrid.rowHeight + 40 + 'px';
-    this.bottom = -nodeGrid.rowHeight + 2 + 'px';
+    this.cellHeightTextareaReadonly = nodeGrid.rowHeight
+      ? nodeGrid.rowHeight - 3 + 'px'
+      : '10px';
+    this.cellHeightTextarea = nodeGrid.rowHeight
+      ? nodeGrid.rowHeight + 40 + 'px'
+      : '10px';
+    this.bottom = nodeGrid.rowHeight ? -nodeGrid.rowHeight + 2 + 'px' : '10px';
   }
 
-  getValue(): string {
+  public getValue(): string {
     return this.value;
   }
 
-  isPopup(): boolean {
+  public isPopup(): boolean {
     return true;
   }
 
-  save() {
-    this.api.stopEditing();
-    this.api.resetRowHeights();
+  protected save() {
+    this.api?.stopEditing();
+    this.api?.resetRowHeights();
   }
 
-  noEnter(event) {
+  public noEnter(event) {
     if (event.key === 'Enter' && this.altState === false) {
       this.save();
     }
@@ -161,20 +164,15 @@ export class TextareaEditor implements ICellEditorAngularComp {
     }
   }
 
-  keyup() {
+  protected keyup() {
     this.altState = false;
   }
 
-  expand() {
+  protected expand() {
     this.show = true;
   }
 
-  delete() {
-    this.value = null;
-    this.save();
-  }
-
-  mouseover(event) {
+  protected mouseover(event) {
     if (this.show) {
       event.srcElement.focus();
     }

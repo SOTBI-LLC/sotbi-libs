@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/ui-ag-grid",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "public"
@@ -11,6 +11,9 @@
     "directory": "ui-ag-grid"
   },
   "peerDependencies": {
+    "@sotbi/state": "0.0.4",
+    "@sotbi/utils": "0.0.4",
+    "@sotbi/models": "0.0.4",
     "@angular/common": "^20.3.0",
     "@angular/core": "^20.3.0",
     "@angular/router": "^20.3.0",
@@ -19,11 +22,10 @@
     "ag-grid-angular": "~34.2.0",
     "ag-grid-community": "~34.2.0",
     "@clr/angular": "^17.12.1",
-    "@sotbi/models": "0.0.4",
-    "@sotbi/data-access": "0.0.4",
     "date-fns": "^4.1.0",
-    "rxjs": "^7.8.0",
-    "@ng-select/ng-select": "^20.7.0"
+    "@ng-select/ng-select": "^20.7.0",
+    "angular-imask": "^7.6.1",
+    "@progress/kendo-angular-dateinputs": "^23.0.1"
   },
   "sideEffects": false
 }

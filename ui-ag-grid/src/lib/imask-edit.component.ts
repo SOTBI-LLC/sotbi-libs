@@ -7,7 +7,6 @@ import type { ICellEditorParams } from 'ag-grid-community';
 import { IMaskDirective } from 'angular-imask';
 
 @Component({
-  selector: 'app-imask-edit',
   template: `
     <input
       #input
@@ -26,10 +25,10 @@ import { IMaskDirective } from 'angular-imask';
 export class IMaskEdit implements ICellEditorAngularComp, AfterViewInit {
   private readonly input = viewChild<ElementRef>('input');
 
-  protected value: string | number;
-  protected min: string;
-  protected max: string;
-  protected mask: string;
+  protected value: string | number = '';
+  protected min = '0';
+  protected max = '100';
+  protected mask = '00';
   protected type = 'text';
   protected step = 1;
 
@@ -62,7 +61,7 @@ export class IMaskEdit implements ICellEditorAngularComp, AfterViewInit {
 
   public ngAfterViewInit() {
     setTimeout(() => {
-      this.input().nativeElement.focus();
+      this.input()?.nativeElement.focus();
     });
   }
 }

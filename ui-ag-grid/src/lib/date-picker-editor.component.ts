@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   Input,
@@ -13,13 +14,13 @@ import {
   DateTimePickerCustomMessagesComponent,
   TimePickerComponent,
 } from '@progress/kendo-angular-dateinputs';
+import { DD_MM_YYYY } from '@sotbi/utils';
 import type { ICellEditorAngularComp } from 'ag-grid-angular';
 import type { GridApi, ICellEditorParams } from 'ag-grid-community';
 import { isSameDay } from 'date-fns';
-import { DD_MM_YYYY } from '../shared-globals';
 
 @Component({
-  selector: 'our-kendo-datepicker',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DateInputsModule, ReactiveFormsModule],
   template: `
     <kendo-datepicker
@@ -47,21 +48,21 @@ export class DatePickerEditor implements ICellEditorAngularComp {
   #value: Date | null = null;
   public readonly disabled = input(false);
   public readonly ourFormControl = input(new FormControl<Date | null>(null));
-  @Input() set value(value: Date) {
+  @Input() public set value(value: Date | null) {
     this.#value = value ? new Date(value) : null;
     this.ourFormControl().setValue(this.#value, { emitEvent: false });
   }
-  get value(): Date {
+  public get value(): Date | null {
     return this.#value ? this.#value : null;
   }
-  min: Date;
-  max: Date;
-  readonly = false;
-  readonly format = DD_MM_YYYY;
-  private api: GridApi;
+  protected min: Date = new Date();
+  protected max: Date = new Date();
+  protected readonly = false;
+  protected readonly format = DD_MM_YYYY;
+  private api: GridApi | null = null;
   public readonly dateChange = output<Date>();
 
-  agInit(params: ICellEditorParams): void {
+  public agInit(params: ICellEditorParams): void {
     this.api = params.api;
     this.min = (params['min'] && new Date(params['min'])) || null;
     this.max = (params['max'] && new Date(params['max'])) || null;
@@ -73,25 +74,26 @@ export class DatePickerEditor implements ICellEditorAngularComp {
     }
   }
 
-  dateChanged(value: Date) {
+  public dateChanged(value: Date) {
     this.value = new Date(value);
     this.ourFormControl()?.setValue(value);
     this.dateChange.emit(value);
   }
 
-  getValue(): Date {
-    if (isNaN(this.value?.getTime())) {
+  public getValue(): Date | null {
+    if (isNaN(Number(this.value?.getTime()))) {
       return new Date();
     }
     return this.value;
   }
 
-  isPopup(): boolean {
+  public isPopup(): boolean {
     return false;
   }
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <kendo-timepicker
       class="grid-picker"
@@ -117,10 +119,10 @@ export class TimePickerEditor implements ICellEditorAngularComp {
       new Date(0, 0, 0, Math.floor(this.value() / 60), this.value() % 60, 0),
   );
 
-  min = 1;
-  max = 1439; // 23:59
-  steps = { hour: 1, minute: 10 };
-  formatPlaceholder: DateInputFormatPlaceholder = {
+  protected min = 1;
+  protected max = 1439; // 23:59
+  protected steps = { hour: 1, minute: 10 };
+  protected formatPlaceholder: DateInputFormatPlaceholder = {
     hour: '00',
     minute: '00',
     second: '00',
@@ -129,25 +131,25 @@ export class TimePickerEditor implements ICellEditorAngularComp {
     day: '00',
     millisecond: '0',
   };
-  private api: GridApi;
+  private api: GridApi | null = null;
 
-  onChange(value: Date): void {
+  public onChange(value: Date): void {
     console.log(value);
     this.value.set(value.getHours() * 60 + value.getMinutes());
   }
 
-  agInit(params: ICellEditorParams): void {
+  public agInit(params: ICellEditorParams): void {
     this.api = params.api;
     this.min = params['min'] ?? 1;
     this.max = params['max'] ?? 1439;
     this.value.set(params.value ?? 0);
   }
 
-  getValue(): number {
+  public getValue(): number {
     return this.value();
   }
 
-  isPopup(): boolean {
+  public isPopup(): boolean {
     return false;
   }
 }

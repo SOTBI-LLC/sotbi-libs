@@ -1,20 +1,12 @@
 import { NgStyle } from '@angular/common';
-import type { AfterViewInit } from '@angular/core';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  viewChild,
-  ViewContainerRef,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  NgLabelTemplateDirective,
   NgOptionTemplateDirective,
   NgSelectComponent,
 } from '@ng-select/ng-select';
 import type { ICellEditorAngularComp } from 'ag-grid-angular';
-import type { GridApi, ICellEditorParams } from 'ag-grid-community';
-import { UserWithAvatarComponent } from '../user-list/user-with-avatar.component';
+import type { ICellEditorParams } from 'ag-grid-community';
 
 @Component({
   template: `
@@ -67,17 +59,12 @@ import { UserWithAvatarComponent } from '../user-list/user-with-avatar.component
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgSelectComponent, FormsModule, NgOptionTemplateDirective, NgStyle],
 })
-export class ProjectAndDebtorSelectEditor<T>
-  implements ICellEditorAngularComp, AfterViewInit
-{
-  protected values: T[];
-  protected value: number;
+export class ProjectAndDebtorSelectEditor<T> implements ICellEditorAngularComp {
+  protected values: T[] = [];
+  protected value = 0;
   protected bindId = 'id';
   protected bindName = 'name';
   protected clearable = false;
-  private readonly input = viewChild.required('ngSelect', {
-    read: ViewContainerRef,
-  });
 
   public agInit(params: ICellEditorParams): void {
     this.values = params['values'];
@@ -100,94 +87,5 @@ export class ProjectAndDebtorSelectEditor<T>
 
   public getValue(): number {
     return this.value;
-  }
-
-  public ngAfterViewInit() {
-    setTimeout(() => {
-      this.input().element.nativeElement.focus();
-    });
-  }
-}
-
-@Component({
-  template: `
-    <ng-select
-      class="ng-select"
-      [clearable]="clearable"
-      name="ngSelect"
-      id="ngSelect"
-      #ngSelect="ngModel"
-      [items]="items"
-      [bindLabel]="bindName"
-      [bindValue]="bindId"
-      [(ngModel)]="value"
-      notFoundText="Не найдено"
-      appendTo="body"
-      [ngStyle]="{ width: wide ? 'unset' : '300px' }"
-      (change)="onChange()"
-    >
-      @if (isUserWithAvatar; as item) {
-        <ng-template ng-label-tmp let-item="item">
-          <user-with-avatar
-            [user]="item.user"
-            [avatar]="item.avatar"
-            size="1rem"
-          />
-        </ng-template>
-      }
-    </ng-select>
-  `,
-  styles: [``],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    NgSelectComponent,
-    FormsModule,
-    NgStyle,
-    NgLabelTemplateDirective,
-    UserWithAvatarComponent,
-  ],
-})
-export class NgSelectEditor<T> implements ICellEditorAngularComp {
-  protected items: T[] = [];
-  protected value: number | string;
-  protected bindId = 'id';
-  protected bindName = 'name';
-  protected clearable = false;
-  protected wide = true;
-  protected isUserWithAvatar = false;
-
-  private api: GridApi | null = null;
-  private readonly input = viewChild.required('ngSelect', {
-    read: ViewContainerRef,
-  });
-
-  public agInit(params: ICellEditorParams<T, number | string>): void {
-    this.api = params.api;
-    this.items = params['items'] ?? [];
-    if (params['bindId']) {
-      this.bindId = params['bindId'];
-    }
-    if (params['bindName']) {
-      this.bindName = params['bindName'];
-    }
-    if (params['wide'] !== undefined) {
-      this.wide = params['wide'] ?? true;
-    }
-    this.clearable = params['clearable'] ?? false;
-    this.isUserWithAvatar = params['isUserWithAvatar'] ?? false;
-    this.value = params.value;
-  }
-
-  public getValue(): number | string {
-    return this.value;
-  }
-
-  public refresh() {
-    return true;
-  }
-  protected onChange() {
-    if (this.api) {
-      this.api.stopEditing(false);
-    }
   }
 }

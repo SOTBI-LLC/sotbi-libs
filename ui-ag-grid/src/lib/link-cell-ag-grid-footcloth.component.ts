@@ -1,10 +1,9 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
 
 @Component({
-  selector: 'app-link-cell-footcloth-ag-grid',
   template:
     '<a class="footcloth-link-cell-ag-grid__link" [routerLink]="routerLink"> {{name}} </a>',
   styles: [
@@ -20,11 +19,12 @@ import type { ICellRendererParams } from 'ag-grid-community';
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink],
 })
 export class LinkCellAgGridFootclothComponent implements ICellRendererAngularComp {
-  protected routerLink: string[];
-  protected name: string;
+  protected routerLink: string[] = [];
+  protected name = '';
 
   public refresh(): boolean {
     return false;
@@ -32,9 +32,10 @@ export class LinkCellAgGridFootclothComponent implements ICellRendererAngularCom
 
   public agInit(params: ICellRendererParams) {
     const { data } = params;
-    this.name = data[params.colDef.field];
+    const field = params.colDef?.field ?? 'debtor_name';
+    this.name = data[field];
     if (Object.entries(data)) {
-      switch (params.colDef.field) {
+      switch (field) {
         case 'bidding_name': {
           this.routerLink = [
             '../',

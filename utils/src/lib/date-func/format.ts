@@ -13,8 +13,10 @@ export const FormatMonth = (data: Date) =>
   `${MONTH_NAMES[data.getMonth()]} ${data.getFullYear()}`;
 
 export const formatEventDuraton = (duration: number): string =>
-  `${(Math.floor(duration / 60))}`.padStart(2,"0") + " ч " + `${(duration % 60)}`.padStart(2,"0") + " мин";
-
+  `${Math.floor(duration / 60)}`.padStart(2, '0') +
+  ' ч ' +
+  `${duration % 60}`.padStart(2, '0') +
+  ' мин';
 
 export const dateValueFormatter = (value: Date | null, hours = false) => {
   return (

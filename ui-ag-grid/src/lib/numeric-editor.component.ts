@@ -6,10 +6,10 @@ import {
   viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { maskForSumm } from '@sotbi/utils';
 import type { ICellEditorAngularComp } from 'ag-grid-angular';
 import type { ICellEditorParams } from 'ag-grid-community';
 import { IMaskDirective } from 'angular-imask';
-import { maskForSumm } from '../shared-globals';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,11 +30,11 @@ import { maskForSumm } from '../shared-globals';
   imports: [FormsModule, IMaskDirective],
 })
 export class NumericEditor<T> implements ICellEditorAngularComp, AfterViewInit {
-  protected maxlength: number;
-  protected minlength: number;
-  protected mask: string;
-  protected unmask: boolean;
-  protected value: number;
+  protected maxlength = 10;
+  protected minlength = 0;
+  protected mask = 'Number';
+  protected unmask = true;
+  protected value = 0;
   protected range = false;
   protected returnIfError = true;
   public static errBgColor = '#F5DBD9';
@@ -90,7 +90,7 @@ export class NumericEditor<T> implements ICellEditorAngularComp, AfterViewInit {
     if (params['range']) {
       this.range = params['range'];
     }
-    this.value = params.value;
+    this.value = params.value ?? 0;
   }
 
   public getValue(): number {
@@ -138,7 +138,7 @@ export class NumericEditor<T> implements ICellEditorAngularComp, AfterViewInit {
   // dont use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this
   public ngAfterViewInit() {
     setTimeout(() => {
-      this.input().element.nativeElement.focus();
+      this.input()?.element.nativeElement.focus();
     });
   }
 }
@@ -158,7 +158,7 @@ export class NumericEditor<T> implements ICellEditorAngularComp, AfterViewInit {
   imports: [FormsModule, IMaskDirective],
 })
 export class SimpleNumericEditor implements AfterViewInit {
-  protected value: number;
+  protected value = 0;
   protected maskForSumm = maskForSumm;
   private readonly input = viewChild('input', { read: ViewContainerRef });
 
@@ -181,7 +181,7 @@ export class SimpleNumericEditor implements AfterViewInit {
 
   public ngAfterViewInit() {
     setTimeout(() => {
-      this.input().element.nativeElement.focus();
+      this.input()?.element.nativeElement.focus();
     });
   }
 }

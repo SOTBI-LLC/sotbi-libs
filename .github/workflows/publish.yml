@@ -50,7 +50,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build all packages
-        run: npx nx run-many -t build --exclude=ui-ag-grid
+        run: npx nx run-many -t build
 
       - name: Publish packages
-        run: npx nx run-many -t nx-release-publish --exclude=ui-ag-grid
+        run: npx nx run-many -t nx-release-publish

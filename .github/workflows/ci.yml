@@ -47,8 +47,7 @@ jobs:
         if: always()
 
       - name: Run ESLint on affected projects
-        run: npx nx run-many -t lint --parallel=3 --configuration=ci --exclude=ui-ag-grid
-        # run: npx nx affected -t lint --parallel=3 --configuration=ci
+        run: npx nx run-many -t lint --parallel=3 --configuration=ci
 
   build:
     name: Build
@@ -75,7 +74,7 @@ jobs:
         uses: nrwl/nx-set-shas@v4
 
       - name: Build affected projects
-        run: npx nx affected -t build --parallel=3 --configuration=production --exclude=ui-ag-grid
+        run: npx nx affected -t build --parallel=3 --configuration=production
 
   test:
     name: Test
@@ -102,8 +101,7 @@ jobs:
         uses: nrwl/nx-set-shas@v4
 
       - name: Run tests on affected projects
-        # run: npx nx affected -t test --parallel=3 --configuration=ci --coverage -- --reporters=default --reporters=jest-junit
-        run: npx nx run-many -t test --parallel=3 --configuration=ci --coverage --exclude=ui-ag-grid -- --reporters=default --reporters=jest-junit
+        run: npx nx affected -t test --parallel=3 --configuration=ci --coverage -- --reporters=default --reporters=jest-junit
         env:
           JEST_JUNIT_OUTPUT_DIR: ./test-results
           JEST_JUNIT_OUTPUT_NAME: junit.xml

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ClrIconModule } from '@clr/angular';
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
 
 interface ExtendedCellRendererParams extends ICellRendererParams {
@@ -13,41 +14,43 @@ interface ExtendedCellRendererParams extends ICellRendererParams {
 @Component({
   template: `
     @if (showSave) {
-    <button
-      type="button"
-      class="btn btn-icon btn-link btn-sm narrow"
-      aria-label="Сохранить"
-      (click)="onSave()"
-      [disabled]="!(needSave() && canSave())"
-      [attr.title]="canSave() ? '' : 'Не все поля заполнены'"
-    >
-      <cds-icon shape="floppy"></cds-icon>
-    </button>
-    } @if (showCancel) {
-    <button
-      type="button"
-      class="btn btn-icon btn-link btn-sm narrow"
-      aria-label="Отменить"
-      [disabled]="!(needSave() && canCancel())"
-      (click)="onCancel()"
-    >
-      <cds-icon shape="times"></cds-icon>
-    </button>
-    } @if (showDelete) {
-    <button
-      type="button"
-      class="btn btn-icon btn-link btn-sm narrow"
-      aria-label="Удалить"
-      (click)="onDelete()"
-    >
-      <cds-icon shape="trash" class="is-error"></cds-icon>
-    </button>
+      <button
+        type="button"
+        class="btn btn-icon btn-link btn-sm narrow"
+        aria-label="Сохранить"
+        (click)="onSave()"
+        [disabled]="!(needSave() && canSave())"
+        [attr.title]="canSave() ? '' : 'Не все поля заполнены'"
+      >
+        <cds-icon shape="floppy"></cds-icon>
+      </button>
+    }
+    @if (showCancel) {
+      <button
+        type="button"
+        class="btn btn-icon btn-link btn-sm narrow"
+        aria-label="Отменить"
+        [disabled]="!(needSave() && canCancel())"
+        (click)="onCancel()"
+      >
+        <cds-icon shape="times"></cds-icon>
+      </button>
+    }
+    @if (showDelete) {
+      <button
+        type="button"
+        class="btn btn-icon btn-link btn-sm narrow"
+        aria-label="Удалить"
+        (click)="onDelete()"
+      >
+        <cds-icon shape="trash" class="is-error"></cds-icon>
+      </button>
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ClrIconModule],
 })
-export class ButtonActionsComponent {
+export class ButtonActionsComponent implements ICellRendererAngularComp {
   private params: ExtendedCellRendererParams | null = null;
   protected showSave = false;
   protected showCancel = false;
@@ -83,7 +86,7 @@ export class ButtonActionsComponent {
     this.needSave.set(
       this.fieldAsIndicatorForSave
         ? params.node.data && !!params.node.data[this.fieldAsIndicatorForSave]
-        : true
+        : true,
     );
     this.canCancel.set(params.node.data.id > 0);
     return true;

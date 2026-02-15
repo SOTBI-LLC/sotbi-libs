@@ -1,4 +1,5 @@
 import { formatCurrency, formatNumber, formatPercent } from '@angular/common';
+import type { ValueFormatterParams } from 'ag-grid-community';
 
 export const localeText = {
   // for filter panel
@@ -103,55 +104,6 @@ export const localeText = {
   rows: 'строк',
 };
 
-export const dateFormatter = ({ value }): string | null => {
-  if (value === null || value === undefined) {
-    return null;
-  }
-  // const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
-  const options: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  };
-  return new Date(value).toLocaleDateString('ru-RU', options);
-};
-
-export const delPercentFormatter = (params) => {
-  if (params.value && params.value !== 0) {
-    const val = +params.value;
-    return formatPercent(val / 100, 'ru-RU');
-  } else {
-    return null;
-  }
-};
-
-export const currencyFormatter = (params) => {
-  if (params.value && params.value !== 0) {
-    const val = +params.value;
-    return formatCurrency(val, 'ru-RU', '');
-  } else {
-    return null;
-  }
-};
-
-export const numericFormatter = (params) => {
-  if (params.value && params.value !== 0) {
-    const val = +params.value;
-    return formatNumber(val, 'ru-RU', '1.2-2');
-  } else {
-    return null;
-  }
-};
-
-export const percentFormatter = (params) => {
-  if (params.value && params.value !== 0) {
-    const val = +params.value;
-    return formatPercent(val, 'ru-RU');
-  } else {
-    return null;
-  }
-};
-
 export enum AgGridFilterType {
   SET = 'set',
   DATE = 'date',
@@ -169,3 +121,61 @@ export interface AgGridFilterValue {
   values: string[];
   filterType: AgGridFilterType;
 }
+
+export const dateFormatter = ({
+  value,
+}: ValueFormatterParams): string | null => {
+  if (value === null || value === undefined) {
+    return null;
+  }
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  };
+  return new Date(value).toLocaleDateString('ru-RU', options);
+};
+
+export const delPercentFormatter = (
+  params: ValueFormatterParams,
+): string | null => {
+  if (params.value && params.value !== 0) {
+    const val = +params.value;
+    return formatPercent(val / 100, 'ru-RU');
+  } else {
+    return null;
+  }
+};
+
+export const currencyFormatter = (
+  params: ValueFormatterParams,
+): string | null => {
+  if (params.value && params.value !== 0) {
+    const val = +params.value;
+    return formatCurrency(val, 'ru-RU', '');
+  } else {
+    return null;
+  }
+};
+
+export const numericFormatter = (
+  params: ValueFormatterParams,
+): string | null => {
+  if (params.value && params.value !== 0) {
+    const val = +params.value;
+    return formatNumber(val, 'ru-RU', '1.2-2');
+  } else {
+    return null;
+  }
+};
+
+export const percentFormatter = (
+  params: ValueFormatterParams,
+): string | null => {
+  if (params.value && params.value !== 0) {
+    const val = +params.value;
+    return formatPercent(val, 'ru-RU');
+  } else {
+    return null;
+  }
+};

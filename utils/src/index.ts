@@ -1,5 +1,6 @@
 export { generateAvatarSvgUrl } from './lib/avatars/generate';
 export { fromBase62, toBase62 } from './lib/base62';
+export { maskForSumm } from './lib/consts';
 export { getDateDifference } from './lib/date-func/difference';
 export {
   dateValueFormatter,
@@ -16,6 +17,13 @@ export {
 } from './lib/date-func/format';
 export { parseStrToDate } from './lib/date-func/parse';
 export {
+  deepEqual,
+  deepFlatten,
+  extractProperty,
+  getDiff,
+  removeID,
+} from './lib/prop';
+export {
   forMap,
   forMapStringNumber,
   notEmptyArray,
@@ -25,13 +33,8 @@ export {
 export {
   bankruptcyManagerFormatter,
   canSave,
-  deepEqual,
-  deepFlatten,
-  extractProperty,
-  getDiff,
   isAllSaved,
   notifyError,
   paramsToOptions,
-  removeID,
   uniqueElementsBy,
 } from './lib/utils';

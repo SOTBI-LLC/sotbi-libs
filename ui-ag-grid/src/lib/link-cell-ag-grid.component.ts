@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import type { Params } from '@angular/router';
 import { RouterLink } from '@angular/router';
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
@@ -33,14 +33,15 @@ import type { ICellRendererParams } from 'ag-grid-community';
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink],
 })
 export class LinkCellAgGridComponent implements ICellRendererAngularComp {
-  name: string;
-  routerLink: string;
-  icon = '';
+  protected name = '';
+  protected routerLink = '';
+  protected icon = '';
 
-  agInit(params: ICellRendererParams) {
+  public agInit(params: ICellRendererParams) {
     this.name = params.value;
     let r = '.';
     if (params['icon']) {
@@ -62,7 +63,7 @@ export class LinkCellAgGridComponent implements ICellRendererAngularComp {
     this.routerLink = `${r}/${id}`;
   }
 
-  refresh(): boolean {
+  public refresh(): boolean {
     return false;
   }
 }
@@ -97,16 +98,17 @@ export class LinkCellAgGridComponent implements ICellRendererAngularComp {
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink],
 })
-export class LinkCellComponent implements ICellRendererAngularComp {
+export class LinkCellComponent<T> implements ICellRendererAngularComp {
   protected value = '';
   protected link: string[] = [];
   protected query: Params | null = null;
   protected absoluteURL = false;
 
-  public agInit(params: ICellRendererParams<unknown, string>) {
-    this.value = params.value;
+  public agInit(params: ICellRendererParams<T, string>) {
+    this.value = params.value ?? '';
     this.link = params['linkTo'] ?? [];
     this.query = params['query'] ?? null;
     this.absoluteURL = params['absoluteURL'] ?? false;

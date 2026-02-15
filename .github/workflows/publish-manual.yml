@@ -16,6 +16,7 @@ on:
           - data-access
           - state
           - ui
+          - ui-ag-grid
 
 jobs:
   publish:

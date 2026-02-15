@@ -1,15 +1,11 @@
-import type { AfterViewInit } from '@angular/core';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ViewContainerRef,
-  viewChild,
-} from '@angular/core';
+import type { ViewContainerRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ClrCheckboxModule, ClrCommonFormsModule } from '@clr/angular';
 import type { AgFilterComponent } from 'ag-grid-angular';
 import type {
   FilterModel,
+  IAfterGuiAttachedParams,
   IDoesFilterPassParams,
   IFilterParams,
   NumberFilterModel,
@@ -51,14 +47,10 @@ import { AgGridFilterType, AgGridFilterTypeOperation } from './ag-grid.common';
   ],
   imports: [FormsModule, ClrCheckboxModule, ClrCommonFormsModule],
 })
-export class CheckboxFilterComponent
-  implements AgFilterComponent, AfterViewInit
-{
+export class CheckboxFilterComponent implements AgFilterComponent {
   protected params!: IFilterParams;
 
-  protected readonly checkbox = viewChild('checkbox', {
-    read: ViewContainerRef,
-  });
+  protected readonly checkbox = viewChild<ViewContainerRef>('checkbox');
 
   protected checked = false;
 
@@ -95,9 +87,7 @@ export class CheckboxFilterComponent
     this.params.filterChangedCallback();
   }
 
-  public ngAfterViewInit(): void {
-    window.setTimeout(() => {
-      this.checkbox()?.element.nativeElement.focus();
-    });
+  public afterGuiAttached(_: IAfterGuiAttachedParams): void {
+    this.checkbox()?.element.nativeElement.focus();
   }
 }
