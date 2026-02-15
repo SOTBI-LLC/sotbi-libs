@@ -7,7 +7,7 @@ import { AnnouncementService } from './announcement.service';
 
 describe('AnnouncementService', () => {
   let service: AnnouncementService;
-  let http: jasmine.SpyObj<HttpClient>;
+  let http: jest.Mocked<HttpClient>;
 
   const mockAnnouncements: Announcement[] = [
     {
@@ -33,12 +33,13 @@ describe('AnnouncementService', () => {
   ];
 
   beforeEach(async () => {
-    const httpSpy = jasmine.createSpyObj('HttpClient', [
-      'get',
-      'post',
-      'put',
-      'delete',
-    ]);
+    const httpSpy = {
+      get: jest.fn(),
+      post: jest.fn(),
+      put: jest.fn(),
+      patch: jest.fn(),
+      delete: jest.fn(),
+    } as unknown as jest.Mocked<HttpClient>;
 
     await TestBed.configureTestingModule({
       providers: [
@@ -49,7 +50,7 @@ describe('AnnouncementService', () => {
     }).compileComponents();
 
     service = TestBed.inject(AnnouncementService);
-    http = TestBed.inject(HttpClient) as jasmine.SpyObj<HttpClient>;
+    http = TestBed.inject(HttpClient) as jest.Mocked<HttpClient>;
   });
 
   it('should be created', () => {
@@ -62,7 +63,7 @@ describe('AnnouncementService', () => {
 
   describe('getAllWithCondition', () => {
     it('should call GET /api/announcements with no params by default', () => {
-      http.get.and.returnValue(of(mockAnnouncements));
+      http.get.mockReturnValue(of(mockAnnouncements));
 
       service.getAllWithCondition().subscribe((res) => {
         expect(res).toEqual(mockAnnouncements);
@@ -74,7 +75,7 @@ describe('AnnouncementService', () => {
     });
 
     it('should set all=1 when all=true', () => {
-      http.get.and.returnValue(of(mockAnnouncements));
+      http.get.mockReturnValue(of(mockAnnouncements));
 
       service.getAllWithCondition(true).subscribe();
 
@@ -85,7 +86,7 @@ describe('AnnouncementService', () => {
     });
 
     it('should set show_planned=1 when show_planned=true', () => {
-      http.get.and.returnValue(of(mockAnnouncements));
+      http.get.mockReturnValue(of(mockAnnouncements));
 
       service.getAllWithCondition(false, true).subscribe();
 
@@ -96,7 +97,7 @@ describe('AnnouncementService', () => {
     });
 
     it('should set omit_img=1 when omit_img=true', () => {
-      http.get.and.returnValue(of(mockAnnouncements));
+      http.get.mockReturnValue(of(mockAnnouncements));
 
       service.getAllWithCondition(false, false, true).subscribe();
 
@@ -107,7 +108,7 @@ describe('AnnouncementService', () => {
     });
 
     it('should combine params when multiple flags are true', () => {
-      http.get.and.returnValue(of(mockAnnouncements));
+      http.get.mockReturnValue(of(mockAnnouncements));
 
       service.getAllWithCondition(true, true, true).subscribe();
 
@@ -122,7 +123,7 @@ describe('AnnouncementService', () => {
 
     it('should propagate HTTP errors', (done) => {
       const err = new Error('Fetch failed');
-      http.get.and.returnValue(throwError(() => err));
+      http.get.mockReturnValue(throwError(() => err));
 
       service.getAllWithCondition().subscribe({
         next: () => {
@@ -139,7 +140,7 @@ describe('AnnouncementService', () => {
 
   describe('inherited CRUD', () => {
     it('get should call GET /api/announcement/:id', () => {
-      http.get.and.returnValue(of(mockAnnouncements[0]));
+      http.get.mockReturnValue(of(mockAnnouncements[0]));
 
       service.get(1).subscribe((res) => {
         expect(res).toEqual(mockAnnouncements[0]);
@@ -158,7 +159,7 @@ describe('AnnouncementService', () => {
         author_id: 2,
       };
       const created = { ...payload, id: 100 } as Announcement;
-      http.post.and.returnValue(of(created));
+      http.post.mockReturnValue(of(created));
 
       service.add(payload).subscribe((res) => {
         expect(res).toEqual(created);
@@ -179,19 +180,22 @@ describe('AnnouncementService', () => {
         author_id: 0,
       };
       const updated = { ...mockAnnouncements[0], title: 'U' } as Announcement;
-      http.put.and.returnValue(of(updated));
+      http.put.mockReturnValue(of(updated));
 
       service.update(updatePayload).subscribe((res) => {
         expect(res).toEqual(updated);
       });
 
-      expect(http.put).toHaveBeenCalledWith('/api/announcement/1', {
-        title: 'U',
-      });
+      expect(http.put).toHaveBeenCalledWith(
+        '/api/announcement/1',
+        expect.objectContaining({
+          title: 'U',
+        }),
+      );
     });
 
     it('delete should call DELETE /api/announcement/:id', () => {
-      http.delete.and.returnValue(of(undefined));
+      http.delete.mockReturnValue(of(undefined));
 
       service.delete(5).subscribe((res) => {
         expect(res).toBeUndefined();

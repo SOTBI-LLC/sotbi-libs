@@ -2,12 +2,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import type { Debtor, DebtorsList } from '@sotbi/models';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { DebtorService } from './debtor.service';
 
 describe('DebtorService', () => {
   let service: DebtorService;
-  let httpClient: jasmine.SpyObj<HttpClient>;
+  let httpClient: jest.Mocked<HttpClient>;
 
   const mockDebtor: Debtor = {
     id: 1,
@@ -124,13 +124,13 @@ describe('DebtorService', () => {
   ];
 
   beforeEach(async () => {
-    const httpSpy = jasmine.createSpyObj('HttpClient', [
-      'get',
-      'post',
-      'put',
-      'patch',
-      'delete',
-    ]);
+    const httpSpy = {
+      get: jest.fn(),
+      post: jest.fn(),
+      put: jest.fn(),
+      patch: jest.fn(),
+      delete: jest.fn(),
+    } as unknown as jest.Mocked<HttpClient>;
 
     await TestBed.configureTestingModule({
       providers: [
@@ -141,7 +141,7 @@ describe('DebtorService', () => {
     }).compileComponents();
 
     service = TestBed.inject(DebtorService);
-    httpClient = TestBed.inject(HttpClient) as jasmine.SpyObj<HttpClient>;
+    httpClient = TestBed.inject(HttpClient) as jest.Mocked<HttpClient>;
   });
 
   it('should be created', () => {
@@ -167,7 +167,7 @@ describe('DebtorService', () => {
     it('should call GET with correct URL and parameters', () => {
       const params = new HttpParams().set('page', '1').set('limit', '10');
       const mockResponse = { debtors: mockDebtorsList, count: 2 };
-      httpClient.get.and.returnValue(of(mockResponse));
+      httpClient.get.mockReturnValue(of(mockResponse));
 
       service.getAllWithParams(params).subscribe((result) => {
         expect(result).toEqual(mockResponse);
@@ -181,7 +181,7 @@ describe('DebtorService', () => {
     it('should handle empty parameters', () => {
       const emptyParams = new HttpParams();
       const mockResponse = { debtors: [], count: 0 };
-      httpClient.get.and.returnValue(of(mockResponse));
+      httpClient.get.mockReturnValue(of(mockResponse));
 
       service.getAllWithParams(emptyParams).subscribe((result) => {
         expect(result.debtors).toEqual([]);
@@ -201,7 +201,7 @@ describe('DebtorService', () => {
         .set('sortBy', 'name')
         .set('sortOrder', 'asc');
       const mockResponse = { debtors: [mockDebtorsList[0]], count: 1 };
-      httpClient.get.and.returnValue(of(mockResponse));
+      httpClient.get.mockReturnValue(of(mockResponse));
 
       service.getAllWithParams(complexParams).subscribe((result) => {
         expect(result.count).toBe(1);
@@ -218,7 +218,7 @@ describe('DebtorService', () => {
     it('should call GET with correct URL and return Debtor array', () => {
       const params = new HttpParams().set('filter', 'active');
       const mockDebtors: Debtor[] = [mockDebtor];
-      httpClient.get.and.returnValue(of(mockDebtors));
+      httpClient.get.mockReturnValue(of(mockDebtors));
 
       service.getList(params).subscribe((result) => {
         expect(result).toEqual(mockDebtors);
@@ -234,7 +234,7 @@ describe('DebtorService', () => {
     it('should handle empty result', () => {
       const params = new HttpParams().set('filter', 'nonexistent');
       const emptyResult: Debtor[] = [];
-      httpClient.get.and.returnValue(of(emptyResult));
+      httpClient.get.mockReturnValue(of(emptyResult));
 
       service.getList(params).subscribe((result) => {
         expect(result).toEqual([]);
@@ -266,7 +266,7 @@ describe('DebtorService', () => {
           ],
         },
       ];
-      httpClient.get.and.returnValue(of(mockDebtorsWithBank));
+      httpClient.get.mockReturnValue(of(mockDebtorsWithBank));
 
       service.getListWithBankDetail$().subscribe((result) => {
         expect(result).toEqual(mockDebtorsWithBank);
@@ -281,7 +281,7 @@ describe('DebtorService', () => {
       const mockDebtorsNoBankDetails: Debtor[] = [
         { ...mockDebtor, bank_details: [] },
       ];
-      httpClient.get.and.returnValue(of(mockDebtorsNoBankDetails));
+      httpClient.get.mockReturnValue(of(mockDebtorsNoBankDetails));
 
       service.getListWithBankDetail$().subscribe((result) => {
         expect(result[0].bank_details).toEqual([]);
@@ -293,7 +293,7 @@ describe('DebtorService', () => {
     it('should call GET with correct URL and bankruptcy ID', () => {
       const bankruptcyId = 123;
       const mockDebtors: Debtor[] = [mockDebtor];
-      httpClient.get.and.returnValue(of(mockDebtors));
+      httpClient.get.mockReturnValue(of(mockDebtors));
 
       service.getDebtorsByBankruptcy(bankruptcyId).subscribe((result) => {
         expect(result).toEqual(mockDebtors);
@@ -306,7 +306,7 @@ describe('DebtorService', () => {
 
     it('should handle zero bankruptcy ID', () => {
       const mockDebtors: Debtor[] = [];
-      httpClient.get.and.returnValue(of(mockDebtors));
+      httpClient.get.mockReturnValue(of(mockDebtors));
 
       service.getDebtorsByBankruptcy(0).subscribe((result) => {
         expect(result).toEqual([]);
@@ -317,7 +317,7 @@ describe('DebtorService', () => {
 
     it('should handle negative bankruptcy ID', () => {
       const mockDebtors: Debtor[] = [];
-      httpClient.get.and.returnValue(of(mockDebtors));
+      httpClient.get.mockReturnValue(of(mockDebtors));
 
       service.getDebtorsByBankruptcy(-1).subscribe((result) => {
         expect(result).toEqual([]);
@@ -330,7 +330,7 @@ describe('DebtorService', () => {
   describe('getListAsProject', () => {
     it('should call getList with asproject=true parameter', () => {
       const mockDebtors: Debtor[] = [mockDebtor];
-      httpClient.get.and.returnValue(of(mockDebtors));
+      httpClient.get.mockReturnValue(of(mockDebtors));
 
       service.getListAsProject().subscribe((result) => {
         expect(result).toEqual(mockDebtors);
@@ -352,7 +352,7 @@ describe('DebtorService', () => {
           },
         },
       ];
-      httpClient.get.and.returnValue(of(projectDebtors));
+      httpClient.get.mockReturnValue(of(projectDebtors));
 
       service.getListAsProject().subscribe((result) => {
         expect(result[0].project).toBeDefined();
@@ -383,7 +383,7 @@ describe('DebtorService', () => {
           profit_cat: { id: 1, name: 'Short' },
         },
       ];
-      httpClient.get.and.returnValue(of(mockShortDebtors));
+      httpClient.get.mockReturnValue(of(mockShortDebtors));
 
       service.getDebtorsShort().subscribe((result) => {
         expect(result).toEqual(mockShortDebtors);
@@ -399,7 +399,7 @@ describe('DebtorService', () => {
   describe('restore', () => {
     it('should call PATCH with correct URL and empty body', () => {
       const restoredDebtor: Debtor = { ...mockDebtor, id: 123 };
-      httpClient.patch.and.returnValue(of(restoredDebtor));
+      httpClient.patch.mockReturnValue(of(restoredDebtor));
 
       service.restore(123).subscribe((result) => {
         expect(result).toEqual(restoredDebtor);
@@ -411,7 +411,7 @@ describe('DebtorService', () => {
 
     it('should handle restore with zero ID', () => {
       const mockResult: Debtor = { ...mockDebtor, id: 0 };
-      httpClient.patch.and.returnValue(of(mockResult));
+      httpClient.patch.mockReturnValue(of(mockResult));
 
       service.restore(0).subscribe((result) => {
         expect(result.id).toBe(0);
@@ -425,7 +425,7 @@ describe('DebtorService', () => {
     it('should call GET with correct URL and INN parameter', () => {
       const inn = '1234567890';
       const mockResponse: number[] = [1, 2, 3];
-      httpClient.get.and.returnValue(of(mockResponse));
+      httpClient.get.mockReturnValue(of(mockResponse));
 
       service.checkInn(inn).subscribe((result) => {
         expect(result).toEqual(mockResponse);
@@ -441,7 +441,7 @@ describe('DebtorService', () => {
     it('should handle empty INN check result', () => {
       const inn = '0000000000';
       const emptyResult: number[] = [];
-      httpClient.get.and.returnValue(of(emptyResult));
+      httpClient.get.mockReturnValue(of(emptyResult));
 
       service.checkInn(inn).subscribe((result) => {
         expect(result).toEqual([]);
@@ -456,7 +456,7 @@ describe('DebtorService', () => {
     it('should handle INN with existing conflicts', () => {
       const inn = '7777777777';
       const conflictIds: number[] = [100, 200, 300];
-      httpClient.get.and.returnValue(of(conflictIds));
+      httpClient.get.mockReturnValue(of(conflictIds));
 
       service.checkInn(inn).subscribe((result) => {
         expect(result).toEqual(conflictIds);
@@ -467,7 +467,7 @@ describe('DebtorService', () => {
     it('should handle special characters in INN', () => {
       const specialInn = '123-456-789';
       const mockResponse: number[] = [];
-      httpClient.get.and.returnValue(of(mockResponse));
+      httpClient.get.mockReturnValue(of(mockResponse));
 
       service.checkInn(specialInn).subscribe((result) => {
         expect(result).toEqual([]);
@@ -480,55 +480,109 @@ describe('DebtorService', () => {
   });
 
   describe('HTTP Error Handling', () => {
-    it('should propagate HTTP errors from getAllWithParams', () => {
+    it('should propagate HTTP errors from getAllWithParams', (done) => {
       const errorResponse = new Error('Server Error');
-      httpClient.get.and.throwError(errorResponse);
+      httpClient.get.mockReturnValue(throwError(() => errorResponse));
 
       const params = new HttpParams().set('page', '1');
-      expect(() => service.getAllWithParams(params).subscribe()).toThrow();
+      service.getAllWithParams(params).subscribe({
+        next: () => {
+          fail('Should have thrown an error');
+          done();
+        },
+        error: (error) => {
+          expect(error.message).toBe('Server Error');
+          done();
+        },
+      });
     });
 
-    it('should propagate HTTP errors from getList', () => {
+    it('should propagate HTTP errors from getList', (done) => {
       const errorResponse = new Error('Not Found');
-      httpClient.get.and.throwError(errorResponse);
+      httpClient.get.mockReturnValue(throwError(() => errorResponse));
 
       const params = new HttpParams();
-      expect(() => service.getList(params).subscribe()).toThrow();
+      service.getList(params).subscribe({
+        next: () => {
+          fail('Should have thrown an error');
+          done();
+        },
+        error: (error) => {
+          expect(error.message).toBe('Not Found');
+          done();
+        },
+      });
     });
 
-    it('should propagate HTTP errors from getListWithBankDetail$', () => {
+    it('should propagate HTTP errors from getListWithBankDetail$', (done) => {
       const errorResponse = new Error('Access Denied');
-      httpClient.get.and.throwError(errorResponse);
+      httpClient.get.mockReturnValue(throwError(() => errorResponse));
 
-      expect(() => service.getListWithBankDetail$().subscribe()).toThrow();
+      service.getListWithBankDetail$().subscribe({
+        next: () => {
+          fail('Should have thrown an error');
+          done();
+        },
+        error: (error) => {
+          expect(error.message).toBe('Access Denied');
+          done();
+        },
+      });
     });
 
-    it('should propagate HTTP errors from getDebtorsByBankruptcy', () => {
+    it('should propagate HTTP errors from getDebtorsByBankruptcy', (done) => {
       const errorResponse = new Error('Bankruptcy not found');
-      httpClient.get.and.throwError(errorResponse);
+      httpClient.get.mockReturnValue(throwError(() => errorResponse));
 
-      expect(() => service.getDebtorsByBankruptcy(999).subscribe()).toThrow();
+      service.getDebtorsByBankruptcy(999).subscribe({
+        next: () => {
+          fail('Should have thrown an error');
+          done();
+        },
+        error: (error) => {
+          expect(error.message).toBe('Bankruptcy not found');
+          done();
+        },
+      });
     });
 
-    it('should propagate HTTP errors from restore', () => {
+    it('should propagate HTTP errors from restore', (done) => {
       const errorResponse = new Error('Cannot restore');
-      httpClient.patch.and.throwError(errorResponse);
+      httpClient.patch.mockReturnValue(throwError(() => errorResponse));
 
-      expect(() => service.restore(123).subscribe()).toThrow();
+      service.restore(123).subscribe({
+        next: () => {
+          fail('Should have thrown an error');
+          done();
+        },
+        error: (error) => {
+          expect(error.message).toBe('Cannot restore');
+          done();
+        },
+      });
     });
 
-    it('should propagate HTTP errors from checkInn', () => {
+    it('should propagate HTTP errors from checkInn', (done) => {
       const errorResponse = new Error('INN validation failed');
-      httpClient.get.and.throwError(errorResponse);
+      httpClient.get.mockReturnValue(throwError(() => errorResponse));
 
-      expect(() => service.checkInn('1234567890').subscribe()).toThrow();
+      service.checkInn('1234567890').subscribe({
+        next: () => {
+          fail('Should have thrown an error');
+          done();
+        },
+        error: (error) => {
+          expect(error.message).toBe('INN validation failed');
+          done();
+        },
+      });
     });
   });
 
   describe('CommonService Integration', () => {
     it('should inherit and use GetAll method correctly', () => {
       const mockDebtors: Debtor[] = [mockDebtor];
-      httpClient.get.and.returnValue(of(mockDebtors));
+      httpClient.get.mockReturnValue(of(mockDebtors));
 
       service.GetAll().subscribe((result) => {
         expect(result).toEqual(mockDebtors);
@@ -539,7 +593,7 @@ describe('DebtorService', () => {
     });
 
     it('should inherit and use get method correctly', () => {
-      httpClient.get.and.returnValue(of(mockDebtor));
+      httpClient.get.mockReturnValue(of(mockDebtor));
 
       service.get(1).subscribe((result) => {
         expect(result).toEqual(mockDebtor);
@@ -567,7 +621,7 @@ describe('DebtorService', () => {
         profit_cat: { id: 99, name: 'New' },
       };
       const createdDebtor: Debtor = { ...newDebtor, id: 999 } as Debtor;
-      httpClient.post.and.returnValue(of(createdDebtor));
+      httpClient.post.mockReturnValue(of(createdDebtor));
 
       service.add(newDebtor).subscribe((result) => {
         expect(result).toEqual(createdDebtor);
@@ -593,7 +647,7 @@ describe('DebtorService', () => {
         project_id: 0,
       };
       const responseDebtor: Debtor = { ...mockDebtor, ...updatedDebtor };
-      httpClient.put.and.returnValue(of(responseDebtor));
+      httpClient.put.mockReturnValue(of(responseDebtor));
 
       service.update(updatedDebtor).subscribe((result) => {
         expect(result.name).toBe('Updated Debtor Name');
@@ -602,12 +656,12 @@ describe('DebtorService', () => {
 
       expect(httpClient.put).toHaveBeenCalledWith(
         '/api/debtors/1',
-        jasmine.any(Object),
+        expect.any(Object),
       );
     });
 
     it('should inherit and use delete method correctly', () => {
-      httpClient.delete.and.returnValue(of(undefined));
+      httpClient.delete.mockReturnValue(of(undefined));
 
       service.delete(1).subscribe((result) => {
         expect(result).toBeUndefined();
@@ -626,9 +680,11 @@ describe('DebtorService', () => {
       const updatedDebtor = { ...mockDebtor, name: 'Updated Company' };
       const restoredDebtor = { ...updatedDebtor, id: 1 };
 
-      httpClient.get.and.returnValues(of(searchResponse), of(debtorDetails));
-      httpClient.put.and.returnValue(of(updatedDebtor));
-      httpClient.patch.and.returnValue(of(restoredDebtor));
+      httpClient.get
+        .mockReturnValueOnce(of(searchResponse))
+        .mockReturnValueOnce(of(debtorDetails));
+      httpClient.put.mockReturnValue(of(updatedDebtor));
+      httpClient.patch.mockReturnValue(of(restoredDebtor));
 
       // Search for debtors
       service.getAllWithParams(searchParams).subscribe((searchResult) => {
@@ -664,10 +720,9 @@ describe('DebtorService', () => {
       ];
       const innCheckResult: number[] = [1, 2];
 
-      httpClient.get.and.returnValues(
-        of(bankruptcyDebtors),
-        of(innCheckResult),
-      );
+      httpClient.get
+        .mockReturnValueOnce(of(bankruptcyDebtors))
+        .mockReturnValueOnce(of(innCheckResult));
 
       // Get debtors by bankruptcy
       service.getDebtorsByBankruptcy(bankruptcyId).subscribe((debtors) => {
@@ -717,11 +772,10 @@ describe('DebtorService', () => {
         },
       ];
 
-      httpClient.get.and.returnValues(
-        of(projectDebtors),
-        of(shortDebtors),
-        of(bankDetailDebtors),
-      );
+      httpClient.get
+        .mockReturnValueOnce(of(projectDebtors))
+        .mockReturnValueOnce(of(shortDebtors))
+        .mockReturnValueOnce(of(bankDetailDebtors));
 
       // Get debtors as projects
       service.getListAsProject().subscribe((projects) => {

@@ -1,6 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Store, provideStates } from '@ngxs/store';
+import { Store, provideStates, provideStore } from '@ngxs/store';
 import { AnnouncementService } from '@sotbi/data-access';
 import type { Announcement } from '@sotbi/models';
 import { DatePublish } from '@sotbi/models';
@@ -17,7 +17,7 @@ import { AnnouncementState } from './announcement.state';
 
 describe('AnnouncementState', () => {
   let store: Store;
-  let svc: jasmine.SpyObj<AnnouncementService>;
+  let svc: jest.Mocked<AnnouncementService>;
 
   const mockItem: Announcement = {
     id: 1,
@@ -42,18 +42,19 @@ describe('AnnouncementState', () => {
   };
 
   beforeEach(async () => {
-    const svcSpy = jasmine.createSpyObj('AnnouncementService', [
-      'getAllWithCondition',
-      'get',
-      'add',
-      'update',
-      'delete',
-    ]);
+    const svcSpy = {
+      getAllWithCondition: jest.fn(),
+      get: jest.fn(),
+      add: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    } as unknown as jest.Mocked<AnnouncementService>;
 
     await TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         { provide: AnnouncementService, useValue: svcSpy },
+        provideStore([]),
         provideStates([AnnouncementState]),
       ],
     }).compileComponents();
@@ -61,7 +62,7 @@ describe('AnnouncementState', () => {
     store = TestBed.inject(Store);
     svc = TestBed.inject(
       AnnouncementService,
-    ) as jasmine.SpyObj<AnnouncementService>;
+    ) as jest.Mocked<AnnouncementService>;
   });
 
   describe('Selectors', () => {
@@ -101,7 +102,7 @@ describe('AnnouncementState', () => {
 
   describe('FetchItems', () => {
     it('should fetch when items are empty (success path)', (done) => {
-      svc.getAllWithCondition.and.returnValue(of([mockItem, mockItem2]));
+      svc.getAllWithCondition.mockReturnValue(of([mockItem, mockItem2]));
 
       store
         .dispatch(
@@ -147,7 +148,7 @@ describe('AnnouncementState', () => {
     });
 
     it('should set loading=false on errors', (done) => {
-      svc.getAllWithCondition.and.returnValue(
+      svc.getAllWithCondition.mockReturnValue(
         throwError(() => new Error('Fetch failed')),
       );
 
@@ -184,7 +185,7 @@ describe('AnnouncementState', () => {
     });
 
     it('should fetch and set selected when id provided', (done) => {
-      svc.get.and.returnValue(of(mockItem));
+      svc.get.mockReturnValue(of(mockItem));
 
       store.dispatch(new GetItem(1)).subscribe(() => {
         expect(svc.get).toHaveBeenCalledWith(1);
@@ -198,7 +199,7 @@ describe('AnnouncementState', () => {
     });
 
     it('should set loading=false on errors', (done) => {
-      svc.get.and.returnValue(throwError(() => new Error('Get failed')));
+      svc.get.mockReturnValue(throwError(() => new Error('Get failed')));
 
       store.dispatch(new GetItem(123)).subscribe({
         next: () => fail('Expected error'),
@@ -216,7 +217,7 @@ describe('AnnouncementState', () => {
   describe('AddItem', () => {
     it('should add item, set selected and increase count', (done) => {
       const created = { ...mockItem, id: 999 };
-      svc.add.and.returnValue(of(created));
+      svc.add.mockReturnValue(of(created));
 
       store.reset({
         announcement: {
@@ -240,7 +241,7 @@ describe('AnnouncementState', () => {
     });
 
     it('should set loading=false on errors', (done) => {
-      svc.add.and.returnValue(throwError(() => new Error('Create failed')));
+      svc.add.mockReturnValue(throwError(() => new Error('Create failed')));
 
       store.dispatch(new AddItem(mockItem)).subscribe({
         next: () => fail('Expected error'),
@@ -258,7 +259,7 @@ describe('AnnouncementState', () => {
   describe('UpdateItem', () => {
     it('should update item in list and set selected', (done) => {
       const updated = { ...mockItem, title: 'Updated' };
-      svc.update.and.returnValue(of(updated));
+      svc.update.mockReturnValue(of(updated));
 
       store.reset({
         announcement: {
@@ -281,7 +282,7 @@ describe('AnnouncementState', () => {
     });
 
     it('should set loading=false on errors', (done) => {
-      svc.update.and.returnValue(throwError(() => new Error('Update failed')));
+      svc.update.mockReturnValue(throwError(() => new Error('Update failed')));
 
       store.dispatch(new UpdateItem(mockItem)).subscribe({
         next: () => fail('Expected error'),
@@ -298,7 +299,7 @@ describe('AnnouncementState', () => {
 
   describe('DeleteItem', () => {
     it('should delete item from list', (done) => {
-      svc.delete.and.returnValue(of(void 0));
+      svc.delete.mockReturnValue(of(void 0));
 
       store.reset({
         announcement: {
@@ -321,7 +322,7 @@ describe('AnnouncementState', () => {
     });
 
     it('should set loading=false on errors', (done) => {
-      svc.delete.and.returnValue(throwError(() => new Error('Delete failed')));
+      svc.delete.mockReturnValue(throwError(() => new Error('Delete failed')));
 
       store.dispatch(new DeleteItem(1)).subscribe({
         next: () => fail('Expected error'),

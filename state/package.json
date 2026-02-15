@@ -11,10 +11,10 @@
     "directory": "state"
   },
   "peerDependencies": {
-    "@sotbi/models": "^0.0.2",
-    "@sotbi/data-access": "^0.0.1",
-    "@sotbi/auth": "0.0.2",
-    "@sotbi/utils": "0.0.3",
+    "@sotbi/models": "^0.0.4",
+    "@sotbi/data-access": "^0.0.4",
+    "@sotbi/auth": "^0.0.4",
+    "@sotbi/utils": "^0.0.4",
     "@angular/core": "20.3.4",
     "@ngxs/store": "^21.0.0",
     "@fullcalendar/core": "~6.1.20",

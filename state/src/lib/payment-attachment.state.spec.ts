@@ -1,6 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideStates, Store } from '@ngxs/store';
+import { provideStates, provideStore, Store } from '@ngxs/store';
 import { PaymentAttachmentService } from '@sotbi/data-access';
 import type { PaymentAttachment, User } from '@sotbi/models';
 import { PaymentAttachmentType } from '@sotbi/models';
@@ -18,7 +18,7 @@ import { PaymentAttachmentState } from './payment-attachment.state';
 
 describe('PaymentAttachmentState', () => {
   let store: Store;
-  let service: jasmine.SpyObj<PaymentAttachmentService>;
+  let service: jest.Mocked<PaymentAttachmentService>;
 
   const mockUser: User = {
     id: 1,
@@ -95,19 +95,20 @@ describe('PaymentAttachmentState', () => {
   ];
 
   beforeEach(async () => {
-    const serviceSpy = jasmine.createSpyObj('PaymentAttachmentService', [
-      'GetAll',
-      'get',
-      'add',
-      'update',
-      'delete',
-      'deleteMultiple',
-    ]);
+    const serviceSpy = {
+      GetAll: jest.fn(),
+      get: jest.fn(),
+      add: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+      deleteMultiple: jest.fn(),
+    } as unknown as jest.Mocked<PaymentAttachmentService>;
 
     await TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         { provide: PaymentAttachmentService, useValue: serviceSpy },
+        provideStore([]),
         provideStates([PaymentAttachmentState]),
       ],
     }).compileComponents();
@@ -115,7 +116,7 @@ describe('PaymentAttachmentState', () => {
     store = TestBed.inject(Store);
     service = TestBed.inject(
       PaymentAttachmentService,
-    ) as jasmine.SpyObj<PaymentAttachmentService>;
+    ) as jest.Mocked<PaymentAttachmentService>;
   });
 
   it('should have initial state', () => {
@@ -149,7 +150,7 @@ describe('PaymentAttachmentState', () => {
 
   describe('GetAllItems', () => {
     it('should fetch items when state is empty (success path)', () => {
-      service.GetAll.and.returnValue(of(mockAttachments));
+      service.GetAll.mockReturnValue(of(mockAttachments));
 
       store.dispatch(new GetAllItems(1));
 
@@ -177,7 +178,7 @@ describe('PaymentAttachmentState', () => {
     });
 
     it('should handle fetch error and reset loading', () => {
-      service.GetAll.and.returnValue(
+      service.GetAll.mockReturnValue(
         throwError(() => new Error('Fetch failed')),
       );
 
@@ -190,7 +191,7 @@ describe('PaymentAttachmentState', () => {
 
   describe('GetItem', () => {
     it('should get item by ID (success path)', (done) => {
-      service.get.and.returnValue(of(mockAttachment));
+      service.get.mockReturnValue(of(mockAttachment));
 
       store.dispatch(new GetItem(1)).subscribe({
         next: () => {
@@ -238,7 +239,7 @@ describe('PaymentAttachmentState', () => {
     });
 
     it('should handle get item error and reset loading', () => {
-      service.get.and.returnValue(throwError(() => new Error('Get failed')));
+      service.get.mockReturnValue(throwError(() => new Error('Get failed')));
 
       store.dispatch(new GetItem(1));
 
@@ -266,7 +267,7 @@ describe('PaymentAttachmentState', () => {
         file: 'uploads/payment-attachments/new.pdf',
       };
 
-      service.add.and.returnValue(of(mockAttachment));
+      service.add.mockReturnValue(of(mockAttachment));
 
       store.dispatch(new AddItem(newItem)).subscribe(() => {
         const items = store.selectSnapshot(PaymentAttachmentState.getItems);
@@ -286,7 +287,7 @@ describe('PaymentAttachmentState', () => {
     });
 
     it('should handle add item error and reset loading', (done) => {
-      service.add.and.returnValue(throwError(() => new Error('Add failed')));
+      service.add.mockReturnValue(throwError(() => new Error('Add failed')));
 
       const newItem: Partial<PaymentAttachment> = {
         type: PaymentAttachmentType.REQUEST,
@@ -328,7 +329,7 @@ describe('PaymentAttachmentState', () => {
         ...mockAttachment,
         link_name: 'Updated Name',
       } as PaymentAttachment;
-      service.update.and.returnValue(of(updated));
+      service.update.mockReturnValue(of(updated));
 
       const itemsBefore = store.selectSnapshot(PaymentAttachmentState.getItems);
 
@@ -374,7 +375,7 @@ describe('PaymentAttachmentState', () => {
         id: 999,
         link_name: 'Does Not Exist',
       };
-      service.update.and.returnValue(of(nonExisting));
+      service.update.mockReturnValue(of(nonExisting));
 
       const before = store.selectSnapshot(PaymentAttachmentState.getItems);
 
@@ -399,7 +400,7 @@ describe('PaymentAttachmentState', () => {
     });
 
     it('should handle update error and reset loading', (done) => {
-      service.update.and.returnValue(
+      service.update.mockReturnValue(
         throwError(() => new Error('Update failed')),
       );
 
@@ -448,7 +449,7 @@ describe('PaymentAttachmentState', () => {
     });
 
     it('should delete item (success path)', (done) => {
-      service.delete.and.returnValue(of(undefined));
+      service.delete.mockReturnValue(of(undefined));
 
       store.dispatch(new DeleteItem(1)).subscribe(() => {
         const items = store.selectSnapshot(PaymentAttachmentState.getItems);
@@ -463,7 +464,7 @@ describe('PaymentAttachmentState', () => {
     });
 
     it('should handle delete error and reset loading', (done) => {
-      service.delete.and.returnValue(
+      service.delete.mockReturnValue(
         throwError(() => new Error('Delete failed')),
       );
 
@@ -489,7 +490,7 @@ describe('PaymentAttachmentState', () => {
   describe('DeleteItems (bulk)', () => {
     it('should call service with filenames and reset loading (success path)', (done) => {
       const files = ['a.pdf', 'b.docx'];
-      service.deleteMultiple.and.returnValue(of(undefined));
+      service.deleteMultiple.mockReturnValue(of(undefined));
 
       store.dispatch(new DeleteItems(files)).subscribe(() => {
         const loading = store.selectSnapshot(PaymentAttachmentState.getLoading);
@@ -500,7 +501,7 @@ describe('PaymentAttachmentState', () => {
     });
 
     it('should handle bulk delete error and reset loading', (done) => {
-      service.deleteMultiple.and.returnValue(
+      service.deleteMultiple.mockReturnValue(
         throwError(() => new Error('Bulk failed')),
       );
 
@@ -526,7 +527,7 @@ describe('PaymentAttachmentState', () => {
   describe('State Consistency Scenario', () => {
     it('should maintain consistent state across fetch -> add -> delete', (done) => {
       // Fetch
-      service.GetAll.and.returnValue(of(mockAttachments));
+      service.GetAll.mockReturnValue(of(mockAttachments));
       store.dispatch(new GetAllItems(1)).subscribe(() => {
         expect(
           store.selectSnapshot(PaymentAttachmentState.getItems).length,
@@ -538,7 +539,7 @@ describe('PaymentAttachmentState', () => {
           id: 3,
           link_name: 'New',
         };
-        service.add.and.returnValue(of(created));
+        service.add.mockReturnValue(of(created));
 
         store.dispatch(new AddItem({ link_name: 'New' })).subscribe(() => {
           expect(
@@ -549,7 +550,7 @@ describe('PaymentAttachmentState', () => {
           ).toEqual(created);
 
           // Delete
-          service.delete.and.returnValue(of(undefined));
+          service.delete.mockReturnValue(of(undefined));
           store.dispatch(new DeleteItem(3)).subscribe(() => {
             expect(
               store.selectSnapshot(PaymentAttachmentState.getItems).length,

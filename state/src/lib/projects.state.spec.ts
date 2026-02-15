@@ -1,6 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Store, provideStates } from '@ngxs/store';
+import { Store, provideStore, provideStates } from '@ngxs/store';
 import { ProjectService } from '@sotbi/data-access';
 import type { Project } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
@@ -17,7 +17,7 @@ import { ProjectsState } from './projects.state';
 
 describe('ProjectsState', () => {
   let store: Store;
-  let projectService: jasmine.SpyObj<ProjectService>;
+  let projectService: jest.Mocked<ProjectService>;
 
   const mockProject: Project = {
     id: 1,
@@ -47,25 +47,26 @@ describe('ProjectsState', () => {
   ];
 
   beforeEach(async () => {
-    const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
-      'getAll$',
-      'get',
-      'create',
-      'save',
-      'delete',
-    ]);
+    const projectServiceSpy = {
+      getAll$: jest.fn(),
+      get: jest.fn(),
+      create: jest.fn(),
+      save: jest.fn(),
+      delete: jest.fn(),
+    } as unknown as jest.Mocked<ProjectService>;
 
     // Set default return values to prevent errors during state initialization
-    projectServiceSpy.getAll$.and.returnValue(of([]));
-    projectServiceSpy.get.and.returnValue(of(mockProject));
-    projectServiceSpy.create.and.returnValue(of(mockProject));
-    projectServiceSpy.save.and.returnValue(of(mockProject));
-    projectServiceSpy.delete.and.returnValue(of(undefined));
+    projectServiceSpy.getAll$.mockReturnValue(of([]));
+    projectServiceSpy.get.mockReturnValue(of(mockProject));
+    projectServiceSpy.create.mockReturnValue(of(mockProject));
+    projectServiceSpy.save.mockReturnValue(of(mockProject));
+    projectServiceSpy.delete.mockReturnValue(of(undefined as any));
 
     await TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         { provide: ProjectService, useValue: projectServiceSpy },
+        provideStore([]),
         provideStates([ProjectsState]),
       ],
     }).compileComponents();
@@ -73,7 +74,7 @@ describe('ProjectsState', () => {
     store = TestBed.inject(Store);
     projectService = TestBed.inject(
       ProjectService,
-    ) as jasmine.SpyObj<ProjectService>;
+    ) as jest.Mocked<ProjectService>;
   });
 
   describe('Selectors', () => {
@@ -162,8 +163,8 @@ describe('ProjectsState', () => {
       });
 
       // Reset spy to clear calls from ngxsOnInit
-      projectService.getAll$.calls.reset();
-      projectService.getAll$.and.returnValue(of(mockProjects));
+      projectService.getAll$.mockClear();
+      projectService.getAll$.mockReturnValue(of(mockProjects));
 
       store.dispatch(new FetchProjects()).subscribe(() => {
         const state = store.selectSnapshot(
@@ -190,7 +191,7 @@ describe('ProjectsState', () => {
         },
       });
 
-      projectService.getAll$.and.returnValue(of(mockProjects));
+      projectService.getAll$.mockReturnValue(of(mockProjects));
 
       store.dispatch(new FetchProjects()).subscribe(() => {
         const state = store.selectSnapshot(
@@ -216,7 +217,7 @@ describe('ProjectsState', () => {
         },
       });
 
-      projectService.getAll$.and.returnValue(of(mockProjects));
+      projectService.getAll$.mockReturnValue(of(mockProjects));
 
       store.dispatch(new FetchProjects()).subscribe(() => {
         const state = store.selectSnapshot(
@@ -243,7 +244,7 @@ describe('ProjectsState', () => {
       });
 
       // Reset spy to clear calls from ngxsOnInit
-      projectService.getAll$.calls.reset();
+      projectService.getAll$.mockClear();
 
       store.dispatch(new FetchProjects()).subscribe(() => {
         expect(projectService.getAll$).not.toHaveBeenCalled();
@@ -265,7 +266,7 @@ describe('ProjectsState', () => {
 
       spyOn(console, 'error');
       const error = new Error('Fetch failed');
-      projectService.getAll$.and.returnValue(throwError(() => error));
+      projectService.getAll$.mockReturnValue(throwError(() => error));
 
       store.dispatch(new FetchProjects()).subscribe({
         next: () => {
@@ -295,7 +296,7 @@ describe('ProjectsState', () => {
         },
       });
 
-      projectService.getAll$.and.returnValue(of(mockShortProjects));
+      projectService.getAll$.mockReturnValue(of(mockShortProjects));
 
       store.dispatch(new FetchAllProjects()).subscribe(() => {
         const state = store.selectSnapshot(
@@ -324,7 +325,7 @@ describe('ProjectsState', () => {
       });
 
       // Reset spy to clear calls from ngxsOnInit
-      projectService.getAll$.calls.reset();
+      projectService.getAll$.mockClear();
 
       store.dispatch(new FetchAllProjects()).subscribe(() => {
         expect(projectService.getAll$).not.toHaveBeenCalled();
@@ -346,7 +347,7 @@ describe('ProjectsState', () => {
 
       spyOn(console, 'error');
       const error = new Error('Fetch all failed');
-      projectService.getAll$.and.returnValue(throwError(() => error));
+      projectService.getAll$.mockReturnValue(throwError(() => error));
 
       store.dispatch(new FetchAllProjects()).subscribe({
         error: () => {
@@ -368,7 +369,7 @@ describe('ProjectsState', () => {
         },
       });
 
-      projectService.getAll$.and.returnValue(of(mockShortProjects));
+      projectService.getAll$.mockReturnValue(of(mockShortProjects));
 
       store.dispatch(new FetchAllProjects()).subscribe(() => {
         const state = store.selectSnapshot(
@@ -405,7 +406,7 @@ describe('ProjectsState', () => {
       });
 
       // Reset spy to ensure clean check
-      projectService.get.calls.reset();
+      projectService.get.mockClear();
 
       store.dispatch(new GetItem(1)).subscribe(() => {
         const state = store.selectSnapshot(
@@ -430,7 +431,7 @@ describe('ProjectsState', () => {
         },
       });
 
-      projectService.get.and.returnValue(of(mockProject));
+      projectService.get.mockReturnValue(of(mockProject));
 
       store.dispatch(new GetItem(1)).subscribe(() => {
         const state = store.selectSnapshot(
@@ -444,7 +445,7 @@ describe('ProjectsState', () => {
     });
 
     it('should set loading to true before fetching', (done) => {
-      projectService.get.and.returnValue(of(mockProject));
+      projectService.get.mockReturnValue(of(mockProject));
 
       // Reset to ensure clean state
       store.reset({
@@ -469,7 +470,7 @@ describe('ProjectsState', () => {
 
     it('should handle errors and reset loading state', (done) => {
       const error = new Error('Get project failed');
-      projectService.get.and.returnValue(throwError(() => error));
+      projectService.get.mockReturnValue(throwError(() => error));
 
       store.dispatch(new GetItem(1)).subscribe({
         error: () => {
@@ -508,7 +509,7 @@ describe('ProjectsState', () => {
   describe('AddItem Action', () => {
     it('should add project successfully (success path)', (done) => {
       const newProject = { ...mockProject, id: 3, name: 'New Project' };
-      projectService.create.and.returnValue(of(newProject));
+      projectService.create.mockReturnValue(of(newProject));
 
       store.dispatch(new AddItem({ name: 'New Project' })).subscribe(() => {
         const state = store.selectSnapshot(
@@ -518,7 +519,7 @@ describe('ProjectsState', () => {
         expect(state.items).toContain(newProject);
         expect(state.items[0]).toEqual(newProject); // Should be prepended
         expect(state.shortItems).toContain(
-          jasmine.objectContaining({
+          expect.objectContaining({
             id: newProject.id,
             name: newProject.name,
           }),
@@ -541,7 +542,7 @@ describe('ProjectsState', () => {
       });
 
       const newProject = { ...mockProject, id: 99, name: 'Newest Project' };
-      projectService.create.and.returnValue(of(newProject));
+      projectService.create.mockReturnValue(of(newProject));
 
       store.dispatch(new AddItem({ name: 'Newest Project' })).subscribe(() => {
         const state = store.selectSnapshot(
@@ -555,7 +556,7 @@ describe('ProjectsState', () => {
 
     it('should update maps when adding project', (done) => {
       const newProject = { ...mockProject, id: 10, name: 'Map Test Project' };
-      projectService.create.and.returnValue(of(newProject));
+      projectService.create.mockReturnValue(of(newProject));
 
       store
         .dispatch(new AddItem({ name: 'Map Test Project' }))
@@ -571,7 +572,7 @@ describe('ProjectsState', () => {
     it('should handle errors and propagate them', (done) => {
       spyOn(console, 'error');
       const error = new Error('Create failed');
-      projectService.create.and.returnValue(throwError(() => error));
+      projectService.create.mockReturnValue(throwError(() => error));
 
       store.dispatch(new AddItem({ name: 'Failed Project' })).subscribe({
         error: (err) => {
@@ -590,7 +591,7 @@ describe('ProjectsState', () => {
         client_id: 10,
         manager_id: 20,
       };
-      projectService.create.and.returnValue(of(complexProject));
+      projectService.create.mockReturnValue(of(complexProject));
 
       store.dispatch(new AddItem({ name: 'Complex Project' })).subscribe(() => {
         const state = store.selectSnapshot(
@@ -617,7 +618,7 @@ describe('ProjectsState', () => {
       });
 
       const editedProject = { ...mockProject, name: 'Updated Project' };
-      projectService.save.and.returnValue(of(editedProject));
+      projectService.save.mockReturnValue(of(editedProject));
 
       store
         .dispatch(new EditItem({ id: 1, name: 'Updated Project' }))
@@ -641,15 +642,15 @@ describe('ProjectsState', () => {
         name: 'Updated Name',
         client_id: 5,
       };
-      projectService.save.and.returnValue(of(editedProject));
+      projectService.save.mockReturnValue(of(editedProject));
 
       store.dispatch(new EditItem(payload)).subscribe(() => {
         expect(projectService.save).toHaveBeenCalledWith(
           1,
-          jasmine.objectContaining({ name: 'Updated Name', client_id: 5 }),
+          expect.objectContaining({ name: 'Updated Name', client_id: 5 }),
         );
         // Verify id was removed from the payload
-        const callArgs = projectService.save.calls.argsFor(0);
+        const callArgs = projectService.save.mock.calls[0];
         expect(callArgs[1].id).toBeUndefined();
         done();
       });
@@ -668,7 +669,7 @@ describe('ProjectsState', () => {
       });
 
       const editedProject = { ...mockProjects[1], name: 'Modified Project' };
-      projectService.save.and.returnValue(of(editedProject));
+      projectService.save.mockReturnValue(of(editedProject));
 
       store
         .dispatch(new EditItem({ id: 2, name: 'Modified Project' }))
@@ -697,7 +698,7 @@ describe('ProjectsState', () => {
       });
 
       const editedProject = { ...mockProject, name: 'New Name' };
-      projectService.save.and.returnValue(of(editedProject));
+      projectService.save.mockReturnValue(of(editedProject));
 
       store
         .dispatch(new EditItem({ id: 1, name: 'New Name' }))
@@ -714,7 +715,7 @@ describe('ProjectsState', () => {
     it('should handle errors and propagate them', (done) => {
       spyOn(console, 'error');
       const error = new Error('Save failed');
-      projectService.save.and.returnValue(throwError(() => error));
+      projectService.save.mockReturnValue(throwError(() => error));
 
       store.dispatch(new EditItem({ id: 1, name: 'Failed Update' })).subscribe({
         error: (err) => {
@@ -738,7 +739,7 @@ describe('ProjectsState', () => {
       });
 
       const editedProject = { ...mockProject, name: 'Brand New Name' };
-      projectService.save.and.returnValue(of(editedProject));
+      projectService.save.mockReturnValue(of(editedProject));
 
       store
         .dispatch(new EditItem({ id: 1, name: 'Brand New Name' }))
@@ -769,7 +770,7 @@ describe('ProjectsState', () => {
         },
       });
 
-      projectService.delete.and.returnValue(of(undefined));
+      projectService.delete.mockReturnValue(of(undefined as any));
 
       store.dispatch(new DeleteItem(1)).subscribe(() => {
         const state = store.selectSnapshot(
@@ -796,7 +797,7 @@ describe('ProjectsState', () => {
         },
       });
 
-      projectService.delete.and.returnValue(of(undefined));
+      projectService.delete.mockReturnValue(of(undefined as any));
 
       store.dispatch(new DeleteItem(2)).subscribe(() => {
         const state = store.selectSnapshot(
@@ -820,7 +821,7 @@ describe('ProjectsState', () => {
         },
       });
 
-      projectService.delete.and.returnValue(of(undefined));
+      projectService.delete.mockReturnValue(of(undefined as any));
 
       store.dispatch(new DeleteItem(2)).subscribe(() => {
         const state = store.selectSnapshot(
@@ -848,7 +849,7 @@ describe('ProjectsState', () => {
         },
       });
 
-      projectService.delete.and.returnValue(of(undefined));
+      projectService.delete.mockReturnValue(of(undefined as any));
 
       store.dispatch(new DeleteItem(2)).subscribe(() => {
         const state = store.selectSnapshot(
@@ -865,7 +866,7 @@ describe('ProjectsState', () => {
     it('should handle errors and propagate them', (done) => {
       spyOn(console, 'error');
       const error = new Error('Delete failed');
-      projectService.delete.and.returnValue(throwError(() => error));
+      projectService.delete.mockReturnValue(throwError(() => error));
 
       store.dispatch(new DeleteItem(1)).subscribe({
         error: (err) => {
@@ -890,7 +891,7 @@ describe('ProjectsState', () => {
         },
       });
 
-      projectService.delete.and.returnValue(of(undefined));
+      projectService.delete.mockReturnValue(of(undefined as any));
 
       store.dispatch(new DeleteItem(1)).subscribe(() => {
         const state = store.selectSnapshot(
@@ -937,11 +938,11 @@ describe('ProjectsState', () => {
 
     it('should maintain state consistency across multiple operations', (done) => {
       // Test a sequence of operations
-      projectService.getAll$.and.returnValue(of(mockShortProjects));
-      projectService.create.and.returnValue(
+      projectService.getAll$.mockReturnValue(of(mockShortProjects));
+      projectService.create.mockReturnValue(
         of({ ...mockProject, id: 10, name: 'Created' }),
       );
-      projectService.delete.and.returnValue(of(undefined));
+      projectService.delete.mockReturnValue(of(undefined as any));
 
       // Execute sequence
       store.dispatch(new FetchAllProjects()).subscribe(() => {
@@ -964,7 +965,7 @@ describe('ProjectsState', () => {
 
     it('should handle projects with minimal data', (done) => {
       const minimalProject: Project = { id: 99, name: 'Minimal' };
-      projectService.create.and.returnValue(of(minimalProject));
+      projectService.create.mockReturnValue(of(minimalProject));
 
       store.dispatch(new AddItem({ name: 'Minimal' })).subscribe(() => {
         const state = store.selectSnapshot(
@@ -987,14 +988,19 @@ describe('ProjectsState', () => {
         saler_group_id: 5,
         created_at: new Date(),
       };
-      projectService.create.and.returnValue(of(fullProject));
+      projectService.create.mockReturnValue(of(fullProject));
 
-      store.dispatch(new AddItem(fullProject)).subscribe(() => {
-        const state = store.selectSnapshot(
-          (state: any) => state.projects,
-        ) as ProjectStateModel;
-        expect(state.selected).toEqual(fullProject);
-        done();
+      store.dispatch(new AddItem(fullProject)).subscribe({
+        next: () => {
+          const state = store.selectSnapshot(
+            (state: any) => state.projects,
+          ) as ProjectStateModel;
+          expect(state.selected).toEqual(fullProject);
+          done();
+        },
+        error: (error) => {
+          done(error);
+        },
       });
     });
 

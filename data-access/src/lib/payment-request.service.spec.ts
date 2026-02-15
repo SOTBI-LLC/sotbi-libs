@@ -1,18 +1,20 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import type { PaymentRequest, User } from '@sotbi/models';
+import type {
+  User
+} from '@sotbi/models';
 import {
-  PaymentRequestTarget,
+  PaymentRequest, PaymentRequestTarget,
   PaymentRequestType,
-  StatusEnum,
+  StatusEnum
 } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import { PaymentRequestService } from './payment-request.service';
 
 describe('PaymentRequestService', () => {
   let service: PaymentRequestService;
-  let httpClient: jasmine.SpyObj<HttpClient>;
+  let httpClient: jest.Mocked<HttpClient>;
 
   const mockUser: User = {
     id: 1,
@@ -63,7 +65,7 @@ describe('PaymentRequestService', () => {
     scans: [],
   };
 
-  const mockPaymentRequest: PaymentRequest = {
+  const mockPaymentRequest: PaymentRequest = {...new PaymentRequest(), ...{
     id: 1,
     status: StatusEnum.OPEN,
     debtor_id: 1,
@@ -72,8 +74,6 @@ describe('PaymentRequestService', () => {
     request_type: PaymentRequestType.FORM,
     description: 'Test payment request',
     worked_by_id: 1,
-    defrayments: [],
-    payment_attachments: [],
     project_name: 'Test Project',
     debtor_name: 'Test Debtor LLC',
     defrayments_count: 2,
@@ -81,38 +81,38 @@ describe('PaymentRequestService', () => {
     worked_by_name: 'Jane Smith',
     project_owner_id: 1,
     doer_comment: 'Processing payment request',
-  };
+  }};
+
+  const mockPaymentRequest2 = {...new PaymentRequest(), ...{
+    id: 2,
+    status: StatusEnum.WORK,
+    debtor_id: 2,
+    bank_detail_id: 2,
+    target: PaymentRequestTarget.CARDFILE,
+    request_type: PaymentRequestType.SIGN,
+    description: 'Another payment request',
+    worked_by_id: 2,
+    project_name: 'Another Project',
+    debtor_name: 'Another Debtor Inc',
+    defrayments_count: 1,
+    updated_by_name: 'Bob Wilson',
+    worked_by_name: 'Alice Johnson',
+    project_owner_id: 2,
+  }}
 
   const mockPaymentRequests: PaymentRequest[] = [
     mockPaymentRequest,
-    {
-      id: 2,
-      status: StatusEnum.WORK,
-      debtor_id: 2,
-      bank_detail_id: 2,
-      target: PaymentRequestTarget.CARDFILE,
-      request_type: PaymentRequestType.SIGN,
-      description: 'Another payment request',
-      worked_by_id: 2,
-      defrayments: [],
-      payment_attachments: [],
-      project_name: 'Another Project',
-      debtor_name: 'Another Debtor Inc',
-      defrayments_count: 1,
-      updated_by_name: 'Bob Wilson',
-      worked_by_name: 'Alice Johnson',
-      project_owner_id: 2,
-    },
+    mockPaymentRequest2,
   ];
 
   beforeEach(async () => {
-    const httpSpy = jasmine.createSpyObj('HttpClient', [
-      'get',
-      'post',
-      'put',
-      'patch',
-      'delete',
-    ]);
+    const httpSpy = {
+      get: jest.fn(),
+      post: jest.fn(),
+      put: jest.fn(),
+      patch: jest.fn(),
+      delete: jest.fn(),
+    } as unknown as jest.Mocked<HttpClient>;
 
     await TestBed.configureTestingModule({
       providers: [
@@ -123,7 +123,7 @@ describe('PaymentRequestService', () => {
     }).compileComponents();
 
     service = TestBed.inject(PaymentRequestService);
-    httpClient = TestBed.inject(HttpClient) as jasmine.SpyObj<HttpClient>;
+    httpClient = TestBed.inject(HttpClient) as jest.Mocked<HttpClient>;
   });
 
   it('should be created', () => {
@@ -149,7 +149,7 @@ describe('PaymentRequestService', () => {
     it('should call GET with correct URL and parameters', () => {
       const params = new HttpParams().set('page', '1').set('limit', '10');
       const mockResponse = { requests: mockPaymentRequests, count: 2 };
-      httpClient.get.and.returnValue(of(mockResponse));
+      httpClient.get.mockReturnValue(of(mockResponse));
 
       service.getAllWithParams(params).subscribe((result) => {
         expect(result).toEqual(mockResponse);
@@ -165,7 +165,7 @@ describe('PaymentRequestService', () => {
     it('should handle empty parameters', () => {
       const emptyParams = new HttpParams();
       const mockResponse = { requests: [], count: 0 };
-      httpClient.get.and.returnValue(of(mockResponse));
+      httpClient.get.mockReturnValue(of(mockResponse));
 
       service.getAllWithParams(emptyParams).subscribe((result) => {
         expect(result.requests).toEqual([]);
@@ -179,7 +179,7 @@ describe('PaymentRequestService', () => {
 
     it('should handle undefined parameters', () => {
       const mockResponse = { requests: mockPaymentRequests, count: 2 };
-      httpClient.get.and.returnValue(of(mockResponse));
+      httpClient.get.mockReturnValue(of(mockResponse));
 
       service.getAllWithParams(undefined).subscribe((result) => {
         expect(result.requests).toEqual(mockPaymentRequests);
@@ -204,7 +204,7 @@ describe('PaymentRequestService', () => {
         .set('sortBy', 'created_at')
         .set('sortOrder', 'desc');
       const mockResponse = { requests: [mockPaymentRequest], count: 1 };
-      httpClient.get.and.returnValue(of(mockResponse));
+      httpClient.get.mockReturnValue(of(mockResponse));
 
       service.getAllWithParams(complexParams).subscribe((result) => {
         expect(result.count).toBe(1);
@@ -226,7 +226,7 @@ describe('PaymentRequestService', () => {
         requests: [mockPaymentRequests[1]],
         count: 1,
       };
-      httpClient.get.and.returnValue(of(filteredResponse));
+      httpClient.get.mockReturnValue(of(filteredResponse));
 
       service.getAllWithParams(statusParams).subscribe((result) => {
         expect(result.requests.length).toBe(1);
@@ -248,7 +248,7 @@ describe('PaymentRequestService', () => {
         requests: [mockPaymentRequests[1]],
         count: 1,
       };
-      httpClient.get.and.returnValue(of(filteredResponse));
+      httpClient.get.mockReturnValue(of(filteredResponse));
 
       service.getAllWithParams(targetParams).subscribe((result) => {
         expect(result.requests.length).toBe(1);
@@ -268,7 +268,7 @@ describe('PaymentRequestService', () => {
         .set('page', '1')
         .set('limit', '10');
       const mockResponse = { requests: mockPaymentRequests, count: 2 };
-      httpClient.get.and.returnValue(of(mockResponse));
+      httpClient.get.mockReturnValue(of(mockResponse));
 
       service.getAllWithParams(dateParams).subscribe((result) => {
         expect(result.requests).toEqual(mockPaymentRequests);
@@ -283,7 +283,7 @@ describe('PaymentRequestService', () => {
     it('should return observable with correct response structure', () => {
       const params = new HttpParams().set('page', '1');
       const mockResponse = { requests: mockPaymentRequests, count: 2 };
-      httpClient.get.and.returnValue(of(mockResponse));
+      httpClient.get.mockReturnValue(of(mockResponse));
 
       const result = service.getAllWithParams(params);
 
@@ -300,7 +300,7 @@ describe('PaymentRequestService', () => {
   describe('HTTP Error Handling', () => {
     it('should propagate HTTP errors from getAllWithParams', (done) => {
       const errorResponse = new Error('Server Error');
-      httpClient.get.and.returnValue(throwError(() => errorResponse));
+      httpClient.get.mockReturnValue(throwError(() => errorResponse));
 
       const params = new HttpParams().set('page', '1');
 
@@ -318,7 +318,7 @@ describe('PaymentRequestService', () => {
 
     it('should handle network errors gracefully', (done) => {
       const networkError = new Error('Network Error');
-      httpClient.get.and.returnValue(throwError(() => networkError));
+      httpClient.get.mockReturnValue(throwError(() => networkError));
 
       const params = new HttpParams().set('limit', '10');
 
@@ -359,11 +359,10 @@ describe('PaymentRequestService', () => {
         doer_comment: 'Started processing',
       };
 
-      httpClient.get.and.returnValues(
-        of(searchResponse),
-        of(paymentRequestDetails),
-      );
-      httpClient.put.and.returnValue(of(updatedPaymentRequest));
+      httpClient.get
+        .mockReturnValueOnce(of(searchResponse))
+        .mockReturnValueOnce(of(paymentRequestDetails));
+      httpClient.put.mockReturnValue(of(updatedPaymentRequest));
 
       // Search for payment requests
       service.getAllWithParams(searchParams).subscribe((searchResult) => {
@@ -393,7 +392,9 @@ describe('PaymentRequestService', () => {
       const page1Response = { requests: [mockPaymentRequests[0]], count: 2 };
       const page2Response = { requests: [mockPaymentRequests[1]], count: 2 };
 
-      httpClient.get.and.returnValues(of(page1Response), of(page2Response));
+      httpClient.get
+        .mockReturnValueOnce(of(page1Response))
+        .mockReturnValueOnce(of(page2Response));
 
       // Get first page
       service.getAllWithParams(page1Params).subscribe((result) => {

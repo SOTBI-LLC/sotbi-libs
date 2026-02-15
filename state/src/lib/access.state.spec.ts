@@ -16,7 +16,7 @@ import { AccessState } from './access.state';
 
 describe('AccessState', () => {
   let store: Store;
-  let accessService: jasmine.SpyObj<AccessService>;
+  let accessService: jest.Mocked<AccessService>;
 
   const mockAccess: Access[] = [
     { id: 1, name: 'Read Access', mask: 1, description: 'Read permission' },
@@ -25,13 +25,13 @@ describe('AccessState', () => {
   ];
 
   beforeEach(async () => {
-    const serviceSpy = jasmine.createSpyObj('AccessService', [
-      'GetAll',
-      'get',
-      'add',
-      'update',
-      'delete',
-    ]);
+    const serviceSpy = {
+      GetAll: jest.fn(),
+      get: jest.fn(),
+      add: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    } as unknown as jest.Mocked<AccessService>;
 
     await TestBed.configureTestingModule({
       providers: [
@@ -43,7 +43,7 @@ describe('AccessState', () => {
     store = TestBed.inject(Store);
     accessService = TestBed.inject(
       AccessService,
-    ) as jasmine.SpyObj<AccessService>;
+    ) as jest.Mocked<AccessService>;
   });
 
   it('should be created', () => {
@@ -152,7 +152,7 @@ describe('AccessState', () => {
   describe('Actions', () => {
     describe('FetchAccess', () => {
       it('should fetch access items when none exist and not loading', () => {
-        accessService.GetAll.and.returnValue(of(mockAccess));
+        accessService.GetAll.mockReturnValue(of(mockAccess));
 
         store.dispatch(new FetchAccess()).subscribe();
 
@@ -190,7 +190,7 @@ describe('AccessState', () => {
           },
         });
 
-        accessService.GetAll.and.returnValue(of(mockAccess));
+        accessService.GetAll.mockReturnValue(of(mockAccess));
 
         store.dispatch(new FetchAccess()).subscribe();
 
@@ -223,7 +223,7 @@ describe('AccessState', () => {
           },
         });
 
-        accessService.GetAll.and.returnValue(of(mockAccess));
+        accessService.GetAll.mockReturnValue(of(mockAccess));
 
         store.dispatch(new FetchAccess()).subscribe();
 
@@ -233,7 +233,7 @@ describe('AccessState', () => {
 
       it('should handle fetch errors properly', () => {
         const errorMessage = 'Failed to fetch access items';
-        accessService.GetAll.and.returnValue(
+        accessService.GetAll.mockReturnValue(
           throwError(() => new Error(errorMessage)),
         );
 
@@ -248,7 +248,7 @@ describe('AccessState', () => {
       });
 
       it('should set loading state correctly during fetch', () => {
-        accessService.GetAll.and.returnValue(of(mockAccess));
+        accessService.GetAll.mockReturnValue(of(mockAccess));
 
         store.dispatch(new FetchAccess()).subscribe();
 
@@ -321,7 +321,7 @@ describe('AccessState', () => {
         };
 
         const createdAccess: Access = { id: 5, ...newAccess } as Access;
-        accessService.add.and.returnValue(of(createdAccess));
+        accessService.add.mockReturnValue(of(createdAccess));
 
         store.dispatch(new CreateItem(newAccess)).subscribe();
 
@@ -337,7 +337,7 @@ describe('AccessState', () => {
         };
 
         const resultAccess: Access = updatedAccess as Access;
-        accessService.update.and.returnValue(of(resultAccess));
+        accessService.update.mockReturnValue(of(resultAccess));
 
         store.dispatch(new UpdateItem(updatedAccess)).subscribe();
 
@@ -346,7 +346,7 @@ describe('AccessState', () => {
 
       it('should call AccessService.delete when DeleteItem is dispatched', () => {
         const itemIdToDelete = 2;
-        accessService.delete.and.returnValue(of(undefined));
+        accessService.delete.mockReturnValue(of(undefined));
 
         store.dispatch(new DeleteItem(itemIdToDelete)).subscribe();
 
@@ -359,7 +359,7 @@ describe('AccessState', () => {
         const newAccess: Partial<Access> = { name: 'Failed Access' };
         const errorMessage = 'Failed to create access item';
 
-        accessService.add.and.returnValue(
+        accessService.add.mockReturnValue(
           throwError(() => new Error(errorMessage)),
         );
 
@@ -380,7 +380,7 @@ describe('AccessState', () => {
         };
         const errorMessage = 'Failed to update access item';
 
-        accessService.update.and.returnValue(
+        accessService.update.mockReturnValue(
           throwError(() => new Error(errorMessage)),
         );
 
@@ -402,7 +402,7 @@ describe('AccessState', () => {
         const itemIdToDelete = 1;
         const errorMessage = 'Failed to delete access item';
 
-        accessService.delete.and.returnValue(
+        accessService.delete.mockReturnValue(
           throwError(() => new Error(errorMessage)),
         );
 
@@ -422,7 +422,7 @@ describe('AccessState', () => {
         const newAccess: Partial<Access> = { name: 'Test Access' };
         const createdAccess: Access = { id: 6, ...newAccess } as Access;
 
-        accessService.add.and.returnValue(of(createdAccess));
+        accessService.add.mockReturnValue(of(createdAccess));
 
         store.dispatch(new CreateItem(newAccess)).subscribe();
 
@@ -440,7 +440,7 @@ describe('AccessState', () => {
         };
         const resultAccess: Access = updatedAccess as Access;
 
-        accessService.update.and.returnValue(of(resultAccess));
+        accessService.update.mockReturnValue(of(resultAccess));
 
         store.dispatch(new UpdateItem(updatedAccess)).subscribe();
 
@@ -452,7 +452,7 @@ describe('AccessState', () => {
 
       it('should set loading to true when DeleteItem starts', () => {
         const itemIdToDelete = 1;
-        accessService.delete.and.returnValue(of(undefined));
+        accessService.delete.mockReturnValue(of(undefined));
 
         store.dispatch(new DeleteItem(itemIdToDelete)).subscribe();
 
@@ -465,7 +465,7 @@ describe('AccessState', () => {
 
     describe('Edge Cases', () => {
       it('should handle empty service responses', () => {
-        accessService.GetAll.and.returnValue(of([]));
+        accessService.GetAll.mockReturnValue(of([]));
 
         store.dispatch(new FetchAccess()).subscribe();
 
@@ -477,7 +477,7 @@ describe('AccessState', () => {
       });
 
       it('should maintain loading state consistency on errors', () => {
-        accessService.GetAll.and.returnValue(
+        accessService.GetAll.mockReturnValue(
           throwError(() => new Error('Network error')),
         );
 

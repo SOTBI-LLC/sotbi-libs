@@ -28,7 +28,7 @@ import { PaymentRequestState } from './payment-request.state';
 
 describe('PaymentRequestState', () => {
   let store: Store;
-  let service: jasmine.SpyObj<PaymentRequestService>;
+  let service: jest.Mocked<PaymentRequestService>;
 
   const mockUser: User = {
     id: 1,
@@ -194,13 +194,13 @@ describe('PaymentRequestState', () => {
   ];
 
   beforeEach(async () => {
-    const serviceSpy = jasmine.createSpyObj('PaymentRequestService', [
-      'getAllWithParams',
-      'get',
-      'add',
-      'update',
-      'delete',
-    ]);
+    const serviceSpy = {
+      getAllWithParams: jest.fn(),
+      get: jest.fn(),
+      add: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    } as unknown as jest.Mocked<PaymentRequestService>;
 
     await TestBed.configureTestingModule({
       providers: [
@@ -212,7 +212,7 @@ describe('PaymentRequestState', () => {
     store = TestBed.inject(Store);
     service = TestBed.inject(
       PaymentRequestService,
-    ) as jasmine.SpyObj<PaymentRequestService>;
+    ) as jest.Mocked<PaymentRequestService>;
   });
 
   it('should have initial state', () => {
@@ -266,7 +266,7 @@ describe('PaymentRequestState', () => {
   describe('FetchItems Action', () => {
     it('should fetch items when state is empty', () => {
       const mockResponse = { requests: mockPaymentRequests, count: 2 };
-      service.getAllWithParams.and.returnValue(of(mockResponse));
+      service.getAllWithParams.mockReturnValue(of(mockResponse));
 
       store.dispatch(new FetchItems());
 
@@ -296,7 +296,7 @@ describe('PaymentRequestState', () => {
 
     it('should handle fetch error', () => {
       const errorResponse = new Error('Fetch failed');
-      service.getAllWithParams.and.returnValue(throwError(() => errorResponse));
+      service.getAllWithParams.mockReturnValue(throwError(() => errorResponse));
 
       store.dispatch(new FetchItems());
 
@@ -306,7 +306,7 @@ describe('PaymentRequestState', () => {
 
     it('should set loading to true while fetching', () => {
       const mockResponse = { requests: mockPaymentRequests, count: 2 };
-      service.getAllWithParams.and.returnValue(of(mockResponse));
+      service.getAllWithParams.mockReturnValue(of(mockResponse));
 
       let loadingDuringFetch = false;
       store.select(PaymentRequestState.getLoading).subscribe((loading) => {
@@ -323,7 +323,7 @@ describe('PaymentRequestState', () => {
 
   describe('GetItem Action', () => {
     it('should get item by ID', (done) => {
-      service.get.and.returnValue(of(mockPaymentRequest));
+      service.get.mockReturnValue(of(mockPaymentRequest));
 
       store.dispatch(new GetItem(1)).subscribe({
         next: () => {
@@ -366,7 +366,7 @@ describe('PaymentRequestState', () => {
 
     it('should handle get item error', () => {
       const errorResponse = new Error('Get item failed');
-      service.get.and.returnValue(throwError(() => errorResponse));
+      service.get.mockReturnValue(throwError(() => errorResponse));
 
       store.dispatch(new GetItem(0));
 
@@ -394,7 +394,7 @@ describe('PaymentRequestState', () => {
         payment_attachments: [],
       };
 
-      service.add.and.returnValue(of(mockPaymentRequest));
+      service.add.mockReturnValue(of(mockPaymentRequest));
 
       store.dispatch(new AddItem(newItem)).subscribe(() => {
         const items = store.selectSnapshot(PaymentRequestState.getItems);
@@ -425,7 +425,7 @@ describe('PaymentRequestState', () => {
         },
       });
 
-      service.add.and.returnValue(of(mockPaymentRequest));
+      service.add.mockReturnValue(of(mockPaymentRequest));
 
       store.dispatch(new AddItem(newItem)).subscribe(() => {
         const state = store.selectSnapshot((state) => state.payment_request);
@@ -436,7 +436,7 @@ describe('PaymentRequestState', () => {
 
     it('should handle add item error', (done) => {
       const errorResponse = new Error('Add item failed');
-      service.add.and.returnValue(throwError(() => errorResponse));
+      service.add.mockReturnValue(throwError(() => errorResponse));
 
       const newItem: Partial<PaymentRequest> = {
         status: StatusEnum.DRAFT,
@@ -479,7 +479,7 @@ describe('PaymentRequestState', () => {
         status: StatusEnum.WORK,
       };
 
-      service.update.and.returnValue(of(updatedItem));
+      service.update.mockReturnValue(of(updatedItem));
 
       const update = {
         ...new PaymentRequest(),
@@ -504,7 +504,7 @@ describe('PaymentRequestState', () => {
 
     it('should handle update item error', (done) => {
       const errorResponse = new Error('Update item failed');
-      service.update.and.returnValue(throwError(() => errorResponse));
+      service.update.mockReturnValue(throwError(() => errorResponse));
 
       const update = {
         ...new PaymentRequest(),
@@ -532,7 +532,7 @@ describe('PaymentRequestState', () => {
         description: 'Updated second item',
       };
 
-      service.update.and.returnValue(of(updatedSecondItem));
+      service.update.mockReturnValue(of(updatedSecondItem));
       const update = {
         ...new PaymentRequest(),
         ...{ id: 2, description: 'Updated second item' },
@@ -573,7 +573,7 @@ describe('PaymentRequestState', () => {
     });
 
     it('should delete item', (done) => {
-      service.delete.and.returnValue(of(undefined));
+      service.delete.mockReturnValue(of(undefined));
 
       store.dispatch(new DeleteItem(1)).subscribe(() => {
         const items = store.selectSnapshot(PaymentRequestState.getItems);
@@ -589,7 +589,7 @@ describe('PaymentRequestState', () => {
 
     it('should handle delete item error', (done) => {
       const errorResponse = new Error('Delete item failed');
-      service.delete.and.returnValue(throwError(() => errorResponse));
+      service.delete.mockReturnValue(throwError(() => errorResponse));
 
       store.dispatch(new DeleteItem(1)).subscribe({
         next: () => {
@@ -607,7 +607,7 @@ describe('PaymentRequestState', () => {
     });
 
     it('should not affect other items when deleting', (done) => {
-      service.delete.and.returnValue(of(undefined));
+      service.delete.mockReturnValue(of(undefined));
 
       const initialCount = store.selectSnapshot(
         PaymentRequestState.getItems,
@@ -698,7 +698,7 @@ describe('PaymentRequestState', () => {
         ],
       };
 
-      service.get.and.returnValue(of(itemWithAllData));
+      service.get.mockReturnValue(of(itemWithAllData as any));
 
       store.dispatch(new AddDirtyItem(1)).subscribe(() => {
         const selected = store.selectSnapshot(PaymentRequestState.getSelected);
@@ -728,7 +728,7 @@ describe('PaymentRequestState', () => {
 
     it('should handle AddDirtyItem error', (done) => {
       const errorResponse = new Error('AddDirtyItem failed');
-      service.get.and.returnValue(throwError(() => errorResponse));
+      service.get.mockReturnValue(throwError(() => errorResponse));
 
       store.dispatch(new AddDirtyItem(0)).subscribe({
         next: () => {
@@ -751,7 +751,7 @@ describe('PaymentRequestState', () => {
         defrayments: null,
       };
 
-      service.get.and.returnValue(of(itemWithoutArrays));
+      service.get.mockReturnValue(of(itemWithoutArrays as any));
 
       store.dispatch(new AddDirtyItem(1)).subscribe(() => {
         const selected = store.selectSnapshot(PaymentRequestState.getSelected);
@@ -762,7 +762,7 @@ describe('PaymentRequestState', () => {
 
     it('should use consistent error handling', (done) => {
       const errorResponse = new Error('AddDirtyItem failed');
-      service.get.and.returnValue(throwError(() => errorResponse));
+      service.get.mockReturnValue(throwError(() => errorResponse));
 
       store.dispatch(new AddDirtyItem(-1)).subscribe({
         next: () => {
@@ -781,7 +781,7 @@ describe('PaymentRequestState', () => {
 
   describe('Error Scenarios and Edge Cases', () => {
     it('should handle service returning null/undefined', () => {
-      service.get.and.returnValue(of(null));
+      service.get.mockReturnValue(of(null as any));
 
       store.dispatch(new GetItem(1));
 
@@ -791,7 +791,7 @@ describe('PaymentRequestState', () => {
 
     it('should handle empty arrays properly', () => {
       const emptyResponse = { requests: [], count: 0 };
-      service.getAllWithParams.and.returnValue(of(emptyResponse));
+      service.getAllWithParams.mockReturnValue(of(emptyResponse));
 
       store.dispatch(new FetchItems());
 
@@ -800,10 +800,10 @@ describe('PaymentRequestState', () => {
     });
 
     it('should handle concurrent actions properly', () => {
-      service.getAllWithParams.and.returnValue(
+      service.getAllWithParams.mockReturnValue(
         of({ requests: mockPaymentRequests, count: 2 }),
       );
-      service.get.and.returnValue(of(mockPaymentRequest));
+      service.get.mockReturnValue(of(mockPaymentRequest));
 
       // Dispatch multiple actions
       store.dispatch(new FetchItems());
@@ -832,7 +832,7 @@ describe('PaymentRequestState', () => {
         description: 'Updated description',
       };
 
-      service.update.and.returnValue(of(nonExistentItem));
+      service.update.mockReturnValue(of(nonExistentItem));
 
       const update = {
         ...new PaymentRequest(),
@@ -853,7 +853,7 @@ describe('PaymentRequestState', () => {
       expect(store.selectSnapshot(PaymentRequestState.getItems)).toEqual([]);
 
       // Step 1: Fetch items
-      service.getAllWithParams.and.returnValue(
+      service.getAllWithParams.mockReturnValue(
         of({ requests: mockPaymentRequests, count: 2 }),
       );
 
@@ -868,7 +868,7 @@ describe('PaymentRequestState', () => {
           id: 3,
           description: 'New item',
         };
-        service.add.and.returnValue(of(newItem));
+        service.add.mockReturnValue(of(newItem));
 
         store
           .dispatch(new AddItem({ description: 'New item' }))
@@ -881,7 +881,7 @@ describe('PaymentRequestState', () => {
             ).toEqual(newItem);
 
             // Step 3: Delete item
-            service.delete.and.returnValue(of(undefined));
+            service.delete.mockReturnValue(of(undefined));
 
             store.dispatch(new DeleteItem(3)).subscribe(() => {
               expect(

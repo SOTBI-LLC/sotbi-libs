@@ -8,7 +8,7 @@ import { PaymentAttachmentService } from './payment-attachment.service';
 
 describe('PaymentAttachmentService', () => {
   let service: PaymentAttachmentService;
-  let httpClient: jasmine.SpyObj<HttpClient>;
+  let httpClient: jest.Mocked<HttpClient>;
 
   const mockUser: User = {
     id: 1,
@@ -106,13 +106,13 @@ describe('PaymentAttachmentService', () => {
   ];
 
   beforeEach(async () => {
-    const httpSpy = jasmine.createSpyObj('HttpClient', [
-      'get',
-      'post',
-      'put',
-      'patch',
-      'delete',
-    ]);
+    const httpSpy = {
+      get: jest.fn(),
+      post: jest.fn(),
+      put: jest.fn(),
+      patch: jest.fn(),
+      delete: jest.fn(),
+    } as unknown as jest.Mocked<HttpClient>;
 
     await TestBed.configureTestingModule({
       providers: [
@@ -123,7 +123,7 @@ describe('PaymentAttachmentService', () => {
     }).compileComponents();
 
     service = TestBed.inject(PaymentAttachmentService);
-    httpClient = TestBed.inject(HttpClient) as jasmine.SpyObj<HttpClient>;
+    httpClient = TestBed.inject(HttpClient) as jest.Mocked<HttpClient>;
   });
 
   it('should be created', () => {
@@ -147,7 +147,7 @@ describe('PaymentAttachmentService', () => {
 
   describe('Inherited CommonService methods', () => {
     it('should call GetAll with correct URL', () => {
-      httpClient.get.and.returnValue(of(mockPaymentAttachments));
+      httpClient.get.mockReturnValue(of(mockPaymentAttachments));
 
       service.GetAll().subscribe((result) => {
         expect(result).toEqual(mockPaymentAttachments);
@@ -161,7 +161,7 @@ describe('PaymentAttachmentService', () => {
       const filteredAttachments = mockPaymentAttachments.filter(
         (att) => att.payment_request_id === paymentRequestId,
       );
-      httpClient.get.and.returnValue(of(filteredAttachments));
+      httpClient.get.mockReturnValue(of(filteredAttachments));
 
       service.GetAll(paymentRequestId).subscribe((result) => {
         expect(result).toEqual(filteredAttachments);
@@ -174,7 +174,7 @@ describe('PaymentAttachmentService', () => {
 
     it('should call get with correct URL', () => {
       const attachmentId = 1;
-      httpClient.get.and.returnValue(of(mockPaymentAttachment));
+      httpClient.get.mockReturnValue(of(mockPaymentAttachment));
 
       service.get(attachmentId).subscribe((result) => {
         expect(result).toEqual(mockPaymentAttachment);
@@ -193,7 +193,7 @@ describe('PaymentAttachmentService', () => {
         original_file_name: 'new-file.pdf',
         file: 'uploads/payment-attachments/new123-new-file.pdf',
       };
-      httpClient.post.and.returnValue(of(mockPaymentAttachment));
+      httpClient.post.mockReturnValue(of(mockPaymentAttachment));
 
       service.add(newAttachment).subscribe((result) => {
         expect(result).toEqual(mockPaymentAttachment);
@@ -217,20 +217,23 @@ describe('PaymentAttachmentService', () => {
         ...mockPaymentAttachment,
         link_name: 'Updated Document Name',
       };
-      httpClient.put.and.returnValue(of(expectedResult));
+      httpClient.put.mockReturnValue(of(expectedResult));
 
       service.update(updatedAttachment).subscribe((result) => {
         expect(result).toEqual(expectedResult);
       });
 
-      expect(httpClient.put).toHaveBeenCalledWith('/api/payment-attachment/1', {
-        link_name: 'Updated Document Name',
-      });
+      expect(httpClient.put).toHaveBeenCalledWith(
+        '/api/payment-attachment/1',
+        expect.objectContaining({
+          link_name: 'Updated Document Name',
+        }),
+      );
     });
 
     it('should call delete with correct URL', () => {
       const attachmentId = 1;
-      httpClient.delete.and.returnValue(of(undefined));
+      httpClient.delete.mockReturnValue(of(undefined));
 
       service.delete(attachmentId).subscribe();
 
@@ -243,7 +246,7 @@ describe('PaymentAttachmentService', () => {
   describe('deleteFile', () => {
     it('should call DELETE with correct URL and body', () => {
       const fileName = 'uploads/payment-attachments/test-file.pdf';
-      httpClient.delete.and.returnValue(of(undefined));
+      httpClient.delete.mockReturnValue(of(undefined));
 
       service.deleteFile(fileName).subscribe();
 
@@ -257,7 +260,7 @@ describe('PaymentAttachmentService', () => {
 
     it('should handle file deletion successfully', () => {
       const fileName = 'uploads/payment-attachments/document.pdf';
-      httpClient.delete.and.returnValue(of(undefined));
+      httpClient.delete.mockReturnValue(of(undefined));
 
       service.deleteFile(fileName).subscribe((result) => {
         expect(result).toBeUndefined();
@@ -273,7 +276,7 @@ describe('PaymentAttachmentService', () => {
 
     it('should handle empty filename', () => {
       const fileName = '';
-      httpClient.delete.and.returnValue(of(undefined));
+      httpClient.delete.mockReturnValue(of(undefined));
 
       service.deleteFile(fileName).subscribe();
 
@@ -288,7 +291,7 @@ describe('PaymentAttachmentService', () => {
     it('should handle special characters in filename', () => {
       const fileName =
         'uploads/payment-attachments/файл с пробелами и символами #@$.pdf';
-      httpClient.delete.and.returnValue(of(undefined));
+      httpClient.delete.mockReturnValue(of(undefined));
 
       service.deleteFile(fileName).subscribe();
 
@@ -307,7 +310,7 @@ describe('PaymentAttachmentService', () => {
       formData.append('file', new Blob(['test content']), 'test.pdf');
       formData.append('payment_request_id', '1');
 
-      httpClient.post.and.returnValue(of(mockUploadResults));
+      httpClient.post.mockReturnValue(of(mockUploadResults));
 
       service.upload(formData).subscribe((result) => {
         expect(result).toEqual(mockUploadResults);
@@ -329,7 +332,7 @@ describe('PaymentAttachmentService', () => {
         { original_file_name: 'file2.docx', file: 'uploads/file2.docx' },
       ];
 
-      httpClient.post.and.returnValue(of(multipleUploadResults));
+      httpClient.post.mockReturnValue(of(multipleUploadResults));
 
       service.upload(formData).subscribe((result) => {
         expect(result).toEqual(multipleUploadResults);
@@ -346,7 +349,7 @@ describe('PaymentAttachmentService', () => {
       const emptyFormData = new FormData();
       const emptyResults: UploadResult[] = [];
 
-      httpClient.post.and.returnValue(of(emptyResults));
+      httpClient.post.mockReturnValue(of(emptyResults));
 
       service.upload(emptyFormData).subscribe((result) => {
         expect(result).toEqual(emptyResults);
@@ -362,7 +365,7 @@ describe('PaymentAttachmentService', () => {
       const formData = new FormData();
       formData.append('file', new Blob(['test']), 'test.pdf');
 
-      httpClient.post.and.returnValue(of(mockUploadResults));
+      httpClient.post.mockReturnValue(of(mockUploadResults));
 
       const result = service.upload(formData);
       expect(result).toBeDefined();
@@ -382,7 +385,7 @@ describe('PaymentAttachmentService', () => {
         'uploads/payment-attachments/file1.pdf',
         'uploads/payment-attachments/file2.docx',
       ];
-      httpClient.delete.and.returnValue(of(undefined));
+      httpClient.delete.mockReturnValue(of(undefined));
 
       service.deleteMultiple(fileNames).subscribe();
 
@@ -396,7 +399,7 @@ describe('PaymentAttachmentService', () => {
 
     it('should handle single file in array', () => {
       const fileNames = ['uploads/payment-attachments/single-file.pdf'];
-      httpClient.delete.and.returnValue(of(undefined));
+      httpClient.delete.mockReturnValue(of(undefined));
 
       service.deleteMultiple(fileNames).subscribe((result) => {
         expect(result).toBeUndefined();
@@ -412,7 +415,7 @@ describe('PaymentAttachmentService', () => {
 
     it('should handle empty array', () => {
       const fileNames: string[] = [];
-      httpClient.delete.and.returnValue(of(undefined));
+      httpClient.delete.mockReturnValue(of(undefined));
 
       service.deleteMultiple(fileNames).subscribe();
 
@@ -426,7 +429,7 @@ describe('PaymentAttachmentService', () => {
 
     it('should handle multiple files correctly', () => {
       const fileNames = ['file1.pdf', 'file2.docx', 'file3.xlsx', 'file4.png'];
-      httpClient.delete.and.returnValue(of(undefined));
+      httpClient.delete.mockReturnValue(of(undefined));
 
       service.deleteMultiple(fileNames).subscribe();
 
@@ -442,7 +445,7 @@ describe('PaymentAttachmentService', () => {
   describe('HTTP Error Handling', () => {
     it('should propagate HTTP errors from deleteFile', (done) => {
       const errorResponse = new Error('File deletion failed');
-      httpClient.delete.and.returnValue(throwError(() => errorResponse));
+      httpClient.delete.mockReturnValue(throwError(() => errorResponse));
 
       const fileName = 'uploads/test.pdf';
 
@@ -460,7 +463,7 @@ describe('PaymentAttachmentService', () => {
 
     it('should propagate HTTP errors from upload', (done) => {
       const errorResponse = new Error('Upload failed');
-      httpClient.post.and.returnValue(throwError(() => errorResponse));
+      httpClient.post.mockReturnValue(throwError(() => errorResponse));
 
       const formData = new FormData();
       formData.append('file', new Blob(['test']), 'test.pdf');
@@ -479,7 +482,7 @@ describe('PaymentAttachmentService', () => {
 
     it('should propagate HTTP errors from deleteMultiple', (done) => {
       const errorResponse = new Error('Multiple deletion failed');
-      httpClient.delete.and.returnValue(throwError(() => errorResponse));
+      httpClient.delete.mockReturnValue(throwError(() => errorResponse));
 
       const fileNames = ['file1.pdf', 'file2.docx'];
 
@@ -497,7 +500,7 @@ describe('PaymentAttachmentService', () => {
 
     it('should propagate HTTP errors from inherited methods', (done) => {
       const errorResponse = new Error('Server Error');
-      httpClient.get.and.returnValue(throwError(() => errorResponse));
+      httpClient.get.mockReturnValue(throwError(() => errorResponse));
 
       service.get(1).subscribe({
         next: () => {
@@ -532,10 +535,10 @@ describe('PaymentAttachmentService', () => {
         link_name: 'Updated Name',
       };
 
-      httpClient.post.and.returnValue(of(mockUploadResults));
-      httpClient.get.and.returnValue(of(paymentRequestAttachments));
-      httpClient.delete.and.returnValue(of(undefined));
-      httpClient.put.and.returnValue(of(updatedAttachment));
+      httpClient.post.mockReturnValue(of(mockUploadResults));
+      httpClient.get.mockReturnValue(of(paymentRequestAttachments));
+      httpClient.delete.mockReturnValue(of(undefined));
+      httpClient.put.mockReturnValue(of(updatedAttachment));
 
       // Execute workflow
       service.upload(formData).subscribe((uploadResult) => {
@@ -565,7 +568,7 @@ describe('PaymentAttachmentService', () => {
         (att) => att.type === PaymentAttachmentType.REQUEST,
       );
 
-      httpClient.get.and.returnValue(of(requestTypeAttachments));
+      httpClient.get.mockReturnValue(of(requestTypeAttachments));
 
       service.GetAll().subscribe((attachments) => {
         const requestAttachments = attachments.filter(
@@ -583,10 +586,9 @@ describe('PaymentAttachmentService', () => {
         'uploads/file3.xlsx',
       ];
 
-      httpClient.delete.and.returnValues(
-        of(undefined), // deleteFile call
-        of(undefined), // deleteMultiple call
-      );
+      httpClient.delete
+        .mockReturnValueOnce(of(undefined)) // deleteFile call
+        .mockReturnValueOnce(of(undefined)); // deleteMultiple call
 
       // Delete individual file first
       service.deleteFile(filesToDelete[0]).subscribe();

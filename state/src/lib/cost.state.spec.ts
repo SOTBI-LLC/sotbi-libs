@@ -1,7 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Store, provideStates } from '@ngxs/store';
+import { Store, provideStore, provideStates } from '@ngxs/store';
 import { CostRealService } from '@sotbi/data-access';
 import type { CostReal, CostRealFilter, Debtor, Interval } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
@@ -24,7 +24,7 @@ import { CostRealState } from './cost.state';
 
 describe('CostRealState', () => {
   let store: Store;
-  let service: jasmine.SpyObj<CostRealService>;
+  let service: jest.Mocked<CostRealService>;
 
   const mockCostReal: CostReal = {
     id: 1,
@@ -81,39 +81,40 @@ describe('CostRealState', () => {
   };
 
   beforeEach(async () => {
-    const serviceSpy = jasmine.createSpyObj('CostRealService', [
-      'getRealCosts',
-      'getSubordinatesCosts',
-      'createCostReal',
-      'updateCostReal',
-      'deleteCostReal',
-      'batchUpdate',
-      'getMonitoring',
-      'getAnalytics',
-    ]);
+    const serviceSpy = {
+      getRealCosts: jest.fn(),
+      getSubordinatesCosts: jest.fn(),
+      createCostReal: jest.fn(),
+      updateCostReal: jest.fn(),
+      deleteCostReal: jest.fn(),
+      batchUpdate: jest.fn(),
+      getMonitoring: jest.fn(),
+      getAnalytics: jest.fn(),
+    } as unknown as jest.Mocked<CostRealService>;
 
-    const snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
+    const snackBarSpy = {
+      open: jest.fn(),
+    };
 
     await TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         { provide: CostRealService, useValue: serviceSpy },
         { provide: MatSnackBar, useValue: snackBarSpy },
+        provideStore([]),
         provideStates([CostRealState]),
       ],
     }).compileComponents();
 
     store = TestBed.inject(Store);
-    service = TestBed.inject(
-      CostRealService,
-    ) as jasmine.SpyObj<CostRealService>;
+    service = TestBed.inject(CostRealService) as jest.Mocked<CostRealService>;
 
     // Set up default spy behaviors
-    service.getRealCosts.and.returnValue(of([mockCostReal]));
-    service.createCostReal.and.returnValue(of(mockCostReal));
-    service.updateCostReal.and.returnValue(of(mockCostReal));
-    service.deleteCostReal.and.returnValue(of());
-    service.batchUpdate.and.returnValue(of([mockCostReal]));
+    service.getRealCosts.mockReturnValue(of([mockCostReal]));
+    service.createCostReal.mockReturnValue(of(mockCostReal));
+    service.updateCostReal.mockReturnValue(of(mockCostReal));
+    service.deleteCostReal.mockReturnValue(of());
+    service.batchUpdate.mockReturnValue(of([mockCostReal]));
   });
 
   describe('Selectors', () => {
@@ -170,7 +171,7 @@ describe('CostRealState', () => {
           {
             ...mockCostReal,
             dirty: false,
-            date: jasmine.any(Date),
+            date: expect.any(Date),
             rowId: '0',
           },
         ]);
@@ -180,7 +181,7 @@ describe('CostRealState', () => {
     });
 
     it('should handle fetch error', (done) => {
-      service.getRealCosts.and.returnValue(
+      service.getRealCosts.mockReturnValue(
         throwError(() => new Error('Fetch failed')),
       );
 
@@ -222,13 +223,13 @@ describe('CostRealState', () => {
         .subscribe(() => {
           const state = store.selectSnapshot((state: any) => state.costReal);
           expect(service.createCostReal).toHaveBeenCalledWith(newCost);
-          expect(state.allItems).toContain(jasmine.objectContaining({ id: 1 }));
+          expect(state.allItems).toContain(expect.objectContaining({ id: 1 }));
           done();
         });
     });
 
     it('should handle add cost error', (done) => {
-      service.createCostReal.and.returnValue(
+      service.createCostReal.mockReturnValue(
         throwError(() => new Error('Add failed')),
       );
 
@@ -351,7 +352,7 @@ describe('CostRealState', () => {
     });
 
     it('should handle update error', (done) => {
-      service.updateCostReal.and.returnValue(
+      service.updateCostReal.mockReturnValue(
         throwError(() => new Error('Update failed')),
       );
 
@@ -392,7 +393,7 @@ describe('CostRealState', () => {
     });
 
     it('should handle save all error', (done) => {
-      service.batchUpdate.and.returnValue(
+      service.batchUpdate.mockReturnValue(
         throwError(() => new Error('Save failed')),
       );
 

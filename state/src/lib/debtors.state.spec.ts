@@ -8,10 +8,12 @@ import { DebtorsState, UniqueDebtorINNValidator } from './debtors.state';
 
 describe('UniqueDebtorINNValidator', () => {
   let validator: UniqueDebtorINNValidator;
-  let debtorService: jasmine.SpyObj<DebtorService>;
+  let debtorService: jest.Mocked<DebtorService>;
 
   beforeEach(async () => {
-    const serviceSpy = jasmine.createSpyObj('DebtorService', ['checkInn']);
+    const serviceSpy = {
+      checkInn: jest.fn(),
+    } as unknown as jest.Mocked<DebtorService>;
 
     await TestBed.configureTestingModule({
       providers: [
@@ -24,7 +26,7 @@ describe('UniqueDebtorINNValidator', () => {
     validator = TestBed.inject(UniqueDebtorINNValidator);
     debtorService = TestBed.inject(
       DebtorService,
-    ) as jasmine.SpyObj<DebtorService>;
+    ) as jest.Mocked<DebtorService>;
   });
 
   it('should be created', () => {
@@ -52,7 +54,7 @@ describe('UniqueDebtorINNValidator', () => {
   it('should call checkInn for valid 10-digit INN', () => {
     const control = new FormControl('1234567890');
     control.markAsDirty();
-    debtorService.checkInn.and.returnValue(of([]));
+    debtorService.checkInn.mockReturnValue(of([]));
 
     validator.validate(control).subscribe((result) => {
       expect(result).toBeNull();
@@ -63,7 +65,7 @@ describe('UniqueDebtorINNValidator', () => {
   it('should return validation error when INN conflicts found', () => {
     const control = new FormControl('1234567890');
     control.markAsDirty();
-    debtorService.checkInn.and.returnValue(of([1, 2, 3]));
+    debtorService.checkInn.mockReturnValue(of([1, 2, 3]));
 
     validator.validate(control).subscribe((result) => {
       expect(result).toEqual({ uniqueDebtorError: true });
@@ -73,14 +75,14 @@ describe('UniqueDebtorINNValidator', () => {
   it('should handle service errors gracefully', () => {
     const control = new FormControl('1234567890');
     control.markAsDirty();
-    debtorService.checkInn.and.returnValue(
+    debtorService.checkInn.mockReturnValue(
       throwError(() => new Error('Service error')),
     );
     spyOn(console, 'error');
 
     validator.validate(control).subscribe((result) => {
       expect(result).toBeNull();
-      expect(console.error).toHaveBeenCalledWith(jasmine.any(Error));
+      expect(console.error).toHaveBeenCalledWith(expect.any(Error));
     });
   });
 });

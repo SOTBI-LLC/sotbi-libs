@@ -17,17 +17,23 @@ describe('DadataService', () => {
     value: 'test',
   };
   let service: DadataService;
-  let httpClient: jasmine.SpyObj<HttpClient>;
+  let httpClient: jest.Mocked<HttpClient>;
 
   beforeEach(async () => {
-    const httpSpy = jasmine.createSpyObj('HttpClient', ['get']);
+    const httpSpy = {
+      get: jest.fn(),
+      post: jest.fn(),
+      put: jest.fn(),
+      patch: jest.fn(),
+      delete: jest.fn(),
+    } as unknown as jest.Mocked<HttpClient>;
 
     await TestBed.configureTestingModule({
       providers: [DadataService, { provide: HttpClient, useValue: httpSpy }],
     }).compileComponents();
 
     service = TestBed.inject(DadataService);
-    httpClient = TestBed.inject(HttpClient) as jasmine.SpyObj<HttpClient>;
+    httpClient = TestBed.inject(HttpClient) as jest.Mocked<HttpClient>;
   });
 
   it('should be created', () => {
@@ -37,7 +43,7 @@ describe('DadataService', () => {
   describe('getDataByInn', () => {
     it('should fetch data by inn (success path)', () => {
       const inn = '1234567890';
-      httpClient.get.and.returnValue(of([mockResponse]));
+      httpClient.get.mockReturnValue(of([mockResponse]));
       service.getDataByInn(inn).subscribe((result) => {
         expect(result).toEqual([mockResponse]);
       });

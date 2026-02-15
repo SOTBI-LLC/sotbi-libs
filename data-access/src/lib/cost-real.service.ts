@@ -87,9 +87,9 @@ export class CostRealService {
   public batchUpdate(costs: CostReal[]): Observable<CostReal[]> {
     let c = structuredClone(costs);
     c = c.map((el: CostReal) => {
-      delete el.debtor;
-      delete el.user;
-      delete el.work_category;
+      el.debtor = null;
+      el.user = null;
+      el.work_category = null;
       return el;
     });
     return this.http.put<CostReal[]>(`/api/v1/costs`, c);

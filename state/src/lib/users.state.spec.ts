@@ -1,6 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Store, provideStates } from '@ngxs/store';
+import { Store, provideStore, provideStates } from '@ngxs/store';
 import { UserPositionService, UserService } from '@sotbi/data-access';
 import type {
   HeadDepartment,
@@ -31,8 +31,8 @@ import { UsersState } from './users.state';
 
 describe('UsersState', () => {
   let store: Store;
-  let userService: jasmine.SpyObj<UserService>;
-  let userPositionService: jasmine.SpyObj<UserPositionService>;
+  let userService: jest.Mocked<UserService>;
+  let userPositionService: jest.Mocked<UserPositionService>;
 
   const mockUser: User = {
     id: 1,
@@ -163,34 +163,35 @@ describe('UsersState', () => {
   };
 
   beforeEach(async () => {
-    const userServiceSpy = jasmine.createSpyObj('UserService', [
-      'getAll',
-      'get',
-      'create',
-      'save',
-      'fire',
-      'getUsersShort',
-      'getHeadDepartment',
-    ]);
+    const userServiceSpy = {
+      getAll: jest.fn(),
+      get: jest.fn(),
+      create: jest.fn(),
+      save: jest.fn(),
+      fire: jest.fn(),
+      getUsersShort: jest.fn(),
+      getHeadDepartment: jest.fn(),
+    } as unknown as jest.Mocked<UserService>;
 
-    const userPositionServiceSpy = jasmine.createSpyObj('UserPositionService', [
-      'batchUpdate',
-    ]);
+    const userPositionServiceSpy = {
+      batchUpdate: jest.fn(),
+    } as unknown as jest.Mocked<UserPositionService>;
 
     await TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         { provide: UserService, useValue: userServiceSpy },
         { provide: UserPositionService, useValue: userPositionServiceSpy },
+        provideStore([]),
         provideStates([UsersState]),
       ],
     }).compileComponents();
 
     store = TestBed.inject(Store);
-    userService = TestBed.inject(UserService) as jasmine.SpyObj<UserService>;
+    userService = TestBed.inject(UserService) as jest.Mocked<UserService>;
     userPositionService = TestBed.inject(
       UserPositionService,
-    ) as jasmine.SpyObj<UserPositionService>;
+    ) as jest.Mocked<UserPositionService>;
   });
 
   describe('Selectors', () => {
@@ -287,7 +288,7 @@ describe('UsersState', () => {
 
   describe('FillUsersShort Action', () => {
     it('should fill users short when avatars map is empty (success path)', (done) => {
-      userService.getUsersShort.and.returnValue(of(mockUsersShort));
+      userService.getUsersShort.mockReturnValue(of(mockUsersShort));
 
       store.dispatch(new FillUsersShort()).subscribe(() => {
         const state = store.selectSnapshot(
@@ -324,7 +325,7 @@ describe('UsersState', () => {
 
     it('should handle errors and reset loading state', (done) => {
       const error = new Error('Service failed');
-      userService.getUsersShort.and.returnValue(throwError(() => error));
+      userService.getUsersShort.mockReturnValue(throwError(() => error));
 
       store.dispatch(new FillUsersShort()).subscribe({
         next: () => {
@@ -346,7 +347,7 @@ describe('UsersState', () => {
         { id: 2, user: 'another.user', avatar: '' },
       ];
 
-      userService.getUsersShort.and.returnValue(of(usersWithoutAvatars));
+      userService.getUsersShort.mockReturnValue(of(usersWithoutAvatars));
 
       store.dispatch(new FillUsersShort()).subscribe(() => {
         const state = store.selectSnapshot(
@@ -385,7 +386,7 @@ describe('UsersState', () => {
 
   describe('FetchUsers Action', () => {
     it('should fetch users when items array is empty (success path)', (done) => {
-      userService.getAll.and.returnValue(of(mockUsers));
+      userService.getAll.mockReturnValue(of(mockUsers));
 
       store.dispatch(new FetchUsers()).subscribe(() => {
         const state = store.selectSnapshot(
@@ -412,7 +413,7 @@ describe('UsersState', () => {
         },
       });
 
-      userService.getAll.and.returnValue(of(mockUsers));
+      userService.getAll.mockReturnValue(of(mockUsers));
 
       store
         .dispatch(new FetchUsers({ refresh: true, loadFired: false }))
@@ -454,7 +455,7 @@ describe('UsersState', () => {
 
     it('should handle errors and reset loading state', (done) => {
       const error = new Error('Fetch failed');
-      userService.getAll.and.returnValue(throwError(() => error));
+      userService.getAll.mockReturnValue(throwError(() => error));
 
       store.dispatch(new FetchUsers()).subscribe({
         next: () => {
@@ -476,7 +477,7 @@ describe('UsersState', () => {
         { ...mockUser, id: 2, avatar: '' },
       ];
 
-      userService.getAll.and.returnValue(of(usersWithoutAvatars));
+      userService.getAll.mockReturnValue(of(usersWithoutAvatars));
 
       store.dispatch(new FetchUsers()).subscribe(() => {
         const state = store.selectSnapshot(
@@ -497,7 +498,7 @@ describe('UsersState', () => {
         (state: any) => state.users,
       ) as UsersStateModel;
       expect(state.selected).toEqual(
-        jasmine.objectContaining({ id: 0, user: '', role: 2 }),
+        expect.objectContaining({ id: 0, user: '', role: 2 }),
       );
       expect(state.loading).toBe(false);
     });
@@ -540,7 +541,7 @@ describe('UsersState', () => {
         },
       });
 
-      userService.get.and.returnValue(of({ ...mockUser, id: 999 }));
+      userService.get.mockReturnValue(of({ ...mockUser, id: 999 }));
 
       store.dispatch(new GetUser({ id: 999, refresh: false })).subscribe(() => {
         expect(userService.get).toHaveBeenCalledWith(999);
@@ -567,7 +568,7 @@ describe('UsersState', () => {
       });
 
       const userWithRefresh = { ...mockUser, id: 999 }; // Use different ID to avoid conflicts
-      userService.get.and.returnValue(of(userWithRefresh));
+      userService.get.mockReturnValue(of(userWithRefresh));
 
       store.dispatch(new GetUser({ id: 999, refresh: true })).subscribe({
         next: () => {
@@ -588,7 +589,7 @@ describe('UsersState', () => {
 
     it('should handle errors and reset loading state', (done) => {
       const error = new Error('Get user failed');
-      userService.get.and.returnValue(throwError(() => error));
+      userService.get.mockReturnValue(throwError(() => error));
 
       store.dispatch(new GetUser({ id: 1 })).subscribe({
         next: () => {
@@ -605,8 +606,8 @@ describe('UsersState', () => {
     });
 
     it('should set default settings when item.settings is falsy', (done) => {
-      const userWithoutSettings = { ...mockUser, settings: undefined };
-      userService.get.and.returnValue(of(userWithoutSettings));
+      const userWithoutSettings = { ...mockUser, settings: undefined } as any;
+      userService.get.mockReturnValue(of(userWithoutSettings));
 
       store.dispatch(new GetUser({ id: 1 })).subscribe(() => {
         const state = store.selectSnapshot(
@@ -621,7 +622,7 @@ describe('UsersState', () => {
   describe('AddUser Action', () => {
     it('should add user successfully (success path)', (done) => {
       const newUser = { ...mockUser, id: 3, user: 'new.user' };
-      userService.create.and.returnValue(of(newUser));
+      userService.create.mockReturnValue(of(newUser));
 
       store.dispatch(new AddUser(newUser)).subscribe(() => {
         const state = store.selectSnapshot(
@@ -649,7 +650,7 @@ describe('UsersState', () => {
         user: 'new.user',
         avatar: '',
       };
-      userService.create.and.returnValue(of(newUserWithoutAvatar));
+      userService.create.mockReturnValue(of(newUserWithoutAvatar));
 
       store.dispatch(new AddUser(newUserWithoutAvatar)).subscribe(() => {
         const state = store.selectSnapshot(
@@ -662,7 +663,7 @@ describe('UsersState', () => {
 
     it('should handle errors', (done) => {
       const error = new Error('Create user failed');
-      userService.create.and.returnValue(throwError(() => error));
+      userService.create.mockReturnValue(throwError(() => error));
 
       store.dispatch(new AddUser(mockUser)).subscribe({
         next: () => {
@@ -941,7 +942,7 @@ describe('UsersState', () => {
         },
       });
 
-      userService.save.and.returnValue(of(editedUser));
+      userService.save.mockReturnValue(of(editedUser));
 
       store.dispatch(new EditUser(payload)).subscribe(() => {
         const state = store.selectSnapshot(
@@ -961,7 +962,7 @@ describe('UsersState', () => {
       const editedUser = { ...mockUser, name: 'Updated Name' };
       const payload = { ...mockUser, name: 'Updated Name', staffs: mockStaff };
 
-      userService.save.and.returnValue(of(editedUser));
+      userService.save.mockReturnValue(of(editedUser));
 
       // Create a new store instance for this test to avoid dispatch spy conflicts
       const editUserAction = new EditUser(payload);
@@ -984,7 +985,7 @@ describe('UsersState', () => {
       const error = new Error('Save failed');
       const payload = { ...mockUser, name: 'Updated Name' };
 
-      userService.save.and.returnValue(throwError(() => error));
+      userService.save.mockReturnValue(throwError(() => error));
 
       store.dispatch(new EditUser(payload)).subscribe({
         next: () => {
@@ -1005,7 +1006,7 @@ describe('UsersState', () => {
       const payload = { ...mockUser, name: 'Updated Name', staffs: mockStaff };
 
       // Mock userService.save to fail directly instead of complex store mocking
-      userService.save.and.returnValue(throwError(() => error));
+      userService.save.mockReturnValue(throwError(() => error));
 
       store.dispatch(new EditUser(payload)).subscribe({
         next: () => {
@@ -1029,7 +1030,7 @@ describe('UsersState', () => {
       };
       const payload = { ...mockUser, name: 'Updated Name' };
 
-      userService.save.and.returnValue(of(editedUserWithoutAvatar));
+      userService.save.mockReturnValue(of(editedUserWithoutAvatar));
 
       store.dispatch(new EditUser(payload)).subscribe(() => {
         const state = store.selectSnapshot(
@@ -1058,7 +1059,7 @@ describe('UsersState', () => {
         },
       });
 
-      userPositionService.batchUpdate.and.returnValue(of(updatedPositions));
+      userPositionService.batchUpdate.mockReturnValue(of(updatedPositions));
 
       store.dispatch(new EditUserPosition(payload)).subscribe(() => {
         const state = store.selectSnapshot(
@@ -1083,15 +1084,15 @@ describe('UsersState', () => {
       };
       const payload = [dirtyPosition, cleanPosition];
 
-      userPositionService.batchUpdate.and.returnValue(of(payload));
+      userPositionService.batchUpdate.mockReturnValue(of(payload));
 
       store.dispatch(new EditUserPosition(payload)).subscribe(() => {
         // Verify that the service was called with correctly processed payload
         const expectedPayload = [
           // Dirty position: should exclude updated_by_id
-          jasmine.objectContaining({ id: 1, dirty: true }),
+          expect.objectContaining({ id: 1, dirty: true }),
           // Clean position: should include updated_by_id
-          jasmine.objectContaining({ id: 2, dirty: false, updated_by_id: 2 }),
+          expect.objectContaining({ id: 2, dirty: false, updated_by_id: 2 }),
         ];
         expect(userPositionService.batchUpdate).toHaveBeenCalledWith(
           expectedPayload,
@@ -1102,7 +1103,7 @@ describe('UsersState', () => {
 
     it('should handle errors', (done) => {
       const error = new Error('Position update failed');
-      userPositionService.batchUpdate.and.returnValue(throwError(() => error));
+      userPositionService.batchUpdate.mockReturnValue(throwError(() => error));
 
       store.dispatch(new EditUserPosition([mockUserPosition])).subscribe({
         next: () => {
@@ -1133,7 +1134,7 @@ describe('UsersState', () => {
         },
       });
 
-      userService.fire.and.returnValue(of(mockUser));
+      userService.fire.mockReturnValue(of(mockUser));
 
       store.dispatch(new DeleteUser(1)).subscribe(() => {
         const state = store.selectSnapshot(
@@ -1148,7 +1149,7 @@ describe('UsersState', () => {
 
     it('should handle delete errors', (done) => {
       const error = new Error('Delete failed');
-      userService.fire.and.returnValue(throwError(() => error));
+      userService.fire.mockReturnValue(throwError(() => error));
 
       store.dispatch(new DeleteUser(1)).subscribe({
         next: () => {
@@ -1168,7 +1169,7 @@ describe('UsersState', () => {
         mockHeadDepartment,
       ];
 
-      userService.getHeadDepartment.and.returnValue(of(headDepartmentData));
+      userService.getHeadDepartment.mockReturnValue(of(headDepartmentData));
 
       store.dispatch(new GetUserHeadDepartment(1)).subscribe(() => {
         const state = store.selectSnapshot(
@@ -1220,7 +1221,7 @@ describe('UsersState', () => {
         mockHeadDepartment,
       ];
 
-      userService.getHeadDepartment.and.returnValue(of(headDepartmentData));
+      userService.getHeadDepartment.mockReturnValue(of(headDepartmentData));
 
       store.dispatch(new GetUserHeadDepartment(2)).subscribe(() => {
         expect(userService.getHeadDepartment).toHaveBeenCalledWith(2);
@@ -1234,7 +1235,7 @@ describe('UsersState', () => {
 
     it('should handle errors and reset loading state', (done) => {
       const error = new Error('Get head department failed');
-      userService.getHeadDepartment.and.returnValue(throwError(() => error));
+      userService.getHeadDepartment.mockReturnValue(throwError(() => error));
 
       store.dispatch(new GetUserHeadDepartment(1)).subscribe({
         next: () => {
@@ -1299,9 +1300,9 @@ describe('UsersState', () => {
 
     it('should maintain state consistency across multiple operations', (done) => {
       // Test a sequence of operations
-      userService.getUsersShort.and.returnValue(of(mockUsersShort));
-      userService.getAll.and.returnValue(of(mockUsers));
-      userService.create.and.returnValue(
+      userService.getUsersShort.mockReturnValue(of(mockUsersShort));
+      userService.getAll.mockReturnValue(of(mockUsers));
+      userService.create.mockReturnValue(
         of({ ...mockUser, id: 3, user: 'new.user' }),
       );
 
@@ -1328,8 +1329,8 @@ describe('UsersState', () => {
     });
 
     it('should handle concurrent actions gracefully', (done) => {
-      userService.getUsersShort.and.returnValue(of(mockUsersShort));
-      userService.getAll.and.returnValue(of(mockUsers));
+      userService.getUsersShort.mockReturnValue(of(mockUsersShort));
+      userService.getAll.mockReturnValue(of(mockUsers));
 
       // Dispatch multiple actions simultaneously
       const actions = [

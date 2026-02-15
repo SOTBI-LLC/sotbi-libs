@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import type { CostReal } from '@sotbi/models';
@@ -22,8 +23,20 @@ describe('CostRealService', () => {
   };
 
   beforeEach(async () => {
+    const httpSpy = {
+      get: jest.fn(),
+      post: jest.fn(),
+      put: jest.fn(),
+      patch: jest.fn(),
+      delete: jest.fn(),
+    } as unknown as jest.Mocked<HttpClient>;
+
     await TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection(), CostRealService],
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: HttpClient, useValue: httpSpy },
+        CostRealService,
+      ],
     }).compileComponents();
 
     service = TestBed.inject(CostRealService);
@@ -45,7 +58,7 @@ describe('CostRealService', () => {
       };
 
       // Create a copy for comparison
-      const expectedCost = structuredClone(costToUpdate);
+      const expectedCost = JSON.parse(JSON.stringify(costToUpdate));
       delete expectedCost.debtor;
       delete expectedCost.user;
       delete expectedCost.work_category;
@@ -75,15 +88,15 @@ describe('CostRealService', () => {
       ];
 
       // Create expected data (without debtor, user, work_category)
-      const expectedCosts = structuredClone(costsToUpdate).map((el) => {
-        delete (el as any).debtor;
-        delete (el as any).user;
-        delete (el as any).work_category;
+      const expectedCosts = JSON.parse(JSON.stringify(costsToUpdate)).map((el: any) => {
+        delete el.debtor;
+        delete el.user;
+        delete el.work_category;
         return el;
       });
 
       // Verify all objects are transformed
-      expectedCosts.forEach((cost) => {
+      expectedCosts.forEach((cost: any) => {
         expect(cost.debtor).toBeUndefined();
         expect(cost.user).toBeUndefined();
         expect(cost.work_category).toBeUndefined();
