@@ -1,10 +1,10 @@
 import type { Config } from 'jest';
 
 const config: Config = {
-  displayName: 'auth',
+  displayName: 'utils',
   preset: '../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../coverage/auth',
+  coverageDirectory: '../coverage/utils',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',
