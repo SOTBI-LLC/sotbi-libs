@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ICellRendererAngularComp } from 'ag-grid-angular';
-import { ICellRendererParams } from 'ag-grid-community';
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
+import type { ICellRendererParams } from 'ag-grid-community';
 
 @Component({
   selector: 'app-link-cell-footcloth-ag-grid',
-  template: '<a class="footcloth-link-cell-ag-grid__link" [routerLink]="routerLink"> {{name}} </a>',
+  template:
+    '<a class="footcloth-link-cell-ag-grid__link" [routerLink]="routerLink"> {{name}} </a>',
   styles: [
     `
       .footcloth-link-cell-ag-grid__link:link {

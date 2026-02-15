@@ -23,7 +23,8 @@
           "buildDepsName": "build-deps",
           "watchDepsName": "watch-deps"
         }
-      }
+      },
+      "exclude": ["ui-ag-grid/**"]
     }
   ],
   "targetDefaults": {

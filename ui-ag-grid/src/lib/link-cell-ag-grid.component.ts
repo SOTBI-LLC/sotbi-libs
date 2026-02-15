@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { Params, RouterLink } from '@angular/router';
-import { ICellRendererAngularComp } from 'ag-grid-angular';
-import { ICellRendererParams } from 'ag-grid-community';
+import type { Params } from '@angular/router';
+import { RouterLink } from '@angular/router';
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
+import type { ICellRendererParams } from 'ag-grid-community';
 
 @Component({
   template: `
@@ -37,7 +38,7 @@ import { ICellRendererParams } from 'ag-grid-community';
 export class LinkCellAgGridComponent implements ICellRendererAngularComp {
   name: string;
   routerLink: string;
-  icon: string = '';
+  icon = '';
 
   agInit(params: ICellRendererParams) {
     this.name = params.value;
@@ -68,7 +69,11 @@ export class LinkCellAgGridComponent implements ICellRendererAngularComp {
 @Component({
   template: `
     @if (!absoluteURL) {
-      <a class="link-cell-ag-grid__link" [routerLink]="link" [queryParams]="query">
+      <a
+        class="link-cell-ag-grid__link"
+        [routerLink]="link"
+        [queryParams]="query"
+      >
         {{ value }}
       </a>
     }
@@ -95,7 +100,7 @@ export class LinkCellAgGridComponent implements ICellRendererAngularComp {
   imports: [RouterLink],
 })
 export class LinkCellComponent implements ICellRendererAngularComp {
-  protected value: string = '';
+  protected value = '';
   protected link: string[] = [];
   protected query: Params | null = null;
   protected absoluteURL = false;

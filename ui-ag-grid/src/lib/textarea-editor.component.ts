@@ -1,12 +1,12 @@
-import { Component } from '@angular/core';
-import { ICellEditorAngularComp } from 'ag-grid-angular';
-import { Column, GridApi, RowNode } from 'ag-grid-community';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import type { ICellEditorAngularComp } from 'ag-grid-angular';
+import type { Column, GridApi, RowNode } from 'ag-grid-community';
 import { NgStyle } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ClrIconModule } from '@clr/angular';
 
 @Component({
-  selector: 'select-cell',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
       [style.width]="cellWidth"
@@ -49,7 +49,10 @@ import { ClrIconModule } from '@clr/angular';
         ></span>
       }
       @if (show) {
-        <button class="m-0 button-ok btn btn-primary btn-block" (click)="save()">
+        <button
+          class="m-0 button-ok btn btn-primary btn-block"
+          (click)="save()"
+        >
           <cds-icon class="check m-0" shape="check"></cds-icon>
         </button>
       }

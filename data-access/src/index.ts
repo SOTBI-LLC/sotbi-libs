@@ -3,6 +3,7 @@ export { AnnouncementService } from './lib/announcement.service';
 export { ArbitrationService } from './lib/arbitration.service';
 export { BankDetailService } from './lib/bankdetail.service';
 export { BankruptcyService } from './lib/bankruptcy.service';
+export { BidcodeService } from './lib/bidcode.service';
 export { BidStateService } from './lib/bidstate.service';
 export { CalendarService } from './lib/calendar.service';
 export { CostRealService } from './lib/cost-real.service';

@@ -1,12 +1,14 @@
 import { AsyncPipe } from '@angular/common';
-import { AfterViewInit, Component, inject, viewChild, ViewContainerRef } from '@angular/core';
+import type { AfterViewInit } from '@angular/core';
+import { Component, inject, viewChild, ViewContainerRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { BidcodeService } from '@services/bidcode.service';
-import { PaymentDocument, SimpleEditModel } from '@sotbi/models';
-import { ICellEditorAngularComp } from 'ag-grid-angular';
-import { GridApi, ICellEditorParams } from 'ag-grid-community';
-import { concat, Observable, of, Subject } from 'rxjs';
+import type { PaymentDocument, SimpleEditModel } from '@sotbi/models';
+import type { ICellEditorAngularComp } from 'ag-grid-angular';
+import type { GridApi, ICellEditorParams } from 'ag-grid-community';
+import type { Observable } from 'rxjs';
+import { concat, of, Subject } from 'rxjs';
 import { catchError, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 @Component({
@@ -37,20 +39,28 @@ import { catchError, distinctUntilChanged, switchMap } from 'rxjs/operators';
   styleUrls: ['select-search-editor.component.scss'],
   imports: [NgSelectComponent, FormsModule, AsyncPipe],
 })
-export class SelectSearchTradingCodeEditor implements ICellEditorAngularComp, AfterViewInit {
+export class SelectSearchTradingCodeEditor
+  implements ICellEditorAngularComp, AfterViewInit
+{
   private readonly tcSvr = inject(BidcodeService);
 
   protected readonly textInput$ = new Subject<string>();
   protected value$: Observable<SimpleEditModel[]>;
   protected value: SimpleEditModel;
   private api: GridApi;
-  private readonly select = viewChild.required('select', { read: ViewContainerRef });
+  private readonly select = viewChild.required('select', {
+    read: ViewContainerRef,
+  });
 
   protected trackByFn(item: SimpleEditModel) {
     return item.id;
   }
 
-  public agInit({ data, value, api }: ICellEditorParams<PaymentDocument, number>): void {
+  public agInit({
+    data,
+    value,
+    api,
+  }: ICellEditorParams<PaymentDocument, number>): void {
     this.api = api;
     this.value$ = concat(
       of([]), // default items

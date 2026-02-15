@@ -8,8 +8,8 @@ import {
 import { EgrnAttachmentService } from '@services/egrn-attachment.service';
 import { DownloadUploadService } from '@services/upload.service';
 import { download } from '@shared/shared-globals';
-import { ICellEditorAngularComp } from 'ag-grid-angular';
-import { GridApi } from 'ag-grid-community';
+import type { ICellEditorAngularComp } from 'ag-grid-angular';
+import type { GridApi } from 'ag-grid-community';
 
 export interface IDropFileResult {
   file?: string;
@@ -53,7 +53,9 @@ export class DropFileComponent implements ICellEditorAngularComp {
   private readonly attachmentService = inject(EgrnAttachmentService);
 
   protected readonly value = signal<IDropFileResult>({});
-  protected readonly uploadBtnState = signal<ClrLoadingState>(ClrLoadingState.DEFAULT);
+  protected readonly uploadBtnState = signal<ClrLoadingState>(
+    ClrLoadingState.DEFAULT,
+  );
   private api: GridApi;
   private path: string;
 

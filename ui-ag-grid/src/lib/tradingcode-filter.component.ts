@@ -1,10 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import { BidcodeService } from '@services/bidcode.service';
-import { SimpleEditModel, TradingCode } from '@sotbi/models';
-import { IFilterParams } from 'ag-grid-community';
-import { concat, Observable, of, Subject } from 'rxjs';
+import { BidcodeService } from '@sotbi/data-access';
+import type { SimpleEditModel, TradingCode } from '@sotbi/models';
+import type { IFilterParams } from 'ag-grid-community';
+import type { Observable } from 'rxjs';
+import { concat, of, Subject } from 'rxjs';
 import { catchError, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { AgGridFilterType } from './ag-grid.common';
 
@@ -22,7 +23,7 @@ interface TradingCodeFilterModel {
         [clearable]="true"
         name="tc"
         id="tc"
-        [items]="value$ | async"
+        [items]="(value$ | async) ?? []"
         bindLabel="name"
         bindValue="id"
         notFoundText="Не найдено"
@@ -45,19 +46,23 @@ interface TradingCodeFilterModel {
         overflow: hidden;
       }
       /* увеличиваем инпут поля 'выберите код торгов' */
-      ::ng-deep .ng-select.ng-select-multiple .ng-select-container .ng-value-container {
+      ::ng-deep
+        .ng-select.ng-select-multiple
+        .ng-select-container
+        .ng-value-container {
         padding: 3px;
       }
     `,
   ],
   imports: [NgSelectComponent, AsyncPipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TradingCodeFilterComponent {
   private readonly tcSvr = inject(BidcodeService);
 
   protected readonly textInput$ = new Subject<string>();
-  protected value$: Observable<SimpleEditModel[]>;
-  private params: IFilterParams;
+  protected value$: Observable<TradingCode[]> = of([] as TradingCode[]);
+  private params: IFilterParams | null = null;
   private result: number[] = [];
 
   protected readonly trackByFn = (item: SimpleEditModel) => item.id;
@@ -65,16 +70,16 @@ export class TradingCodeFilterComponent {
   public agInit(params: IFilterParams) {
     this.params = params;
     this.value$ = concat(
-      of([]), // default items
+      of([] as TradingCode[]), // default items
       this.textInput$.pipe(
         distinctUntilChanged(),
-        switchMap((term) => {
+        switchMap((term: string) => {
           if (!(term === '' || term === null)) {
             return this.tcSvr.GetAll(term, { limit: 25 }).pipe(
-              catchError(() => of([])), // empty list on error
+              catchError(() => of([] as TradingCode[])), // empty list on error
             );
           }
-          return of([]);
+          return of([] as TradingCode[]);
         }),
       ),
     );
@@ -90,7 +95,9 @@ export class TradingCodeFilterComponent {
 
   protected onChange(items: TradingCode[]) {
     this.result = items.map((el) => el.id);
-    this.params.filterChangedCallback();
+    if (this.params) {
+      this.params.filterChangedCallback();
+    }
   }
 
   public setModel(model: TradingCodeFilterModel) {
@@ -99,7 +106,10 @@ export class TradingCodeFilterComponent {
 
   public getModel(): TradingCodeFilterModel | null {
     if (this.result.length > 0) {
-      return { values: this.result.map((el) => el + ''), filterType: AgGridFilterType.SET };
+      return {
+        values: this.result.map((el) => el + ''),
+        filterType: AgGridFilterType.SET,
+      };
     }
     return null;
   }

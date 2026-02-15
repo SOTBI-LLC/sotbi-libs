@@ -31,6 +31,7 @@ export {
   getDiff,
   isAllSaved,
   notifyError,
+  paramsToOptions,
   removeID,
   uniqueElementsBy,
 } from './lib/utils';

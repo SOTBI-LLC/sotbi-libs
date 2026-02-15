@@ -1,9 +1,10 @@
-import { AfterViewInit, Component, ViewContainerRef, viewChild } from '@angular/core';
+import type { AfterViewInit } from '@angular/core';
+import { Component, ViewContainerRef, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ClrSelectModule } from '@clr/angular';
-import { itemMap } from '@root/store/simple-edit.state.model';
-import { ICellEditorAngularComp } from 'ag-grid-angular';
-import { ICellEditorParams } from 'ag-grid-community';
+import type { itemMap } from '@root/store/simple-edit.state.model';
+import type { ICellEditorAngularComp } from 'ag-grid-angular';
+import type { ICellEditorParams } from 'ag-grid-community';
 
 @Component({
   selector: 'select-cell',

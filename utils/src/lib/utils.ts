@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { type Bankruptcy } from '@sotbi/models';
 
 export const removeProperty =
@@ -183,3 +184,17 @@ export const uniqueElementsBy = <T>(
     }
     return acc;
   }, []);
+
+export const paramsToOptions = (
+  params: Record<string, string> | number | null = {},
+): { params: HttpParams } => {
+  const options: { params: HttpParams } = { params: new HttpParams() };
+  if (params && typeof params === 'object') {
+    for (const prop in params) {
+      if (Object.prototype.hasOwnProperty.call(params, prop)) {
+        options.params = options.params.set(prop, params[prop]);
+      }
+    }
+  }
+  return options;
+};

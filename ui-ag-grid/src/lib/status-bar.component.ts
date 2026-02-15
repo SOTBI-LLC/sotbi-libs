@@ -1,10 +1,12 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy } from '@angular/core';
+import type { OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngxs/store';
-import { calcSumHours, CostReal } from '@sotbi/models';
+import type { CostReal } from '@sotbi/models';
+import { calcSumHours } from '@sotbi/models';
 import { CalendarState } from '@store/calendar.state';
-import { IStatusPanelAngularComp } from 'ag-grid-angular';
-import { GridApi, IStatusPanelParams, RowNode } from 'ag-grid-community';
+import type { IStatusPanelAngularComp } from 'ag-grid-angular';
+import type { GridApi, IStatusPanelParams, RowNode } from 'ag-grid-community';
 import { formatEventDuraton } from '../date-func';
 
 @Component({
@@ -44,7 +46,12 @@ export class AggregationStatusBarComponent implements OnDestroy {
   template: `
     @if (editable()) {
       <div class="ag-name-value p-0">
-        <button type="button" class="btn btn-sm" (click)="inputClicked(ctrl.value)">Добавить</button
+        <button
+          type="button"
+          class="btn btn-sm"
+          (click)="inputClicked(ctrl.value)"
+        >
+          Добавить</button
         >&nbsp;строки&nbsp;внизу:&nbsp;
         <span class="ag-name-value-value">
           <input
@@ -77,7 +84,7 @@ export class AddRowsStatusBarComponent implements IStatusPanelAngularComp {
     this.params = params;
   }
 
-  inputClicked(count: number = 1) {
+  inputClicked(count = 1) {
     if (!!this.params['onAdd'] && count && count > 0) {
       return this.params['onAdd'](count);
     }
@@ -94,7 +101,9 @@ export class AddRowsStatusBarComponent implements IStatusPanelAngularComp {
   styles: [],
   standalone: true,
 })
-export class SumHourStatusBarComponent implements IStatusPanelAngularComp, OnDestroy {
+export class SumHourStatusBarComponent
+  implements IStatusPanelAngularComp, OnDestroy
+{
   private readonly cdr = inject(ChangeDetectorRef);
 
   hours: string;

@@ -1,7 +1,8 @@
-import { AfterViewInit, Component, ViewContainerRef, viewChild } from '@angular/core';
+import type { AfterViewInit } from '@angular/core';
+import { Component, ViewContainerRef, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ICellEditorAngularComp } from 'ag-grid-angular';
-import { ICellEditorParams } from 'ag-grid-community';
+import type { ICellEditorAngularComp } from 'ag-grid-angular';
+import type { ICellEditorParams } from 'ag-grid-community';
 import { IMaskDirective } from 'angular-imask';
 import { maskForSumm } from '../shared-globals';
 
@@ -44,7 +45,9 @@ export class NumericEditor<T> implements ICellEditorAngularComp, AfterViewInit {
       return false;
     }
     const len = value.toString().length;
-    return range ? len >= minlength && len <= maxlength : len === minlength || len === maxlength;
+    return range
+      ? len >= minlength && len <= maxlength
+      : len === minlength || len === maxlength;
   }
 
   private static getCharCodeFromEvent(event) {
@@ -120,7 +123,10 @@ export class NumericEditor<T> implements ICellEditorAngularComp, AfterViewInit {
 
   private isKeyPressedNavigation(event) {
     return (
-      event.keyCode === 39 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 40
+      event.keyCode === 39 ||
+      event.keyCode === 37 ||
+      event.keyCode === 38 ||
+      event.keyCode === 40
     );
   }
 

@@ -1,13 +1,20 @@
-import { Component, computed, Input, input, output, signal } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
-  DateInputFormatPlaceholder,
+  Component,
+  computed,
+  Input,
+  input,
+  output,
+  signal,
+} from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import type { DateInputFormatPlaceholder } from '@progress/kendo-angular-dateinputs';
+import {
   DateInputsModule,
   DateTimePickerCustomMessagesComponent,
   TimePickerComponent,
 } from '@progress/kendo-angular-dateinputs';
-import { ICellEditorAngularComp } from 'ag-grid-angular';
-import { GridApi, ICellEditorParams } from 'ag-grid-community';
+import type { ICellEditorAngularComp } from 'ag-grid-angular';
+import type { GridApi, ICellEditorParams } from 'ag-grid-community';
 import { isSameDay } from 'date-fns';
 import { DD_MM_YYYY } from '../shared-globals';
 
@@ -106,7 +113,8 @@ export class DatePickerEditor implements ICellEditorAngularComp {
 export class TimePickerEditor implements ICellEditorAngularComp {
   private readonly value = signal<number>(0);
   protected readonly display = computed(
-    () => new Date(0, 0, 0, Math.floor(this.value() / 60), this.value() % 60, 0),
+    () =>
+      new Date(0, 0, 0, Math.floor(this.value() / 60), this.value() % 60, 0),
   );
 
   min = 1;

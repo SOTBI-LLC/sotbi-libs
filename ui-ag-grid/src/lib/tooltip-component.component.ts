@@ -1,12 +1,15 @@
 import { Component } from '@angular/core';
-import { ITooltipAngularComp } from 'ag-grid-angular';
-import { ITooltipParams } from 'ag-grid-community';
+import type { ITooltipAngularComp } from 'ag-grid-angular';
+import type { ITooltipParams } from 'ag-grid-community';
 
 @Component({
   selector: 'app-tooltip-component',
   template: `@if (show) {
     <div class="custom-tooltip">
-      <span>По данному счёту есть выписки или заявки. Номер и БИК нельзя редактировать</span>
+      <span
+        >По данному счёту есть выписки или заявки. Номер и БИК нельзя
+        редактировать</span
+      >
     </div>
   }`,
   styles: [

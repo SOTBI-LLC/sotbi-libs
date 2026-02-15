@@ -1,10 +1,15 @@
-import { Component } from '@angular/core';
-import { ICellRendererAngularComp } from 'ag-grid-angular';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
 
 @Component({
   template: `
     @if (!!avatar) {
-      <img [style.--avatar-size]="size" [src]="avatar" [alt]="user" class="avatar" />
+      <img
+        [style.--avatar-size]="size"
+        [src]="avatar"
+        [alt]="user"
+        class="avatar"
+      />
     }
     {{ user }}
   `,
@@ -25,18 +30,19 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
     `,
   ],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserAvatarRendererComponent implements ICellRendererAngularComp {
-  size: string;
-  avatar: string;
-  user: number;
-  agInit(params) {
+  public size = '';
+  public avatar = '';
+  public user = 0;
+  public agInit(params) {
     this.size = params.size;
     this.avatar = params.avatar;
     this.user = params.user;
   }
 
-  refresh(): boolean {
+  public refresh(): boolean {
     return false;
   }
 }

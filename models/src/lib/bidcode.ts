@@ -24,20 +24,20 @@ export interface Calculation {
   attachments: Attachment[]; // к каким расходам относится
 }
 
-export interface TradingCode {
-  id?: number;
-  name: string;
-  adverts?: Advert[];
-  calculations?: Calculation[];
-  attachments?: Attachment[];
-  biddingId: number;
-  bidding?: Bidding;
-  organisation_id?: number;
-  start_date?: Date | string;
-  end_date?: Date | string;
-  bid_date?: Date | string;
-  bidstate_id?: number;
-  bidstate?: BidState;
+export class TradingCode {
+  public id = 0;
+  public name = '';
+  public adverts: Advert[] = [];
+  public calculations: Calculation[] = [];
+  public attachments: Attachment[] = [];
+  public biddingId = 0;
+  public bidding: Bidding | null = null;
+  public organisation_id = 0;
+  public start_date: Date | null = null;
+  public end_date: Date | null = null;
+  public bid_date: Date | null = null;
+  public bidstate_id = 0;
+  public bidstate: BidState | null = null;
 }
 
 // use in app-footcloth-comp

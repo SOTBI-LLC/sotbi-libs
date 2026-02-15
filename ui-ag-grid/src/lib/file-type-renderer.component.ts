@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { PaymentAttachmentService } from '@root/service/payment-attachment.service';
-import { DownloadFile } from '@services/common.service';
+import type { DownloadFile } from '@services/common.service';
 import { checkXlsFileType, download } from '@shared/shared-globals';
-import { Remaining } from '@sotbi/models';
-import { ICellRendererAngularComp } from 'ag-grid-angular';
-import { ICellRendererParams } from 'ag-grid-community';
+import type { Remaining } from '@sotbi/models';
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
+import type { ICellRendererParams } from 'ag-grid-community';
 
 @Component({
   template: `

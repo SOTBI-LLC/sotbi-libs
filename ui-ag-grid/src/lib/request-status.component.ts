@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ICellRendererAngularComp } from 'ag-grid-angular';
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
 
 @Component({
   selector: 'app-request-status',

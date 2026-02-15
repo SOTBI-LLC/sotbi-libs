@@ -6,7 +6,7 @@ on:
       package:
         description: 'Package to publish (or "all" for all packages)'
         required: true
-        default: "all"
+        default: 'all'
         type: choice
         options:
           - all
@@ -16,7 +16,6 @@ on:
           - data-access
           - state
           - ui
-          - ui-ag-grid
 
 jobs:
   publish:
@@ -25,7 +24,7 @@ jobs:
     permissions:
       contents: read
     env:
-      NPM_REGISTRY_URL: "https://npm.bazys.io"
+      NPM_REGISTRY_URL: 'https://npm.bazys.io'
       NPM_TOKEN: ${{ secrets['NPM_TOKEN'] }}
       NODE_AUTH_TOKEN: ${{ secrets['NPM_TOKEN'] }}
 
@@ -36,10 +35,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
-          cache: "yarn"
-          registry-url: "https://npm.bazys.io"
-          scope: "@sotbi"
+          node-version: '22'
+          cache: 'yarn'
+          registry-url: 'https://npm.bazys.io'
+          scope: '@sotbi'
 
       - name: Validate publish token
         run: |
@@ -66,7 +65,7 @@ jobs:
       - name: Build packages
         run: |
           if [ "${{ github.event.inputs.package }}" = "all" ]; then
-            npx nx run-many -t build
+            npx nx run-many -t build --exclude=ui-ag-grid
           else
             npx nx run ${{ github.event.inputs.package }}:build
           fi
@@ -74,7 +73,7 @@ jobs:
       - name: Publish packages
         run: |
           if [ "${{ github.event.inputs.package }}" = "all" ]; then
-            npx nx run-many -t nx-release-publish
+            npx nx run-many -t nx-release-publish --exclude=ui-ag-grid
           else
             npx nx run ${{ github.event.inputs.package }}:nx-release-publish
           fi

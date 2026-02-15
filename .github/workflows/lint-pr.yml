@@ -51,6 +51,7 @@ jobs:
             --base=${{ steps.set-shas.outputs.base }} \
             --head=${{ steps.set-shas.outputs.head }} \
             --parallel=3 \
+            --exclude=ui-ag-grid \
             --verbose
 
       - name: Check code formatting

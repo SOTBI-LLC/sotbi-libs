@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { GridApi, IToolPanel, IToolPanelParams } from 'ag-grid-community';
+import type { GridApi, IToolPanel, IToolPanelParams } from 'ag-grid-community';
 
 @Component({
   selector: 'app-right-side-bar-ag-grid',
@@ -12,7 +12,10 @@ import { GridApi, IToolPanel, IToolPanelParams } from 'ag-grid-community';
         >
           Автоширина всех колонок
         </button>
-        <button class="btn btn-sm btn-secondary  buttons-group__item" (click)="resetColumns()">
+        <button
+          class="btn btn-sm btn-secondary  buttons-group__item"
+          (click)="resetColumns()"
+        >
           Восстановить настройки по умолчанию для всех колонок
         </button>
         @if (showButtonResetFilterAndSort) {
@@ -25,10 +28,16 @@ import { GridApi, IToolPanel, IToolPanelParams } from 'ag-grid-community';
         }
       </div>
       <div class="buttons-group  tool-panel__item">
-        <button class="btn btn-sm btn-secondary  buttons-group__item" (click)="exportExcel()">
+        <button
+          class="btn btn-sm btn-secondary  buttons-group__item"
+          (click)="exportExcel()"
+        >
           Экспортировать в Excel только видимые столбцы
         </button>
-        <button class="btn btn-sm btn-secondary  buttons-group__item" (click)="onBtExport()">
+        <button
+          class="btn btn-sm btn-secondary  buttons-group__item"
+          (click)="onBtExport()"
+        >
           Экспортировать в Excel все столбцы
         </button>
       </div>

@@ -1,6 +1,6 @@
 import { NgStyle } from '@angular/common';
+import type { AfterViewInit } from '@angular/core';
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   viewChild,
@@ -12,8 +12,8 @@ import {
   NgOptionTemplateDirective,
   NgSelectComponent,
 } from '@ng-select/ng-select';
-import { ICellEditorAngularComp } from 'ag-grid-angular';
-import { GridApi, ICellEditorParams } from 'ag-grid-community';
+import type { ICellEditorAngularComp } from 'ag-grid-angular';
+import type { GridApi, ICellEditorParams } from 'ag-grid-community';
 import { UserWithAvatarComponent } from '../user-list/user-with-avatar.component';
 
 @Component({
@@ -52,7 +52,10 @@ import { UserWithAvatarComponent } from '../user-list/user-with-avatar.component
   `,
   styles: [
     `
-      ::ng-deep ng-dropdown-panel.ng-dropdown-panel .ng-dropdown-panel-items div.ng-option {
+      ::ng-deep
+        ng-dropdown-panel.ng-dropdown-panel
+        .ng-dropdown-panel-items
+        div.ng-option {
         white-space: pre;
         cursor: pointer;
       }
@@ -64,13 +67,17 @@ import { UserWithAvatarComponent } from '../user-list/user-with-avatar.component
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgSelectComponent, FormsModule, NgOptionTemplateDirective, NgStyle],
 })
-export class ProjectAndDebtorSelectEditor<T> implements ICellEditorAngularComp, AfterViewInit {
+export class ProjectAndDebtorSelectEditor<T>
+  implements ICellEditorAngularComp, AfterViewInit
+{
   protected values: T[];
   protected value: number;
   protected bindId = 'id';
   protected bindName = 'name';
   protected clearable = false;
-  private readonly input = viewChild.required('ngSelect', { read: ViewContainerRef });
+  private readonly input = viewChild.required('ngSelect', {
+    read: ViewContainerRef,
+  });
 
   public agInit(params: ICellEditorParams): void {
     this.values = params['values'];
@@ -80,7 +87,10 @@ export class ProjectAndDebtorSelectEditor<T> implements ICellEditorAngularComp, 
     this.value = params.value;
   }
 
-  protected customSearchFn(term: string, item: { name: string; project_name: string }) {
+  protected customSearchFn(
+    term: string,
+    item: { name: string; project_name: string },
+  ) {
     term = term.toLowerCase();
     return (
       item.name.toLowerCase().indexOf(term) > -1 ||
@@ -118,7 +128,11 @@ export class ProjectAndDebtorSelectEditor<T> implements ICellEditorAngularComp, 
     >
       @if (isUserWithAvatar; as item) {
         <ng-template ng-label-tmp let-item="item">
-          <user-with-avatar [user]="item.user" [avatar]="item.avatar" size="1rem" />
+          <user-with-avatar
+            [user]="item.user"
+            [avatar]="item.avatar"
+            size="1rem"
+          />
         </ng-template>
       }
     </ng-select>
@@ -143,7 +157,9 @@ export class NgSelectEditor<T> implements ICellEditorAngularComp {
   protected isUserWithAvatar = false;
 
   private api: GridApi | null = null;
-  private readonly input = viewChild.required('ngSelect', { read: ViewContainerRef });
+  private readonly input = viewChild.required('ngSelect', {
+    read: ViewContainerRef,
+  });
 
   public agInit(params: ICellEditorParams<T, number | string>): void {
     this.api = params.api;
