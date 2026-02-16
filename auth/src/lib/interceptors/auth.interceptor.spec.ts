@@ -135,7 +135,7 @@ describe('AuthInterceptor', () => {
         httpHandler.handle.mock.calls.length - 1
       ][0] as HttpRequest<unknown>;
       expect(handledRequest.headers.get('Authorization')).toBe(
-        `Bearer ${mockToken}`
+        `Bearer ${mockToken}`,
       );
     });
 
@@ -199,7 +199,7 @@ describe('AuthInterceptor', () => {
             expect(event.status).toBe(200);
           }
           expect(store.dispatch).toHaveBeenCalledWith(
-            new RefreshToken(mockRefreshToken)
+            new RefreshToken(mockRefreshToken),
           );
           done();
         },
@@ -222,13 +222,12 @@ describe('AuthInterceptor', () => {
           expect(error).toBe(errorResponse);
         },
       });
-
       expect(snackBar.open).toHaveBeenCalledWith(
         'У ВАС НЕДОСТАТОЧНО ПРАВ!',
         '',
         {
           duration: 2000,
-        }
+        },
       );
       expect(location.back).toHaveBeenCalled();
     });
@@ -298,7 +297,7 @@ describe('AuthInterceptor', () => {
         next: (event) => {
           expect(event).toBe(successResponse);
           expect(store.dispatch).toHaveBeenCalledWith(
-            new RefreshToken(mockRefreshToken)
+            new RefreshToken(mockRefreshToken),
           );
           // The token signal should be updated by now
           const handledRequest = httpHandler.handle.mock.calls[
@@ -307,7 +306,7 @@ describe('AuthInterceptor', () => {
           // After dispatch completes, token should be updated
           setTimeout(() => {
             expect(handledRequest.headers.get('Authorization')).toBe(
-              `Bearer ${mockNewToken}`
+              `Bearer ${mockNewToken}`,
             );
             done();
           }, 0);
@@ -339,7 +338,7 @@ describe('AuthInterceptor', () => {
       interceptor.handle401Error(request, httpHandler, error).subscribe({
         next: () => {
           expect(store.dispatch).toHaveBeenCalledWith(
-            new RefreshToken(mockRefreshToken)
+            new RefreshToken(mockRefreshToken),
           );
           done();
         },
@@ -419,7 +418,7 @@ describe('AuthInterceptor', () => {
               httpHandler.handle.mock.calls.length - 1
             ][0] as HttpRequest<unknown>;
             expect(handledRequest.headers.get('Authorization')).toBe(
-              `Bearer ${mockNewToken}`
+              `Bearer ${mockNewToken}`,
             );
             done();
           },
