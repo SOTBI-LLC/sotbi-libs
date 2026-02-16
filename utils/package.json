@@ -11,7 +11,7 @@
     "directory": "utils"
   },
   "packageManager": "yarn@1.22.22",
-  "dependencies": {
+  "peerDependencies": {
     "tslib": "^2.3.0",
     "@sotbi/models": "0.0.4",
     "@angular/common": "20.3.4",

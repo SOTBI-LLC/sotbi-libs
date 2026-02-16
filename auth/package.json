@@ -10,6 +10,7 @@
     "url": "git+https://github.com/SOTBI-LLC/sotbi-libs.git",
     "directory": "auth"
   },
+  "packageManager": "yarn@1.22.22",
   "peerDependencies": {
     "@sotbi/data-access": "0.0.4",
     "@sotbi/models": "0.0.4",
