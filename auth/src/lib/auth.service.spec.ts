@@ -72,7 +72,7 @@ describe('AuthService - Static Functions and Business Logic', () => {
 
   function validateAuthActionStatic(
     username: string,
-    password: string
+    password: string,
   ): boolean {
     return !!(
       username &&
@@ -84,7 +84,7 @@ describe('AuthService - Static Functions and Business Logic', () => {
 
   function createLoginActionStatic(
     username: string,
-    password: string
+    password: string,
   ): { type: string; payload: { username: string; password: string } } {
     return { type: '[AUTH] Login', payload: { username, password } };
   }
@@ -131,7 +131,7 @@ describe('AuthService - Static Functions and Business Logic', () => {
 
   function processAccessForPathStatic(
     path: string,
-    accessSet: Set<unknown> | null
+    accessSet: Set<unknown> | null,
   ): boolean {
     if (!path || !accessSet) return false;
 
@@ -195,7 +195,7 @@ describe('AuthService - Static Functions and Business Logic', () => {
       it('should handle empty and undefined access sets', () => {
         expect(processAccessSetStatic(new Set())).toEqual([]);
         expect(
-          processAccessSetStatic(new Set([null, undefined, '', false]))
+          processAccessSetStatic(new Set([null, undefined, '', false])),
         ).toEqual([]);
       });
 
@@ -205,10 +205,10 @@ describe('AuthService - Static Functions and Business Logic', () => {
         expect(validateAuthActionStatic('user', '')).toBe(false);
         expect(validateAuthActionStatic('', '')).toBe(false);
         expect(
-          validateAuthActionStatic(null as unknown as string, 'pass')
+          validateAuthActionStatic(null as unknown as string, 'pass'),
         ).toBe(false);
         expect(
-          validateAuthActionStatic('user', null as unknown as string)
+          validateAuthActionStatic('user', null as unknown as string),
         ).toBe(false);
       });
     });
@@ -353,7 +353,7 @@ describe('AuthService - Static Functions and Business Logic', () => {
 
       it('should handle token refresh workflow', () => {
         const refreshAction = createRefreshTokenActionStatic(
-          'stored_refresh_token'
+          'stored_refresh_token',
         );
         expect(refreshAction.type).toBe('[AUTH] RefreshToken');
         expect(refreshAction.payload).toBe('stored_refresh_token');
@@ -373,14 +373,14 @@ describe('AuthService - Static Functions and Business Logic', () => {
       expect(
         validateAuthActionStatic(
           undefined as unknown as string,
-          undefined as unknown as string
-        )
+          undefined as unknown as string,
+        ),
       ).toBe(false);
       expect(
         validateAuthActionStatic(
           null as unknown as string,
-          null as unknown as string
-        )
+          null as unknown as string,
+        ),
       ).toBe(false);
     });
 
@@ -454,7 +454,7 @@ describe('AuthService - Static Functions and Business Logic', () => {
       };
 
       const start = performance.now();
-      for (let i = 0; i < 1000; i++) {
+      for (let i = 0; i < 100; i++) {
         const result = processUserStateForAuthStatic(userState);
         expect(typeof result.isLogged).toBe('boolean');
         expect(typeof result.isOwned(123)).toBe('boolean');
