@@ -145,8 +145,8 @@ export class EgrnRequestState {
         if (item.real_estates) {
           for (const realEstate of item.real_estates) {
             realEstate.id = 0;
-            delete realEstate.file;
-            delete realEstate.original_file_name;
+            realEstate.file = null;
+            realEstate.original_file_name = null;
             realEstate.request_num = null;
             realEstate.key = null;
           }

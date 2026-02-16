@@ -33,6 +33,7 @@
     "@fullcalendar/core": "^6.1.20",
     "@ngxs/store": "^21.0.0",
     "@progress/kendo-angular-dateinputs": "^23.0.1",
+    "@types/javascript-state-machine": "^2.4.6",
     "ag-grid-angular": "~34.2.0",
     "ag-grid-community": "~34.2.0",
     "ag-grid-enterprise": "~34.2.0",

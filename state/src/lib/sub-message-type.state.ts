@@ -73,7 +73,7 @@ export class EfrsbSubMessageTypeState {
     const state = getState();
     // console.log('EfrsbSubMessageTypeState::FetchItems', state);
     if (!state.items.length) {
-      return this.itemsService.GetAll().pipe(
+      this.itemsService.GetAll().pipe(
         tap((items) => {
           const maps = new Map(items.map((item) => [item.id, item.name]));
           setState({

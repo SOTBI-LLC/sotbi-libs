@@ -48,7 +48,7 @@ export class LinkState implements NgxsOnInit {
   }: StateContext<SimpleEditStateModel>) {
     const state = getState();
     if (!state.items.length) {
-      return this.linkService.getAll(SimpleEditServiceNames.LINK).pipe(
+      this.linkService.getAll(SimpleEditServiceNames.LINK).pipe(
         catchError((err) => {
           return throwError(() => err);
         }),
