@@ -7,10 +7,10 @@ import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import type { itemMap } from './simple-edit.state.model';
 import {
-  AddItem,
-  DeleteItem,
+  AddSubMessageType,
+  DeleteSubMessageType,
   FetchSubMessageTypes,
-  UpdateItem,
+  UpdateSubMessageType,
 } from './sub-message-type.actions';
 
 export interface EfrsbSubMessageTypeStateModel {
@@ -88,10 +88,10 @@ export class EfrsbSubMessageTypeState {
     }
   }
 
-  @Action(AddItem)
+  @Action(AddSubMessageType)
   public createItem(
     { getState, setState }: StateContext<EfrsbSubMessageTypeStateModel>,
-    { payload }: AddItem,
+    { payload }: AddSubMessageType,
   ) {
     // console.log('EfrsbSubMessageTypeState::AddItem', payload);
     return this.itemsService.add(payload).pipe(
@@ -111,10 +111,10 @@ export class EfrsbSubMessageTypeState {
     );
   }
 
-  @Action(UpdateItem)
+  @Action(UpdateSubMessageType)
   public updateItem(
     { getState, setState }: StateContext<EfrsbSubMessageTypeStateModel>,
-    { payload }: UpdateItem,
+    { payload }: UpdateSubMessageType,
   ) {
     // console.log('EfrsbSubMessageTypeState::UpdateItem', payload);
     const state = getState();
@@ -135,10 +135,10 @@ export class EfrsbSubMessageTypeState {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteSubMessageType)
   public deleteItem(
     { getState, setState }: StateContext<EfrsbSubMessageTypeStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteSubMessageType,
   ) {
     // console.log('EfrsbSubMessageTypeState::DeleteItem', payload);
     return this.itemsService.delete(payload).pipe(

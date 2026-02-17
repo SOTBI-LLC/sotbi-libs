@@ -12,12 +12,12 @@ import {
   tap,
 } from 'rxjs/operators';
 import {
-  AddItem,
-  DeleteItem,
-  EditItem,
+  AddProject,
+  DeleteProject,
+  EditProject,
   FetchAllProjects,
   FetchProjects,
-  GetItem,
+  GetProject,
 } from './projects.actions';
 import type { itemMap } from './simple-edit.state.model';
 
@@ -132,10 +132,10 @@ export class ProjectsState implements NgxsOnInit {
     return;
   }
 
-  @Action(GetItem)
+  @Action(GetProject)
   public getItem(
     { patchState, getState, setState }: StateContext<ProjectStateModel>,
-    { payload }: GetItem,
+    { payload }: GetProject,
   ) {
     patchState({ loading: true });
     const state = getState();
@@ -159,10 +159,10 @@ export class ProjectsState implements NgxsOnInit {
     }
   }
 
-  @Action(AddItem)
+  @Action(AddProject)
   public addItem(
     { getState, setState }: StateContext<ProjectStateModel>,
-    { payload }: AddItem,
+    { payload }: AddProject,
   ) {
     return this.prjSrv.create(payload).pipe(
       tap((result) => {
@@ -188,10 +188,10 @@ export class ProjectsState implements NgxsOnInit {
     );
   }
 
-  @Action(EditItem)
+  @Action(EditProject)
   public editItem(
     { getState, setState }: StateContext<ProjectStateModel>,
-    { payload }: EditItem,
+    { payload }: EditProject,
   ) {
     const { id } = payload;
     const state = getState();
@@ -221,10 +221,10 @@ export class ProjectsState implements NgxsOnInit {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteProject)
   public deleteItem(
     { getState, setState }: StateContext<ProjectStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteProject,
   ) {
     return this.prjSrv.delete(payload).pipe(
       tap(() => {

@@ -6,13 +6,8 @@ import type { SimpleEditModel } from '@sotbi/models';
 import { forMap } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import {
-  AddItem,
-  DeleteItem,
-  EditItem,
-  FetchLinkTypes,
-  GetItem,
-} from './links.actions';
+import type { GetLink } from './links.actions';
+import { AddLink, DeleteLink, EditLink, FetchLinkTypes } from './links.actions';
 import type { SimpleEditStateModel } from './simple-edit.state.model';
 
 @State<SimpleEditStateModel>({
@@ -67,7 +62,7 @@ export class LinkState implements NgxsOnInit {
   @Action(GetItem)
   public getItem(
     { patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: GetItem,
+    { payload }: GetLink,
   ) {
     return this.linkService.get(SimpleEditServiceNames.LINK, payload).pipe(
       tap((result) => {
@@ -79,10 +74,10 @@ export class LinkState implements NgxsOnInit {
     );
   }
 
-  @Action(AddItem)
+  @Action(AddLink)
   public addItem(
     { getState, setState }: StateContext<SimpleEditStateModel>,
-    { payload }: AddItem,
+    { payload }: AddLink,
   ) {
     return this.linkService.create(payload, SimpleEditServiceNames.LINK).pipe(
       tap((result) => {
@@ -102,10 +97,10 @@ export class LinkState implements NgxsOnInit {
     );
   }
 
-  @Action(EditItem)
+  @Action(EditLink)
   public editItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: EditItem,
+    { payload }: EditLink,
   ) {
     return this.linkService.save$(payload, SimpleEditServiceNames.LINK).pipe(
       tap((result: SimpleEditModel) => {
@@ -123,10 +118,10 @@ export class LinkState implements NgxsOnInit {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteLink)
   public deleteItem(
     { getState, setState }: StateContext<SimpleEditStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteLink,
   ) {
     return this.linkService.delete(payload, SimpleEditServiceNames.LINK).pipe(
       tap(() => {

@@ -1,41 +1,41 @@
 // Access
 export {
-  CreateItem,
-  DeleteItem,
+  CreateAccess,
+  DeleteAccess,
   FetchAccess,
-  GetItem,
-  UpdateItem,
+  GetAccess,
+  UpdateAccess,
 } from './lib/access.actions';
 export { AccessState, AccessStateModel } from './lib/access.state';
 
 // Account Types
 export {
-  AddItem as AddAccountType,
-  DeleteItem as DeleteAccountType,
-  EditItem as EditAccountType,
+  AddAccountType,
+  DeleteAccountType,
+  EditAccountType,
   FetchAccountTypes,
-  GetItem as GetAccountType,
+  GetAccountType,
 } from './lib/accounttypes.actions';
 export { AccountTypesState } from './lib/accounttypes.state';
 
 // Advert Types
 export {
-  AddItem as AddAdvertType,
-  AddEmptyItem as AddEmptyAdvertType,
-  DeleteItem as DeleteAdvertType,
-  EditItem as EditAdvertType,
+  AddAdvertType,
+  AddEmptyAdvertType,
+  DeleteAdvertType,
+  EditAdvertType,
   FetchAdvertTypes,
-  GetItem as GetAdvertType,
+  GetAdvertType,
 } from './lib/adverttype.actions';
 export { AdvertTypesState } from './lib/adverttype.state';
 
 // Announcement
 export {
-  AddItem as AddAnnouncement,
-  DeleteItem as DeleteAnnouncement,
-  FetchItems as FetchAnnouncements,
-  GetItem as GetAnnouncement,
-  UpdateItem as UpdateAnnouncement,
+  AddAnnouncement,
+  DeleteAnnouncement,
+  FetchAnnouncements,
+  GetAnnouncement,
+  UpdateAnnouncement,
 } from './lib/announcement.actions';
 export {
   AnnouncementState,
@@ -57,21 +57,21 @@ export {
 
 // Assets
 export {
-  AddItem as AddAsset,
-  DeleteItem as DeleteAsset,
-  EditItem as EditAsset,
+  AddAsset,
+  DeleteAsset,
+  EditAsset,
   FetchAssetTypes,
-  GetItem as GetAsset,
+  GetAsset,
 } from './lib/assets.actions';
 export { AssetsState, AssetStateModel } from './lib/assets.state';
 
 // Attachment Types
 export {
-  AddItem as AddAttachmentType,
-  DeleteItem as DeleteAttachmentType,
-  EditItem as EditAttachmentType,
+  AddAttachmentType,
+  DeleteAttachmentType,
+  EditAttachmentType,
   FetchAttachmentTypes,
-  GetItem as GetAttachmentType,
+  GetAttachmentType,
 } from './lib/attachmenttypes.actions';
 export { AttachmentTypesState } from './lib/attachmenttypes.state';
 
@@ -81,15 +81,15 @@ export { BankDetailState, BankDetailStateModel } from './lib/bank_detail.state';
 
 // Bankruptcy
 export {
-  AddPolicy as AddBankruptcyPolicy,
+  AddBankruptcyPolicy,
   ClearSelectedBankruptcy,
   CreateBankruptcy,
   DeleteBankruptcy,
-  DeletePolicy as DeleteBankruptcyPolicy,
+  DeleteBankruptcyPolicy,
   FetchBankruptcies,
   GetBankruptcy,
   UpdateBankruptcy,
-  UpdatePolicy as UpdateBankruptcyPolicy,
+  UpdateBankruptcyPolicy,
 } from './lib/bankruptcy.actions';
 export { BankruptcyState, BankruptcyStateModel } from './lib/bankruptcy.state';
 
@@ -106,7 +106,11 @@ export {
   SaveAllBidState,
   UpdateBidState,
 } from './lib/bidstate.actions';
-export { BidStateState, BidStateStateModel } from './lib/bidstate.state';
+export {
+  BidStateRequiredFields,
+  BidStateState,
+  BidStateStateModel,
+} from './lib/bidstate.state';
 
 // Calendar
 export {
@@ -119,21 +123,21 @@ export { CalendarState, CalendarStateModel } from './lib/calendar.state';
 
 // Category
 export {
-  AddItem as AddCategory,
-  DeleteItem as DeleteCategory,
-  EditItem as EditCategory,
-  FetchItems as FetchCategories,
-  GetItem as GetCategory,
+  AddCategory,
+  DeleteCategory,
+  EditCategory,
+  FetchCategories,
+  GetCategory,
 } from './lib/category.actions';
 export { CategoryState } from './lib/category.state';
 
 // Clients
 export {
-  AddItem as AddClient,
-  DeleteItem as DeleteClient,
-  EditItem as EditClient,
+  AddClient,
+  DeleteClient,
+  EditClient,
   FetchClients,
-  GetItem as GetClient,
+  GetClient,
 } from './lib/clients.actions';
 export { ClientsState } from './lib/clients.state';
 
@@ -153,7 +157,11 @@ export {
   SaveAllCostReal,
   UpdateCostReal,
 } from './lib/cost.actions';
-export { CostRealState, CostRealStateModel } from './lib/cost.state';
+export {
+  CostRealState,
+  CostRealStateModel,
+  CostRequiredFields,
+} from './lib/cost.state';
 
 // Counterparty
 export {
@@ -176,26 +184,26 @@ export { DadataState, DadataStateModel } from './lib/dadata.state';
 export {
   AddItem as AddDebtor,
   AddDebtorPolicy,
-  ClearSelected as ClearSelectedDebtor,
-  DeleteItem as DeleteDebtorItem,
+  ClearSelectedDebtor,
+  DeleteDebtorItem,
   DeleteDebtorPolicy,
   FetchDebtors,
-  FetchPage as FetchDebtorsPage,
+  FetchDebtorsPage,
   FetchProjectsAndDebtors,
   GetDebtor,
-  RestoreItem as RestoreDebtor,
-  UpdateItem as UpdateDebtorItem,
+  RestoreDebtor,
+  UpdateDebtorItem,
   UpdateDebtorPolicy,
 } from './lib/debtors.actions';
 export { DebtorsState, DebtorStateModel } from './lib/debtors.state';
 
 // Defrayment
 export {
-  AddItem as AddDefrayment,
-  DeleteItem as DeleteDefrayment,
-  GetAllItems as GetAllDefrayments,
-  GetItem as GetDefrayment,
-  UpdateItem as UpdateDefrayment,
+  AddDefrayment,
+  DeleteDefrayment,
+  GetAllDefrayments,
+  GetDefrayment,
+  UpdateDefrayment,
 } from './lib/defrayment.actions';
 export { DefraymentState, DefraymentStateModel } from './lib/defrayment.state';
 
@@ -211,11 +219,11 @@ export { DepositsState, DepositStateModel } from './lib/deposits.state';
 
 // EFRSB Message
 export {
-  AddItem as AddEfrsbMessage,
-  DeleteItem as DeleteEfrsbMessage,
-  FetchItems as FetchEfrsbMessages,
-  GetItem as GetEfrsbMessage,
-  UpdateItem as UpdateEfrsbMessage,
+  AddEfrsbMessage,
+  DeleteEfrsbMessage,
+  FetchEfrsbMessages,
+  GetEfrsbMessage,
+  UpdateEfrsbMessage,
 } from './lib/efrsb-message.actions';
 export {
   EfrsbMessageState,
@@ -224,13 +232,13 @@ export {
 
 // EGRN Request
 export {
-  AddDirtyItem as AddDirtyEgrnRequest,
-  AddItem as AddEgrnRequest,
-  DeleteItem as DeleteEgrnRequest,
-  FetchItems as FetchEgrnRequests,
-  GetItem as GetEgrnRequest,
+  AddDirtyEgrnRequest,
+  AddEgrnRequest,
+  DeleteEgrnRequest,
+  FetchEgrnRequests,
+  GetEgrnRequest,
   RemoveRealEstate,
-  UpdateItem as UpdateEgrnRequest,
+  UpdateEgrnRequest,
 } from './lib/egrn-request.actions';
 export {
   EgrnRequestState,
@@ -251,30 +259,30 @@ export { FavoritesState, FavoritesStateModel } from './lib/favorites.state';
 
 // Flow
 export {
-  AddItem as AddFlow,
-  DeleteItem as DeleteFlow,
-  EditItem as EditFlow,
+  AddFlow,
+  DeleteFlow,
+  EditFlow,
   FetchFlowTypes,
-  GetItem as GetFlow,
+  GetFlow,
 } from './lib/flow.actions';
 export { FlowState } from './lib/flow.state';
 
 // Help File
 export {
-  AddEmptyItem as AddEmptyHelpFile,
-  AddItem as AddHelpFile,
-  DeleteItem as DeleteHelpFile,
-  FetchItems as FetchHelpFiles,
-  StartEditItem as StartEditHelpFile,
-  UpdateItem as UpdateHelpFile,
+  AddEmptyHelpFile,
+  AddHelpFile,
+  DeleteHelpFile,
+  FetchHelpFiles,
+  StartEditHelpFile,
+  UpdateHelpFile,
 } from './lib/help-file.actions';
 export { HelpFileState, HelpFileStateModel } from './lib/help-file.state';
 
 // Initiators
 export {
   AddInintiator,
-  DeleteItem as DeleteInitiator,
-  EditItem as EditInitiator,
+  DeleteInitiator,
+  EditInitiator,
   FetchInitiators,
   GetInintiator,
 } from './lib/initiators.actions';
@@ -283,13 +291,10 @@ export { InitiatorsState, InitiatorsStateModel } from './lib/initiators.state';
 // Insurance Company
 export {
   AddCompany,
-  AddPolicy as AddInsurancePolicy,
   DeleteCompany,
-  DeletePolicy as DeleteInsurancePolicy,
   FetchCompanies,
   GetCompany,
   UpdateCompany,
-  UpdatePolicy as UpdateInsurancePolicy,
 } from './lib/insurance-company.actions';
 export {
   InsuranceCompanyState,
@@ -298,11 +303,11 @@ export {
 
 // Insurance Policy
 export {
-  AddItem as AddInsurancePolicyItem,
-  DeleteItem as DeleteInsurancePolicyItem,
-  FetchItems as FetchInsurancePolicies,
-  GetItem as GetInsurancePolicy,
-  UpdateItem as UpdateInsurancePolicyItem,
+  AddInsurancePolicy,
+  DeleteInsurancePolicy,
+  FetchInsurancePolicies,
+  GetInsurancePolicy,
+  UpdateInsurancePolicy,
 } from './lib/insurance-policy.actions';
 export {
   InsurancePolicyState,
@@ -321,20 +326,20 @@ export { LabelsState, LabelStateModel } from './lib/labels.state';
 
 // Links
 export {
-  AddItem as AddLink,
-  DeleteItem as DeleteLink,
-  EditItem as EditLink,
+  AddLink,
+  DeleteLink,
+  EditLink,
   FetchLinkTypes,
-  GetItem as GetLink,
+  GetLink,
 } from './lib/links.actions';
 export { LinkState } from './lib/links.state';
 
 // Message Type
 export {
-  AddItem as AddMessageType,
-  DeleteItem as DeleteMessageType,
+  AddMessageType,
+  DeleteMessageType,
   FetchMessageTypes,
-  UpdateItem as UpdateMessageType,
+  UpdateMessageType,
 } from './lib/message-type.actions';
 export {
   EfrsbMessageTypeState,
@@ -343,12 +348,12 @@ export {
 
 // Payment Attachment
 export {
-  AddItem as AddPaymentAttachment,
-  DeleteItem as DeletePaymentAttachment,
-  DeleteItems as DeletePaymentAttachments,
-  GetAllItems as GetAllPaymentAttachments,
-  GetItem as GetPaymentAttachment,
-  UpdateItem as UpdatePaymentAttachment,
+  AddPaymentAttachment,
+  DeletePaymentAttachment,
+  DeletePaymentAttachments,
+  GetAllPaymentAttachments,
+  GetPaymentAttachment,
+  UpdatePaymentAttachment,
 } from './lib/payment-attachment.actions';
 export {
   PaymentAttachmentState,
@@ -357,12 +362,12 @@ export {
 
 // Payment Request
 export {
-  AddDirtyItem as AddDirtyPaymentRequest,
-  AddItem as AddPaymentRequest,
-  DeleteItem as DeletePaymentRequest,
-  FetchItems as FetchPaymentRequests,
-  GetItem as GetPaymentRequest,
-  UpdateItem as UpdatePaymentRequest,
+  AddDirtyPaymentRequest,
+  AddPaymentRequest,
+  DeletePaymentRequest,
+  FetchPaymentRequests,
+  GetPaymentRequest,
+  UpdatePaymentRequest,
 } from './lib/payment-request.actions';
 export {
   PaymentRequestState,
@@ -370,10 +375,7 @@ export {
 } from './lib/payment-request.state';
 
 // Payments
-export {
-  GetDebtorPayments,
-  GetItem as GetPayment,
-} from './lib/payments.actions';
+export { GetDebtorPayments, GetPayment } from './lib/payments.actions';
 export {
   PaymentDocumentsState,
   PaymentDocumentsStateModel,
@@ -381,11 +383,11 @@ export {
 
 // Persons
 export {
-  AddItem as AddPerson,
-  DeleteItem as DeletePerson,
-  EditItem as EditPerson,
+  AddPerson,
+  DeletePerson,
+  EditPerson,
   FetchPersons,
-  GetItem as GetPerson,
+  GetPerson,
 } from './lib/persons.actions';
 export { PersonsState } from './lib/persons.state';
 
@@ -401,36 +403,40 @@ export {
   SaveAllPositions,
   UpdatePosition,
 } from './lib/positions.actions';
-export { PositionState, PositionStateModel } from './lib/positions.state';
+export {
+  PositionsRequiredFields,
+  PositionState,
+  PositionStateModel,
+} from './lib/positions.state';
 
 // Procedure
 export {
-  AddItem as AddProcedure,
-  DeleteItem as DeleteProcedure,
-  EditItem as EditProcedure,
+  AddProcedure,
+  DeleteProcedure,
+  EditProcedure,
   FetchProcedures,
-  GetItem as GetProcedure,
+  GetProcedure,
 } from './lib/procedure.actions';
 export { ProcedureState } from './lib/procedure.state';
 
 // Profits
 export {
-  AddItem as AddProfit,
-  DeleteItem as DeleteProfit,
-  EditItem as EditProfit,
+  AddProfit,
+  DeleteProfit,
+  EditProfit,
   FetchProfits,
-  GetItem as GetProfit,
+  GetProfit,
 } from './lib/profits.actions';
 export { ProfitsState } from './lib/profits.state';
 
 // Projects
 export {
-  AddItem as AddProject,
-  DeleteItem as DeleteProject,
-  EditItem as EditProject,
+  AddProject,
+  DeleteProject,
+  EditProject,
   FetchAllProjects,
   FetchProjects,
-  GetItem as GetProject,
+  GetProject,
 } from './lib/projects.actions';
 export { ProjectsState, ProjectStateModel } from './lib/projects.state';
 
@@ -487,20 +493,20 @@ export { StaffsState, StaffStateModel } from './lib/staffs.state';
 
 // Stages
 export {
-  AddItem as AddStage,
-  DeleteItem as DeleteStage,
-  EditItem as EditStage,
+  AddStage,
+  DeleteStage,
+  EditStage,
   FetchStages,
-  GetItem as GetStage,
+  GetStage,
 } from './lib/stages.actions';
 export { StageState } from './lib/stages.state';
 
 // Sub Message Type
 export {
-  AddItem as AddSubMessageType,
-  DeleteItem as DeleteSubMessageType,
+  AddSubMessageType,
+  DeleteSubMessageType,
   FetchSubMessageTypes,
-  UpdateItem as UpdateSubMessageType,
+  UpdateSubMessageType,
 } from './lib/sub-message-type.actions';
 export {
   EfrsbSubMessageTypeState,
@@ -519,11 +525,11 @@ export {
 
 // Targets
 export {
-  AddItem as AddTarget,
-  DeleteItem as DeleteTarget,
-  EditItem as EditTarget,
+  AddTarget,
+  DeleteTarget,
+  EditTarget,
   FetchTargetTypes,
-  GetItem as GetTarget,
+  GetTarget,
 } from './lib/targets.actions';
 export { TargetsState } from './lib/targets.state';
 
@@ -531,7 +537,7 @@ export { TargetsState } from './lib/targets.state';
 export {
   AddEmptyTransition,
   CreateTransition,
-  DeleteItem as DeleteTransition,
+  DeleteTransition,
   FetchTransitions,
   GetTransition,
   UpdateTransition,
@@ -540,11 +546,11 @@ export { TransitionState, TransitionStateModel } from './lib/transition.state';
 
 // User Group
 export {
-  CreateItem as CreateUserGroup,
-  DeleteItem as DeleteUserGroup,
+  CreateUserGroup,
+  DeleteUserGroup,
   FetchGroups,
-  GetItem as GetUserGroup,
-  UpdateItem as UpdateUserGroup,
+  GetUserGroup,
+  UpdateUserGroup,
 } from './lib/usergroup.actions';
 export { UserGroupState, UserGroupStateModel } from './lib/usergroup.state';
 
@@ -580,6 +586,7 @@ export {
   UpdateWorkCategory,
 } from './lib/work-category.actions';
 export {
+  WorkCategoryRequiredFields,
   WorkCategoryState,
   WorkCategoryStateModel,
 } from './lib/work-category.state';

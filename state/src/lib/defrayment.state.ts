@@ -7,11 +7,11 @@ import { removeID } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
-  AddItem,
-  DeleteItem,
-  GetAllItems,
-  GetItem,
-  UpdateItem,
+  AddDefrayment,
+  DeleteDefrayment,
+  GetAllDefrayments,
+  GetDefrayment,
+  UpdateDefrayment,
 } from './defrayment.actions';
 
 export interface DefraymentStateModel {
@@ -49,10 +49,10 @@ export class DefraymentState {
     return state.items;
   }
 
-  @Action(GetAllItems)
+  @Action(GetAllDefrayments)
   public GetAllItems(
     { getState, setState, patchState }: StateContext<DefraymentStateModel>,
-    { payload }: GetAllItems,
+    { payload }: GetAllDefrayments,
   ) {
     // console.log('DefraymentState::FetchItems');
     const state = getState();
@@ -73,10 +73,10 @@ export class DefraymentState {
     }
   }
 
-  @Action(GetItem)
+  @Action(GetDefrayment)
   public getItem(
     { patchState }: StateContext<DefraymentStateModel>,
-    { payload }: GetItem,
+    { payload }: GetDefrayment,
   ) {
     patchState({ loading: true });
     if (!payload) {
@@ -98,10 +98,10 @@ export class DefraymentState {
     }
   }
 
-  @Action(AddItem)
+  @Action(AddDefrayment)
   public createItem(
     { getState, patchState, setState }: StateContext<DefraymentStateModel>,
-    { payload }: AddItem,
+    { payload }: AddDefrayment,
   ) {
     // console.log('DefraymentState::AddItem', payload);
     patchState({ loading: true });
@@ -122,10 +122,10 @@ export class DefraymentState {
     );
   }
 
-  @Action(UpdateItem)
+  @Action(UpdateDefrayment)
   public UpdateItem(
     { getState, setState, patchState }: StateContext<DefraymentStateModel>,
-    { payload }: UpdateItem,
+    { payload }: UpdateDefrayment,
   ) {
     // console.log('DefraymentState::UpdateItem', payload);
     patchState({ loading: true });
@@ -148,10 +148,10 @@ export class DefraymentState {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteDefrayment)
   public deleteItem(
     { getState, patchState, setState }: StateContext<DefraymentStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteDefrayment,
   ) {
     // console.log('DefraymentState::DeleteItem', payload);
     patchState({ loading: true });

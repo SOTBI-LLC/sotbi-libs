@@ -7,7 +7,7 @@ import { catchError, finalize, tap } from 'rxjs/operators';
 import {
   AddEmptyTransition,
   CreateTransition,
-  DeleteItem,
+  DeleteTransition,
   FetchTransitions,
   GetTransition,
   UpdateTransition,
@@ -158,10 +158,10 @@ export class TransitionState {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteTransition)
   public deleteItem(
     { getState, patchState, setState }: StateContext<TransitionStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteTransition,
   ) {
     patchState({ loading: true });
     return this.itemsService.delete(payload).pipe(

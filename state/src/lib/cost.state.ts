@@ -26,7 +26,7 @@ import {
   UpdateCostReal,
 } from './cost.actions';
 
-export const requiredFields = [
+export const CostRequiredFields = [
   'date',
   'debtor_id',
   'minutes_costs',
@@ -205,7 +205,7 @@ export class CostRealState {
 
   @Selector()
   public static canSave(state: CostRealStateModel): boolean {
-    return canSave(state.items, requiredFields);
+    return canSave(state.items, CostRequiredFields);
   }
 
   @Selector()
@@ -515,7 +515,7 @@ export class CostRealState {
     // console.log('CostRealState::SaveAllCostReal', state.items);
     const costs: CostReal[] = [];
     const idxs: Map<number, number> = new Map(); // храним соотвествие index в ag-grid и id в бд
-    const fields = new Set(requiredFields);
+    const fields = new Set(CostRequiredFields);
     const items = [...state.items];
     for (const item of items) {
       if (item.dirty) {

@@ -8,7 +8,7 @@ export class FetchProjectsAndDebtors {
   public static readonly type = '[DEBTORS] Fetch items as projects';
 }
 
-export class FetchPage {
+export class FetchDebtorsPage {
   public static readonly type = '[DEBTORS] Fetch page of items';
   constructor(public payload: { from: number; limit: number }) {}
 }
@@ -17,7 +17,7 @@ export class GetDebtor {
   public static readonly type = '[DEBTORS] Get item';
   constructor(public payload: number) {}
 }
-export class ClearSelected {
+export class ClearSelectedDebtor {
   public static readonly type = '[DEBTORS] Clear Selected';
 }
 
@@ -26,17 +26,17 @@ export class AddItem {
   constructor(public payload: Partial<Debtor>) {}
 }
 
-export class UpdateItem {
+export class UpdateDebtorItem {
   public static readonly type = '[DEBTORS] Edit item';
   constructor(public payload: Debtor) {}
 }
 
-export class DeleteItem {
+export class DeleteDebtorItem {
   public static readonly type = '[DEBTORS] Delete item';
   constructor(public payload: number) {}
 }
 
-export class RestoreItem {
+export class RestoreDebtor {
   public static readonly type = '[DEBTORS] Restore item';
   constructor(public payload: number) {}
 }

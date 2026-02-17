@@ -6,11 +6,11 @@ import type { Announcement } from '@sotbi/models';
 import { DatePublish } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import {
-  AddItem,
-  DeleteItem,
-  FetchItems,
-  GetItem,
-  UpdateItem,
+  AddAnnouncement,
+  DeleteAnnouncement,
+  FetchAnnouncements,
+  GetAnnouncement,
+  UpdateAnnouncement,
 } from './announcement.actions';
 import type { AnnouncementStateModel } from './announcement.state';
 import { AnnouncementState } from './announcement.state';
@@ -106,7 +106,7 @@ describe('AnnouncementState', () => {
 
       store
         .dispatch(
-          new FetchItems({
+          new FetchAnnouncements({
             all: false,
             refresh: true,
             show_planned: true,
@@ -140,7 +140,7 @@ describe('AnnouncementState', () => {
       });
 
       store
-        .dispatch(new FetchItems({ all: false, refresh: false }))
+        .dispatch(new FetchAnnouncements({ all: false, refresh: false }))
         .subscribe(() => {
           expect(svc.getAllWithCondition).not.toHaveBeenCalled();
           done();
@@ -152,22 +152,24 @@ describe('AnnouncementState', () => {
         throwError(() => new Error('Fetch failed')),
       );
 
-      store.dispatch(new FetchItems({ all: false, refresh: true })).subscribe({
-        next: () => fail('Expected error'),
-        error: () => {
-          const state = store.selectSnapshot(
-            (s: any) => s.announcement,
-          ) as AnnouncementStateModel;
-          expect(state.loading).toBeFalsy();
-          done();
-        },
-      });
+      store
+        .dispatch(new FetchAnnouncements({ all: false, refresh: true }))
+        .subscribe({
+          next: () => fail('Expected error'),
+          error: () => {
+            const state = store.selectSnapshot(
+              (s: any) => s.announcement,
+            ) as AnnouncementStateModel;
+            expect(state.loading).toBeFalsy();
+            done();
+          },
+        });
     });
   });
 
   describe('GetItem', () => {
     it('should set default selected when payload is falsy (0)', () => {
-      store.dispatch(new GetItem(0));
+      store.dispatch(new GetAnnouncement(0));
       const state = store.selectSnapshot(
         (s: any) => s.announcement,
       ) as AnnouncementStateModel;
@@ -188,7 +190,7 @@ describe('AnnouncementState', () => {
     it('should fetch and set selected when id provided', (done) => {
       svc.get.mockReturnValue(of(mockItem));
 
-      store.dispatch(new GetItem(1)).subscribe(() => {
+      store.dispatch(new GetAnnouncement(1)).subscribe(() => {
         expect(svc.get).toHaveBeenCalledWith(1);
         const state = store.selectSnapshot(
           (s: any) => s.announcement,
@@ -202,7 +204,7 @@ describe('AnnouncementState', () => {
     it('should set loading=false on errors', (done) => {
       svc.get.mockReturnValue(throwError(() => new Error('Get failed')));
 
-      store.dispatch(new GetItem(123)).subscribe({
+      store.dispatch(new GetAnnouncement(123)).subscribe({
         next: () => fail('Expected error'),
         error: () => {
           const state = store.selectSnapshot(
@@ -229,7 +231,7 @@ describe('AnnouncementState', () => {
         },
       });
 
-      store.dispatch(new AddItem(created)).subscribe(() => {
+      store.dispatch(new AddAnnouncement(created)).subscribe(() => {
         const state = store.selectSnapshot(
           (s: any) => s.announcement,
         ) as AnnouncementStateModel;
@@ -244,7 +246,7 @@ describe('AnnouncementState', () => {
     it('should set loading=false on errors', (done) => {
       svc.add.mockReturnValue(throwError(() => new Error('Create failed')));
 
-      store.dispatch(new AddItem(mockItem)).subscribe({
+      store.dispatch(new AddAnnouncement(mockItem)).subscribe({
         next: () => fail('Expected error'),
         error: () => {
           const state = store.selectSnapshot(
@@ -271,7 +273,7 @@ describe('AnnouncementState', () => {
         },
       });
 
-      store.dispatch(new UpdateItem(updated)).subscribe(() => {
+      store.dispatch(new UpdateAnnouncement(updated)).subscribe(() => {
         const state = store.selectSnapshot(
           (s: any) => s.announcement,
         ) as AnnouncementStateModel;
@@ -285,7 +287,7 @@ describe('AnnouncementState', () => {
     it('should set loading=false on errors', (done) => {
       svc.update.mockReturnValue(throwError(() => new Error('Update failed')));
 
-      store.dispatch(new UpdateItem(mockItem)).subscribe({
+      store.dispatch(new UpdateAnnouncement(mockItem)).subscribe({
         next: () => fail('Expected error'),
         error: () => {
           const state = store.selectSnapshot(
@@ -311,7 +313,7 @@ describe('AnnouncementState', () => {
         },
       });
 
-      store.dispatch(new DeleteItem(1)).subscribe(() => {
+      store.dispatch(new DeleteAnnouncement(1)).subscribe(() => {
         const state = store.selectSnapshot(
           (s: any) => s.announcement,
         ) as AnnouncementStateModel;
@@ -325,7 +327,7 @@ describe('AnnouncementState', () => {
     it('should set loading=false on errors', (done) => {
       svc.delete.mockReturnValue(throwError(() => new Error('Delete failed')));
 
-      store.dispatch(new DeleteItem(1)).subscribe({
+      store.dispatch(new DeleteAnnouncement(1)).subscribe({
         next: () => fail('Expected error'),
         error: () => {
           const state = store.selectSnapshot(

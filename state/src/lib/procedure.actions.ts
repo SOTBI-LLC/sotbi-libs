@@ -4,22 +4,22 @@ export class FetchProcedures {
   public static readonly type = '[PROCEDURE] Fetch all procedures';
 }
 
-export class GetItem {
+export class GetProcedure {
   public static readonly type = '[PROCEDURE] Get item';
   constructor(public payload: number) {}
 }
 
-export class AddItem {
+export class AddProcedure {
   public static readonly type = '[PROCEDURE] Add item';
   constructor(public payload: SimpleEdit2Model) {}
 }
 
-export class EditItem {
+export class EditProcedure {
   public static readonly type = '[PROCEDURE] Edit item';
   constructor(public payload: SimpleEdit2Model) {}
 }
 
-export class DeleteItem {
+export class DeleteProcedure {
   public static readonly type = '[PROCEDURE] Delete item';
   constructor(public payload: number) {}
 }

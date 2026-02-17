@@ -11,12 +11,12 @@ import { removeID } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
-  AddDirtyItem,
-  AddItem,
-  DeleteItem,
-  FetchItems,
-  GetItem,
-  UpdateItem,
+  AddDirtyPaymentRequest,
+  AddPaymentRequest,
+  DeletePaymentRequest,
+  FetchPaymentRequests,
+  GetPaymentRequest,
+  UpdatePaymentRequest,
 } from './payment-request.actions';
 
 export class PaymentRequestStateModel {
@@ -54,7 +54,7 @@ export class PaymentRequestState {
     return state.items;
   }
 
-  @Action(FetchItems)
+  @Action(FetchPaymentRequests)
   public fetchItems({
     getState,
     setState,
@@ -79,10 +79,10 @@ export class PaymentRequestState {
     return;
   }
 
-  @Action(GetItem)
+  @Action(GetPaymentRequest)
   public getItem(
     { patchState, getState, setState }: StateContext<PaymentRequestStateModel>,
-    { payload }: GetItem,
+    { payload }: GetPaymentRequest,
   ) {
     patchState({ loading: true });
     if (!payload) {
@@ -103,10 +103,10 @@ export class PaymentRequestState {
     }
   }
 
-  @Action(AddItem)
+  @Action(AddPaymentRequest)
   public createItem(
     { getState, patchState, setState }: StateContext<PaymentRequestStateModel>,
-    { payload }: AddItem,
+    { payload }: AddPaymentRequest,
   ) {
     patchState({ loading: true });
     return this.itemsService.add(removeID(payload)).pipe(
@@ -124,10 +124,10 @@ export class PaymentRequestState {
     );
   }
 
-  @Action(UpdateItem)
+  @Action(UpdatePaymentRequest)
   public updateItem(
     { getState, setState, patchState }: StateContext<PaymentRequestStateModel>,
-    { payload }: UpdateItem,
+    { payload }: UpdatePaymentRequest,
   ) {
     patchState({ loading: true });
     return this.itemsService.update(payload).pipe(
@@ -150,10 +150,10 @@ export class PaymentRequestState {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeletePaymentRequest)
   public deleteItem(
     { getState, patchState, setState }: StateContext<PaymentRequestStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeletePaymentRequest,
   ) {
     patchState({ loading: true });
     return this.itemsService.delete(payload).pipe(
@@ -172,10 +172,10 @@ export class PaymentRequestState {
     );
   }
 
-  @Action(AddDirtyItem)
+  @Action(AddDirtyPaymentRequest)
   public addDirtyItem(
     { patchState }: StateContext<PaymentRequestStateModel>,
-    { payload }: AddDirtyItem,
+    { payload }: AddDirtyPaymentRequest,
   ) {
     patchState({ loading: true });
     return this.itemsService.get(payload).pipe(

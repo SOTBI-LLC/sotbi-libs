@@ -7,12 +7,12 @@ import { removeID } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
-  AddItem,
-  DeleteItem,
-  DeleteItems,
-  GetAllItems,
-  GetItem,
-  UpdateItem,
+  AddPaymentAttachment,
+  DeletePaymentAttachment,
+  DeletePaymentAttachments,
+  GetAllPaymentAttachments,
+  GetPaymentAttachment,
+  UpdatePaymentAttachment,
 } from './payment-attachment.actions';
 
 export class PaymentAttachmentStateModel {
@@ -52,14 +52,14 @@ export class PaymentAttachmentState {
     return state.items;
   }
 
-  @Action(GetAllItems)
+  @Action(GetAllPaymentAttachments)
   public GetAllItems(
     {
       getState,
       setState,
       patchState,
     }: StateContext<PaymentAttachmentStateModel>,
-    { payload }: GetAllItems,
+    { payload }: GetAllPaymentAttachments,
   ) {
     // console.log('PaymentAttachmentState::FetchItems');
     const state = getState();
@@ -81,10 +81,10 @@ export class PaymentAttachmentState {
     return;
   }
 
-  @Action(GetItem)
+  @Action(GetPaymentAttachment)
   public getItem(
     { patchState, getState }: StateContext<PaymentAttachmentStateModel>,
-    { payload }: GetItem,
+    { payload }: GetPaymentAttachment,
   ) {
     patchState({ loading: true });
     if (!payload) {
@@ -108,14 +108,14 @@ export class PaymentAttachmentState {
     }
   }
 
-  @Action(AddItem)
+  @Action(AddPaymentAttachment)
   public createItem(
     {
       getState,
       patchState,
       setState,
     }: StateContext<PaymentAttachmentStateModel>,
-    { payload }: AddItem,
+    { payload }: AddPaymentAttachment,
   ) {
     // console.log('PaymentAttachmentState::AddItem', payload);
     patchState({ loading: true });
@@ -134,14 +134,14 @@ export class PaymentAttachmentState {
     );
   }
 
-  @Action(UpdateItem)
+  @Action(UpdatePaymentAttachment)
   public updateItem(
     {
       getState,
       setState,
       patchState,
     }: StateContext<PaymentAttachmentStateModel>,
-    { payload }: UpdateItem,
+    { payload }: UpdatePaymentAttachment,
   ) {
     // console.log('PaymentAttachmentState::UpdateItem', payload);
     patchState({ loading: true });
@@ -164,14 +164,14 @@ export class PaymentAttachmentState {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeletePaymentAttachment)
   public deleteItem(
     {
       getState,
       patchState,
       setState,
     }: StateContext<PaymentAttachmentStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeletePaymentAttachment,
   ) {
     // console.log('PaymentAttachmentState::DeleteItem', payload);
     patchState({ loading: true });
@@ -189,10 +189,10 @@ export class PaymentAttachmentState {
     );
   }
 
-  @Action(DeleteItems)
+  @Action(DeletePaymentAttachments)
   public deleteItems(
     { patchState }: StateContext<PaymentAttachmentStateModel>,
-    { payload }: DeleteItems,
+    { payload }: DeletePaymentAttachments,
   ) {
     // console.log('PaymentAttachmentState::DeleteItems', payload);
     patchState({ loading: true });

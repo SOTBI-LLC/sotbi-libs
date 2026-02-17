@@ -8,13 +8,13 @@ import { removeID } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
-  AddDirtyItem,
-  AddItem,
-  DeleteItem,
-  FetchItems,
-  GetItem,
+  AddDirtyEgrnRequest,
+  AddEgrnRequest,
+  DeleteEgrnRequest,
+  FetchEgrnRequests,
+  GetEgrnRequest,
   RemoveRealEstate,
-  UpdateItem,
+  UpdateEgrnRequest,
 } from './egrn-request.actions';
 
 export class EgrnRequestStateModel {
@@ -56,13 +56,13 @@ export class EgrnRequestState {
   }
 
   public ngxsOnInit({ dispatch }: StateContext<EgrnRequestStateModel>) {
-    dispatch(new FetchItems());
+    dispatch(new FetchEgrnRequests());
   }
 
-  @Action(FetchItems)
+  @Action(FetchEgrnRequests)
   public fetchItems(
     { getState, setState, patchState }: StateContext<EgrnRequestStateModel>,
-    { payload }: FetchItems,
+    { payload }: FetchEgrnRequests,
   ) {
     // console.log('EgrnState::FetchItems', payload);
     const state = getState();
@@ -83,10 +83,10 @@ export class EgrnRequestState {
     }
   }
 
-  @Action(GetItem)
+  @Action(GetEgrnRequest)
   public getItem(
     { patchState }: StateContext<EgrnRequestStateModel>,
-    { payload }: GetItem,
+    { payload }: GetEgrnRequest,
   ) {
     patchState({ loading: true });
     if (!payload) {
@@ -101,10 +101,10 @@ export class EgrnRequestState {
     }
   }
 
-  @Action(AddItem)
+  @Action(AddEgrnRequest)
   public createItem(
     { getState, patchState, setState }: StateContext<EgrnRequestStateModel>,
-    { payload }: AddItem,
+    { payload }: AddEgrnRequest,
   ) {
     // console.log('EgrnState::AddItem', payload);
     patchState({ loading: true });
@@ -123,10 +123,10 @@ export class EgrnRequestState {
     );
   }
 
-  @Action(AddDirtyItem)
+  @Action(AddDirtyEgrnRequest)
   public AddDirtyItem(
     { patchState }: StateContext<EgrnRequestStateModel>,
-    { payload }: AddDirtyItem,
+    { payload }: AddDirtyEgrnRequest,
   ) {
     return this.itemsService.get(payload).pipe(
       tap((item: EgrnRequest) => {
@@ -158,10 +158,10 @@ export class EgrnRequestState {
     );
   }
 
-  @Action(UpdateItem)
+  @Action(UpdateEgrnRequest)
   public updateItem(
     { getState, setState, patchState }: StateContext<EgrnRequestStateModel>,
-    { payload }: UpdateItem,
+    { payload }: UpdateEgrnRequest,
   ) {
     // console.log('EgrnState::UpdateItem', payload);
     patchState({ loading: true });
@@ -182,10 +182,10 @@ export class EgrnRequestState {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteEgrnRequest)
   public deleteItem(
     { getState, patchState, setState }: StateContext<EgrnRequestStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteEgrnRequest,
   ) {
     // console.log('EgrnState::DeleteItem', payload);
     patchState({ loading: true });

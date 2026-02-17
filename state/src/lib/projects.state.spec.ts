@@ -1,16 +1,16 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Store, provideStore, provideStates } from '@ngxs/store';
+import { Store, provideStates, provideStore } from '@ngxs/store';
 import { ProjectService } from '@sotbi/data-access';
 import type { Project } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import {
-  AddItem,
-  DeleteItem,
-  EditItem,
+  AddProject,
+  DeleteProject,
+  EditProject,
   FetchAllProjects,
   FetchProjects,
-  GetItem,
+  GetProject,
 } from './projects.actions';
 import type { ProjectStateModel } from './projects.state';
 import { ProjectsState } from './projects.state';
@@ -383,7 +383,7 @@ describe('ProjectsState', () => {
 
   describe('GetItem Action', () => {
     it('should return default project when id is 0', (done) => {
-      store.dispatch(new GetItem(0)).subscribe(() => {
+      store.dispatch(new GetProject(0)).subscribe(() => {
         const state = store.selectSnapshot(
           (state: any) => state.projects,
         ) as ProjectStateModel;
@@ -408,7 +408,7 @@ describe('ProjectsState', () => {
       // Reset spy to ensure clean check
       projectService.get.mockClear();
 
-      store.dispatch(new GetItem(1)).subscribe(() => {
+      store.dispatch(new GetProject(1)).subscribe(() => {
         const state = store.selectSnapshot(
           (state: any) => state.projects,
         ) as ProjectStateModel;
@@ -433,7 +433,7 @@ describe('ProjectsState', () => {
 
       projectService.get.mockReturnValue(of(mockProject));
 
-      store.dispatch(new GetItem(1)).subscribe(() => {
+      store.dispatch(new GetProject(1)).subscribe(() => {
         const state = store.selectSnapshot(
           (state: any) => state.projects,
         ) as ProjectStateModel;
@@ -458,7 +458,7 @@ describe('ProjectsState', () => {
         },
       });
 
-      store.dispatch(new GetItem(1)).subscribe(() => {
+      store.dispatch(new GetProject(1)).subscribe(() => {
         // After the operation completes, loading should be false
         const state = store.selectSnapshot(
           (state: any) => state.projects,
@@ -472,7 +472,7 @@ describe('ProjectsState', () => {
       const error = new Error('Get project failed');
       projectService.get.mockReturnValue(throwError(() => error));
 
-      store.dispatch(new GetItem(1)).subscribe({
+      store.dispatch(new GetProject(1)).subscribe({
         error: () => {
           const state = store.selectSnapshot(
             (state: any) => state.projects,
@@ -495,7 +495,7 @@ describe('ProjectsState', () => {
         },
       });
 
-      store.dispatch(new GetItem(2)).subscribe(() => {
+      store.dispatch(new GetProject(2)).subscribe(() => {
         const state = store.selectSnapshot(
           (state: any) => state.projects,
         ) as ProjectStateModel;
@@ -511,7 +511,7 @@ describe('ProjectsState', () => {
       const newProject = { ...mockProject, id: 3, name: 'New Project' };
       projectService.create.mockReturnValue(of(newProject));
 
-      store.dispatch(new AddItem({ name: 'New Project' })).subscribe(() => {
+      store.dispatch(new AddProject({ name: 'New Project' })).subscribe(() => {
         const state = store.selectSnapshot(
           (state: any) => state.projects,
         ) as ProjectStateModel;
@@ -544,14 +544,16 @@ describe('ProjectsState', () => {
       const newProject = { ...mockProject, id: 99, name: 'Newest Project' };
       projectService.create.mockReturnValue(of(newProject));
 
-      store.dispatch(new AddItem({ name: 'Newest Project' })).subscribe(() => {
-        const state = store.selectSnapshot(
-          (state: any) => state.projects,
-        ) as ProjectStateModel;
-        expect(state.items[0]).toEqual(newProject);
-        expect(state.items[1]).toEqual(mockProject);
-        done();
-      });
+      store
+        .dispatch(new AddProject({ name: 'Newest Project' }))
+        .subscribe(() => {
+          const state = store.selectSnapshot(
+            (state: any) => state.projects,
+          ) as ProjectStateModel;
+          expect(state.items[0]).toEqual(newProject);
+          expect(state.items[1]).toEqual(mockProject);
+          done();
+        });
     });
 
     it('should update maps when adding project', (done) => {
@@ -559,7 +561,7 @@ describe('ProjectsState', () => {
       projectService.create.mockReturnValue(of(newProject));
 
       store
-        .dispatch(new AddItem({ name: 'Map Test Project' }))
+        .dispatch(new AddProject({ name: 'Map Test Project' }))
         .subscribe(() => {
           const state = store.selectSnapshot(
             (state: any) => state.projects,
@@ -574,7 +576,7 @@ describe('ProjectsState', () => {
       const error = new Error('Create failed');
       projectService.create.mockReturnValue(throwError(() => error));
 
-      store.dispatch(new AddItem({ name: 'Failed Project' })).subscribe({
+      store.dispatch(new AddProject({ name: 'Failed Project' })).subscribe({
         error: (err) => {
           expect(console.error).toHaveBeenCalledWith('Create failed');
           expect(err).toBeDefined();
@@ -593,14 +595,16 @@ describe('ProjectsState', () => {
       };
       projectService.create.mockReturnValue(of(complexProject));
 
-      store.dispatch(new AddItem({ name: 'Complex Project' })).subscribe(() => {
-        const state = store.selectSnapshot(
-          (state: any) => state.projects,
-        ) as ProjectStateModel;
-        const shortItem = state.shortItems.find((item) => item.id === 5);
-        expect(shortItem).toEqual({ id: 5, name: 'Complex Project' });
-        done();
-      });
+      store
+        .dispatch(new AddProject({ name: 'Complex Project' }))
+        .subscribe(() => {
+          const state = store.selectSnapshot(
+            (state: any) => state.projects,
+          ) as ProjectStateModel;
+          const shortItem = state.shortItems.find((item) => item.id === 5);
+          expect(shortItem).toEqual({ id: 5, name: 'Complex Project' });
+          done();
+        });
     });
   });
 
@@ -621,7 +625,7 @@ describe('ProjectsState', () => {
       projectService.save.mockReturnValue(of(editedProject));
 
       store
-        .dispatch(new EditItem({ id: 1, name: 'Updated Project' }))
+        .dispatch(new EditProject({ id: 1, name: 'Updated Project' }))
         .subscribe(() => {
           const state = store.selectSnapshot(
             (state: any) => state.projects,
@@ -644,7 +648,7 @@ describe('ProjectsState', () => {
       };
       projectService.save.mockReturnValue(of(editedProject));
 
-      store.dispatch(new EditItem(payload)).subscribe(() => {
+      store.dispatch(new EditProject(payload)).subscribe(() => {
         expect(projectService.save).toHaveBeenCalledWith(
           1,
           expect.objectContaining({ name: 'Updated Name', client_id: 5 }),
@@ -672,7 +676,7 @@ describe('ProjectsState', () => {
       projectService.save.mockReturnValue(of(editedProject));
 
       store
-        .dispatch(new EditItem({ id: 2, name: 'Modified Project' }))
+        .dispatch(new EditProject({ id: 2, name: 'Modified Project' }))
         .subscribe(() => {
           const state = store.selectSnapshot(
             (state: any) => state.projects,
@@ -701,7 +705,7 @@ describe('ProjectsState', () => {
       projectService.save.mockReturnValue(of(editedProject));
 
       store
-        .dispatch(new EditItem({ id: 1, name: 'New Name' }))
+        .dispatch(new EditProject({ id: 1, name: 'New Name' }))
         .subscribe(() => {
           const state = store.selectSnapshot(
             (state: any) => state.projects,
@@ -717,13 +721,15 @@ describe('ProjectsState', () => {
       const error = new Error('Save failed');
       projectService.save.mockReturnValue(throwError(() => error));
 
-      store.dispatch(new EditItem({ id: 1, name: 'Failed Update' })).subscribe({
-        error: (err) => {
-          expect(console.error).toHaveBeenCalledWith('Save failed');
-          expect(err).toBeDefined();
-          done();
-        },
-      });
+      store
+        .dispatch(new EditProject({ id: 1, name: 'Failed Update' }))
+        .subscribe({
+          error: (err) => {
+            expect(console.error).toHaveBeenCalledWith('Save failed');
+            expect(err).toBeDefined();
+            done();
+          },
+        });
     });
 
     it('should update maps with new name', (done) => {
@@ -742,7 +748,7 @@ describe('ProjectsState', () => {
       projectService.save.mockReturnValue(of(editedProject));
 
       store
-        .dispatch(new EditItem({ id: 1, name: 'Brand New Name' }))
+        .dispatch(new EditProject({ id: 1, name: 'Brand New Name' }))
         .subscribe(() => {
           const state = store.selectSnapshot(
             (state: any) => state.projects,
@@ -772,7 +778,7 @@ describe('ProjectsState', () => {
 
       projectService.delete.mockReturnValue(of(undefined as any));
 
-      store.dispatch(new DeleteItem(1)).subscribe(() => {
+      store.dispatch(new DeleteProject(1)).subscribe(() => {
         const state = store.selectSnapshot(
           (state: any) => state.projects,
         ) as ProjectStateModel;
@@ -799,7 +805,7 @@ describe('ProjectsState', () => {
 
       projectService.delete.mockReturnValue(of(undefined as any));
 
-      store.dispatch(new DeleteItem(2)).subscribe(() => {
+      store.dispatch(new DeleteProject(2)).subscribe(() => {
         const state = store.selectSnapshot(
           (state: any) => state.projects,
         ) as ProjectStateModel;
@@ -823,7 +829,7 @@ describe('ProjectsState', () => {
 
       projectService.delete.mockReturnValue(of(undefined as any));
 
-      store.dispatch(new DeleteItem(2)).subscribe(() => {
+      store.dispatch(new DeleteProject(2)).subscribe(() => {
         const state = store.selectSnapshot(
           (state: any) => state.projects,
         ) as ProjectStateModel;
@@ -851,7 +857,7 @@ describe('ProjectsState', () => {
 
       projectService.delete.mockReturnValue(of(undefined as any));
 
-      store.dispatch(new DeleteItem(2)).subscribe(() => {
+      store.dispatch(new DeleteProject(2)).subscribe(() => {
         const state = store.selectSnapshot(
           (state: any) => state.projects,
         ) as ProjectStateModel;
@@ -868,7 +874,7 @@ describe('ProjectsState', () => {
       const error = new Error('Delete failed');
       projectService.delete.mockReturnValue(throwError(() => error));
 
-      store.dispatch(new DeleteItem(1)).subscribe({
+      store.dispatch(new DeleteProject(1)).subscribe({
         error: (err) => {
           expect(console.error).toHaveBeenCalledWith('Delete failed');
           expect(err).toBeDefined();
@@ -893,7 +899,7 @@ describe('ProjectsState', () => {
 
       projectService.delete.mockReturnValue(of(undefined as any));
 
-      store.dispatch(new DeleteItem(1)).subscribe(() => {
+      store.dispatch(new DeleteProject(1)).subscribe(() => {
         const state = store.selectSnapshot(
           (state: any) => state.projects,
         ) as ProjectStateModel;
@@ -946,8 +952,8 @@ describe('ProjectsState', () => {
 
       // Execute sequence
       store.dispatch(new FetchAllProjects()).subscribe(() => {
-        store.dispatch(new AddItem({ name: 'Created' })).subscribe(() => {
-          store.dispatch(new DeleteItem(10)).subscribe(() => {
+        store.dispatch(new AddProject({ name: 'Created' })).subscribe(() => {
+          store.dispatch(new DeleteProject(10)).subscribe(() => {
             const state = store.selectSnapshot(
               (state: any) => state.projects,
             ) as ProjectStateModel;
@@ -967,7 +973,7 @@ describe('ProjectsState', () => {
       const minimalProject: Project = { id: 99, name: 'Minimal' };
       projectService.create.mockReturnValue(of(minimalProject));
 
-      store.dispatch(new AddItem({ name: 'Minimal' })).subscribe(() => {
+      store.dispatch(new AddProject({ name: 'Minimal' })).subscribe(() => {
         const state = store.selectSnapshot(
           (state: any) => state.projects,
         ) as ProjectStateModel;
@@ -990,7 +996,7 @@ describe('ProjectsState', () => {
       };
       projectService.create.mockReturnValue(of(fullProject));
 
-      store.dispatch(new AddItem(fullProject)).subscribe({
+      store.dispatch(new AddProject(fullProject)).subscribe({
         next: () => {
           const state = store.selectSnapshot(
             (state: any) => state.projects,
@@ -1018,8 +1024,8 @@ describe('ProjectsState', () => {
 
       // Dispatch multiple GetItem actions
       const actions = [
-        store.dispatch(new GetItem(1)),
-        store.dispatch(new GetItem(2)),
+        store.dispatch(new GetProject(1)),
+        store.dispatch(new GetProject(2)),
       ];
 
       Promise.all(actions).then(() => {

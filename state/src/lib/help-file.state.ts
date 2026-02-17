@@ -7,12 +7,12 @@ import { removeID } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
-  AddEmptyItem,
-  AddItem,
-  DeleteItem,
-  FetchItems,
-  StartEditItem,
-  UpdateItem,
+  AddEmptyHelpFile,
+  AddHelpFile,
+  DeleteHelpFile,
+  FetchHelpFiles,
+  StartEditHelpFile,
+  UpdateHelpFile,
 } from './help-file.actions';
 
 export interface HelpFileStateModel {
@@ -46,10 +46,10 @@ export class HelpFileState {
   }
 
   public ngxsOnInit({ dispatch }: StateContext<HelpFileStateModel>) {
-    dispatch(new FetchItems());
+    dispatch(new FetchHelpFiles());
   }
 
-  @Action(FetchItems)
+  @Action(FetchHelpFiles)
   public FetchItems({
     getState,
     setState,
@@ -77,10 +77,10 @@ export class HelpFileState {
     }
   }
 
-  @Action(AddItem)
+  @Action(AddHelpFile)
   public createItem(
     { getState, patchState, setState }: StateContext<HelpFileStateModel>,
-    { payload }: AddItem,
+    { payload }: AddHelpFile,
   ) {
     // console.log('HelpFileStateModel::AddItem', payload);
     patchState({ loading: true });
@@ -103,7 +103,7 @@ export class HelpFileState {
     );
   }
 
-  @Action(AddEmptyItem)
+  @Action(AddEmptyHelpFile)
   public addEmptyItem({
     getState,
     patchState,
@@ -114,10 +114,10 @@ export class HelpFileState {
     return patchState({ items: [...state.items, item], count: state.count });
   }
 
-  @Action(UpdateItem)
+  @Action(UpdateHelpFile)
   public UpdateItem(
     { getState, setState, patchState }: StateContext<HelpFileStateModel>,
-    { payload }: UpdateItem,
+    { payload }: UpdateHelpFile,
   ) {
     // console.log('HelpFileStateModel::UpdateItem', payload);
     patchState({ loading: true });
@@ -140,10 +140,10 @@ export class HelpFileState {
     );
   }
 
-  @Action(StartEditItem)
+  @Action(StartEditHelpFile)
   public editItem(
     { getState, patchState }: StateContext<HelpFileStateModel>,
-    { payload }: StartEditItem,
+    { payload }: StartEditHelpFile,
   ) {
     const state = getState();
     if (payload > 0) {
@@ -152,10 +152,10 @@ export class HelpFileState {
     }
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteHelpFile)
   public deleteItem(
     { getState, patchState, setState }: StateContext<HelpFileStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteHelpFile,
   ) {
     // console.log('HelpFileStateModel::DeleteItem', payload);
     patchState({ loading: true });

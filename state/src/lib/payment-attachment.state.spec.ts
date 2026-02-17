@@ -6,12 +6,12 @@ import type { PaymentAttachment, User } from '@sotbi/models';
 import { PaymentAttachmentType } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import {
-  AddItem,
-  DeleteItem,
-  DeleteItems,
-  GetAllItems,
-  GetItem,
-  UpdateItem,
+  AddPaymentAttachment,
+  DeletePaymentAttachment,
+  DeletePaymentAttachments,
+  GetAllPaymentAttachments,
+  GetPaymentAttachment,
+  UpdatePaymentAttachment,
 } from './payment-attachment.actions';
 import type { PaymentAttachmentStateModel } from './payment-attachment.state';
 import { PaymentAttachmentState } from './payment-attachment.state';
@@ -152,7 +152,7 @@ describe('PaymentAttachmentState', () => {
     it('should fetch items when state is empty (success path)', () => {
       service.GetAll.mockReturnValue(of(mockAttachments));
 
-      store.dispatch(new GetAllItems(1));
+      store.dispatch(new GetAllPaymentAttachments(1));
 
       const items = store.selectSnapshot(PaymentAttachmentState.getItems);
       const loading = store.selectSnapshot(PaymentAttachmentState.getLoading);
@@ -172,7 +172,7 @@ describe('PaymentAttachmentState', () => {
         },
       });
 
-      store.dispatch(new GetAllItems(1));
+      store.dispatch(new GetAllPaymentAttachments(1));
 
       expect(service.GetAll).not.toHaveBeenCalled();
     });
@@ -182,7 +182,7 @@ describe('PaymentAttachmentState', () => {
         throwError(() => new Error('Fetch failed')),
       );
 
-      store.dispatch(new GetAllItems(1)).subscribe({
+      store.dispatch(new GetAllPaymentAttachments(1)).subscribe({
         error: () => {
           const loading = store.selectSnapshot(
             PaymentAttachmentState.getLoading,
@@ -198,7 +198,7 @@ describe('PaymentAttachmentState', () => {
     it('should get item by ID (success path)', (done) => {
       service.get.mockReturnValue(of(mockAttachment));
 
-      store.dispatch(new GetItem(1)).subscribe({
+      store.dispatch(new GetPaymentAttachment(1)).subscribe({
         next: () => {
           const selected = store.selectSnapshot(
             PaymentAttachmentState.getSelected,
@@ -220,7 +220,7 @@ describe('PaymentAttachmentState', () => {
     });
 
     it('should create new default item when payload is 0 (edge case)', () => {
-      store.dispatch(new GetItem(0));
+      store.dispatch(new GetPaymentAttachment(0));
 
       const selected = store.selectSnapshot(PaymentAttachmentState.getSelected);
       const loading = store.selectSnapshot(PaymentAttachmentState.getLoading);
@@ -238,7 +238,7 @@ describe('PaymentAttachmentState', () => {
       expect(loading).toBe(false);
 
       // zero should be treated as falsy new-item case as well
-      store.dispatch(new GetItem(0));
+      store.dispatch(new GetPaymentAttachment(0));
       const selectedZero = store.selectSnapshot(
         PaymentAttachmentState.getSelected,
       );
@@ -248,7 +248,7 @@ describe('PaymentAttachmentState', () => {
     it('should handle get item error and reset loading', (done) => {
       service.get.mockReturnValue(throwError(() => new Error('Get failed')));
 
-      store.dispatch(new GetItem(1)).subscribe({
+      store.dispatch(new GetPaymentAttachment(1)).subscribe({
         error: () => {
           const loading = store.selectSnapshot(
             PaymentAttachmentState.getLoading,
@@ -281,7 +281,7 @@ describe('PaymentAttachmentState', () => {
 
       service.add.mockReturnValue(of(mockAttachment));
 
-      store.dispatch(new AddItem(newItem)).subscribe(() => {
+      store.dispatch(new AddPaymentAttachment(newItem)).subscribe(() => {
         const items = store.selectSnapshot(PaymentAttachmentState.getItems);
         const selected = store.selectSnapshot(
           PaymentAttachmentState.getSelected,
@@ -305,7 +305,7 @@ describe('PaymentAttachmentState', () => {
         type: PaymentAttachmentType.REQUEST,
       };
 
-      store.dispatch(new AddItem(newItem)).subscribe({
+      store.dispatch(new AddPaymentAttachment(newItem)).subscribe({
         next: () => {
           const loading = store.selectSnapshot(
             PaymentAttachmentState.getLoading,
@@ -347,7 +347,7 @@ describe('PaymentAttachmentState', () => {
 
       store
         .dispatch(
-          new UpdateItem({
+          new UpdatePaymentAttachment({
             id: 1,
             link_name: 'Updated Name',
             type: PaymentAttachmentType.REQUEST,
@@ -395,7 +395,7 @@ describe('PaymentAttachmentState', () => {
 
       store
         .dispatch(
-          new UpdateItem({
+          new UpdatePaymentAttachment({
             id: 999,
             link_name: 'Does Not Exist',
             type: PaymentAttachmentType.REQUEST,
@@ -420,7 +420,7 @@ describe('PaymentAttachmentState', () => {
 
       store
         .dispatch(
-          new UpdateItem({
+          new UpdatePaymentAttachment({
             id: 1,
             link_name: 'X',
             type: PaymentAttachmentType.REQUEST,
@@ -465,7 +465,7 @@ describe('PaymentAttachmentState', () => {
     it('should delete item (success path)', (done) => {
       service.delete.mockReturnValue(of(undefined));
 
-      store.dispatch(new DeleteItem(1)).subscribe(() => {
+      store.dispatch(new DeletePaymentAttachment(1)).subscribe(() => {
         const items = store.selectSnapshot(PaymentAttachmentState.getItems);
         const loading = store.selectSnapshot(PaymentAttachmentState.getLoading);
 
@@ -482,7 +482,7 @@ describe('PaymentAttachmentState', () => {
         throwError(() => new Error('Delete failed')),
       );
 
-      store.dispatch(new DeleteItem(1)).subscribe({
+      store.dispatch(new DeletePaymentAttachment(1)).subscribe({
         next: () => {
           const loading = store.selectSnapshot(
             PaymentAttachmentState.getLoading,
@@ -506,7 +506,7 @@ describe('PaymentAttachmentState', () => {
       const files = ['a.pdf', 'b.docx'];
       service.deleteMultiple.mockReturnValue(of(undefined));
 
-      store.dispatch(new DeleteItems(files)).subscribe(() => {
+      store.dispatch(new DeletePaymentAttachments(files)).subscribe(() => {
         const loading = store.selectSnapshot(PaymentAttachmentState.getLoading);
         expect(service.deleteMultiple).toHaveBeenCalledWith(files);
         expect(loading).toBe(false);
@@ -519,7 +519,7 @@ describe('PaymentAttachmentState', () => {
         throwError(() => new Error('Bulk failed')),
       );
 
-      store.dispatch(new DeleteItems(['x'])).subscribe({
+      store.dispatch(new DeletePaymentAttachments(['1'])).subscribe({
         next: () => {
           const loading = store.selectSnapshot(
             PaymentAttachmentState.getLoading,
@@ -542,7 +542,7 @@ describe('PaymentAttachmentState', () => {
     it('should maintain consistent state across fetch -> add -> delete', (done) => {
       // Fetch
       service.GetAll.mockReturnValue(of(mockAttachments));
-      store.dispatch(new GetAllItems(1)).subscribe(() => {
+      store.dispatch(new GetAllPaymentAttachments(1)).subscribe(() => {
         expect(
           store.selectSnapshot(PaymentAttachmentState.getItems).length,
         ).toBe(2);
@@ -555,28 +555,30 @@ describe('PaymentAttachmentState', () => {
         };
         service.add.mockReturnValue(of(created));
 
-        store.dispatch(new AddItem({ link_name: 'New' })).subscribe(() => {
-          expect(
-            store.selectSnapshot(PaymentAttachmentState.getItems).length,
-          ).toBe(3);
-          expect(
-            store.selectSnapshot(PaymentAttachmentState.getItems)[0],
-          ).toEqual(created);
-
-          // Delete
-          service.delete.mockReturnValue(of(undefined));
-          store.dispatch(new DeleteItem(3)).subscribe(() => {
+        store
+          .dispatch(new AddPaymentAttachment({ link_name: 'New' }))
+          .subscribe(() => {
             expect(
               store.selectSnapshot(PaymentAttachmentState.getItems).length,
-            ).toBe(2);
+            ).toBe(3);
             expect(
-              store
-                .selectSnapshot(PaymentAttachmentState.getItems)
-                .find((i) => i.id === 3),
-            ).toBeUndefined();
-            done();
+              store.selectSnapshot(PaymentAttachmentState.getItems)[0],
+            ).toEqual(created);
+
+            // Delete
+            service.delete.mockReturnValue(of(undefined));
+            store.dispatch(new DeletePaymentAttachment(3)).subscribe(() => {
+              expect(
+                store.selectSnapshot(PaymentAttachmentState.getItems).length,
+              ).toBe(2);
+              expect(
+                store
+                  .selectSnapshot(PaymentAttachmentState.getItems)
+                  .find((i) => i.id === 3),
+              ).toBeUndefined();
+              done();
+            });
           });
-        });
       });
     });
   });

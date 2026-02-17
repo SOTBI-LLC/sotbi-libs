@@ -18,16 +18,16 @@ import { catchError, finalize, map, take, tap } from 'rxjs/operators';
 import {
   AddDebtorPolicy,
   AddItem,
-  ClearSelected,
+  ClearSelectedDebtor,
+  DeleteDebtorItem,
   DeleteDebtorPolicy,
-  DeleteItem,
   FetchDebtors,
-  FetchPage,
+  FetchDebtorsPage,
   FetchProjectsAndDebtors,
   GetDebtor,
-  RestoreItem,
+  RestoreDebtor,
+  UpdateDebtorItem,
   UpdateDebtorPolicy,
-  UpdateItem,
 } from './debtors.actions';
 import type { itemMap } from './simple-edit.state.model';
 
@@ -263,10 +263,10 @@ export class DebtorsState {
     return;
   }
 
-  @Action(FetchPage, { cancelUncompleted: true })
+  @Action(FetchDebtorsPage, { cancelUncompleted: true })
   public fetchPage(
     { getState, setState }: StateContext<DebtorStateModel>,
-    { payload }: FetchPage,
+    { payload }: FetchDebtorsPage,
   ) {
     console.log('DebtorsState::FetchPage', getState().debtors.length);
     return this.debtorSrv
@@ -318,7 +318,7 @@ export class DebtorsState {
     return;
   }
 
-  @Action(ClearSelected)
+  @Action(ClearSelectedDebtor)
   public clearSelected({ patchState }: StateContext<DebtorStateModel>) {
     return patchState({ selected: null });
   }
@@ -341,10 +341,10 @@ export class DebtorsState {
     );
   }
 
-  @Action(UpdateItem)
+  @Action(UpdateDebtorItem)
   public updateItem(
     { patchState, getState, setState }: StateContext<DebtorStateModel>,
-    { payload }: UpdateItem,
+    { payload }: UpdateDebtorItem,
   ) {
     patchState({ loading: true });
     const state = getState();
@@ -367,10 +367,10 @@ export class DebtorsState {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteDebtorItem)
   public deleteItem(
     { getState, patchState, dispatch }: StateContext<DebtorStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteDebtorItem,
   ) {
     patchState({ loading: true });
     const state = getState();
@@ -393,7 +393,7 @@ export class DebtorsState {
           .onAction()
           .pipe(take(1))
           .subscribe(() => {
-            dispatch(new RestoreItem(payload));
+            dispatch(new RestoreDebtor(payload));
           });
       }),
       catchError((error) => {
@@ -404,10 +404,10 @@ export class DebtorsState {
     );
   }
 
-  @Action(RestoreItem)
+  @Action(RestoreDebtor)
   public restoreItem(
     { getState, patchState, setState }: StateContext<DebtorStateModel>,
-    { payload }: RestoreItem,
+    { payload }: RestoreDebtor,
   ) {
     patchState({ loading: true });
     const state = getState();

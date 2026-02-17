@@ -4,7 +4,12 @@ import { Action, Selector, State } from '@ngxs/store';
 import { SimpleEditService, SimpleEditServiceNames } from '@sotbi/data-access';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { AddItem, DeleteItem, EditItem, FetchPersons } from './persons.actions';
+import {
+  AddPerson,
+  DeletePerson,
+  EditPerson,
+  FetchPersons,
+} from './persons.actions';
 import type { SimpleEditStateModel } from './simple-edit.state.model';
 
 @State<SimpleEditStateModel>({
@@ -60,10 +65,10 @@ export class PersonsState {
     }
   }
 
-  @Action(AddItem)
+  @Action(AddPerson)
   public addItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: AddItem,
+    { payload }: AddPerson,
   ) {
     const state = getState();
     this.itemsService.create(payload.name, SimpleEditServiceNames.PERSON).pipe(
@@ -84,10 +89,10 @@ export class PersonsState {
     );
   }
 
-  @Action(EditItem)
+  @Action(EditPerson)
   public editItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: EditItem,
+    { payload }: EditPerson,
   ) {
     const state = getState();
     this.itemsService.save$(payload, SimpleEditServiceNames.PERSON).pipe(
@@ -107,10 +112,10 @@ export class PersonsState {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeletePerson)
   public deleteItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeletePerson,
   ) {
     const state = getState();
     this.itemsService.delete(payload, SimpleEditServiceNames.PERSON).pipe(

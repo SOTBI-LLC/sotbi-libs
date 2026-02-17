@@ -8,14 +8,21 @@ import {
 import { emptySimpleEdit2 } from '@sotbi/models';
 import { catchError, tap, throwError } from 'rxjs';
 import {
-  AddEmptyItem,
-  AddItem,
-  DeleteItem,
-  EditItem,
+  AddAdvertType,
+  AddEmptyAdvertType,
+  DeleteAdvertType,
+  EditAdvertType,
   FetchAdvertTypes,
 } from './adverttype.actions';
 import type { SimpleEdit2StateModel } from './simple-edit.state.model';
-
+export {
+  AddAdvertType,
+  AddEmptyAdvertType,
+  DeleteAdvertType,
+  EditAdvertType,
+  FetchAdvertTypes,
+  GetAdvertType,
+} from './adverttype.actions';
 @State<SimpleEdit2StateModel>({
   name: 'adverttypes',
   defaults: {
@@ -76,10 +83,10 @@ export class AdvertTypesState implements NgxsOnInit {
     return undefined;
   }
 
-  @Action(AddItem)
+  @Action(AddAdvertType)
   public addItem(
     { getState, patchState }: StateContext<SimpleEdit2StateModel>,
-    { payload }: AddItem,
+    { payload }: AddAdvertType,
   ) {
     const state = getState();
     return this.itemsService
@@ -108,7 +115,7 @@ export class AdvertTypesState implements NgxsOnInit {
       );
   }
 
-  @Action(AddEmptyItem)
+  @Action(AddEmptyAdvertType)
   public addEmptyItem({
     getState,
     patchState,
@@ -119,10 +126,10 @@ export class AdvertTypesState implements NgxsOnInit {
     });
   }
 
-  @Action(EditItem)
+  @Action(EditAdvertType)
   public editItem(
     { getState, patchState }: StateContext<SimpleEdit2StateModel>,
-    { payload }: EditItem,
+    { payload }: EditAdvertType,
   ) {
     const state = getState();
     return this.itemsService
@@ -148,10 +155,10 @@ export class AdvertTypesState implements NgxsOnInit {
       );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteAdvertType)
   public deleteItem(
     { getState, patchState }: StateContext<SimpleEdit2StateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteAdvertType,
   ) {
     const state = getState();
     return this.itemsService

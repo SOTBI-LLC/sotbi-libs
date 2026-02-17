@@ -1,29 +1,29 @@
 import type { PaymentRequest } from '@sotbi/models';
 
-export class FetchItems {
+export class FetchPaymentRequests {
   public static readonly type = '[PAYMENT REQUEST] Fetch items';
 }
 
-export class GetItem {
+export class GetPaymentRequest {
   public static readonly type = '[PAYMENT REQUEST] Get item';
   constructor(public readonly payload: number) {}
 }
-export class AddDirtyItem {
+export class AddDirtyPaymentRequest {
   public static readonly type = '[PAYMENT REQUEST] Add dirty item';
   constructor(public readonly payload: number) {}
 }
 
-export class AddItem {
+export class AddPaymentRequest {
   public static readonly type = '[PAYMENT REQUEST] Add item';
   constructor(public readonly payload: Partial<PaymentRequest>) {}
 }
 
-export class UpdateItem {
+export class UpdatePaymentRequest {
   public static readonly type = '[PAYMENT REQUEST] Update item';
   constructor(public readonly payload: PaymentRequest) {}
 }
 
-export class DeleteItem {
+export class DeletePaymentRequest {
   public static readonly type = '[PAYMENT REQUEST] Delete item';
   constructor(public readonly payload: number) {}
 }

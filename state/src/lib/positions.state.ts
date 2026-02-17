@@ -18,7 +18,7 @@ import {
   UpdatePosition,
 } from './positions.actions';
 
-export const RequiredFields = [
+export const PositionsRequiredFields = [
   'name',
   'user_group_id' /* 'settings', 'staff_type_id' */,
 ];
@@ -69,7 +69,7 @@ export class PositionState implements NgxsOnInit {
 
   @Selector()
   public static canSave(state: PositionStateModel): boolean {
-    return !state.saved && canSave(state.items, RequiredFields);
+    return !state.saved && canSave(state.items, PositionsRequiredFields);
   }
 
   public ngxsOnInit({ dispatch }: StateContext<PositionStateModel>) {
@@ -213,7 +213,7 @@ export class PositionState implements NgxsOnInit {
     let idx = 0;
     const workcategory: Position[] = [];
     const idxs: Map<number, number> = new Map(); // храним соотвествие index в ag-grid и id в бд
-    const fields = new Set(RequiredFields);
+    const fields = new Set(PositionsRequiredFields);
     for (const item of state.items) {
       if (item.dirty) {
         // для всех не сохраненных

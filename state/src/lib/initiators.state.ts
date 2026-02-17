@@ -6,8 +6,8 @@ import type { Initiator } from '@sotbi/models';
 import { catchError, tap, throwError } from 'rxjs';
 import {
   AddInintiator,
-  DeleteItem,
-  EditItem,
+  DeleteInitiator,
+  EditInitiator,
   FetchInitiators,
   GetInintiator,
 } from './initiators.actions';
@@ -120,10 +120,10 @@ export class InitiatorsState {
     );
   }
 
-  @Action(EditItem)
+  @Action(EditInitiator)
   public editItem(
     { getState, setState }: StateContext<InitiatorsStateModel>,
-    { payload }: EditItem,
+    { payload }: EditInitiator,
   ) {
     const state = getState();
     const { id } = payload;
@@ -139,10 +139,10 @@ export class InitiatorsState {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteInitiator)
   public deleteItem(
     { getState, setState }: StateContext<InitiatorsStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteInitiator,
   ) {
     return this.initiatorSrv.delete(payload).pipe(
       tap(() => {

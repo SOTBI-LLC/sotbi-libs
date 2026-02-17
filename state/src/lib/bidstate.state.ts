@@ -20,7 +20,7 @@ import {
 } from './bidstate.actions';
 import type { itemMap } from './simple-edit.state.model';
 
-export const RequiredFields = ['name', 'order'];
+export const BidStateRequiredFields = ['name', 'order'];
 
 export interface BidStateStateModel {
   allItems: BidState[];
@@ -88,7 +88,7 @@ export class BidStateState implements NgxsOnInit {
 
   @Selector()
   public static canSave(state: BidStateStateModel): boolean {
-    return !state.saved && canSave(state.items, RequiredFields);
+    return !state.saved && canSave(state.items, BidStateRequiredFields);
   }
 
   public ngxsOnInit({ dispatch }: StateContext<BidStateStateModel>) {
@@ -282,7 +282,7 @@ export class BidStateState implements NgxsOnInit {
     let idx = 0;
     const states: BidState[] = [];
     const idxs: Map<number, number> = new Map(); // храним соотвествие index в ag-grid и id в бд
-    const fields = new Set(RequiredFields);
+    const fields = new Set(BidStateRequiredFields);
     for (const item of state.items) {
       if (item.dirty) {
         // для всех не сохраненных

@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/utils",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "restricted"

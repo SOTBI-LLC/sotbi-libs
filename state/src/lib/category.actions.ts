@@ -1,26 +1,26 @@
 import type { SimpleEdit2Model } from '@sotbi/models';
 
-export class FetchItems {
+export class FetchCategories {
   public static readonly type = '[CATEGORY] Fetch items';
   // constructor(public payload: { type: string }) {}
 }
 
-export class GetItem {
+export class GetCategory {
   public static readonly type = '[CATEGORY] Get item';
   constructor(public payload: number) {}
 }
 
-export class AddItem {
+export class AddCategory {
   public static readonly type = '[CATEGORY] Add item';
   constructor(public payload: SimpleEdit2Model) {}
 }
 
-export class EditItem {
+export class EditCategory {
   public static readonly type = '[CATEGORY] Edit item';
   constructor(public payload: SimpleEdit2Model) {}
 }
 
-export class DeleteItem {
+export class DeleteCategory {
   public static readonly type = '[CATEGORY] Delete item';
   constructor(public payload: number) {}
 }

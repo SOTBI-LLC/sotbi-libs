@@ -7,15 +7,15 @@ import { bankruptcyManagerFormatter, getDiff } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
-  AddPolicy,
+  AddBankruptcyPolicy,
   ClearSelectedBankruptcy,
   CreateBankruptcy,
   DeleteBankruptcy,
-  DeletePolicy,
+  DeleteBankruptcyPolicy,
   FetchBankruptcies,
   GetBankruptcy,
   UpdateBankruptcy,
-  UpdatePolicy,
+  UpdateBankruptcyPolicy,
 } from './bankruptcy.actions';
 import type { itemMap } from './simple-edit.state.model';
 
@@ -237,10 +237,10 @@ export class BankruptcyState implements NgxsOnInit {
     );
   }
 
-  @Action(UpdatePolicy)
+  @Action(UpdateBankruptcyPolicy)
   public updatePolicy(
     { getState, patchState, dispatch }: StateContext<BankruptcyStateModel>,
-    { payload }: UpdatePolicy,
+    { payload }: UpdateBankruptcyPolicy,
   ) {
     patchState({ loading: true });
     const state = getState();
@@ -255,15 +255,15 @@ export class BankruptcyState implements NgxsOnInit {
       );
       selected.insurance_policies[idx] = payload;
     } else {
-      return dispatch(new AddPolicy(payload));
+      return dispatch(new AddBankruptcyPolicy(payload));
     }
     return patchState({ selected, loading: false });
   }
 
-  @Action(AddPolicy)
+  @Action(AddBankruptcyPolicy)
   public addPolicy(
     { getState, patchState }: StateContext<BankruptcyStateModel>,
-    { payload }: AddPolicy,
+    { payload }: AddBankruptcyPolicy,
   ) {
     patchState({ loading: true });
     const state = getState();
@@ -276,10 +276,10 @@ export class BankruptcyState implements NgxsOnInit {
     patchState({ selected, loading: false });
   }
 
-  @Action(DeletePolicy)
+  @Action(DeleteBankruptcyPolicy)
   public deletePolicy(
     { getState, patchState }: StateContext<BankruptcyStateModel>,
-    { payload }: DeletePolicy,
+    { payload }: DeleteBankruptcyPolicy,
   ) {
     patchState({ loading: true });
     const state = getState();

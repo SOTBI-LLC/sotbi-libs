@@ -19,17 +19,17 @@ export class UpdateCompany {
   constructor(public payload: InsuranceCompany) {}
 }
 
-export class UpdatePolicy {
+export class UpdateInsurancePolicy {
   public static readonly type = '[INSURANCE COMPANY] Update policy';
   constructor(public payload: InsurancePolicy) {}
 }
 
-export class AddPolicy {
+export class AddInsurancePolicy {
   public static readonly type = '[INSURANCE COMPANY] Add policy';
   constructor(public payload: InsurancePolicy) {}
 }
 
-export class DeletePolicy {
+export class DeleteInsurancePolicy {
   public static readonly type = '[INSURANCE COMPANY] Delete policy';
   constructor(public payload: number) {}
 }

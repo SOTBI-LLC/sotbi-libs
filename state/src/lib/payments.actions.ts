@@ -5,7 +5,7 @@ export class GetDebtorPayments {
   constructor(public payload: IPaymentDocumentFilter) {}
 }
 
-export class GetItem {
+export class GetPayment {
   public static readonly type = '[PAYMENTS] Get item';
   constructor(public payload: number) {}
 }

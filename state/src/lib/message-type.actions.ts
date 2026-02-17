@@ -4,17 +4,17 @@ export class FetchMessageTypes {
   public static readonly type = '[EFRSB MESSAGE TYPE] Fetch items';
 }
 
-export class AddItem {
+export class AddMessageType {
   public static readonly type = '[EFRSB MESSAGE TYPE] Add item';
   constructor(public payload: Partial<MessageType>) {}
 }
 
-export class UpdateItem {
+export class UpdateMessageType {
   public static readonly type = '[EFRSB MESSAGE TYPE] Update item';
   constructor(public payload: MessageType) {}
 }
 
-export class DeleteItem {
+export class DeleteMessageType {
   public static readonly type = '[EFRSB MESSAGE TYPE] Delete item';
   constructor(public payload: number) {}
 }

@@ -6,9 +6,9 @@ import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import type { SimpleEditStateModel } from './simple-edit.state.model';
 import {
-  AddItem,
-  DeleteItem,
-  EditItem,
+  AddTarget,
+  DeleteTarget,
+  EditTarget,
   FetchTargetTypes,
 } from './targets.actions';
 
@@ -65,10 +65,10 @@ export class TargetsState {
     }
   }
 
-  @Action(AddItem)
+  @Action(AddTarget)
   public addItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: AddItem,
+    { payload }: AddTarget,
   ) {
     const state = getState();
     return this.itemsService
@@ -89,10 +89,10 @@ export class TargetsState {
       );
   }
 
-  @Action(EditItem)
+  @Action(EditTarget)
   public editItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: EditItem,
+    { payload }: EditTarget,
   ) {
     const state = getState();
     return this.itemsService.save$(payload, SimpleEditServiceNames.TARGET).pipe(
@@ -112,10 +112,10 @@ export class TargetsState {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteTarget)
   public async deleteItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteTarget,
   ) {
     const state = getState();
     await this.itemsService.delete(payload, SimpleEditServiceNames.TARGET);

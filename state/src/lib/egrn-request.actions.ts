@@ -1,6 +1,6 @@
 import type { EgrnRequest } from '@sotbi/models';
 
-export class FetchItems {
+export class FetchEgrnRequests {
   public static readonly type = '[EGRN REQUEST] Fetch items';
   constructor(
     public readonly payload: { refresh: boolean; view: boolean } = {
@@ -10,27 +10,27 @@ export class FetchItems {
   ) {}
 }
 
-export class GetItem {
+export class GetEgrnRequest {
   public static readonly type = '[EGRN REQUEST] Get item';
   constructor(public readonly payload: number) {}
 }
 
-export class AddItem {
+export class AddEgrnRequest {
   public static readonly type = '[EGRN REQUEST] Add item';
   constructor(public readonly payload: Partial<EgrnRequest>) {}
 }
 
-export class AddDirtyItem {
+export class AddDirtyEgrnRequest {
   public static readonly type = '[EGRN REQUEST] Add dirty item';
   constructor(public readonly payload: number) {}
 }
 
-export class UpdateItem {
+export class UpdateEgrnRequest {
   public static readonly type = '[EGRN REQUEST] Update item';
   constructor(public readonly payload: EgrnRequest) {}
 }
 
-export class DeleteItem {
+export class DeleteEgrnRequest {
   public static readonly type = '[EGRN REQUEST] Delete item';
   constructor(public readonly payload: number) {}
 }

@@ -1,15 +1,15 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Store, provideStore, provideStates } from '@ngxs/store';
+import { Store, provideStates, provideStore } from '@ngxs/store';
 import { AccessService } from '@sotbi/data-access';
 import type { Access } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import {
-  CreateItem,
-  DeleteItem,
+  CreateAccess,
+  DeleteAccess,
   FetchAccess,
-  GetItem,
-  UpdateItem,
+  GetAccess,
+  UpdateAccess,
 } from './access.actions';
 import type { AccessStateModel } from './access.state';
 import { AccessState } from './access.state';
@@ -43,9 +43,7 @@ describe('AccessState', () => {
     }).compileComponents();
 
     store = TestBed.inject(Store);
-    accessService = TestBed.inject(
-      AccessService,
-    ) as jest.Mocked<AccessService>;
+    accessService = TestBed.inject(AccessService) as jest.Mocked<AccessService>;
   });
 
   it('should be created', () => {
@@ -289,7 +287,7 @@ describe('AccessState', () => {
       });
 
       it('should select item by id from existing items', () => {
-        store.dispatch(new GetItem({ id: 2 }));
+        store.dispatch(new GetAccess({ id: 2 }));
 
         const selected = store.selectSnapshot(AccessState.getItem);
         expect(selected).toEqual(mockAccess[1]);
@@ -298,14 +296,14 @@ describe('AccessState', () => {
       });
 
       it('should handle non-existent item id', () => {
-        store.dispatch(new GetItem({ id: 999 }));
+        store.dispatch(new GetAccess({ id: 999 }));
 
         const selected = store.selectSnapshot(AccessState.getItem);
         expect(selected).toBeUndefined();
       });
 
       it('should update loading state during item selection', () => {
-        store.dispatch(new GetItem({ id: 1 }));
+        store.dispatch(new GetAccess({ id: 1 }));
 
         // After completion, loading should be false
         const snapshot = store.snapshot();
@@ -325,7 +323,7 @@ describe('AccessState', () => {
         const createdAccess: Access = { id: 5, ...newAccess } as Access;
         accessService.add.mockReturnValue(of(createdAccess));
 
-        store.dispatch(new CreateItem(newAccess)).subscribe();
+        store.dispatch(new CreateAccess(newAccess)).subscribe();
 
         expect(accessService.add).toHaveBeenCalledWith(newAccess);
       });
@@ -341,7 +339,7 @@ describe('AccessState', () => {
         const resultAccess: Access = updatedAccess as Access;
         accessService.update.mockReturnValue(of(resultAccess));
 
-        store.dispatch(new UpdateItem(updatedAccess)).subscribe();
+        store.dispatch(new UpdateAccess(updatedAccess)).subscribe();
 
         expect(accessService.update).toHaveBeenCalledWith(updatedAccess);
       });
@@ -350,7 +348,7 @@ describe('AccessState', () => {
         const itemIdToDelete = 2;
         accessService.delete.mockReturnValue(of(undefined));
 
-        store.dispatch(new DeleteItem(itemIdToDelete)).subscribe();
+        store.dispatch(new DeleteAccess(itemIdToDelete)).subscribe();
 
         expect(accessService.delete).toHaveBeenCalledWith(itemIdToDelete);
       });
@@ -365,7 +363,7 @@ describe('AccessState', () => {
           throwError(() => new Error(errorMessage)),
         );
 
-        store.dispatch(new CreateItem(newAccess)).subscribe({
+        store.dispatch(new CreateAccess(newAccess)).subscribe({
           error: (error) => {
             expect(error).toBeTruthy();
             expect(error.message).toBe(errorMessage);
@@ -389,7 +387,7 @@ describe('AccessState', () => {
         // Spy on console.error since the action logs errors
         jest.spyOn(console, 'error').mockImplementation();
 
-        store.dispatch(new UpdateItem(updatedAccess)).subscribe({
+        store.dispatch(new UpdateAccess(updatedAccess)).subscribe({
           error: (error) => {
             expect(error).toBeTruthy();
             expect(error.message).toBe(errorMessage);
@@ -408,7 +406,7 @@ describe('AccessState', () => {
           throwError(() => new Error(errorMessage)),
         );
 
-        store.dispatch(new DeleteItem(itemIdToDelete)).subscribe({
+        store.dispatch(new DeleteAccess(itemIdToDelete)).subscribe({
           error: (error) => {
             expect(error).toBeTruthy();
             expect(error.message).toBe(errorMessage);
@@ -426,7 +424,7 @@ describe('AccessState', () => {
 
         accessService.add.mockReturnValue(of(createdAccess));
 
-        store.dispatch(new CreateItem(newAccess)).subscribe();
+        store.dispatch(new CreateAccess(newAccess)).subscribe();
 
         // After completion, loading should be false
         const snapshot = store.snapshot();
@@ -444,7 +442,7 @@ describe('AccessState', () => {
 
         accessService.update.mockReturnValue(of(resultAccess));
 
-        store.dispatch(new UpdateItem(updatedAccess)).subscribe();
+        store.dispatch(new UpdateAccess(updatedAccess)).subscribe();
 
         // After completion, loading should be false
         const snapshot = store.snapshot();
@@ -456,7 +454,7 @@ describe('AccessState', () => {
         const itemIdToDelete = 1;
         accessService.delete.mockReturnValue(of(undefined));
 
-        store.dispatch(new DeleteItem(itemIdToDelete)).subscribe();
+        store.dispatch(new DeleteAccess(itemIdToDelete)).subscribe();
 
         // After completion, loading should be false
         const snapshot = store.snapshot();

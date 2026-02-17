@@ -8,13 +8,13 @@ import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
   AddCompany,
-  AddPolicy,
+  AddInsurancePolicy,
   DeleteCompany,
-  DeletePolicy,
+  DeleteInsurancePolicy,
   FetchCompanies,
   GetCompany,
   UpdateCompany,
-  UpdatePolicy,
+  UpdateInsurancePolicy,
 } from './insurance-company.actions';
 
 export class InsuranceCompanyStateModel {
@@ -178,14 +178,14 @@ export class InsuranceCompanyState {
     }
   }
 
-  @Action(UpdatePolicy)
+  @Action(UpdateInsurancePolicy)
   public updatePolicy(
     {
       getState,
       patchState,
       dispatch,
     }: StateContext<InsuranceCompanyStateModel>,
-    { payload }: UpdatePolicy,
+    { payload }: UpdateInsurancePolicy,
   ) {
     // console.log('InsuranceCompanyState::UpdatePolicy', payload);
     patchState({ loading: true });
@@ -200,16 +200,16 @@ export class InsuranceCompanyState {
           selected.insurance_policies[idx] = payload;
         }
       } else {
-        dispatch(new AddPolicy(payload));
+        dispatch(new AddInsurancePolicy(payload));
       }
       patchState({ selected, loading: false });
     }
   }
 
-  @Action(DeletePolicy)
+  @Action(DeleteInsurancePolicy)
   public deletePolicy(
     { getState, patchState }: StateContext<InsuranceCompanyStateModel>,
-    { payload }: DeletePolicy,
+    { payload }: DeleteInsurancePolicy,
   ) {
     // console.log('InsuranceCompanyState::UpdatePolicy', payload);
     patchState({ loading: true });
@@ -224,10 +224,10 @@ export class InsuranceCompanyState {
     }
   }
 
-  @Action(AddPolicy)
+  @Action(AddInsurancePolicy)
   public addPolicy(
     { getState, patchState }: StateContext<InsuranceCompanyStateModel>,
-    { payload }: AddPolicy,
+    { payload }: AddInsurancePolicy,
   ) {
     // console.log('InsuranceCompanyState::AddPolicy', payload);
     patchState({ loading: true });

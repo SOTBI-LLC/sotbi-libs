@@ -1,26 +1,26 @@
 import type { Defrayment } from '@sotbi/models';
 
-export class GetAllItems {
+export class GetAllDefrayments {
   public static readonly type = '[DEFRAYMENT] Get all items';
   constructor(public readonly payload: number) {}
 }
 
-export class GetItem {
+export class GetDefrayment {
   public static readonly type = '[DEFRAYMENT] Get item';
   constructor(public readonly payload: number) {}
 }
 
-export class AddItem {
+export class AddDefrayment {
   public static readonly type = '[DEFRAYMENT] Add item';
   constructor(public readonly payload: Partial<Defrayment>) {}
 }
 
-export class UpdateItem {
+export class UpdateDefrayment {
   public static readonly type = '[DEFRAYMENT] Update item';
   constructor(public readonly payload: Defrayment) {}
 }
 
-export class DeleteItem {
+export class DeleteDefrayment {
   public static readonly type = '[DEFRAYMENT] Delete item';
   constructor(public readonly payload: number) {}
 }

@@ -8,11 +8,11 @@ import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import type { SimpleEditStateModel } from './simple-edit.state.model';
 import {
-  AddItem,
-  DeleteItem,
-  EditItem,
+  AddStage,
+  DeleteStage,
+  EditStage,
   FetchStages,
-  GetItem,
+  GetStage,
 } from './stages.actions';
 
 @State<SimpleEditStateModel>({
@@ -70,10 +70,10 @@ export class StageState implements NgxsOnInit {
     }
   }
 
-  @Action(GetItem)
+  @Action(GetStage)
   public getItem(
     { patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: GetItem,
+    { payload }: GetStage,
   ) {
     return this.itemsService.get(SimpleEditServiceNames.STAGE, payload).pipe(
       tap((result) => {
@@ -85,10 +85,10 @@ export class StageState implements NgxsOnInit {
     );
   }
 
-  @Action(AddItem)
+  @Action(AddStage)
   public addItem(
     { getState, setState }: StateContext<SimpleEditStateModel>,
-    { payload }: AddItem,
+    { payload }: AddStage,
   ) {
     return this.itemsService.create(payload, SimpleEditServiceNames.STAGE).pipe(
       tap((result) => {
@@ -108,10 +108,10 @@ export class StageState implements NgxsOnInit {
     );
   }
 
-  @Action(EditItem)
+  @Action(EditStage)
   public editItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: EditItem,
+    { payload }: EditStage,
   ) {
     return this.itemsService.save$(payload, SimpleEditServiceNames.STAGE).pipe(
       tap((result: SimpleEditModel) => {
@@ -129,10 +129,10 @@ export class StageState implements NgxsOnInit {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteStage)
   public deleteItem(
     { getState, setState }: StateContext<SimpleEditStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteStage,
   ) {
     return this.itemsService.delete(payload, SimpleEditServiceNames.STAGE).pipe(
       tap(() => {

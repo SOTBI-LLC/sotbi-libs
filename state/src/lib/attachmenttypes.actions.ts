@@ -5,22 +5,22 @@ export class FetchAttachmentTypes {
   // constructor(public payload: { type: string }) {}
 }
 
-export class GetItem {
+export class GetAttachmentType {
   public static readonly type = '[AttachmentTypes] Get item';
   constructor(public payload: { id: number }) {}
 }
 
-export class AddItem {
+export class AddAttachmentType {
   public static readonly type = '[AttachmentTypes] Add item';
   constructor(public payload: SimpleEditModel) {}
 }
 
-export class EditItem {
+export class EditAttachmentType {
   public static readonly type = '[AttachmentTypes] Edit item';
   constructor(public payload: SimpleEditModel) {}
 }
 
-export class DeleteItem {
+export class DeleteAttachmentType {
   public static readonly type = '[AttachmentTypes] Delete item';
   constructor(public payload: number) {}
 }

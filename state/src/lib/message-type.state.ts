@@ -6,10 +6,10 @@ import { MessageType } from '@sotbi/models';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import {
-  AddItem,
-  DeleteItem,
+  AddMessageType,
+  DeleteMessageType,
   FetchMessageTypes,
-  UpdateItem,
+  UpdateMessageType,
 } from './message-type.actions';
 import type { itemMap } from './simple-edit.state.model';
 
@@ -93,10 +93,10 @@ export class EfrsbMessageTypeState {
     }
   }
 
-  @Action(AddItem)
+  @Action(AddMessageType)
   public createItem(
     { getState, setState }: StateContext<EfrsbMessageTypeStateModel>,
-    { payload }: AddItem,
+    { payload }: AddMessageType,
   ) {
     // console.log('EfrsbMessageTypeState::AddItem', payload);
     return this.itemsService.add(payload).pipe(
@@ -116,10 +116,10 @@ export class EfrsbMessageTypeState {
     );
   }
 
-  @Action(UpdateItem)
+  @Action(UpdateMessageType)
   public updateItem(
     { getState, setState }: StateContext<EfrsbMessageTypeStateModel>,
-    { payload }: UpdateItem,
+    { payload }: UpdateMessageType,
   ) {
     // console.log('EfrsbMessageTypeState::UpdateItem', payload);
     const state = getState();
@@ -140,10 +140,10 @@ export class EfrsbMessageTypeState {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteMessageType)
   public deleteItem(
     { getState, setState }: StateContext<EfrsbMessageTypeStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteMessageType,
   ) {
     // console.log('EfrsbMessageTypeState::DeleteItem', payload);
     return this.itemsService.delete(payload).pipe(

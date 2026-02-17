@@ -9,9 +9,9 @@ import { emptySimpleEdit2 } from '@sotbi/models';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import {
-  AddItem,
-  DeleteItem,
-  EditItem,
+  AddProcedure,
+  DeleteProcedure,
+  EditProcedure,
   FetchProcedures,
 } from './procedure.actions';
 import type { itemMap, SimpleEdit2StateModel } from './simple-edit.state.model';
@@ -90,10 +90,10 @@ export class ProcedureState implements NgxsOnInit {
     }
   }
 
-  @Action(AddItem)
+  @Action(AddProcedure)
   public addItem(
     { getState, setState }: StateContext<SimpleEdit2StateModel>,
-    { payload }: AddItem,
+    { payload }: AddProcedure,
   ) {
     const state = getState();
     return this.itemsService
@@ -124,10 +124,10 @@ export class ProcedureState implements NgxsOnInit {
       );
   }
 
-  @Action(EditItem)
+  @Action(EditProcedure)
   public editItem(
     { getState, setState }: StateContext<SimpleEdit2StateModel>,
-    { payload }: EditItem,
+    { payload }: EditProcedure,
   ) {
     const state = getState();
     const { id } = payload;
@@ -154,10 +154,10 @@ export class ProcedureState implements NgxsOnInit {
       );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteProcedure)
   public deleteItem(
     { getState, setState }: StateContext<SimpleEdit2StateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteProcedure,
   ) {
     const state = getState();
     return this.itemsService

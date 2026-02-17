@@ -20,7 +20,7 @@ export class UpdateTransition {
   constructor(public payload: Transition) {}
 }
 
-export class DeleteItem {
+export class DeleteTransition {
   public static readonly type = '[TRANSITION] Delete item';
   constructor(public payload: number) {}
 }

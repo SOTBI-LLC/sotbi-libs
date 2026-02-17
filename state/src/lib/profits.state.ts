@@ -4,7 +4,12 @@ import { Action, Selector, State } from '@ngxs/store';
 import { SimpleEditService, SimpleEditServiceNames } from '@sotbi/data-access';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { AddItem, DeleteItem, EditItem, FetchProfits } from './profits.actions';
+import {
+  AddProfit,
+  DeleteProfit,
+  EditProfit,
+  FetchProfits,
+} from './profits.actions';
 import type { SimpleEditStateModel } from './simple-edit.state.model';
 
 @State<SimpleEditStateModel>({
@@ -60,10 +65,10 @@ export class ProfitsState {
     }
   }
 
-  @Action(AddItem)
+  @Action(AddProfit)
   public addItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: AddItem,
+    { payload }: AddProfit,
   ) {
     const state = getState();
     return this.itemsService
@@ -84,10 +89,10 @@ export class ProfitsState {
       );
   }
 
-  @Action(EditItem)
+  @Action(EditProfit)
   public editItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: EditItem,
+    { payload }: EditProfit,
   ) {
     const state = getState();
     return this.itemsService
@@ -109,10 +114,10 @@ export class ProfitsState {
       );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteProfit)
   public deleteItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteProfit,
   ) {
     const state = getState();
     return this.itemsService

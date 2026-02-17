@@ -1,31 +1,31 @@
 import type { PaymentAttachment } from '@sotbi/models';
 
-export class GetAllItems {
+export class GetAllPaymentAttachments {
   public static readonly type = '[PAYMENT ATTACHMENT] Get all items';
   constructor(public readonly payload: number) {}
 }
 
-export class GetItem {
+export class GetPaymentAttachment {
   public static readonly type = '[PAYMENT ATTACHMENT] Get item';
   constructor(public readonly payload: number) {}
 }
 
-export class AddItem {
+export class AddPaymentAttachment {
   public static readonly type = '[PAYMENT ATTACHMENT] Add item';
   constructor(public readonly payload: Partial<PaymentAttachment>) {}
 }
 
-export class UpdateItem {
+export class UpdatePaymentAttachment {
   public static readonly type = '[PAYMENT ATTACHMENT] Update item';
   constructor(public readonly payload: PaymentAttachment) {}
 }
 
-export class DeleteItem {
+export class DeletePaymentAttachment {
   public static readonly type = '[PAYMENT ATTACHMENT] Delete item';
   constructor(public readonly payload: number) {}
 }
 
-export class DeleteItems {
+export class DeletePaymentAttachments {
   public static readonly type = '[PAYMENT ATTACHMENT] Delete items';
   constructor(public readonly payload: string[]) {}
 }

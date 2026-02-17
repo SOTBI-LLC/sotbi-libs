@@ -4,22 +4,22 @@ export class FetchTargetTypes {
   public static readonly type = '[TARGETS] Fetch target types';
 }
 
-export class GetItem {
+export class GetTarget {
   public static readonly type = '[TARGETS] Get item';
   constructor(public payload: number) {}
 }
 
-export class AddItem {
+export class AddTarget {
   public static readonly type = '[TARGETS] Add item';
   constructor(public payload: SimpleEditModel) {}
 }
 
-export class EditItem {
+export class EditTarget {
   public static readonly type = '[TARGETS] Edit item';
   constructor(public payload: SimpleEditModel) {}
 }
 
-export class DeleteItem {
+export class DeleteTarget {
   public static readonly type = '[TARGETS] Delete item';
   constructor(public payload: number) {}
 }

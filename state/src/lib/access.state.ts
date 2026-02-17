@@ -6,11 +6,11 @@ import type { Access } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
-  CreateItem,
-  DeleteItem,
+  CreateAccess,
+  DeleteAccess,
   FetchAccess,
-  GetItem,
-  UpdateItem,
+  GetAccess,
+  UpdateAccess,
 } from './access.actions';
 
 export class AccessStateModel {
@@ -62,16 +62,16 @@ export class AccessState {
         catchError((err) => {
           return throwError(() => err);
         }),
-        finalize(() => patchState({ loading: false }))
+        finalize(() => patchState({ loading: false })),
       );
     }
     return of([]);
   }
 
-  @Action(GetItem)
+  @Action(GetAccess)
   public getItem(
     { patchState, getState }: StateContext<AccessStateModel>,
-    { payload }: GetItem
+    { payload }: GetAccess,
   ) {
     patchState({ loading: true });
     const state = getState();
@@ -79,10 +79,10 @@ export class AccessState {
     patchState({ selected, loading: false });
   }
 
-  @Action(CreateItem)
+  @Action(CreateAccess)
   public createItem(
     { getState, patchState, setState }: StateContext<AccessStateModel>,
-    { payload }: CreateItem
+    { payload }: CreateAccess,
   ) {
     patchState({ loading: true });
     return this.itemsService.add(payload).pipe(
@@ -98,14 +98,14 @@ export class AccessState {
       catchError((err) => {
         return throwError(() => err);
       }),
-      finalize(() => patchState({ loading: false }))
+      finalize(() => patchState({ loading: false })),
     );
   }
 
-  @Action(UpdateItem)
+  @Action(UpdateAccess)
   public updateItem(
     { getState, patchState, setState }: StateContext<AccessStateModel>,
-    { payload }: UpdateItem
+    { payload }: UpdateAccess,
   ) {
     const state = getState();
     patchState({ loading: true });
@@ -122,14 +122,14 @@ export class AccessState {
       }),
       finalize(() => {
         patchState({ loading: false });
-      })
+      }),
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteAccess)
   public deleteItem(
     { getState, patchState, setState }: StateContext<AccessStateModel>,
-    { payload }: DeleteItem
+    { payload }: DeleteAccess,
   ) {
     patchState({ loading: true });
     return this.itemsService.delete(payload).pipe(
@@ -148,7 +148,7 @@ export class AccessState {
       catchError((err) => {
         return throwError(() => err);
       }),
-      finalize(() => patchState({ loading: false }))
+      finalize(() => patchState({ loading: false })),
     );
   }
 }

@@ -6,9 +6,9 @@ import { forMap } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import {
-  AddItem,
-  DeleteItem,
-  EditItem,
+  AddAccountType,
+  DeleteAccountType,
+  EditAccountType,
   FetchAccountTypes,
 } from './accounttypes.actions';
 import type { SimpleEditStateModel } from './simple-edit.state.model';
@@ -69,10 +69,10 @@ export class AccountTypesState implements NgxsOnInit {
     return undefined;
   }
 
-  @Action(AddItem)
+  @Action(AddAccountType)
   public addItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: AddItem,
+    { payload }: AddAccountType,
   ) {
     const state = getState();
     return this.itemsService
@@ -93,10 +93,10 @@ export class AccountTypesState implements NgxsOnInit {
       );
   }
 
-  @Action(EditItem)
+  @Action(EditAccountType)
   public editItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: EditItem,
+    { payload }: EditAccountType,
   ) {
     const state = getState();
     return this.itemsService
@@ -118,10 +118,10 @@ export class AccountTypesState implements NgxsOnInit {
       );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteAccountType)
   public deleteItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteAccountType,
   ) {
     const state = getState();
     return this.itemsService

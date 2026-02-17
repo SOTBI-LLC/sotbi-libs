@@ -5,22 +5,22 @@ export class FetchProfits {
   // constructor(public payload: { type: string }) {}
 }
 
-export class GetItem {
+export class GetProfit {
   public static readonly type = '[PROFITS] Get item';
   constructor(public payload: number) {}
 }
 
-export class AddItem {
+export class AddProfit {
   public static readonly type = '[PROFITS] Add item';
   constructor(public payload: SimpleEditModel) {}
 }
 
-export class EditItem {
+export class EditProfit {
   public static readonly type = '[PROFITS] Edit item';
   constructor(public payload: SimpleEditModel) {}
 }
 
-export class DeleteItem {
+export class DeleteProfit {
   public static readonly type = '[PROFITS] Delete item';
   constructor(public payload: number) {}
 }

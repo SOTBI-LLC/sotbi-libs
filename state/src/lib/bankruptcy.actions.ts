@@ -28,17 +28,17 @@ export class DeleteBankruptcy {
   constructor(public payload: number) {}
 }
 
-export class UpdatePolicy {
+export class UpdateBankruptcyPolicy {
   public static readonly type = '[BANKRUPTCIES] Update policy';
   constructor(public payload: InsurancePolicy) {}
 }
 
-export class AddPolicy {
+export class AddBankruptcyPolicy {
   public static readonly type = '[BANKRUPTCIES] Add policy';
   constructor(public payload: InsurancePolicy) {}
 }
 
-export class DeletePolicy {
+export class DeleteBankruptcyPolicy {
   public static readonly type = '[BANKRUPTCIES] delete policy';
   constructor(public payload: number) {}
 }

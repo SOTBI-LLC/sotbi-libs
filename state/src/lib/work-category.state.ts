@@ -19,7 +19,7 @@ import {
   UpdateWorkCategory,
 } from './work-category.actions';
 
-export const RequiredFields = ['name', 'staff_id', 'type'];
+export const WorkCategoryRequiredFields = ['name', 'staff_id', 'type'];
 
 export interface WorkCategoryStateModel {
   allItems: WorkCategory[];
@@ -80,7 +80,7 @@ export class WorkCategoryState {
 
   @Selector()
   public static canSave(state: WorkCategoryStateModel): boolean {
-    return !state.saved && canSave(state.items, RequiredFields);
+    return !state.saved && canSave(state.items, WorkCategoryRequiredFields);
   }
 
   @Action(FetchWorkCategory)
@@ -241,7 +241,7 @@ export class WorkCategoryState {
     let idx = 0;
     const workcategory: WorkCategory[] = [];
     const idxs: Map<number, number> = new Map(); // храним соотвествие index в ag-grid и id в бд
-    const fields = new Set(RequiredFields);
+    const fields = new Set(WorkCategoryRequiredFields);
     for (const item of items) {
       if (item.dirty) {
         // для всех не сохраненных

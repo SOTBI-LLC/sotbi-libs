@@ -50,7 +50,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build all packages
-        run: npx nx run-many -t build
+        run: npx nx run-many -t build --configuration=production
 
       - name: Publish packages
         run: npx nx run-many -t nx-release-publish

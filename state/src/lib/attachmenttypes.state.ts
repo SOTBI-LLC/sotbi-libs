@@ -6,9 +6,9 @@ import { forMap } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import {
-  AddItem,
-  DeleteItem,
-  EditItem,
+  AddAttachmentType,
+  DeleteAttachmentType,
+  EditAttachmentType,
   FetchAttachmentTypes,
 } from './attachmenttypes.actions';
 import type { SimpleEditStateModel } from './simple-edit.state.model';
@@ -64,10 +64,10 @@ export class AttachmentTypesState {
     return undefined;
   }
 
-  @Action(AddItem)
+  @Action(AddAttachmentType)
   public addItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: AddItem,
+    { payload }: AddAttachmentType,
   ) {
     const state = getState();
     return this.itemsService
@@ -88,10 +88,10 @@ export class AttachmentTypesState {
       );
   }
 
-  @Action(EditItem)
+  @Action(EditAttachmentType)
   public editItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: EditItem,
+    { payload }: EditAttachmentType,
   ) {
     const state = getState();
     return this.itemsService
@@ -113,10 +113,10 @@ export class AttachmentTypesState {
       );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteAttachmentType)
   public deleteItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteAttachmentType,
   ) {
     const state = getState();
     return this.itemsService

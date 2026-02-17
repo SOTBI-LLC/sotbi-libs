@@ -5,22 +5,22 @@ export class FetchFlowTypes {
   // constructor(public payload: { type: string }) {}
 }
 
-export class GetItem {
+export class GetFlow {
   public static readonly type = '[FLOW] Get item';
   constructor(public payload: number) {}
 }
 
-export class AddItem {
+export class AddFlow {
   public static readonly type = '[FLOW] Add item';
   constructor(public payload: SimpleEdit2Model) {}
 }
 
-export class EditItem {
+export class EditFlow {
   public static readonly type = '[FLOW] Edit item';
   constructor(public payload: SimpleEdit2Model) {}
 }
 
-export class DeleteItem {
+export class DeleteFlow {
   public static readonly type = '[FLOW] Delete item';
   constructor(public payload: number) {}
 }

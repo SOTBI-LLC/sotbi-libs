@@ -15,12 +15,12 @@ export class AddInintiator {
   constructor(public payload: Initiator) {}
 }
 
-export class EditItem {
+export class EditInitiator {
   public static readonly type = '[INITIATORS] Edit item';
   constructor(public payload: Initiator) {}
 }
 
-export class DeleteItem {
+export class DeleteInitiator {
   public static readonly type = '[INITIATORS] Delete item';
   constructor(public payload: number) {}
 }

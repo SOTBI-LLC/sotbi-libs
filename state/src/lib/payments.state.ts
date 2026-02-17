@@ -7,8 +7,7 @@ import { PaymentService } from '@sotbi/data-access';
 import type { IPaymentDocumentFilter, PaymentDocument } from '@sotbi/models';
 import { DD_MM_YYYY_HH_MM_SS } from '@sotbi/utils';
 import { catchError, finalize, tap, throwError } from 'rxjs';
-import { GetItem } from './payment-request.actions';
-import { GetDebtorPayments } from './payments.actions';
+import { GetDebtorPayments, GetPayment } from './payments.actions';
 
 export interface PaymentDocumentsStateModel {
   items: PaymentDocument[];
@@ -114,10 +113,10 @@ export class PaymentDocumentsState {
       );
   }
 
-  @Action(GetItem)
+  @Action(GetPayment)
   public getItem(
     { patchState }: StateContext<PaymentDocumentsStateModel>,
-    { payload }: GetItem,
+    { payload }: GetPayment,
   ) {
     patchState({ loading: true });
     if (payload) {

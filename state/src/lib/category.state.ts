@@ -8,7 +8,12 @@ import {
 import type { SimpleEdit2Model } from '@sotbi/models';
 import { removeID } from '@sotbi/utils';
 import { catchError, tap, throwError } from 'rxjs';
-import { AddItem, DeleteItem, EditItem, FetchItems } from './category.actions';
+import {
+  AddCategory,
+  DeleteCategory,
+  EditCategory,
+  FetchCategories,
+} from './category.actions';
 import type { itemMap, SimpleEdit2StateModel } from './simple-edit.state.model';
 
 @State<SimpleEdit2StateModel>({
@@ -43,10 +48,10 @@ export class CategoryState implements NgxsOnInit {
   }
 
   public ngxsOnInit({ dispatch }: StateContext<SimpleEdit2StateModel>) {
-    dispatch(new FetchItems());
+    dispatch(new FetchCategories());
   }
 
-  @Action(FetchItems, { cancelUncompleted: true })
+  @Action(FetchCategories, { cancelUncompleted: true })
   public fetchItems({
     getState,
     patchState,
@@ -79,10 +84,10 @@ export class CategoryState implements NgxsOnInit {
     return;
   }
 
-  @Action(AddItem)
+  @Action(AddCategory)
   public addItem(
     { getState, setState }: StateContext<SimpleEdit2StateModel>,
-    { payload }: AddItem,
+    { payload }: AddCategory,
   ) {
     const state = getState();
     return this.itemsService
@@ -111,10 +116,10 @@ export class CategoryState implements NgxsOnInit {
       );
   }
 
-  @Action(EditItem)
+  @Action(EditCategory)
   public editItem(
     { getState, patchState }: StateContext<SimpleEdit2StateModel>,
-    { payload }: EditItem,
+    { payload }: EditCategory,
   ) {
     const state = getState();
     const { id } = payload;
@@ -145,10 +150,10 @@ export class CategoryState implements NgxsOnInit {
       );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteCategory)
   public deleteItem(
     { getState, setState }: StateContext<SimpleEdit2StateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteCategory,
   ) {
     const state = getState();
     return this.itemsService

@@ -1,29 +1,28 @@
 import type { SimpleEdit2Model } from '@sotbi/models';
-
 export class FetchAdvertTypes {
   public static readonly type = '[ADVERTTYPE] Fetch items';
   // constructor(public payload: { type: string }) {}
 }
 
-export class GetItem {
+export class GetAdvertType {
   public static readonly type = '[ADVERTTYPE] Get item';
   constructor(public payload: { id: number }) {}
 }
 
-export class AddItem {
+export class AddAdvertType {
   public static readonly type = '[ADVERTTYPE] Add item';
   constructor(public payload: SimpleEdit2Model) {}
 }
-export class AddEmptyItem {
+export class AddEmptyAdvertType {
   public static readonly type = '[ADVERTTYPE] Add empty item';
 }
 
-export class EditItem {
+export class EditAdvertType {
   public static readonly type = '[ADVERTTYPE] Edit item';
   constructor(public payload: SimpleEdit2Model) {}
 }
 
-export class DeleteItem {
+export class DeleteAdvertType {
   public static readonly type = '[ADVERTTYPE] Delete item';
   constructor(public payload: number) {}
 }

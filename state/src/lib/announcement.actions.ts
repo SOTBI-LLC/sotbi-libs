@@ -1,6 +1,6 @@
 import type { Announcement } from '@sotbi/models';
 
-export class FetchItems {
+export class FetchAnnouncements {
   public static readonly type = '[ANNOUNCEMENT] Fetch items';
   constructor(
     public payload: {
@@ -12,22 +12,22 @@ export class FetchItems {
   ) {}
 }
 
-export class GetItem {
+export class GetAnnouncement {
   public static readonly type = '[ANNOUNCEMENT] Get item';
   constructor(public readonly payload: number) {}
 }
 
-export class AddItem {
+export class AddAnnouncement {
   public static readonly type = '[ANNOUNCEMENT] Add item';
   constructor(public readonly payload: Partial<Announcement>) {}
 }
 
-export class UpdateItem {
+export class UpdateAnnouncement {
   public static readonly type = '[ANNOUNCEMENT] Update item';
   constructor(public readonly payload: Announcement) {}
 }
 
-export class DeleteItem {
+export class DeleteAnnouncement {
   public static readonly type = '[ANNOUNCEMENT] Delete item';
   constructor(public readonly payload: number) {}
 }

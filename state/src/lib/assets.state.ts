@@ -7,9 +7,9 @@ import { forMap } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import {
-  AddItem,
-  DeleteItem,
-  EditItem,
+  AddAsset,
+  DeleteAsset,
+  EditAsset,
   FetchAssetTypes,
 } from './assets.actions';
 import type { SimpleEditStateModel } from './simple-edit.state.model';
@@ -70,10 +70,10 @@ export class AssetsState {
     return undefined;
   }
 
-  @Action(AddItem)
+  @Action(AddAsset)
   public addItem(
     { getState, setState }: StateContext<SimpleEditStateModel>,
-    { payload }: AddItem,
+    { payload }: AddAsset,
   ) {
     const state = getState();
     return this.itemsService
@@ -95,10 +95,10 @@ export class AssetsState {
       );
   }
 
-  @Action(EditItem)
+  @Action(EditAsset)
   public editItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: EditItem,
+    { payload }: EditAsset,
   ) {
     const state = getState();
     return this.itemsService.save$(payload, SimpleEditServiceNames.ASSET).pipe(
@@ -118,10 +118,10 @@ export class AssetsState {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteAsset)
   public deleteItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteAsset,
   ) {
     const state = getState();
     return this.itemsService.delete(payload, SimpleEditServiceNames.ASSET).pipe(

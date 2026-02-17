@@ -5,22 +5,22 @@ export class FetchAccountTypes {
   // constructor(public payload: { type: string }) {}
 }
 
-export class GetItem {
+export class GetAccountType {
   public static readonly type = '[ACCOUNTTYPES] Get item';
   constructor(public payload: number) {}
 }
 
-export class AddItem {
+export class AddAccountType {
   public static readonly type = '[ACCOUNTTYPES] Add item';
   constructor(public payload: string) {}
 }
 
-export class EditItem {
+export class EditAccountType {
   public static readonly type = '[ACCOUNTTYPES] Edit item';
   constructor(public payload: SimpleEditModel) {}
 }
 
-export class DeleteItem {
+export class DeleteAccountType {
   public static readonly type = '[ACCOUNTTYPES] Delete item';
   constructor(public payload: number) {}
 }

@@ -7,11 +7,11 @@ import type { UserGroup } from '@sotbi/models';
 import { throwError } from 'rxjs';
 import { catchError, finalize, map, tap } from 'rxjs/operators';
 import {
-  CreateItem,
-  DeleteItem,
+  CreateUserGroup,
+  DeleteUserGroup,
   FetchGroups,
-  GetItem,
-  UpdateItem,
+  GetUserGroup,
+  UpdateUserGroup,
 } from './usergroup.actions';
 
 export class UserGroupStateModel {
@@ -82,10 +82,10 @@ export class UserGroupState implements NgxsOnInit {
     }
   }
 
-  @Action(GetItem)
+  @Action(GetUserGroup)
   public getItem(
     { patchState, getState }: StateContext<UserGroupStateModel>,
-    { payload }: GetItem,
+    { payload }: GetUserGroup,
   ) {
     patchState({ loading: true });
     const state = getState();
@@ -93,10 +93,10 @@ export class UserGroupState implements NgxsOnInit {
     patchState({ selected, loading: false });
   }
 
-  @Action(CreateItem)
+  @Action(CreateUserGroup)
   public createItem(
     { getState, patchState, setState }: StateContext<UserGroupStateModel>,
-    { payload }: CreateItem,
+    { payload }: CreateUserGroup,
   ) {
     patchState({ loading: true });
     return this.itemsService.create(payload).pipe(
@@ -116,10 +116,10 @@ export class UserGroupState implements NgxsOnInit {
     );
   }
 
-  @Action(UpdateItem)
+  @Action(UpdateUserGroup)
   public updateItem(
     { getState, patchState }: StateContext<UserGroupStateModel>,
-    { payload }: UpdateItem,
+    { payload }: UpdateUserGroup,
   ) {
     const state = getState();
     return this.itemsService.update(payload).pipe(
@@ -135,10 +135,10 @@ export class UserGroupState implements NgxsOnInit {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteUserGroup)
   public deleteItem(
     { getState, patchState, setState }: StateContext<UserGroupStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteUserGroup,
   ) {
     patchState({ loading: true });
     return this.itemsService.delete(payload).pipe(

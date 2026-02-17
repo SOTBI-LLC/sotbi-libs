@@ -8,7 +8,7 @@ import {
 import type { SimpleEdit2Model } from '@sotbi/models';
 import { emptySimpleEdit2 } from '@sotbi/models';
 import { catchError, tap, throwError } from 'rxjs';
-import { AddItem, DeleteItem, EditItem, FetchFlowTypes } from './flow.actions';
+import { AddFlow, DeleteFlow, EditFlow, FetchFlowTypes } from './flow.actions';
 import type { SimpleEdit2StateModel } from './simple-edit.state.model';
 
 @State<SimpleEdit2StateModel>({
@@ -71,10 +71,10 @@ export class FlowState implements NgxsOnInit {
     }
   }
 
-  @Action(AddItem)
+  @Action(AddFlow)
   public addItem(
     { getState, setState }: StateContext<SimpleEdit2StateModel>,
-    { payload }: AddItem,
+    { payload }: AddFlow,
   ) {
     const state = getState();
     return this.itemsService.create(payload, SimpleEdit2ServiceNames.FLOW).pipe(
@@ -102,10 +102,10 @@ export class FlowState implements NgxsOnInit {
     );
   }
 
-  @Action(EditItem)
+  @Action(EditFlow)
   public editItem(
     { getState, setState }: StateContext<SimpleEdit2StateModel>,
-    { payload }: EditItem,
+    { payload }: EditFlow,
   ) {
     const state = getState();
     return this.itemsService
@@ -131,10 +131,10 @@ export class FlowState implements NgxsOnInit {
       );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteFlow)
   public deleteItem(
     { getState, setState }: StateContext<SimpleEdit2StateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteFlow,
   ) {
     const state = getState();
     return this.itemsService.delete(payload, SimpleEdit2ServiceNames.FLOW).pipe(

@@ -5,7 +5,12 @@ import { SimpleEditService, SimpleEditServiceNames } from '@sotbi/data-access';
 import { forMap } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { AddItem, DeleteItem, EditItem, FetchClients } from './clients.actions';
+import {
+  AddClient,
+  DeleteClient,
+  EditClient,
+  FetchClients,
+} from './clients.actions';
 import type { SimpleEditStateModel } from './simple-edit.state.model';
 
 @State<SimpleEditStateModel>({
@@ -60,10 +65,10 @@ export class ClientsState {
     return;
   }
 
-  @Action(AddItem)
+  @Action(AddClient)
   public addItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: AddItem,
+    { payload }: AddClient,
   ) {
     const state = getState();
     return this.itemsService
@@ -84,10 +89,10 @@ export class ClientsState {
       );
   }
 
-  @Action(EditItem)
+  @Action(EditClient)
   public editItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: EditItem,
+    { payload }: EditClient,
   ) {
     const state = getState();
     return this.itemsService.save$(payload, SimpleEditServiceNames.CLIENT).pipe(
@@ -107,10 +112,10 @@ export class ClientsState {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteClient)
   public deleteItem(
     { getState, patchState }: StateContext<SimpleEditStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteClient,
   ) {
     const state = getState();
     return this.itemsService

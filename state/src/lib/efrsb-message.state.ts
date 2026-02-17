@@ -8,11 +8,11 @@ import { StatusEnum } from '@sotbi/models';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
-  AddItem,
-  DeleteItem,
-  FetchItems,
-  GetItem,
-  UpdateItem,
+  AddEfrsbMessage,
+  DeleteEfrsbMessage,
+  FetchEfrsbMessages,
+  GetEfrsbMessage,
+  UpdateEfrsbMessage,
 } from './efrsb-message.actions';
 
 export class EfrsbMessageStateModel {
@@ -53,7 +53,7 @@ export class EfrsbMessageState {
     return state.items;
   }
 
-  @Action(FetchItems)
+  @Action(FetchEfrsbMessages)
   public fetchItems({
     getState,
     setState,
@@ -77,10 +77,10 @@ export class EfrsbMessageState {
     }
   }
 
-  @Action(GetItem)
+  @Action(GetEfrsbMessage)
   public getItem(
     { patchState, getState, setState }: StateContext<EfrsbMessageStateModel>,
-    { payload }: GetItem,
+    { payload }: GetEfrsbMessage,
   ) {
     patchState({ loading: true });
     const state = getState();
@@ -100,10 +100,10 @@ export class EfrsbMessageState {
     );
   }
 
-  @Action(AddItem)
+  @Action(AddEfrsbMessage)
   public createItem(
     { getState, patchState, setState }: StateContext<EfrsbMessageStateModel>,
-    { payload }: AddItem,
+    { payload }: AddEfrsbMessage,
   ) {
     patchState({ loading: true });
     this.itemsService.add(payload).pipe(
@@ -120,10 +120,10 @@ export class EfrsbMessageState {
     );
   }
 
-  @Action(UpdateItem)
+  @Action(UpdateEfrsbMessage)
   public updateItem(
     { getState, setState, patchState }: StateContext<EfrsbMessageStateModel>,
-    { payload }: UpdateItem,
+    { payload }: UpdateEfrsbMessage,
   ) {
     patchState({ loading: true });
     const state = getState();
@@ -142,10 +142,10 @@ export class EfrsbMessageState {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteEfrsbMessage)
   public deleteItem(
     { getState, patchState, setState }: StateContext<EfrsbMessageStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteEfrsbMessage,
   ) {
     patchState({ loading: true });
     this.itemsService.delete(payload).pipe(

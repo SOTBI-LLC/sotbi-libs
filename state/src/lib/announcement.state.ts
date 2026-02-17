@@ -8,11 +8,11 @@ import { removeID } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
-  AddItem,
-  DeleteItem,
-  FetchItems,
-  GetItem,
-  UpdateItem,
+  AddAnnouncement,
+  DeleteAnnouncement,
+  FetchAnnouncements,
+  GetAnnouncement,
+  UpdateAnnouncement,
 } from './announcement.actions';
 
 export interface AnnouncementStateModel {
@@ -50,10 +50,10 @@ export class AnnouncementState {
     return state.items;
   }
 
-  @Action(FetchItems)
+  @Action(FetchAnnouncements)
   public FetchItems(
     { getState, setState, patchState }: StateContext<AnnouncementStateModel>,
-    { payload }: FetchItems,
+    { payload }: FetchAnnouncements,
   ) {
     // console.log('AnnouncementState::FetchItems');
     if (!payload) {
@@ -84,10 +84,10 @@ export class AnnouncementState {
     return undefined;
   }
 
-  @Action(GetItem)
+  @Action(GetAnnouncement)
   public getItem(
     { patchState, getState, setState }: StateContext<AnnouncementStateModel>,
-    { payload }: GetItem,
+    { payload }: GetAnnouncement,
   ) {
     const state = getState();
     patchState({ loading: true });
@@ -122,10 +122,10 @@ export class AnnouncementState {
     }
   }
 
-  @Action(AddItem)
+  @Action(AddAnnouncement)
   public createItem(
     { getState, patchState, setState }: StateContext<AnnouncementStateModel>,
-    { payload }: AddItem,
+    { payload }: AddAnnouncement,
   ) {
     // console.log('AnnouncementState::AddItem', payload);
     patchState({ loading: true });
@@ -146,10 +146,10 @@ export class AnnouncementState {
     );
   }
 
-  @Action(UpdateItem)
+  @Action(UpdateAnnouncement)
   public UpdateItem(
     { getState, setState, patchState }: StateContext<AnnouncementStateModel>,
-    { payload }: UpdateItem,
+    { payload }: UpdateAnnouncement,
   ) {
     // console.log('AnnouncementState::UpdateItem', payload);
     patchState({ loading: true });
@@ -172,10 +172,10 @@ export class AnnouncementState {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteAnnouncement)
   public deleteItem(
     { getState, patchState, setState }: StateContext<AnnouncementStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteAnnouncement,
   ) {
     // console.log('AnnouncementState::DeleteItem', payload);
     patchState({ loading: true });

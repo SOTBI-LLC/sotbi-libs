@@ -1,6 +1,6 @@
 export { generateAvatarSvgUrl } from './lib/avatars/generate';
 export { fromBase62, toBase62 } from './lib/base62';
-export { maskForSumm } from './lib/consts';
+export { Level, maskForSumm } from './lib/consts';
 export { getDateDifference } from './lib/date-func/difference';
 export {
   dateValueFormatter,
