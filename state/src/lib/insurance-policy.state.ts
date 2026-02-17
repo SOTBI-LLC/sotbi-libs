@@ -6,11 +6,11 @@ import { InsurancePolicy } from '@sotbi/models';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
-  AddItem,
-  DeleteItem,
-  FetchItems,
-  GetItem,
-  UpdateItem,
+  AddInsurancePolicy,
+  DeleteInsurancePolicy,
+  FetchInsurancePolicies,
+  GetInsurancePolicy,
+  UpdateInsurancePolicy,
 } from './insurance-policy.actions';
 
 export class InsurancePolicyStateModel {
@@ -55,7 +55,7 @@ export class InsurancePolicyState {
     return state.items;
   }
 
-  @Action(FetchItems)
+  @Action(FetchInsurancePolicies)
   public fetchItems({
     getState,
     setState,
@@ -80,10 +80,10 @@ export class InsurancePolicyState {
     }
   }
 
-  @Action(GetItem)
+  @Action(GetInsurancePolicy)
   public getItem(
     { patchState, getState, setState }: StateContext<InsurancePolicyStateModel>,
-    { payload }: GetItem,
+    { payload }: GetInsurancePolicy,
   ) {
     // console.log('InsurancePolicyState::GetItem', payload);
     patchState({ loading: true });
@@ -122,10 +122,10 @@ export class InsurancePolicyState {
     }
   }
 
-  @Action(AddItem)
+  @Action(AddInsurancePolicy)
   public createItem(
     { getState, patchState, setState }: StateContext<InsurancePolicyStateModel>,
-    { payload }: AddItem,
+    { payload }: AddInsurancePolicy,
   ) {
     // console.log('InsurancePolicyState::AddItem', payload);
     patchState({ loading: true });
@@ -145,10 +145,10 @@ export class InsurancePolicyState {
     );
   }
 
-  @Action(UpdateItem)
+  @Action(UpdateInsurancePolicy)
   public updateItem(
     { getState, setState, patchState }: StateContext<InsurancePolicyStateModel>,
-    { payload }: UpdateItem,
+    { payload }: UpdateInsurancePolicy,
   ) {
     // console.log('InsurancePolicyState::UpdateItem', payload);
     patchState({ loading: true });
@@ -168,10 +168,10 @@ export class InsurancePolicyState {
     );
   }
 
-  @Action(DeleteItem)
+  @Action(DeleteInsurancePolicy)
   public deleteItem(
     { getState, patchState, setState }: StateContext<InsurancePolicyStateModel>,
-    { payload }: DeleteItem,
+    { payload }: DeleteInsurancePolicy,
   ) {
     // console.log('InsurancePolicyState::DeleteItem', payload);
     patchState({ loading: true });

@@ -6,8 +6,13 @@ import type { SimpleEditModel } from '@sotbi/models';
 import { forMap } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import type { GetLink } from './links.actions';
-import { AddLink, DeleteLink, EditLink, FetchLinkTypes } from './links.actions';
+import {
+  AddLink,
+  DeleteLink,
+  EditLink,
+  FetchLinkTypes,
+  GetLink,
+} from './links.actions';
 import type { SimpleEditStateModel } from './simple-edit.state.model';
 
 @State<SimpleEditStateModel>({
@@ -59,7 +64,7 @@ export class LinkState implements NgxsOnInit {
     }
   }
 
-  @Action(GetItem)
+  @Action(GetLink)
   public getItem(
     { patchState }: StateContext<SimpleEditStateModel>,
     { payload }: GetLink,
