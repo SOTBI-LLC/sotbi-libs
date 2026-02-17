@@ -1,4 +1,5 @@
 import type { Arbitration } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class FetchArbitrations {
   public static readonly type = '[ARBITRS] Fetch items';
@@ -16,7 +17,7 @@ export class AddArbitration {
 
 export class EditArbitration {
   public static readonly type = '[ARBITRS] Edit item';
-  constructor(public payload: Partial<Arbitration> & { id: number | string }) {}
+  constructor(public payload: WithId<Arbitration>) {}
 }
 
 export class DeleteArbitration {

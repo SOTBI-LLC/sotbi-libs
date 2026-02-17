@@ -1,4 +1,5 @@
 import type { Label } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class FetchLabels {
   public static readonly type = '[LABELS] Fetch items';
@@ -17,7 +18,7 @@ export class AddLabel {
 
 export class EditLabel {
   public static readonly type = '[LABELS] Edit item';
-  constructor(public payload: Partial<Label> & { id: number | string }) {}
+  constructor(public payload: WithId<Label>) {}
 }
 
 export class DeleteLabel {

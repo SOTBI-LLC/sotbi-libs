@@ -1,4 +1,5 @@
 import type { SimpleEditModel } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class FetchProfits {
   public static readonly type = '[PROFITS] Fetch items';
@@ -12,16 +13,12 @@ export class GetProfit {
 
 export class AddProfit {
   public static readonly type = '[PROFITS] Add item';
-  constructor(
-    public payload: Partial<SimpleEditModel> & { id: number | string },
-  ) {}
+  constructor(public payload: Partial<SimpleEditModel>) {}
 }
 
 export class EditProfit {
   public static readonly type = '[PROFITS] Edit item';
-  constructor(
-    public payload: Partial<SimpleEditModel> & { id: number | string },
-  ) {}
+  constructor(public payload: WithId<SimpleEditModel>) {}
 }
 
 export class DeleteProfit {

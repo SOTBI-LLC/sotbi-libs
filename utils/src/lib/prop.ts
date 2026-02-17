@@ -1,3 +1,5 @@
+export type WithId<T> = Partial<T> & { id: number | string };
+
 export const removeProperty =
   (prop: string) =>
   ({ [prop]: _, ...rest }) =>
@@ -12,13 +14,16 @@ export const extractProperty = <T, K extends keyof T>(
 };
 
 export const getDiff = <T>(
-  oldItem: T,
-  newItem: T,
-): { changed: boolean; update: Partial<T> | null } => {
+  oldItem: WithId<T>,
+  newItem: WithId<T>,
+): {
+  changed: boolean;
+  update: WithId<T> | null;
+} => {
   if (!oldItem || !newItem) {
     return { changed: false, update: null };
   }
-  const update: Partial<T> = {};
+  const update = { id: oldItem.id } as WithId<T>;
   let changed = false;
   for (const prop in newItem) {
     if (Object.prototype.hasOwnProperty.call(newItem, prop)) {

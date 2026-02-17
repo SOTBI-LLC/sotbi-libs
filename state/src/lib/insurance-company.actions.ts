@@ -1,4 +1,5 @@
 import type { InsuranceCompany, InsurancePolicy } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class FetchCompanies {
   public static readonly type = '[INSURANCE COMPANY] Fetch Companies';
@@ -16,9 +17,7 @@ export class AddCompany {
 
 export class UpdateCompany {
   public static readonly type = '[INSURANCE COMPANY] Update Company';
-  constructor(
-    public payload: Partial<InsuranceCompany> & { id: number | string },
-  ) {}
+  constructor(public payload: WithId<InsuranceCompany>) {}
 }
 
 export class UpdateInsurancePolicy {

@@ -1,4 +1,5 @@
 import type { Defrayment } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class GetAllDefrayments {
   public static readonly type = '[DEFRAYMENT] Get all items';
@@ -17,7 +18,7 @@ export class AddDefrayment {
 
 export class UpdateDefrayment {
   public static readonly type = '[DEFRAYMENT] Update item';
-  constructor(public readonly payload: Defrayment) {}
+  constructor(public readonly payload: WithId<Defrayment>) {}
 }
 
 export class DeleteDefrayment {

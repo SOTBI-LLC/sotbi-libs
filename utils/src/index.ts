@@ -22,6 +22,7 @@ export {
   extractProperty,
   getDiff,
   removeID,
+  WithId,
 } from './lib/prop';
 export {
   ArrFromMap,

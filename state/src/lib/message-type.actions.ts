@@ -1,4 +1,5 @@
 import type { MessageType } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class FetchMessageTypes {
   public static readonly type = '[EFRSB MESSAGE TYPE] Fetch items';
@@ -11,7 +12,7 @@ export class AddMessageType {
 
 export class UpdateMessageType {
   public static readonly type = '[EFRSB MESSAGE TYPE] Update item';
-  constructor(public payload: MessageType) {}
+  constructor(public payload: WithId<MessageType>) {}
 }
 
 export class DeleteMessageType {

@@ -1,4 +1,5 @@
 import type { Access } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 export class CreateAccess {
   public static readonly type = '[ACCESS] Create item';
   constructor(public payload: Partial<Access>) {}
@@ -15,7 +16,7 @@ export class GetAccess {
 
 export class UpdateAccess {
   public static readonly type = '[ACCESS] Update access path';
-  constructor(public payload: Partial<Access> & { id: number }) {}
+  constructor(public payload: WithId<Access>) {}
 }
 
 export class DeleteAccess {

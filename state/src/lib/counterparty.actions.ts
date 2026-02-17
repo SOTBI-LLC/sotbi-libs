@@ -1,4 +1,5 @@
 import type { Counterparty } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 /** GetCounterparties Action Class */
 export class GetCounterparties {
@@ -35,7 +36,7 @@ export class UpdateCounterparty {
    * @constructor
    * @param {Partial<Counterparty>} payload - Counterparty object
    */
-  constructor(public readonly payload: Counterparty) {}
+  constructor(public readonly payload: WithId<Counterparty>) {}
 }
 
 /** DeleteCounterparty Action Class */

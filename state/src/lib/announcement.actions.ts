@@ -1,4 +1,5 @@
 import type { Announcement } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class FetchAnnouncements {
   public static readonly type = '[ANNOUNCEMENT] Fetch items';
@@ -24,9 +25,7 @@ export class AddAnnouncement {
 
 export class UpdateAnnouncement {
   public static readonly type = '[ANNOUNCEMENT] Update item';
-  constructor(
-    public readonly payload: Partial<Announcement> & { id: number | string },
-  ) {}
+  constructor(public readonly payload: WithId<Announcement>) {}
 }
 
 export class DeleteAnnouncement {

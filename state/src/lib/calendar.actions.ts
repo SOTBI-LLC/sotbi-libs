@@ -1,4 +1,5 @@
 import type { Calendar } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class GetActivePeriods {
   public static readonly type = '[CALENDAR] get active periods';
@@ -12,7 +13,7 @@ export class GetMonth {
 
 export class TogglePeriod {
   public static readonly type = '[CALENDAR] Open/Close period for filling';
-  constructor(public payload: Partial<Calendar> & { id: number | string }) {}
+  constructor(public payload: WithId<Calendar>) {}
 }
 
 export class RefreshPeriod {

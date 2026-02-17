@@ -3,7 +3,7 @@ import type { PostAddress } from './post-address';
 import type { Sro } from './sro';
 
 export class Bankruptcy {
-  public id: number | null = null;
+  public id = 0;
   public name = '';
   public surname: string | null = null;
   public patronymicname: string | null = null;

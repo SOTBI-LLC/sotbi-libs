@@ -1,8 +1,8 @@
 import type { SimpleEdit2Model } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class FetchFlowTypes {
   public static readonly type = '[FLOW] Fetch items';
-  // constructor(public payload: { type: string }) {}
 }
 
 export class GetFlow {
@@ -12,16 +12,12 @@ export class GetFlow {
 
 export class AddFlow {
   public static readonly type = '[FLOW] Add item';
-  constructor(
-    public payload: Partial<SimpleEdit2Model> & { id: number | string },
-  ) {}
+  constructor(public payload: Partial<SimpleEdit2Model>) {}
 }
 
 export class EditFlow {
   public static readonly type = '[FLOW] Edit item';
-  constructor(
-    public payload: Partial<SimpleEdit2Model> & { id: number | string },
-  ) {}
+  constructor(public payload: WithId<SimpleEdit2Model>) {}
 }
 
 export class DeleteFlow {

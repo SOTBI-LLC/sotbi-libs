@@ -1,4 +1,5 @@
 import type { Message } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class FetchEfrsbMessages {
   public static readonly type = '[EFRSB MESSAGE] Fetch items';
@@ -16,7 +17,7 @@ export class AddEfrsbMessage {
 
 export class UpdateEfrsbMessage {
   public static readonly type = '[EFRSB MESSAGE] Update item';
-  constructor(public payload: Message) {}
+  constructor(public payload: WithId<Message>) {}
 }
 
 export class DeleteEfrsbMessage {

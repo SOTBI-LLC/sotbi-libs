@@ -1,4 +1,5 @@
 import type { PaymentAttachment } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class GetAllPaymentAttachments {
   public static readonly type = '[PAYMENT ATTACHMENT] Get all items';
@@ -17,7 +18,7 @@ export class AddPaymentAttachment {
 
 export class UpdatePaymentAttachment {
   public static readonly type = '[PAYMENT ATTACHMENT] Update item';
-  constructor(public readonly payload: PaymentAttachment) {}
+  constructor(public readonly payload: WithId<PaymentAttachment>) {}
 }
 
 export class DeletePaymentAttachment {

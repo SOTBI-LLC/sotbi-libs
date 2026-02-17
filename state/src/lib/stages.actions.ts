@@ -1,4 +1,5 @@
 import type { SimpleEditModel } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class FetchStages {
   public static readonly type = '[STAGES] Fetch items';
@@ -16,9 +17,7 @@ export class AddStage {
 
 export class EditStage {
   public static readonly type = '[STAGES] Edit item';
-  constructor(
-    public payload: Partial<SimpleEditModel> & { id: number | string },
-  ) {}
+  constructor(public payload: WithId<SimpleEditModel>) {}
 }
 
 export class DeleteStage {

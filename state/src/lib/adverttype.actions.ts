@@ -1,4 +1,5 @@
 import type { SimpleEdit2Model } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 export class FetchAdvertTypes {
   public static readonly type = '[ADVERTTYPE] Fetch items';
   // constructor(public payload: { type: string }) {}
@@ -11,9 +12,7 @@ export class GetAdvertType {
 
 export class AddAdvertType {
   public static readonly type = '[ADVERTTYPE] Add item';
-  constructor(
-    public payload: Partial<SimpleEdit2Model> & { id: number | string },
-  ) {}
+  constructor(public payload: Partial<SimpleEdit2Model>) {}
 }
 export class AddEmptyAdvertType {
   public static readonly type = '[ADVERTTYPE] Add empty item';
@@ -21,9 +20,7 @@ export class AddEmptyAdvertType {
 
 export class EditAdvertType {
   public static readonly type = '[ADVERTTYPE] Edit item';
-  constructor(
-    public payload: Partial<SimpleEdit2Model> & { id: number | string },
-  ) {}
+  constructor(public payload: WithId<SimpleEdit2Model>) {}
 }
 
 export class DeleteAdvertType {

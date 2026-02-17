@@ -1,4 +1,5 @@
 import type { SimpleEditModel } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class FetchLinkTypes {
   public static readonly type = '[LINKS] Fetch items';
@@ -17,9 +18,7 @@ export class AddLink {
 
 export class EditLink {
   public static readonly type = '[LINKS] Edit item';
-  constructor(
-    public payload: Partial<SimpleEditModel> & { id: number | string },
-  ) {}
+  constructor(public payload: WithId<SimpleEditModel>) {}
 }
 
 export class DeleteLink {

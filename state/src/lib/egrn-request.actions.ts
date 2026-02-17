@@ -1,4 +1,5 @@
 import type { EgrnRequest } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class FetchEgrnRequests {
   public static readonly type = '[EGRN REQUEST] Fetch items';
@@ -27,7 +28,7 @@ export class AddDirtyEgrnRequest {
 
 export class UpdateEgrnRequest {
   public static readonly type = '[EGRN REQUEST] Update item';
-  constructor(public readonly payload: EgrnRequest) {}
+  constructor(public readonly payload: WithId<EgrnRequest>) {}
 }
 
 export class DeleteEgrnRequest {

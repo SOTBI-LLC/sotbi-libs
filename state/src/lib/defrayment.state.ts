@@ -139,10 +139,9 @@ export class DefraymentState {
           items: state.items,
           selected,
         });
-        patchState({ selected: payload });
       }),
       catchError((err) => {
-        return throwError(err);
+        return throwError(() => err);
       }),
       finalize(() => patchState({ loading: false })),
     );

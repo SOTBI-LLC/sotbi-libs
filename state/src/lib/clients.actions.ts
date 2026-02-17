@@ -1,8 +1,8 @@
 import type { SimpleEditModel } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class FetchClients {
   public static readonly type = '[CLIENTS] Fetch all clients';
-  // constructor(public payload: { type: string }) {}
 }
 
 export class GetClient {
@@ -12,16 +12,12 @@ export class GetClient {
 
 export class AddClient {
   public static readonly type = '[CLIENTS] Add item';
-  constructor(
-    public payload: Partial<SimpleEditModel> & { id: number | string },
-  ) {}
+  constructor(public payload: Partial<SimpleEditModel>) {}
 }
 
 export class EditClient {
   public static readonly type = '[CLIENTS] Edit item';
-  constructor(
-    public payload: Partial<SimpleEditModel> & { id: number | string },
-  ) {}
+  constructor(public payload: WithId<SimpleEditModel>) {}
 }
 
 export class DeleteClient {

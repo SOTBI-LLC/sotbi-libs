@@ -1,4 +1,5 @@
 import type { BidState } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class FetchBidState {
   public static readonly type = '[BID STATES] Fetch items';
@@ -29,7 +30,7 @@ export class SaveAllBidState {
 
 export class UpdateBidState {
   public static readonly type = '[BID STATES] Update item';
-  constructor(public payload: Partial<BidState> & { id: number | string }) {}
+  constructor(public payload: WithId<BidState>) {}
 }
 
 export class CancelBidState {

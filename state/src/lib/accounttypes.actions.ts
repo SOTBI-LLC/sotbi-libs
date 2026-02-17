@@ -1,4 +1,5 @@
 import type { SimpleEditModel } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class FetchAccountTypes {
   public static readonly type = '[ACCOUNTTYPES] Fetch items';
@@ -17,9 +18,7 @@ export class AddAccountType {
 
 export class EditAccountType {
   public static readonly type = '[ACCOUNTTYPES] Edit item';
-  constructor(
-    public payload: Partial<SimpleEditModel> & { id: number | string },
-  ) {}
+  constructor(public payload: WithId<SimpleEditModel>) {}
 }
 
 export class DeleteAccountType {

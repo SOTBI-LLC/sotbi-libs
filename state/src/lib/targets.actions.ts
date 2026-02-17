@@ -1,4 +1,5 @@
 import type { SimpleEditModel } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class FetchTargetTypes {
   public static readonly type = '[TARGETS] Fetch target types';
@@ -11,16 +12,12 @@ export class GetTarget {
 
 export class AddTarget {
   public static readonly type = '[TARGETS] Add item';
-  constructor(
-    public payload: Partial<SimpleEditModel> & { id: number | string },
-  ) {}
+  constructor(public payload: Partial<SimpleEditModel>) {}
 }
 
 export class EditTarget {
   public static readonly type = '[TARGETS] Edit item';
-  constructor(
-    public payload: Partial<SimpleEditModel> & { id: number | string },
-  ) {}
+  constructor(public payload: WithId<SimpleEditModel>) {}
 }
 
 export class DeleteTarget {

@@ -1,4 +1,5 @@
 import type { Initiator } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class FetchInitiators {
   public static readonly type = '[INITIATORS] Fetch items';
@@ -12,12 +13,12 @@ export class GetInintiator {
 
 export class AddInintiator {
   public static readonly type = '[INITIATORS] Add item';
-  constructor(public payload: Initiator) {}
+  constructor(public payload: Partial<Initiator>) {}
 }
 
 export class EditInitiator {
   public static readonly type = '[INITIATORS] Edit item';
-  constructor(public payload: Initiator) {}
+  constructor(public payload: WithId<Initiator>) {}
 }
 
 export class DeleteInitiator {

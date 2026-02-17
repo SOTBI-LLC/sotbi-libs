@@ -159,22 +159,27 @@ export class InsuranceCompanyState {
     // console.log('InsuranceCompanyState::UpdateItem', payload);
     patchState({ loading: true });
     const state = getState();
-    const { changed, update } = getDiff(state.selected, payload);
-    if (changed && update) {
-      update.id = payload.id;
-      this.itemsService.update(update).pipe(
-        tap((selected) => {
-          const idx = state.items.findIndex(({ id }) => id === selected.id);
-          state.items[idx] = selected;
-          setState({
-            ...state,
-            selected,
-            items: state.items,
-          });
-        }),
-        catchError((err) => throwError(err)),
-        finalize(() => patchState({ loading: false })),
+    if (state.selected) {
+      const { changed, update } = getDiff<InsuranceCompany>(
+        state.selected,
+        payload,
       );
+      if (changed && update) {
+        update.id = payload.id;
+        this.itemsService.update(update).pipe(
+          tap((selected) => {
+            const idx = state.items.findIndex(({ id }) => id === selected.id);
+            state.items[idx] = selected;
+            setState({
+              ...state,
+              selected,
+              items: state.items,
+            });
+          }),
+          catchError((err) => throwError(err)),
+          finalize(() => patchState({ loading: false })),
+        );
+      }
     }
   }
 
