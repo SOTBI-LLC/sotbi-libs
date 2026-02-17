@@ -15,6 +15,7 @@ export {
   HH_MM,
   MM_YYYY,
 } from './lib/date-func/format';
+export { MONTH_NAMES, RUS_MONTH } from './lib/date-func/locale';
 export { parseStrToDate } from './lib/date-func/parse';
 export {
   deepEqual,

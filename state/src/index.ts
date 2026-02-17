@@ -182,7 +182,7 @@ export { DadataState, DadataStateModel } from './lib/dadata.state';
 
 // Debtors
 export {
-  AddItem as AddDebtor,
+  AddDebtor,
   AddDebtorPolicy,
   ClearSelectedDebtor,
   DeleteDebtorItem,

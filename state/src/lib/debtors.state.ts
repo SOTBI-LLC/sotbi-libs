@@ -9,15 +9,16 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { DebtorService } from '@sotbi/data-access';
-import type { Debtor, DebtorsList } from '@sotbi/models';
+import type { Debtor, DebtorsList, InsurancePolicy } from '@sotbi/models';
 import { conditionMap } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 import { bankruptcyManagerFormatter, deepEqual } from '@sotbi/utils';
 import type { Observable } from 'rxjs';
 import { of, throwError } from 'rxjs';
 import { catchError, finalize, map, take, tap } from 'rxjs/operators';
 import {
+  AddDebtor,
   AddDebtorPolicy,
-  AddItem,
   ClearSelectedDebtor,
   DeleteDebtorItem,
   DeleteDebtorPolicy,
@@ -164,8 +165,8 @@ export class DebtorsState {
     old: Debtor,
     current: Debtor,
     nullables: Set<string>,
-  ): Partial<Debtor> | null {
-    const update: Record<string, unknown> = {};
+  ): WithId<Debtor> | null {
+    const update: Record<string, unknown> = { id: old.id };
     for (const prop in current) {
       const key = prop as keyof Debtor;
       if (Object.prototype.hasOwnProperty.call(current, prop)) {
@@ -199,7 +200,7 @@ export class DebtorsState {
       }
     }
     if (Object.entries(update).length) {
-      return update;
+      return update as WithId<Debtor>;
     }
     return null;
   }
@@ -323,10 +324,10 @@ export class DebtorsState {
     return patchState({ selected: null });
   }
 
-  @Action(AddItem)
+  @Action(AddDebtor)
   public addItem(
     { getState, patchState }: StateContext<DebtorStateModel>,
-    { payload }: AddItem,
+    { payload }: AddDebtor,
   ) {
     patchState({ loading: true });
     return this.debtorSrv.add(payload).pipe(
@@ -441,7 +442,7 @@ export class DebtorsState {
       const idx = selected.insurance_policies.findIndex(
         (el) => el.id === payload.id,
       );
-      selected.insurance_policies[idx] = payload;
+      selected.insurance_policies[idx] = payload as InsurancePolicy;
       patchState({ selected, loading: false });
     } else {
       dispatch(new AddDebtorPolicy(payload));
@@ -457,7 +458,7 @@ export class DebtorsState {
     const state = getState();
     if (state.selected) {
       const selected = structuredClone(state.selected);
-      selected.insurance_policies?.push(payload);
+      selected.insurance_policies?.push(payload as InsurancePolicy);
       setState({ ...state, selected, loading: false });
     }
   }
@@ -472,7 +473,7 @@ export class DebtorsState {
     if (state.selected) {
       const selected = structuredClone(state.selected);
       const idx = selected.insurance_policies?.findIndex(
-        (el) => el.id === payload.id,
+        (el) => el.id === payload,
       );
       if (idx) {
         selected.insurance_policies?.splice(idx, 1);

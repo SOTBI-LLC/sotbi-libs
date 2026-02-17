@@ -1,4 +1,5 @@
 import type { Debtor, InsurancePolicy } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class FetchDebtors {
   public static readonly type = '[DEBTORS] Fetch items';
@@ -21,14 +22,14 @@ export class ClearSelectedDebtor {
   public static readonly type = '[DEBTORS] Clear Selected';
 }
 
-export class AddItem {
+export class AddDebtor {
   public static readonly type = '[DEBTORS] Add item';
   constructor(public payload: Partial<Debtor>) {}
 }
 
 export class UpdateDebtorItem {
   public static readonly type = '[DEBTORS] Edit item';
-  constructor(public payload: Debtor) {}
+  constructor(public payload: WithId<Debtor>) {}
 }
 
 export class DeleteDebtorItem {
@@ -43,16 +44,14 @@ export class RestoreDebtor {
 
 export class UpdateDebtorPolicy {
   public static readonly type = '[DEBTORS] Update policy';
-  constructor(public payload: InsurancePolicy & { id: number | string }) {}
+  constructor(public payload: WithId<InsurancePolicy>) {}
 }
 
 export class AddDebtorPolicy {
   public static readonly type = '[DEBTORS] Add policy';
-  constructor(public payload: InsurancePolicy & { id: number | string }) {}
+  constructor(public payload: Partial<InsurancePolicy>) {}
 }
 export class DeleteDebtorPolicy {
   public static readonly type = '[DEBTORS] delete policy';
-  constructor(
-    public payload: Partial<InsurancePolicy> & { id: number | string },
-  ) {}
+  constructor(public payload: number) {}
 }
