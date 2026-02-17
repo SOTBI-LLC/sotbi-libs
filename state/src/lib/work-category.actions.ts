@@ -16,7 +16,9 @@ export class EditWorkCategory {
 
 export class AddWorkCategory {
   public static readonly type = '[WORKCATEGORIES] Add item';
-  constructor(public payload: { idx: number; workcategory: Partial<WorkCategory> }) {}
+  constructor(
+    public payload: { idx: number; workcategory: Partial<WorkCategory> },
+  ) {}
 }
 
 export class AddEmptyWorkCategory {
@@ -28,7 +30,9 @@ export class SaveAllWorkCategory {
 
 export class UpdateWorkCategory {
   public static readonly type = '[WORKCATEGORIES] Update item';
-  constructor(public payload: WorkCategory) {}
+  constructor(
+    public payload: Partial<WorkCategory> & { id: number | string },
+  ) {}
 }
 
 export class CancelWorkCategory {

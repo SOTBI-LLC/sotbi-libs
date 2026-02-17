@@ -11,7 +11,9 @@ export class GetAdvertType {
 
 export class AddAdvertType {
   public static readonly type = '[ADVERTTYPE] Add item';
-  constructor(public payload: SimpleEdit2Model) {}
+  constructor(
+    public payload: Partial<SimpleEdit2Model> & { id: number | string },
+  ) {}
 }
 export class AddEmptyAdvertType {
   public static readonly type = '[ADVERTTYPE] Add empty item';
@@ -19,7 +21,9 @@ export class AddEmptyAdvertType {
 
 export class EditAdvertType {
   public static readonly type = '[ADVERTTYPE] Edit item';
-  constructor(public payload: SimpleEdit2Model) {}
+  constructor(
+    public payload: Partial<SimpleEdit2Model> & { id: number | string },
+  ) {}
 }
 
 export class DeleteAdvertType {

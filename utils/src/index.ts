@@ -24,6 +24,7 @@ export {
   removeID,
 } from './lib/prop';
 export {
+  ArrFromMap,
   forMap,
   forMapStringNumber,
   notEmptyArray,

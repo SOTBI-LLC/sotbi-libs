@@ -7,3 +7,5 @@ export const notEmptyMap = <K, V>(el: Map<K, V>) => el?.size > 0;
 export const notEmptyArray = <T>(el: Array<T>) => el?.length > 0;
 export const notEmptyObject = (obj: object) =>
   !!obj && Object.keys(obj).length > 0;
+export const ArrFromMap = <K, V>(map: Map<K, V>): { id: K; name: V }[] =>
+  [...map].map(([key, value]) => ({ id: key, name: value }));

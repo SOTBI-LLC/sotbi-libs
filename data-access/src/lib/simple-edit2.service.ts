@@ -40,7 +40,7 @@ export class SimpleEdit2Service {
    */
   public save(
     id: number,
-    item: SimpleEdit2Model,
+    item: Partial<SimpleEdit2Model>,
     type: string = this.defaultServiceName,
   ): Observable<SimpleEdit2Model> {
     return this.http.put<SimpleEdit2Model>(

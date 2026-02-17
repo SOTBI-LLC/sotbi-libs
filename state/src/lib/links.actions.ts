@@ -17,7 +17,9 @@ export class AddLink {
 
 export class EditLink {
   public static readonly type = '[LINKS] Edit item';
-  constructor(public payload: SimpleEditModel) {}
+  constructor(
+    public payload: Partial<SimpleEditModel> & { id: number | string },
+  ) {}
 }
 
 export class DeleteLink {

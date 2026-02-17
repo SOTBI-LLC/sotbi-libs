@@ -24,7 +24,9 @@ export class AddAnnouncement {
 
 export class UpdateAnnouncement {
   public static readonly type = '[ANNOUNCEMENT] Update item';
-  constructor(public readonly payload: Announcement) {}
+  constructor(
+    public readonly payload: Partial<Announcement> & { id: number | string },
+  ) {}
 }
 
 export class DeleteAnnouncement {

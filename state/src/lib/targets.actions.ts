@@ -11,12 +11,16 @@ export class GetTarget {
 
 export class AddTarget {
   public static readonly type = '[TARGETS] Add item';
-  constructor(public payload: SimpleEditModel) {}
+  constructor(
+    public payload: Partial<SimpleEditModel> & { id: number | string },
+  ) {}
 }
 
 export class EditTarget {
   public static readonly type = '[TARGETS] Edit item';
-  constructor(public payload: SimpleEditModel) {}
+  constructor(
+    public payload: Partial<SimpleEditModel> & { id: number | string },
+  ) {}
 }
 
 export class DeleteTarget {

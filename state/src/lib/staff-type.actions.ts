@@ -11,12 +11,16 @@ export class GetStaffType {
 
 export class AddStaffItem {
   public static readonly type = '[STAFF TYPE] Add item';
-  constructor(public payload: SimpleEdit2Model) {}
+  constructor(
+    public payload: Partial<SimpleEdit2Model> & { id: number | string },
+  ) {}
 }
 
 export class EditStaffItem {
   public static readonly type = '[STAFF TYPE] Edit item';
-  constructor(public payload: SimpleEdit2Model) {}
+  constructor(
+    public payload: Partial<SimpleEdit2Model> & { id: number | string },
+  ) {}
 }
 
 export class DeleteStaffItem {

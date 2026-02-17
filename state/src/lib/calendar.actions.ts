@@ -12,7 +12,7 @@ export class GetMonth {
 
 export class TogglePeriod {
   public static readonly type = '[CALENDAR] Open/Close period for filling';
-  constructor(public payload: Calendar) {}
+  constructor(public payload: Partial<Calendar> & { id: number | string }) {}
 }
 
 export class RefreshPeriod {

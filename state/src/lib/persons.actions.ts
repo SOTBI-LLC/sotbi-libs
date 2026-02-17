@@ -12,12 +12,16 @@ export class GetPerson {
 
 export class AddPerson {
   public static readonly type = '[PERSONS] Add item';
-  constructor(public payload: SimpleEditModel) {}
+  constructor(
+    public payload: Partial<SimpleEditModel> & { id: number | string },
+  ) {}
 }
 
 export class EditPerson {
   public static readonly type = '[PERSONS] Edit item';
-  constructor(public payload: SimpleEditModel) {}
+  constructor(
+    public payload: Partial<SimpleEditModel> & { id: number | string },
+  ) {}
 }
 
 export class DeletePerson {

@@ -17,7 +17,7 @@ export class AddLabel {
 
 export class EditLabel {
   public static readonly type = '[LABELS] Edit item';
-  constructor(public payload: Label) {}
+  constructor(public payload: Partial<Label> & { id: number | string }) {}
 }
 
 export class DeleteLabel {

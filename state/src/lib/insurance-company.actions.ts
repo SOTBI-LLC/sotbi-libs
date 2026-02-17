@@ -16,7 +16,9 @@ export class AddCompany {
 
 export class UpdateCompany {
   public static readonly type = '[INSURANCE COMPANY] Update Company';
-  constructor(public payload: InsuranceCompany) {}
+  constructor(
+    public payload: Partial<InsuranceCompany> & { id: number | string },
+  ) {}
 }
 
 export class UpdateInsurancePolicy {

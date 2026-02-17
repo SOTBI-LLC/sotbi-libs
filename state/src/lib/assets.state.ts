@@ -77,7 +77,7 @@ export class AssetsState {
   ) {
     const state = getState();
     return this.itemsService
-      .create(payload.name, SimpleEditServiceNames.ASSET)
+      .create(payload.name ?? '', SimpleEditServiceNames.ASSET)
       .pipe(
         tap((result) => {
           const mapItems = state.mapItems;

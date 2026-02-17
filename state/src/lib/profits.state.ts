@@ -72,7 +72,7 @@ export class ProfitsState {
   ) {
     const state = getState();
     return this.itemsService
-      .create(payload.name, SimpleEditServiceNames.PROFIT_CAT)
+      .create(payload.name ?? '', SimpleEditServiceNames.PROFIT_CAT)
       .pipe(
         tap((result) => {
           const mapItems = state.mapItems;

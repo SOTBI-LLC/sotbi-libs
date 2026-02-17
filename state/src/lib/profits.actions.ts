@@ -12,12 +12,16 @@ export class GetProfit {
 
 export class AddProfit {
   public static readonly type = '[PROFITS] Add item';
-  constructor(public payload: SimpleEditModel) {}
+  constructor(
+    public payload: Partial<SimpleEditModel> & { id: number | string },
+  ) {}
 }
 
 export class EditProfit {
   public static readonly type = '[PROFITS] Edit item';
-  constructor(public payload: SimpleEditModel) {}
+  constructor(
+    public payload: Partial<SimpleEditModel> & { id: number | string },
+  ) {}
 }
 
 export class DeleteProfit {

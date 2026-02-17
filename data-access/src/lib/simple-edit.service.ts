@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import type { SimpleEditModel } from '@sotbi/models';
-import { firstValueFrom } from 'rxjs';
 import type { Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 export enum SimpleEditServiceNames {
   ATTACHMENT = 'attachmenttype', // Виды вложений
@@ -62,7 +62,7 @@ export class SimpleEditService {
   }
 
   public save$(
-    simpleEdit: SimpleEditModel,
+    simpleEdit: Partial<SimpleEditModel>,
     type: string = this.defaultServiceName,
   ): Observable<SimpleEditModel> {
     return this.http.put<SimpleEditModel>(`/api/${type}/${simpleEdit.id}`, {

@@ -71,7 +71,7 @@ export class AttachmentTypesState {
   ) {
     const state = getState();
     return this.itemsService
-      .create(payload.name, SimpleEditServiceNames.ATTACHMENT)
+      .create(payload.name ?? '', SimpleEditServiceNames.ATTACHMENT)
       .pipe(
         tap((result) => {
           const mapItems = state.mapItems;

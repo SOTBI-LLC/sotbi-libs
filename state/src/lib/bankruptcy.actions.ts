@@ -16,7 +16,7 @@ export class GetBankruptcy {
 
 export class UpdateBankruptcy {
   public static readonly type = '[BANKRUPTCIES] Update item';
-  constructor(public payload: Bankruptcy) {}
+  constructor(public payload: Bankruptcy & { id: number | string }) {}
 }
 
 export class ClearSelectedBankruptcy {
@@ -30,12 +30,12 @@ export class DeleteBankruptcy {
 
 export class UpdateBankruptcyPolicy {
   public static readonly type = '[BANKRUPTCIES] Update policy';
-  constructor(public payload: InsurancePolicy) {}
+  constructor(public payload: InsurancePolicy & { id: number | string }) {}
 }
 
 export class AddBankruptcyPolicy {
   public static readonly type = '[BANKRUPTCIES] Add policy';
-  constructor(public payload: InsurancePolicy) {}
+  constructor(public payload: InsurancePolicy & { id: number | string }) {}
 }
 
 export class DeleteBankruptcyPolicy {

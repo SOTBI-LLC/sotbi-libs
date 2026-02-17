@@ -27,9 +27,11 @@ export class CalendarService {
   /**
    * removePeriod
    */
-  public togglePeriod(cal: Calendar): Observable<Calendar[]> {
-    const ym = formatDate(cal.first_day_month, 'yyyy-MM', 'ru-Ru');
-    const { editable } = cal;
+  public togglePeriod(
+    first_day_month: Date,
+    editable: boolean,
+  ): Observable<Calendar[]> {
+    const ym = formatDate(first_day_month, 'yyyy-MM', 'ru-Ru');
     return this.http.put<Calendar[]>(`/api/calendar/${ym}`, { editable });
   }
 

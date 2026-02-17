@@ -12,12 +12,16 @@ export class GetAttachmentType {
 
 export class AddAttachmentType {
   public static readonly type = '[AttachmentTypes] Add item';
-  constructor(public payload: SimpleEditModel) {}
+  constructor(
+    public payload: Partial<SimpleEditModel> & { id: number | string },
+  ) {}
 }
 
 export class EditAttachmentType {
   public static readonly type = '[AttachmentTypes] Edit item';
-  constructor(public payload: SimpleEditModel) {}
+  constructor(
+    public payload: Partial<SimpleEditModel> & { id: number | string },
+  ) {}
 }
 
 export class DeleteAttachmentType {

@@ -72,7 +72,7 @@ export class TargetsState {
   ) {
     const state = getState();
     return this.itemsService
-      .create(payload.name, SimpleEditServiceNames.TARGET)
+      .create(payload.name ?? '', SimpleEditServiceNames.TARGET)
       .pipe(
         tap((result) => {
           const mapItems = state.mapItems;

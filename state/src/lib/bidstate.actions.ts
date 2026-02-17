@@ -29,7 +29,7 @@ export class SaveAllBidState {
 
 export class UpdateBidState {
   public static readonly type = '[BID STATES] Update item';
-  constructor(public payload: BidState) {}
+  constructor(public payload: Partial<BidState> & { id: number | string }) {}
 }
 
 export class CancelBidState {

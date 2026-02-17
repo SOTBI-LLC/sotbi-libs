@@ -43,14 +43,16 @@ export class RestoreDebtor {
 
 export class UpdateDebtorPolicy {
   public static readonly type = '[DEBTORS] Update policy';
-  constructor(public payload: InsurancePolicy) {}
+  constructor(public payload: InsurancePolicy & { id: number | string }) {}
 }
 
 export class AddDebtorPolicy {
   public static readonly type = '[DEBTORS] Add policy';
-  constructor(public payload: InsurancePolicy) {}
+  constructor(public payload: InsurancePolicy & { id: number | string }) {}
 }
 export class DeleteDebtorPolicy {
   public static readonly type = '[DEBTORS] delete policy';
-  constructor(public payload: InsurancePolicy) {}
+  constructor(
+    public payload: Partial<InsurancePolicy> & { id: number | string },
+  ) {}
 }

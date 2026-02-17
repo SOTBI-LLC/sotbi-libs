@@ -16,7 +16,7 @@ export class AddArbitration {
 
 export class EditArbitration {
   public static readonly type = '[ARBITRS] Edit item';
-  constructor(public payload: Arbitration) {}
+  constructor(public payload: Partial<Arbitration> & { id: number | string }) {}
 }
 
 export class DeleteArbitration {

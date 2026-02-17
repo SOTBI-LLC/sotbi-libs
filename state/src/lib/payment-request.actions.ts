@@ -20,7 +20,9 @@ export class AddPaymentRequest {
 
 export class UpdatePaymentRequest {
   public static readonly type = '[PAYMENT REQUEST] Update item';
-  constructor(public readonly payload: PaymentRequest) {}
+  constructor(
+    public readonly payload: Partial<PaymentRequest> & { id: number },
+  ) {}
 }
 
 export class DeletePaymentRequest {

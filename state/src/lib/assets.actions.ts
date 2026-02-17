@@ -12,12 +12,16 @@ export class GetAsset {
 
 export class AddAsset {
   public static readonly type = '[ASSETS] Add item';
-  constructor(public payload: SimpleEditModel) {}
+  constructor(
+    public payload: Partial<SimpleEditModel> & { id: number | string },
+  ) {}
 }
 
 export class EditAsset {
   public static readonly type = '[ASSETS] Edit item';
-  constructor(public payload: SimpleEditModel) {}
+  constructor(
+    public payload: Partial<SimpleEditModel> & { id: number | string },
+  ) {}
 }
 
 export class DeleteAsset {

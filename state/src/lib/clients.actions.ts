@@ -12,12 +12,16 @@ export class GetClient {
 
 export class AddClient {
   public static readonly type = '[CLIENTS] Add item';
-  constructor(public payload: SimpleEditModel) {}
+  constructor(
+    public payload: Partial<SimpleEditModel> & { id: number | string },
+  ) {}
 }
 
 export class EditClient {
   public static readonly type = '[CLIENTS] Edit item';
-  constructor(public payload: SimpleEditModel) {}
+  constructor(
+    public payload: Partial<SimpleEditModel> & { id: number | string },
+  ) {}
 }
 
 export class DeleteClient {

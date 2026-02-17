@@ -16,7 +16,9 @@ export class AddInsurancePolicy {
 
 export class UpdateInsurancePolicy {
   public static readonly type = '[INSURANCE POLICY] Update item';
-  constructor(public payload: InsurancePolicy) {}
+  constructor(
+    public payload: Partial<InsurancePolicy> & { id: number | string },
+  ) {}
 }
 
 export class DeleteInsurancePolicy {

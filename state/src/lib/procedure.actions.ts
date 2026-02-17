@@ -11,12 +11,16 @@ export class GetProcedure {
 
 export class AddProcedure {
   public static readonly type = '[PROCEDURE] Add item';
-  constructor(public payload: SimpleEdit2Model) {}
+  constructor(
+    public payload: Partial<SimpleEdit2Model> & { id: number | string },
+  ) {}
 }
 
 export class EditProcedure {
   public static readonly type = '[PROCEDURE] Edit item';
-  constructor(public payload: SimpleEdit2Model) {}
+  constructor(
+    public payload: Partial<SimpleEdit2Model> & { id: number | string },
+  ) {}
 }
 
 export class DeleteProcedure {

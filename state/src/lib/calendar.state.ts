@@ -156,21 +156,26 @@ export class CalendarState {
     { payload }: TogglePeriod,
   ) {
     patchState({ loading: true });
-    return this.itemsService.togglePeriod(payload).pipe(
-      tap((result) => {
-        patchState({
-          items: result.map((el) => {
-            el.first_day_month = new Date(el.first_day_month);
-            return el;
-          }),
-          selected: result.find(
-            ({ month }: Calendar) => month === payload.month,
-          ),
-        });
-      }),
-      catchError((err) => throwError(() => err)),
-      finalize(() => patchState({ loading: false })),
-    );
+    return this.itemsService
+      .togglePeriod(
+        payload.first_day_month ?? new Date(),
+        payload.editable ?? false,
+      )
+      .pipe(
+        tap((result) => {
+          patchState({
+            items: result.map((el) => {
+              el.first_day_month = new Date(el.first_day_month);
+              return el;
+            }),
+            selected: result.find(
+              ({ month }: Calendar) => month === payload.month,
+            ),
+          });
+        }),
+        catchError((err) => throwError(() => err)),
+        finalize(() => patchState({ loading: false })),
+      );
   }
 
   @Action(RefreshPeriod)

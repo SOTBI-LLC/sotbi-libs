@@ -17,7 +17,7 @@ export class AddSro {
 
 export class EditSro {
   public static readonly type = '[SROS] Edit item';
-  constructor(public payload: Sro) {}
+  constructor(public payload: Partial<Sro> & { id: number | string }) {}
 }
 
 export class DeleteSro {

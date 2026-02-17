@@ -12,12 +12,16 @@ export class GetFlow {
 
 export class AddFlow {
   public static readonly type = '[FLOW] Add item';
-  constructor(public payload: SimpleEdit2Model) {}
+  constructor(
+    public payload: Partial<SimpleEdit2Model> & { id: number | string },
+  ) {}
 }
 
 export class EditFlow {
   public static readonly type = '[FLOW] Edit item';
-  constructor(public payload: SimpleEdit2Model) {}
+  constructor(
+    public payload: Partial<SimpleEdit2Model> & { id: number | string },
+  ) {}
 }
 
 export class DeleteFlow {

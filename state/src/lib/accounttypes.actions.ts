@@ -17,7 +17,9 @@ export class AddAccountType {
 
 export class EditAccountType {
   public static readonly type = '[ACCOUNTTYPES] Edit item';
-  constructor(public payload: SimpleEditModel) {}
+  constructor(
+    public payload: Partial<SimpleEditModel> & { id: number | string },
+  ) {}
 }
 
 export class DeleteAccountType {

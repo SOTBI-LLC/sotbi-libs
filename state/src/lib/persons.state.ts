@@ -71,22 +71,24 @@ export class PersonsState {
     { payload }: AddPerson,
   ) {
     const state = getState();
-    this.itemsService.create(payload.name, SimpleEditServiceNames.PERSON).pipe(
-      tap({
-        next: (result) => {
-          const mapItems = state.mapItems;
-          mapItems.set(result.id, result.name);
-          patchState({
-            items: [...state.items, result],
-            mapItems,
-          });
-        },
-      }),
-      catchError((error) => {
-        console.error(error);
-        return throwError(() => error);
-      }),
-    );
+    this.itemsService
+      .create(payload.name ?? '', SimpleEditServiceNames.PERSON)
+      .pipe(
+        tap({
+          next: (result) => {
+            const mapItems = state.mapItems;
+            mapItems.set(result.id, result.name);
+            patchState({
+              items: [...state.items, result],
+              mapItems,
+            });
+          },
+        }),
+        catchError((error) => {
+          console.error(error);
+          return throwError(() => error);
+        }),
+      );
   }
 
   @Action(EditPerson)

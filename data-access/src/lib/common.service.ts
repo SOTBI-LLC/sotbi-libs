@@ -13,7 +13,7 @@ interface ICommon<T> {
   GetAll(id: number): Observable<T[]>;
   get(id: number): Observable<T>;
   add(item: Partial<T>): Observable<T>;
-  update(item: Partial<T> & { id: number }): Observable<T>;
+  update(item: Partial<T> & { id: number | string }): Observable<T>;
   delete(id: number): Observable<void>;
   download(file: string, params: HttpParams): Observable<BlobPart>;
   download(attachment: DownloadFile): Observable<BlobPart>;

@@ -12,12 +12,16 @@ export class GetCategory {
 
 export class AddCategory {
   public static readonly type = '[CATEGORY] Add item';
-  constructor(public payload: SimpleEdit2Model) {}
+  constructor(
+    public payload: Partial<SimpleEdit2Model> & { id: number | string },
+  ) {}
 }
 
 export class EditCategory {
   public static readonly type = '[CATEGORY] Edit item';
-  constructor(public payload: SimpleEdit2Model) {}
+  constructor(
+    public payload: Partial<SimpleEdit2Model> & { id: number | string },
+  ) {}
 }
 
 export class DeleteCategory {
