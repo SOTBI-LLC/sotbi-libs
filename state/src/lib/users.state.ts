@@ -237,10 +237,11 @@ export class UsersState {
     patchState({ loading: true });
 
     if (payload.id === 0) {
-      return patchState({
+      patchState({
         selected: { id: 0, user: '', role: 2 } as User,
         loading: false,
       });
+      return;
     }
 
     const state = getState();
@@ -249,13 +250,8 @@ export class UsersState {
       // ✅ Proper null checking instead of force-casting
       const selected = state.items.find(({ id }) => id === payload.id);
       if (selected) {
-        return patchState({ selected, loading: false });
-      } else {
-        console.error(
-          'User not found in state, fetching from server',
-          payload.id,
-        );
-        // Fall through to API call
+        patchState({ selected, loading: false });
+        return;
       }
     }
 
@@ -331,7 +327,7 @@ export class UsersState {
           ) || [],
       };
 
-      console.debug('ClearDirtyPositions: updated selected user', selected); // ✅ Use proper logging
+      // console.debug('ClearDirtyPositions: updated selected user', selected); // ✅ Use proper logging
 
       return patchState({ selected });
     }

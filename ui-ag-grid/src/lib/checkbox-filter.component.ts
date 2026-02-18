@@ -1,7 +1,6 @@
 import type { ViewContainerRef } from '@angular/core';
 import { ChangeDetectionStrategy, Component, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ClrCheckboxModule, ClrCommonFormsModule } from '@clr/angular';
 import type { AgFilterComponent } from 'ag-grid-angular';
 import type {
   FilterModel,
@@ -22,7 +21,6 @@ import { AgGridFilterType, AgGridFilterTypeOperation } from './ag-grid.common';
         [(ngModel)]="checked"
         (change)="toggleCheckbox()"
         class="checkbox"
-        clrCheckbox
         id="checkbox"
       />
       <label class="mt-1" for="checkbox"
@@ -45,7 +43,7 @@ import { AgGridFilterType, AgGridFilterTypeOperation } from './ag-grid.common';
       }
     `,
   ],
-  imports: [FormsModule, ClrCheckboxModule, ClrCommonFormsModule],
+  imports: [FormsModule],
 })
 export class CheckboxFilterComponent implements AgFilterComponent {
   protected params!: IFilterParams;

@@ -10,102 +10,110 @@ import type { Property } from './property';
 import type { SimpleEdit2Model, SimpleEditModel } from './simple-edit';
 import type { ClrSelectedState } from './staff';
 
-export interface Debtor {
-  id: number;
-  name: string; // Должник (наименование)
-  full_name: string;
-  inn: string;
-  kpp: string;
-  ogrn: string;
-  address: string;
-  post_address: string;
-  post_address_match?: boolean;
-  arbitration?: Arbitration;
-  arbitration_id: string;
-  case_no: string;
-  decision_date?: Date;
-  initiation_date?: Date;
-  procedure_date?: Date;
-  bankruptcy_manager_id: number;
-  bankruptcy_manager?: Bankruptcy;
-  biddings?: Bidding[];
-  contacts?: string;
-  bank_details?: BankDetail[];
-  project_id: number;
-  project?: Project;
-  project_name?: string;
-  stage_id?: number; // Стадия
-  stage?: SimpleEditModel;
-  kind?: boolean; // Вид, TRUE=физ.лицо FALSE=юр.лицо
-  reportable?: boolean; // Выводить ли должника в отчет для клиента
-  category_id?: number;
-  category?: SimpleEdit2Model;
-  procedure_id?: number;
-  procedure?: SimpleEdit2Model;
-  links?: Link[]; // Таблица ссылок: Тип | Значение
-  registry?: number; //          Общий РТК (все очереди)
-  deposit?: number; //           Общая сумма сопровождаемых требований
-  not_deposit?: number; //       Сумма сопровождаемых требований, обеспеченных залогом
-  deposit_share?: number; //     от реестра с залогом (наблюдение)
-  not_deposit_share?: number; // от реестра без залога (конкурс)
-  assets?: SimpleEditModel[]; // Виды ценного имущества
-  properties?: Property[]; // Список имущества
-  targets?: SimpleEditModel[]; //     Поставленные цели
-  persons?: SimpleEditModel[]; //    Представляемые лица
-  incomes?: SimpleEdit2Model[]; //    Источники дохода
-  expenses?: SimpleEdit2Model[]; //  Статьи расходов
-  income_date?: Date; //    Плановая дата получения прибыли
-  comments?: string; //     Комментарий к финансовому плану
-  profit_cat?: SimpleEditModel; // Категория прибыльности
-  profit_cat_id?: number;
-  created_at?: Date; // Дата добавления должника в базу
-  action_plans?: ActionPlan[]; // Планируемые процедуры
-  insurance_policies?: InsurancePolicy[]; // Страховые полисы
-  updated_at?: Date;
-  selected?: boolean | ClrSelectedState;
+export class Debtor {
+  public id = 0;
+  public name = ''; // Должник (наименование)
+  public full_name = '';
+  public inn = '';
+  public kpp = '';
+  public ogrn = '';
+  public address = '';
+  public post_address = '';
+  public post_address_match = false;
+  public arbitration: Arbitration | null = null;
+  public arbitration_id = '';
+  public case_no = '';
+  public decision_date: Date | null = null;
+  public initiation_date: Date | null = null;
+  public procedure_date: Date | null = null;
+  public bankruptcy_manager_id = 0;
+  public bankruptcy_manager: Bankruptcy | null = null;
+  public biddings: Bidding[] = [];
+  public contacts = '';
+  public bank_details: BankDetail[] = [];
+  public project_id = 0;
+  public project: Project | null = null;
+  public project_name = '';
+  public stage_id: number | null = null; // Стадия
+  public stage: SimpleEditModel | null = null;
+  public kind: boolean | null = null; // Вид, TRUE=физ.лицо FALSE=юр.лицо
+  public reportable: boolean | null = null; // Выводить ли должника в отчет для клиента
+  public category_id = 0;
+  public category: SimpleEdit2Model | null = null;
+  public procedure_id = 0;
+  public procedure: SimpleEdit2Model | null = null;
+  public links: Link[] = []; // Таблица ссылок: Тип | Значение
+  public registry = 0; //          Общий РТК (все очереди)
+  public deposit = 0; //           Общая сумма сопровождаемых требований
+  public not_deposit = 0; //       Сумма сопровождаемых требований, обеспеченных залогом
+  public deposit_share = 0; //     от реестра с залогом (наблюдение)
+  public not_deposit_share = 0; // от реестра без залога (конкурс)
+  public assets: SimpleEditModel[] = []; // Виды ценного имущества
+  public properties: Property[] = []; // Список имущества
+  public targets: SimpleEditModel[] = []; //     Поставленные цели
+  public persons: SimpleEditModel[] = []; //    Представляемые лица
+  public incomes: SimpleEdit2Model[] = []; //    Источники дохода
+  public expenses: SimpleEdit2Model[] = []; //  Статьи расходов
+  public income_date: Date | null = null; //    Плановая дата получения прибыли
+  public comments = ''; //     Комментарий к финансовому плану
+  public profit_cat: SimpleEditModel | null = null; // Категория прибыльности
+  public profit_cat_id = 0;
+  public created_at: Date | null = null; // Дата добавления должника в базу
+  public action_plans: ActionPlan[] = []; // Планируемые процедуры
+  public insurance_policies: InsurancePolicy[] = []; // Страховые полисы
+  public updated_at: Date | null = null;
+  public selected: boolean | ClrSelectedState | null = null;
+
+  constructor(data: Partial<Debtor> = {}) {
+    Object.assign(this, data);
+  }
 }
 
-export interface DebtorsList {
-  id: number;
-  name: string; // Должник (наименование)
-  debtor_created_at: Date;
-  full_name: string;
-  koordinator: string;
-  group1: string;
-  group2: string;
-  state: string;
-  inn: string;
-  kpp: string;
-  ogrn: string;
-  address: string;
-  post_address: string;
-  arbitration_name: string;
-  case_no: string;
-  decision_date: Date;
-  initiation_date?: Date;
-  procedure_date?: Date;
-  bankruptcy_name: string;
-  bankruptcy_manager_id?: number;
-  sro: string;
-  contacts?: string;
-  project_id: number;
-  project?: Project;
-  project_name: string;
-  project_created_at: Date;
-  stage_name?: string; // Стадия
-  kind?: string;
-  category_name?: string;
-  procedure_name?: string;
-  registry?: number; //          Общий РТК (все очереди)
-  deposit?: number; //           Общая сумма сопровождаемых требований
-  not_deposit?: number; //       Сумма сопровождаемых требований, обеспеченных залогом
-  deposit_share?: number; //     от реестра с залогом (наблюдение)
-  not_deposit_share?: number; // от реестра без залога (конкурс)
-  reportable?: string;
-  comments?: string; //     Комментарий к финансовому плану
-  profit_cat_name?: string;
-  links: Link[]; // Таблица ссылок: Тип | Значение
-  property?: Property[]; // Список имущества
-  assets?: SimpleEditModel[]; // Виды ценного имущества
-  created_at?: Date; // Дата добавления должника в базу
+export class DebtorsList {
+  public id = 0;
+  public name = ''; // Должник (наименование)
+  public debtor_created_at: Date | null = null;
+  public full_name = '';
+  public koordinator = '';
+  public group1 = '';
+  public group2 = '';
+  public state = '';
+  public inn = '';
+  public kpp = '';
+  public ogrn = '';
+  public address = '';
+  public post_address = '';
+  public arbitration_name = '';
+  public case_no = '';
+  public decision_date: Date | null = null;
+  public initiation_date: Date | null = null;
+  public procedure_date: Date | null = null;
+  public bankruptcy_name = '';
+  public bankruptcy_manager_id = 0;
+  public sro = '';
+  public contacts: string | null = null;
+  public project_id = 0;
+  public project: Project | null = null;
+  public project_name = '';
+  public project_created_at: Date | null = null;
+  public stage_name = ''; // Стадия
+  public kind = '';
+  public category_name = '';
+  public procedure_name = '';
+  public registry = 0; //          Общий РТК (все очереди)
+  public deposit = 0; //           Общая сумма сопровождаемых требований
+  public not_deposit = 0; //       Сумма сопровождаемых требований, обеспеченных залогом
+  public deposit_share = 0; //     от реестра с залогом (наблюдение)
+  public not_deposit_share = 0; // от реестра без залога (конкурс)
+  public reportable = '';
+  public comments = ''; //     Комментарий к финансовому плану
+  public profit_cat_name = '';
+  public links: Link[] = []; // Таблица ссылок: Тип | Значение
+  public property: Property[] = []; // Список имущества
+  public assets: SimpleEditModel[] = []; // Виды ценного имущества
+  public created_at: Date | null = null; // Дата добавления должника в базу
+
+  constructor(data: Partial<DebtorsList> = {}) {
+    Object.assign(this, data);
+  }
 }

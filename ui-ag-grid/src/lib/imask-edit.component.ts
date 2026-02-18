@@ -1,7 +1,6 @@
 import type { AfterViewInit, ElementRef } from '@angular/core';
 import { ChangeDetectionStrategy, Component, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ClrInputModule } from '@clr/angular';
 import type { ICellEditorAngularComp } from 'ag-grid-angular';
 import type { ICellEditorParams } from 'ag-grid-community';
 import { IMaskDirective } from 'angular-imask';
@@ -20,7 +19,7 @@ import { IMaskDirective } from 'angular-imask';
   `,
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, ClrInputModule, IMaskDirective],
+  imports: [FormsModule, IMaskDirective],
 })
 export class IMaskEdit implements ICellEditorAngularComp, AfterViewInit {
   private readonly input = viewChild<ElementRef>('input');

@@ -2,7 +2,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { DebtorService } from '@sotbi/data-access';
-import type { Debtor } from '@sotbi/models';
+import { Debtor } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import { DebtorsState, UniqueDebtorINNValidator } from './debtors.state';
 
@@ -24,9 +24,7 @@ describe('UniqueDebtorINNValidator', () => {
     }).compileComponents();
 
     validator = TestBed.inject(UniqueDebtorINNValidator);
-    debtorService = TestBed.inject(
-      DebtorService,
-    ) as jest.Mocked<DebtorService>;
+    debtorService = TestBed.inject(DebtorService) as jest.Mocked<DebtorService>;
   });
 
   it('should be created', () => {
@@ -88,7 +86,7 @@ describe('UniqueDebtorINNValidator', () => {
 });
 
 describe('DebtorsState Static Methods', () => {
-  const mockDebtor: Debtor = {
+  const mockDebtor = new Debtor({
     id: 1,
     name: 'Test Debtor LLC',
     full_name: 'Test Debtor Limited Liability Company',
@@ -125,7 +123,7 @@ describe('DebtorsState Static Methods', () => {
     created_at: new Date('2024-01-01'),
     bank_details: [],
     insurance_policies: [],
-  };
+  });
 
   describe('debtorConvertFunction', () => {
     it('should convert Debtor to DebtorsList correctly', () => {
@@ -288,6 +286,7 @@ describe('DebtorsState Static Methods', () => {
       const result = DebtorsState.prepForSave(oldDebtor, newDebtor, new Set());
 
       expect(result).toEqual({
+        id: 1,
         name: 'Updated Name',
         inn: '0987654321',
       });
@@ -334,7 +333,7 @@ describe('DebtorsState Static Methods', () => {
 
       const result = DebtorsState.prepForSave(oldDebtor, newDebtor, nullables);
 
-      expect(result).toEqual({ name: 'Updated Name' });
+      expect(result).toEqual({ id: 1, name: 'Updated Name' });
     });
 
     it('should handle new debtor creation', () => {
@@ -344,7 +343,7 @@ describe('DebtorsState Static Methods', () => {
       const result = DebtorsState.prepForSave(oldDebtor, newDebtor, new Set());
 
       // inn changed from '1234567890' to '' so it's included in the diff
-      expect(result).toEqual({ name: 'New Debtor', inn: '' });
+      expect(result).toEqual({ id: 0, name: 'New Debtor', inn: '' });
     });
   });
 });
@@ -352,7 +351,7 @@ describe('DebtorsState Static Methods', () => {
 describe('DebtorsState Integration', () => {
   it('should have correct static method functionality', () => {
     // Test the debtorConvertFunction with a complete example
-    const testDebtor: Debtor = {
+    const testDebtor = new Debtor({
       id: 42,
       name: 'Integration Test Debtor',
       full_name: 'Integration Test Debtor Full Name',
@@ -373,7 +372,7 @@ describe('DebtorsState Integration', () => {
       insurance_policies: [],
       kind: false,
       reportable: true,
-    };
+    });
 
     const converted = DebtorsState.debtorConvertFunction(testDebtor);
 
@@ -385,7 +384,7 @@ describe('DebtorsState Integration', () => {
   });
 
   it('should properly compare debtors for save preparation', () => {
-    const originalDebtor: Debtor = {
+    const originalDebtor = new Debtor({
       id: 1,
       name: 'Original Name',
       inn: '1234567890',
@@ -404,7 +403,7 @@ describe('DebtorsState Integration', () => {
       profit_cat: { id: 1, name: 'Low' },
       bank_details: [],
       insurance_policies: [],
-    };
+    });
 
     const modifiedDebtor: Debtor = {
       ...originalDebtor,
@@ -420,6 +419,7 @@ describe('DebtorsState Integration', () => {
     );
 
     expect(changes).toEqual({
+      id: 1,
       name: 'Modified Name',
       inn: '0987654321',
       profit_cat: { id: 2, name: 'High' },

@@ -1,7 +1,6 @@
 import { NgStyle } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ClrIconModule } from '@clr/angular';
 import type { ICellEditorAngularComp } from 'ag-grid-angular';
 import type { Column, GridApi, RowNode } from 'ag-grid-community';
 
@@ -52,7 +51,19 @@ import type { Column, GridApi, RowNode } from 'ag-grid-community';
           class="m-0 button-ok btn btn-primary btn-block"
           (click)="save()"
         >
-          <cds-icon class="check m-0" shape="check"></cds-icon>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="28"
+            height="28"
+            viewBox="0 0 36 36"
+            aria-hidden="true"
+            class="check m-0"
+          >
+            <path
+              fill="currentColor"
+              d="M13.759 28.5L3.2909 17.8985C2.94988 17.4948 2.97281 16.8931 3.34353 16.5173C3.71424 16.1415 4.30784 16.1182 4.70604 16.4639L13.7389 25.6207L31.3931 7.74465C31.7913 7.39895 32.3849 7.4222 32.7556 7.798C33.1263 8.1738 33.1492 8.77554 32.8082 9.17921L13.759 28.5Z"
+            />
+          </svg>
         </button>
       }
     </div>
@@ -101,7 +112,7 @@ import type { Column, GridApi, RowNode } from 'ag-grid-community';
       }
     `,
   ],
-  imports: [NgStyle, FormsModule, ClrIconModule],
+  imports: [NgStyle, FormsModule],
 })
 export class TextareaEditor implements ICellEditorAngularComp {
   protected value = '';

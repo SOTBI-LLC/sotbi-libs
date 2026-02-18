@@ -199,7 +199,7 @@ export class DebtorsState {
         }
       }
     }
-    if (Object.entries(update).length) {
+    if (Object.entries(update).length > 1) {
       return update as WithId<Debtor>;
     }
     return null;

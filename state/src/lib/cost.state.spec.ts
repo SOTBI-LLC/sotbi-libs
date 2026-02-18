@@ -1,9 +1,10 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Store, provideStore, provideStates } from '@ngxs/store';
+import { Store, provideStates, provideStore } from '@ngxs/store';
 import { CostRealService } from '@sotbi/data-access';
-import type { CostReal, CostRealFilter, Debtor, Interval } from '@sotbi/models';
+import type { CostReal, CostRealFilter, Interval } from '@sotbi/models';
+import { Debtor } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import {
   AddAbsenceCostsReal,
@@ -41,7 +42,7 @@ describe('CostRealState', () => {
     work_category: null,
   };
 
-  const mockDebtor: Debtor = {
+  const mockDebtor = new Debtor({
     id: 456,
     name: 'Test Debtor',
     full_name: 'Test Debtor Full Name',
@@ -58,7 +59,7 @@ describe('CostRealState', () => {
     links: [],
     project: {} as any,
     profit_cat: {} as any,
-  };
+  });
 
   const mockInterval: Interval = {
     start: new Date('2024-01-01'),
@@ -223,7 +224,9 @@ describe('CostRealState', () => {
         .subscribe(() => {
           const state = store.selectSnapshot((state: any) => state.costReal);
           expect(service.createCostReal).toHaveBeenCalledWith(newCost);
-          expect(state.allItems).toContainEqual(expect.objectContaining({ id: 1 }));
+          expect(state.allItems).toContainEqual(
+            expect.objectContaining({ id: 1 }),
+          );
           done();
         });
     });

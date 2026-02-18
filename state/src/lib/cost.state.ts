@@ -439,7 +439,7 @@ export class CostRealState {
     { getState, setState }: StateContext<CostRealStateModel>,
     { payload }: EditCostReal,
   ) {
-    console.log('CostRealState::EditCostReal', payload);
+    // console.log('CostRealState::EditCostReal', payload);
     const { cost, idx } = payload;
     const state = getState();
     const items = [...state.items];

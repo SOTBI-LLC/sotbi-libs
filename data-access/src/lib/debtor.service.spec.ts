@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import type { Debtor, DebtorsList } from '@sotbi/models';
+import { Debtor, DebtorsList } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import { DebtorService } from './debtor.service';
 
@@ -9,7 +9,7 @@ describe('DebtorService', () => {
   let service: DebtorService;
   let httpClient: jest.Mocked<HttpClient>;
 
-  const mockDebtor: Debtor = {
+  const mockDebtor = new Debtor({
     id: 1,
     name: 'Test Debtor LLC',
     full_name: 'Test Debtor Limited Liability Company',
@@ -44,10 +44,10 @@ describe('DebtorService', () => {
     profit_cat: { id: 1, name: 'High' },
     profit_cat_id: 1,
     created_at: new Date('2024-01-01'),
-  };
+  });
 
   const mockDebtorsList: DebtorsList[] = [
-    {
+    new DebtorsList({
       id: 1,
       name: 'Test Debtor LLC',
       debtor_created_at: new Date('2024-01-01'),
@@ -84,8 +84,8 @@ describe('DebtorService', () => {
       reportable: 'да',
       profit_cat_name: 'High',
       links: [],
-    },
-    {
+    }),
+    new DebtorsList({
       id: 2,
       name: 'Another Debtor Inc',
       debtor_created_at: new Date('2024-01-02'),
@@ -120,7 +120,7 @@ describe('DebtorService', () => {
       reportable: 'нет',
       profit_cat_name: 'Medium',
       links: [],
-    },
+    }),
   ];
 
   beforeEach(async () => {
@@ -364,7 +364,7 @@ describe('DebtorService', () => {
   describe('getDebtorsShort', () => {
     it('should call getList with short=true parameter', () => {
       const mockShortDebtors: Debtor[] = [
-        {
+        new Debtor({
           id: 1,
           name: 'Short Debtor',
           full_name: 'Short Debtor Full Name',
@@ -381,7 +381,7 @@ describe('DebtorService', () => {
           project: { id: 1, name: 'Short Project' },
           links: [],
           profit_cat: { id: 1, name: 'Short' },
-        },
+        }),
       ];
       httpClient.get.mockReturnValue(of(mockShortDebtors));
 
@@ -632,7 +632,7 @@ describe('DebtorService', () => {
     });
 
     it('should inherit and use update method correctly', () => {
-      const updatedDebtor: Debtor = {
+      const updatedDebtor = new Debtor({
         id: 1,
         name: 'Updated Debtor Name',
         full_name: 'Updated Full Name',
@@ -645,7 +645,7 @@ describe('DebtorService', () => {
         case_no: '',
         bankruptcy_manager_id: 0,
         project_id: 0,
-      };
+      });
       const responseDebtor: Debtor = { ...mockDebtor, ...updatedDebtor };
       httpClient.put.mockReturnValue(of(responseDebtor));
 
@@ -654,9 +654,10 @@ describe('DebtorService', () => {
         expect(result.full_name).toBe('Updated Full Name');
       });
 
+      const { id: _id, ...expectedBody } = updatedDebtor;
       expect(httpClient.put).toHaveBeenCalledWith(
         '/api/debtors/1',
-        expect.any(Object),
+        expectedBody,
       );
     });
 
