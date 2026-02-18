@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { InitiatorService } from '@sotbi/data-access';
-import type { Initiator } from '@sotbi/models';
+import { Initiator } from '@sotbi/models';
 import { catchError, tap, throwError } from 'rxjs';
 import {
   AddInintiator,
@@ -14,7 +14,7 @@ import {
 
 export class InitiatorsStateModel {
   public items: Initiator[] = [];
-  public selected: Partial<Initiator> | null = null;
+  public selected: Initiator | null = null;
 }
 
 @State<InitiatorsStateModel>({
@@ -68,16 +68,7 @@ export class InitiatorsState {
     if (!payload) {
       return setState({
         ...state,
-        selected: {
-          id: 0,
-          name: '',
-          full_name: '',
-          accreditations: [],
-          bank_details: [],
-          type: false,
-          is_bankruptcy: false,
-          inn: '',
-        },
+        selected: new Initiator(),
       });
     }
     if (state.selected?.id !== payload) {

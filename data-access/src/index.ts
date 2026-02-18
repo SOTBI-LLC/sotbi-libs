@@ -8,6 +8,7 @@ export { BidStateService } from './lib/bidstate.service';
 export { CalendarService } from './lib/calendar.service';
 export { CostRealService } from './lib/cost-real.service';
 export {
+  CounterpartyAccessService,
   CounterpartyBankDetailService,
   CounterpartyEmployeeService,
   CounterpartyService,

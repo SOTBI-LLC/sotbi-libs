@@ -7,18 +7,22 @@ export class Initiator {
   public name = '';
   public type = false;
   public is_bankruptcy = false;
-  public full_name?: string | null = null;
+  public full_name = '';
   public inn = '';
-  public kpp?: string | null = null;
+  public kpp = '';
   public ogrn = '';
-  public snils?: string | null = null;
+  public snils = '';
   public address = '';
-  public post_address?: string | null = null;
-  public bank_details?: BankDetail[] = [];
-  public accreditations?: Accreditation[] = [];
+  public post_address = '';
+  public bank_details: BankDetail[] = [];
+  public accreditations: Accreditation[] = [];
   public email = '';
   public phone = '';
   public position = '';
   public chief = '';
-  public biddings?: Bidding[] = [];
+  public biddings: Bidding[] = [];
+
+  constructor(data: Partial<Initiator> = {}) {
+    Object.assign(this, data);
+  }
 }

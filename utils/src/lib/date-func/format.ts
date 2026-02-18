@@ -26,6 +26,6 @@ export const dateValueFormatter = (value: Date | null, hours = false) => {
   );
 };
 
-export const getMonthNameFunction = (month: keyof typeof RUS_MONTH): string => {
-  return RUS_MONTH[month];
+export const getMonthNameFunction = (month: string): string => {
+  return RUS_MONTH.get(month) ?? '';
 };
