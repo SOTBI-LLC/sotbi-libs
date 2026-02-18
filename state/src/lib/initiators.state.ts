@@ -34,9 +34,7 @@ export class InitiatorsState {
   }
 
   @Selector()
-  public static getItem(
-    state: InitiatorsStateModel,
-  ): Partial<Initiator> | null {
+  public static getItem(state: InitiatorsStateModel): Initiator | null {
     return state.selected;
   }
 

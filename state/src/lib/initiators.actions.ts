@@ -3,7 +3,6 @@ import type { WithId } from '@sotbi/utils';
 
 export class FetchInitiators {
   public static readonly type = '[INITIATORS] Fetch items';
-  // constructor(public payload: { type: string }) {}
 }
 
 export class GetInintiator {

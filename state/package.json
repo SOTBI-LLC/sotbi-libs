@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/state",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "public"
