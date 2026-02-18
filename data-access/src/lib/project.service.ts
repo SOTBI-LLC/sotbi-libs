@@ -1,7 +1,6 @@
 import { formatDate } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Store } from '@ngxs/store';
 import type { Project } from '@sotbi/models';
 import type { Observable } from 'rxjs';
 
@@ -13,7 +12,6 @@ import type { Observable } from 'rxjs';
 })
 export class ProjectService {
   private readonly http = inject(HttpClient);
-  private readonly store = inject(Store);
 
   protected readonly path = '/api/project';
 

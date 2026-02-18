@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/models",
-  "version": "0.0.4",
+  "version": "0.0.8",
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
@@ -13,7 +13,7 @@
     "url": "https://github.com/SOTBI-LLC/sotbi-libs.git",
     "directory": "models"
   },
-  "dependencies": {
+  "peerDependencies": {
     "tslib": "^2.3.0"
   }
 }

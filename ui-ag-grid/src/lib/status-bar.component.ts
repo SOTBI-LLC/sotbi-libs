@@ -6,7 +6,6 @@ import {
   inject,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Store } from '@ngxs/store';
 import type { CostReal } from '@sotbi/models';
 import { calcSumHours } from '@sotbi/models';
 import { formatEventDuraton } from '@sotbi/utils';
@@ -79,8 +78,6 @@ export class AggregationStatusBarComponent implements OnDestroy {
   imports: [FormsModule],
 })
 export class AddRowsStatusBarComponent implements IStatusPanelAngularComp {
-  private readonly store = inject(Store);
-
   protected editable = true;
 
   private params: IStatusPanelParams | null = null;

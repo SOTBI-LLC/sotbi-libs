@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/ui-ag-grid",
-  "version": "0.0.5",
+  "version": "0.0.8",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "public"
@@ -11,13 +11,12 @@
     "directory": "ui-ag-grid"
   },
   "peerDependencies": {
-    "@sotbi/utils": "~0.0.7",
-    "@sotbi/models": "~0.0.4",
+    "@sotbi/utils": "~0.0.8",
+    "@sotbi/models": "~0.0.8",
     "@angular/common": "^20.3.0",
     "@angular/core": "^20.3.0",
     "@angular/router": "^20.3.0",
     "@angular/forms": "^20.3.4",
-    "@ngxs/store": "^21.0.0",
     "ag-grid-angular": "~34.2.0",
     "ag-grid-community": "~34.2.0",
     "date-fns": "^4.1.0",
