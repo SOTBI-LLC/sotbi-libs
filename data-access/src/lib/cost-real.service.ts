@@ -5,10 +5,10 @@ import type {
   CostReal,
   CostRealAnalyticsMonth,
   CostRealFilter,
+  Interval,
   ResponseCostMonitoring,
 } from '@sotbi/models';
 import { removeID } from '@sotbi/utils';
-import type { Interval } from 'date-fns';
 import type { Observable } from 'rxjs';
 
 @Injectable({
