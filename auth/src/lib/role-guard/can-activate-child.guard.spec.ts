@@ -1,13 +1,17 @@
 import { HttpClient } from '@angular/common/http';
-import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import type { CanActivateChildFn } from '@angular/router';
 import { provideStates, provideStore } from '@ngxs/store';
 import { UserService } from '@sotbi/data-access';
 import { AuthState } from '../store/auth.state';
-import { RoleGuard } from './role.guard';
+import { canActivateChildGuard } from './can-activate-child.guard';
 
-describe('RoleGuardGuard', () => {
-  let guard: RoleGuard;
+describe('canActivateChildGuard', () => {
+  const executeGuard: CanActivateChildFn = (...guardParameters) =>
+    TestBed.runInInjectionContext(() =>
+      canActivateChildGuard(...guardParameters),
+    );
 
   const userServiceSpy = {
     getAll: jest.fn(),
@@ -37,10 +41,9 @@ describe('RoleGuardGuard', () => {
         provideStates([AuthState]),
       ],
     });
-    guard = TestBed.inject(RoleGuard);
   });
 
   it('should be created', () => {
-    expect(guard).toBeTruthy();
+    expect(executeGuard).toBeTruthy();
   });
 });
