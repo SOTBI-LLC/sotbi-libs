@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/auth",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "restricted"
@@ -13,7 +13,7 @@
   "packageManager": "yarn@1.22.22",
   "peerDependencies": {
     "@sotbi/data-access": "~0.0.9",
-    "@sotbi/models": "~0.0.8",
+    "@sotbi/models": "~0.0.10",
     "@angular/common": "^20.3.0",
     "@angular/core": "^20.3.0",
     "@angular/material": "^20.2.0",

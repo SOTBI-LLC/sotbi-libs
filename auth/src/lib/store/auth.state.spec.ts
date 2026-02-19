@@ -1,4 +1,4 @@
-import type { User } from '@sotbi/models';
+import { emptyUser, type User } from '@sotbi/models';
 import type { AuthStateModel } from './auth.state';
 import { AuthState } from './auth.state';
 
@@ -10,13 +10,13 @@ describe('AuthState - Static Functions and Utilities', () => {
       const regularUser = { id: 2, user: 'user', role: 2 };
 
       expect(AuthState.isAdmin({ user: adminUser } as AuthStateModel)).toBe(
-        true
+        true,
       );
       expect(AuthState.isAdmin({ user: regularUser } as AuthStateModel)).toBe(
-        false
+        false,
       );
       expect(
-        AuthState.isAdmin({ user: { id: 0, role: 0 } } as AuthStateModel)
+        AuthState.isAdmin({ user: { id: 0, role: 0 } } as AuthStateModel),
       ).toBe(false);
     });
 
@@ -26,10 +26,10 @@ describe('AuthState - Static Functions and Utilities', () => {
       const notLoggedUser = { id: 0, user: '', role: 1 };
 
       expect(AuthState.isLogged({ user: loggedUser } as AuthStateModel)).toBe(
-        true
+        true,
       );
       expect(
-        AuthState.isLogged({ user: notLoggedUser } as AuthStateModel)
+        AuthState.isLogged({ user: notLoggedUser } as AuthStateModel),
       ).toBe(false);
     });
 
@@ -47,13 +47,13 @@ describe('AuthState - Static Functions and Utilities', () => {
       const regularUser = { id: 2, user: 'user', role: 2 };
 
       expect(AuthState.isAdmin({ user: adminUser } as AuthStateModel)).toBe(
-        true
+        true,
       );
       expect(AuthState.isAdmin({ user: regularUser } as AuthStateModel)).toBe(
-        false
+        false,
       );
       expect(
-        AuthState.isAdmin({ user: { id: 0, role: 0 } } as AuthStateModel)
+        AuthState.isAdmin({ user: { id: 0, role: 0 } } as AuthStateModel),
       ).toBe(false);
     });
 
@@ -63,10 +63,10 @@ describe('AuthState - Static Functions and Utilities', () => {
       const notLoggedUser = { id: 0, user: '', role: 1 };
 
       expect(AuthState.isLogged({ user: loggedUser } as AuthStateModel)).toBe(
-        true
+        true,
       );
       expect(
-        AuthState.isLogged({ user: notLoggedUser } as AuthStateModel)
+        AuthState.isLogged({ user: notLoggedUser } as AuthStateModel),
       ).toBe(false);
     });
 
@@ -133,11 +133,14 @@ describe('AuthState - Static Functions and Utilities', () => {
     it('should validate AuthStateModel interface', () => {
       const validState: AuthStateModel = {
         user: {
-          id: 123,
-          user: 'testuser',
-          role: 2,
-          settings: 32,
-          staff_type: 1,
+          ...emptyUser,
+          ...{
+            id: 123,
+            user: 'testuser',
+            role: 2,
+            settings: 32,
+            staff_type: 1,
+          },
         },
         token: 'test_token',
         refreshToken: 'refresh_token',
@@ -156,7 +159,7 @@ describe('AuthState - Static Functions and Utilities', () => {
 
     it('should validate default state structure', () => {
       const defaultState: AuthStateModel = {
-        user: { id: 0, user: '', role: 1, settings: 0, staff_type: -1 },
+        user: { ...emptyUser },
         token: '',
         refreshToken: '',
         home: '/',

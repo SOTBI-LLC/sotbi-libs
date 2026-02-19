@@ -100,6 +100,7 @@ export {
   StaffUnit,
 } from './lib/staff';
 export {
+  emptyUser,
   HeadDepartment,
   HeadDepartmentChef,
   SettingsType,

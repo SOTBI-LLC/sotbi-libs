@@ -7,6 +7,7 @@ export {
 export { httpInterceptorProviders } from './lib/interceptors';
 export { AuthInterceptor } from './lib/interceptors/auth.interceptor';
 export { UploadInterceptor } from './lib/interceptors/upload.interceptor';
+export { RoleGuard } from './lib/role-guard/role.guard';
 export { RolesGuard } from './lib/roles.guard';
 export {
   GetAccess,

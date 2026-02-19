@@ -13,13 +13,13 @@ export interface User extends UserShort {
   name: string;
   email: string;
   phone: string;
-  hired: Date;
-  fired: Date;
+  hired: Date | null;
+  fired: Date | null;
   password: string;
-  data: Date;
+  data: Date | null;
   role: number;
   user_group_id: number;
-  group: UserGroup;
+  group: UserGroup | null;
   position_id: number;
   users_positions: UserPosition[];
   unit1_id: number;
@@ -29,14 +29,14 @@ export interface User extends UserShort {
   settings: number; // хранятся данные по отображению энергозатрат
   staffs?: Staff; // штатное расписане
   staff_type: number;
-  update_at: Date; // дата обновления
+  update_at: Date | null; // дата обновления
   updated_by: number;
   surname: string; // фамилия
   patronymic: string; //
-  birthday: Date; // дата рождения
+  birthday: Date | null; // дата рождения
   passport_series: string; // серия паспорта
   passport_number: string; // номер паспорта
-  passport_date: Date; // дата выдачи паспорта
+  passport_date: Date | null; // дата выдачи паспорта
   passport_issued: string; // кем выдан паспорт
   inn: string; // инн
   snils: string; // снилс
@@ -54,6 +54,49 @@ export interface User extends UserShort {
   fotoDiplom?: string;
   fotoDiplomName?: string;
 }
+
+export const emptyUser: User = {
+  id: 0,
+  user: '',
+  role: 1,
+  settings: 0,
+  staff_type: -1,
+  uuid: null,
+  name: '',
+  email: '',
+  phone: '',
+  hired: null,
+  fired: null,
+  password: '',
+  data: null,
+  user_group_id: 0,
+  group: null,
+  position_id: 0,
+  users_positions: [],
+  unit1_id: 0,
+  unit1: '',
+  unit2_id: 0,
+  unit2: '',
+  update_at: null,
+  updated_by: 0,
+  surname: '',
+  patronymic: '',
+  birthday: null,
+  passport_series: '',
+  passport_number: '',
+  passport_date: null,
+  passport_issued: '',
+  inn: '',
+  snils: '',
+  diploma: '',
+  mobile: '',
+  external_email: '',
+  tg_nik: '',
+  registration_address: '',
+  actual_address: '',
+  scans: [],
+  avatar: '',
+};
 
 export interface UsersHistory extends User {
   action: string;

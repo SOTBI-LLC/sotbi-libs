@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, createSelector, Selector, State } from '@ngxs/store';
 import { AccessService, UserService } from '@sotbi/data-access';
-import type { User } from '@sotbi/models';
+import { emptyUser, type User } from '@sotbi/models';
 import { isBefore } from 'date-fns';
 import type { JwtPayload } from 'jwt-decode';
 import { jwtDecode } from 'jwt-decode';
@@ -26,17 +26,10 @@ export interface SotbiClaims extends JwtPayload {
   role: number;
   staff: number;
 }
-
 export class AuthStateModel {
   public token: string | null = null;
   public refreshToken: string | null = null;
-  public user: Partial<User> = {
-    id: 0,
-    user: '',
-    role: 1,
-    settings: 0,
-    staff_type: -1,
-  };
+  public user: User = { ...emptyUser };
   public home = '/';
   public loading = false;
   public access: Set<string> = new Set();
@@ -45,7 +38,7 @@ export class AuthStateModel {
 @State<AuthStateModel>({
   name: 'auth',
   defaults: {
-    user: { id: 0, user: '', role: 1, settings: 0, staff_type: -1 },
+    user: { ...emptyUser },
     token: null,
     refreshToken: null,
     home: '/',
@@ -62,17 +55,11 @@ export class AuthState implements NgxsOnInit {
   private readonly refreshStorageKey = 'refreshUser';
   private readonly sessionStorageKey = 'currentUser';
   private readonly sessionAccessKey = 'currentAccess';
-  private readonly defaultUser: Partial<User> = {
-    id: 0,
-    user: '',
-    role: 1,
-    settings: 0,
-    staff_type: -1,
-  };
+  private readonly defaultUser: User = { ...emptyUser };
 
   public static hasAccess(
     path: string,
-    accessSet: Set<string> = new Set()
+    accessSet: Set<string> = new Set(),
   ): boolean {
     path = path.replace(/^\/+|\/+$/, '');
     if (accessSet.has(path)) {
@@ -85,7 +72,7 @@ export class AuthState implements NgxsOnInit {
             .replace(/(.+)/, '^$1$')
             .replace(/:\w?id/gm, '\\d+')
             .replace(/\/:[^/$]+/gm, '/[^\\/\\$]+'),
-          'i'
+          'i',
         );
         // console.log({ path, item, regex }, !!path.match(regex));
         if (path.match(regex)) {
@@ -204,7 +191,7 @@ export class AuthState implements NgxsOnInit {
       const state = getState();
       const { exp } = jwtDecode<JwtPayload>(refreshToken);
       const { jti, iss, role, aud, settings, staff } = jwtDecode<SotbiClaims>(
-        token ?? ''
+        token ?? '',
       ) ?? { jti: 0, iss: '', role: 1, aud: ['/'], settings: 0, staff: 0 };
       if (isBefore(new Date(+(exp ?? 0) * 1000), new Date())) {
         return dispatch(new Logout());
@@ -216,7 +203,16 @@ export class AuthState implements NgxsOnInit {
         refreshToken,
         home: aud?.[0] ?? '/',
         access: new Set(decodedAccess.aud),
-        user: { id: +(jti ?? 0), user: iss, role, settings, staff_type: staff },
+        user: {
+          ...emptyUser,
+          ...{
+            id: +(jti ?? 0),
+            user: iss ?? '',
+            role,
+            settings,
+            staff_type: staff,
+          },
+        },
       });
       dispatch(new GetAccess());
       return patchState({ loading: false });
@@ -242,14 +238,14 @@ export class AuthState implements NgxsOnInit {
       catchError((err) => {
         return throwError(() => err);
       }),
-      finalize(() => patchState({ loading: false }))
+      finalize(() => patchState({ loading: false })),
     );
   }
 
   @Action(UpdateMe)
   public updateMe(
     { patchState }: StateContext<AuthStateModel>,
-    { payload }: UpdateMe
+    { payload }: UpdateMe,
   ) {
     patchState({ loading: true });
     return this.itemsService.saveMe(payload).pipe(
@@ -259,25 +255,28 @@ export class AuthState implements NgxsOnInit {
           jwtDecode<SotbiClaims>(token);
         patchState({
           user: {
-            id: +(jti ?? 0),
-            user: iss,
-            role,
-            settings,
-            staff_type: staff,
+            ...emptyUser,
+            ...{
+              id: +(jti ?? 0),
+              user: iss ?? '',
+              role,
+              settings,
+              staff_type: staff,
+            },
           },
         });
       }),
 
       finalize(() => {
         patchState({ loading: false });
-      })
+      }),
     );
   }
 
   @Action(Login, { cancelUncompleted: true })
   public login(
     { dispatch, setState, getState, patchState }: StateContext<AuthStateModel>,
-    { payload }: Login
+    { payload }: Login,
   ) {
     patchState({ loading: true });
     return this.itemsService.login(payload).pipe(
@@ -299,11 +298,14 @@ export class AuthState implements NgxsOnInit {
             token,
             refreshToken: refresh_token,
             user: {
-              id: +(jti ?? 0),
-              user: iss,
-              role,
-              settings,
-              staff_type: staff,
+              ...emptyUser,
+              ...{
+                id: +(jti ?? 0),
+                user: iss ?? '',
+                role,
+                settings,
+                staff_type: staff,
+              },
             },
             home: aud?.[0] ?? '/',
             access: new Set(decodedAccess),
@@ -314,14 +316,14 @@ export class AuthState implements NgxsOnInit {
         console.error(err);
         return throwError(() => err);
       }),
-      finalize(() => patchState({ loading: false }))
+      finalize(() => patchState({ loading: false })),
     );
   }
 
   @Action(RefreshToken)
   public refereshToken(
     { patchState }: StateContext<AuthStateModel>,
-    { payload }: RefreshToken
+    { payload }: RefreshToken,
   ) {
     patchState({ loading: true });
     return this.itemsService.refreshToken(payload).pipe(
@@ -329,14 +331,14 @@ export class AuthState implements NgxsOnInit {
         localStorage.setItem(this.sessionStorageKey, token);
         localStorage.setItem(this.refreshStorageKey, (refresh_token ??= ''));
         patchState({ token, refreshToken: refresh_token });
-      })
+      }),
     );
   }
 
   @Action(LoginAs, { cancelUncompleted: true })
   public loginAs(
     { setState, getState, patchState }: StateContext<AuthStateModel>,
-    { payload }: LoginAs
+    { payload }: LoginAs,
   ) {
     // console.log('AuthState::LoginAs');
     patchState({ loading: true });
@@ -353,7 +355,15 @@ export class AuthState implements NgxsOnInit {
           setState({
             ...state,
             token,
-            user: { id: +(jti ?? 0), user: iss, role, settings },
+            user: {
+              ...emptyUser,
+              ...{
+                id: +(jti ?? 0),
+                user: iss ?? '',
+                role,
+                settings,
+              },
+            },
             home: aud?.[0] ?? '/',
             access: new Set(decodedAccess.aud),
           });
@@ -365,7 +375,7 @@ export class AuthState implements NgxsOnInit {
       catchError((err) => {
         return throwError(() => err);
       }),
-      finalize(() => patchState({ loading: false }))
+      finalize(() => patchState({ loading: false })),
     );
   }
 
@@ -382,7 +392,7 @@ export class AuthState implements NgxsOnInit {
       finalize(() => {
         patchState({ loading: false });
         return this.router.navigate(['/login']);
-      })
+      }),
     );
   }
 }

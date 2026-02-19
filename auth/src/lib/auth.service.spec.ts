@@ -1,9 +1,13 @@
+import { emptyUser } from '@sotbi/models';
 import type { AuthStateModel } from '../';
 import { AuthState, Login, LoginAs, Logout, RefreshToken } from '../';
 
 describe('AuthService - Static Functions and Business Logic', () => {
   const mockUserState: AuthStateModel = {
-    user: { id: 123, user: 'testuser', role: 2, settings: 32, staff_type: 1 },
+    user: {
+      ...emptyUser,
+      ...{ id: 123, user: 'testuser', role: 2, settings: 32, staff_type: 1 },
+    },
     token: 'test_token',
     refreshToken: 'refresh_token',
     home: '/dashboard',
