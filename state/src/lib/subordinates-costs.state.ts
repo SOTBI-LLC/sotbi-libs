@@ -69,7 +69,6 @@ export class SubordinatesCostsState {
 
   @Selector()
   public static getUnits(state: SubordinatesCostsStateModel): Staff[] {
-    // console.log(state.filter);
     const allUsers = uniqueElementsBy(
       state.items.map((el: CostReal) => el.user),
       (a, b) => a?.id === b?.id,
@@ -86,7 +85,6 @@ export class SubordinatesCostsState {
       units,
       (a, b) => a.unit2_id === b.unit2_id,
     ).filter((el) => !!el.unit2);
-    // console.log(units, subunits);
     return uniqueElementsBy(units, (a, b) => a.unit1_id === b.unit1_id).map(
       (el) => {
         return {
@@ -158,27 +156,22 @@ export class SubordinatesCostsState {
     return state.count;
   }
 
-  @Action(FetchSubordinatesCosts, { cancelUncompleted: false })
+  @Action(FetchSubordinatesCosts, { cancelUncompleted: true })
   public fetchSubordinatesCosts(
-    { patchState, getState }: StateContext<SubordinatesCostsStateModel>,
+    { patchState, setState }: StateContext<SubordinatesCostsStateModel>,
     { payload }: FetchSubordinatesCosts,
   ) {
-    const state = getState();
-    if (!state.loading) {
-      patchState({ loading: true, filter: payload });
-      this.costsService.getSubordinatesCosts(payload).pipe(
-        tap(
-          (result) => {
-            patchState({ items: result, count: result.length });
-          },
-          (error) => {
-            console.error(error.message);
-          },
-        ),
-        catchError((err) => throwError(err)),
-        finalize(() => patchState({ loading: false })),
-      );
-    }
+    patchState({ loading: true, filter: payload });
+    return this.costsService.getSubordinatesCosts(payload).pipe(
+      tap((items) => {
+        setState(patch({ items, count: items.length, loading: false }));
+      }),
+      catchError((error) => {
+        console.error(error.message);
+        return throwError(() => error);
+      }),
+      finalize(() => patchState({ loading: false })),
+    );
   }
 
   @Action(SetSubordinatesFilter)

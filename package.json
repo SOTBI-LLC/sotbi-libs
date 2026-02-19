@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "lint": "nx run-many -t lint --exclude=ui-ag-grid",
+    "lint": "nx run-many -t lint",
     "format": "nx format:write",
     "format:check": "nx format:check",
     "test": "nx run-many -t test",

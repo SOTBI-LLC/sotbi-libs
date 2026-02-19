@@ -19,17 +19,14 @@ export const canMatchGuard: CanMatchFn = (route, segments) => {
       }
 
       // tslint:disable-next-line: no-bitwise
-      if (
-        route.data &&
-        route.data['role'] &&
-        !!(route.data['role'] & user.role)
-      ) {
+      if ((route.data?.['role'] ?? 0) & user.role) {
         return true;
       }
 
       const path = segments
         .reduce((p, el) => {
-          return (p += '/' + el.path);
+          p += '/' + el.path;
+          return p;
         }, '')
         .replace(/^\//, '');
       if (AuthState.hasAccess(path, access)) {
@@ -42,6 +39,4 @@ export const canMatchGuard: CanMatchFn = (route, segments) => {
       });
     }),
   );
-
-  return true;
 };

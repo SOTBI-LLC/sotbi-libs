@@ -26,30 +26,40 @@ export const canActivateGuard: CanActivateFn = (
   }
   return store.select(AuthState.getUserState).pipe(
     map(({ user, access, home }: AuthStateModel) => {
+      // если не авторизован отправляем на странице логина
       if (user.role === 1 || access.size === 0) {
         const loginPath = router.parseUrl('/login');
         return new RedirectCommand(loginPath, {
           skipLocationChange: true,
         });
       }
+
+      // если на роуте есть роль (legacy)
       // tslint:disable-next-line: no-bitwise
-      if (
-        route.data &&
-        route.data['role'] &&
-        !!(route.data['role'] & user.role)
-      ) {
+      if ((route.data['role'] ?? 0) & user.role) {
         return true;
       }
-      const nextUrl = state.url.replace(/^\//, '').split('?')[0];
-      if (AuthState.hasAccess(nextUrl, access)) {
-        return true;
-      }
-      if (window.location.pathname === '/') {
+
+      // релирект после логина
+      if (window.location.pathname === '/login' && state.url === '/') {
         const homePath = router.parseUrl(home);
         return new RedirectCommand(homePath, {
-          skipLocationChange: true,
+          skipLocationChange: false,
         });
       }
+
+      if (state.url) {
+        // авторизованный идет на стартовую страницу
+        if (user.role > 1 && state.url === '/') {
+          return true;
+        }
+        // проверчем доступ к конкретной странице
+        const nextUrl = state.url.replace(/^\//, '').split('?')[0];
+        if (AuthState.hasAccess(nextUrl, access)) {
+          return true;
+        }
+      }
+
       return false;
     }),
   );
