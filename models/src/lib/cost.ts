@@ -44,19 +44,23 @@ export interface ResultUserCost {
   rating: number;
 }
 
-export interface CostReal {
-  id: number;
-  date: Date;
-  user_id: number | null;
-  user: User | null;
-  debtor_id: number;
-  debtor: Debtor | null;
-  minutes_costs: number;
-  description: string | null;
-  work_category_id: number;
-  work_category: WorkCategory | null;
-  dirty: boolean;
-  rowId: string | null;
+export class CostReal {
+  public id = 0;
+  public date: Date | null = null;
+  public user_id = 0;
+  public user: User | null = null;
+  public debtor_id = 0;
+  public debtor: Debtor | null = null;
+  public minutes_costs = 0;
+  public description: string | null = null;
+  public work_category_id: number | null = null;
+  public work_category: WorkCategory | null = null;
+  public dirty = false;
+  public rowId: string | null = null;
+
+  constructor(data: Partial<CostReal> = {}) {
+    Object.assign(this, data);
+  }
 }
 
 export interface CostRealAnalyticsMonth extends CostReal {

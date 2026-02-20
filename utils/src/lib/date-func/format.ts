@@ -12,12 +12,17 @@ export const DD_MM_YYYY_HH_MM_SS = `${DD_MM_YYYY} ${HH_MM}:ss`;
 export const FormatMonth = (data: Date) =>
   `${MONTH_NAMES[data.getMonth()]} ${data.getFullYear()}`;
 
-export const formatEventDuraton = (duration: number): string =>
-  `${Math.floor(duration / 60)}`.padStart(2, '0') +
-  ' ч ' +
-  `${duration % 60}`.padStart(2, '0') +
-  ' мин';
-
+export const formatEventDuraton = (duration: number): string => {
+  if (duration) {
+    return (
+      `${Math.floor(duration / 60)}`.padStart(2, '0') +
+      ' ч ' +
+      `${duration % 60}`.padStart(2, '0') +
+      ' мин'
+    );
+  }
+  return '';
+};
 export const dateValueFormatter = (value: Date | null, hours = false) => {
   return (
     (value &&
