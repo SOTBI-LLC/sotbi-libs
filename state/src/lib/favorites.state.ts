@@ -36,7 +36,7 @@ export class FavoritesState implements NgxsOnInit {
 
   @Action(FavoritesFetchAll, { cancelUncompleted: false })
   public favoritesFetchAll({ patchState }: StateContext<FavoritesStateModel>) {
-    this.itemsService.getAll().pipe(
+    return this.itemsService.getAll().pipe(
       tap((items: Debtor[]) => {
         patchState({ items });
       }),
@@ -52,13 +52,15 @@ export class FavoritesState implements NgxsOnInit {
     { payload }: FavoritesAddItems,
   ) {
     if (payload?.length > 0) {
-      this.itemsService.batchUpdate(payload.map((el: Debtor) => el.id)).pipe(
-        tap((items: Debtor[]) => {
-          patchState({ items });
-        }),
-      );
+     return this.itemsService
+       .batchUpdate(payload.map((el: Debtor) => el.id))
+       .pipe(
+         tap((items: Debtor[]) => {
+           patchState({ items });
+         }),
+       );
     } else {
-      dispatch(new FavoritesRemoveAllItems());
+      return dispatch(new FavoritesRemoveAllItems());
     }
   }
 
@@ -66,7 +68,7 @@ export class FavoritesState implements NgxsOnInit {
   public favoritesRemoveAllItems({
     patchState,
   }: StateContext<FavoritesStateModel>) {
-    this.itemsService.deleteAll().pipe(
+    return this.itemsService.deleteAll().pipe(
       tap(() => {
         patchState({ items: [] });
       }),

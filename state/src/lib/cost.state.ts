@@ -230,7 +230,6 @@ export class CostRealState {
             rowId: rowId++ + '',
           };
         });
-        console.log('CostRealState::FetchCostsReal', allItems);
         setState({
           ...state,
           allItems,
