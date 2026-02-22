@@ -23,6 +23,9 @@ export class InsurancePolicy {
   public debtor_id = 0;
   public debtor: Debtor | null = null;
   public insurance_attachments: InsuranceAttachment[] = [];
+  constructor(init: Partial<InsurancePolicy> = {}) {
+    Object.assign(this, init);
+  }
 }
 
 export enum InsurancePolicyType {

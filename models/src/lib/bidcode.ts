@@ -38,6 +38,10 @@ export class TradingCode {
   public bid_date: Date | null = null;
   public bidstate_id = 0;
   public bidstate: BidState | null = null;
+
+  constructor(init: Partial<TradingCode> = {}) {
+    Object.assign(this, init);
+  }
 }
 
 // use in app-footcloth-comp

@@ -47,6 +47,10 @@ export class EgrnRequest {
   public executed_at: Date | null = null; // Дата исполнения
   public updated_at: Date | null = null; // Дата изменения
   public person_type: PersonType | null = null;
+
+  constructor(init: Partial<EgrnRequest> = {}) {
+    Object.assign(this, init);
+  }
 }
 
 export interface EgrnRequestHistory extends EgrnRequest {
