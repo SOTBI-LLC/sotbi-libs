@@ -4,8 +4,8 @@ import { Action, Selector, State } from '@ngxs/store';
 import { SroService } from '@sotbi/data-access';
 import type { Sro } from '@sotbi/models';
 import { forMap } from '@sotbi/utils';
-import { throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { of, throwError } from 'rxjs';
+import { catchError, finalize, tap } from 'rxjs/operators';
 import type { itemMap } from './simple-edit.state.model';
 import { AddSro, DeleteSro, EditSro, FetchSros, GetSro } from './sros.actions';
 
@@ -47,29 +47,33 @@ export class SrosState implements NgxsOnInit {
   }
 
   @Action(FetchSros, { cancelUncompleted: true })
-  public fetchSros({ getState, setState }: StateContext<SroStateModel>) {
+  public fetchSros({
+    getState,
+    setState,
+    patchState,
+  }: StateContext<SroStateModel>) {
     // console.log('SrosState::FetchSros');
     const state = getState();
     if (!state.items.length) {
-      this.sroSrv.getAll().pipe(
+      patchState({ loading: true });
+      return this.sroSrv.getAll().pipe(
         catchError((err) => {
-          return throwError(err);
+          return throwError(() => err);
         }),
-        tap(
-          (result) => {
-            const mapSros = new Map(result.map(forMap));
+        finalize(() => patchState({ loading: false })),
+        tap({
+          next: (items: Sro[]) => {
+            const mapSros = new Map(items.map(forMap));
             setState({
               ...state,
-              items: result,
+              items,
               mapSros,
             });
           },
-          (error) => {
-            console.error(error.message);
-          },
-        ),
+        }),
       );
     }
+    return of();
   }
 
   @Action(GetSro)
@@ -80,7 +84,7 @@ export class SrosState implements NgxsOnInit {
     patchState({ loading: true });
     const state = getState();
     let result: Sro;
-    const items = state.items;
+    const items = structuredClone(state.items);
     const idx = items.findIndex(({ id }) => payload === id);
     if (!items[idx].full_name) {
       this.sroSrv.get(payload).subscribe((result) => {

@@ -2,9 +2,10 @@ import { Injectable, inject } from '@angular/core';
 import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { BankruptcyService } from '@sotbi/data-access';
-import type { Bankruptcy, InsurancePolicy, PostAddress } from '@sotbi/models';
+import type { InsurancePolicy, PostAddress } from '@sotbi/models';
+import { Bankruptcy } from '@sotbi/models';
 import { bankruptcyManagerFormatter, getDiff } from '@sotbi/utils';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
   AddBankruptcyPolicy,
@@ -48,21 +49,9 @@ export class BankruptcyStateModel {
 export class BankruptcyState implements NgxsOnInit {
   private readonly itemsService = inject(BankruptcyService);
 
-  private readonly empty: Bankruptcy = {
-    id: 0,
-    name: '',
-    surname: null,
-    patronymicname: null,
-    inn: null,
-    snils: null,
-    post_addresses: [emptyPostAddress], // null,
-    uri: null,
-    insurance_policies: [],
-    deleted_at: null,
-    sro: null,
-    sro_id: null,
-    show: null,
-  };
+  private readonly empty: Bankruptcy = new Bankruptcy({
+    post_addresses: [emptyPostAddress],
+  });
 
   @Selector()
   public static loading(state: BankruptcyStateModel) {
@@ -98,9 +87,10 @@ export class BankruptcyState implements NgxsOnInit {
     patchState,
     getState,
   }: StateContext<BankruptcyStateModel>) {
-    patchState({ loading: true });
+    // console.log('BankruptcyState::FetchBankruptcies');
     const state = getState();
     if (!(state.items.length && state.loading)) {
+      patchState({ loading: true });
       return this.itemsService.getAll().pipe(
         tap((res) => {
           const maps = new Map(
@@ -120,15 +110,15 @@ export class BankruptcyState implements NgxsOnInit {
         finalize(() => patchState({ loading: false })),
       );
     }
-    return patchState({ loading: false });
+    return of();
   }
 
   @Action(GetBankruptcy)
   public getBankruptcy(
-    { patchState }: StateContext<BankruptcyStateModel>,
+    { patchState, setState, getState }: StateContext<BankruptcyStateModel>,
     { payload }: GetBankruptcy,
   ) {
-    // console.log('BankruptcyState::FetchBankruptcies', payload);
+    // console.log('BankruptcyState::GetBankruptcy', payload);
     patchState({ loading: true });
     if (payload === 0) {
       return patchState({
@@ -136,12 +126,12 @@ export class BankruptcyState implements NgxsOnInit {
         selected: Object.assign({}, this.empty),
       });
     }
+    const state = getState();
     return this.itemsService.get(payload).pipe(
       tap((selected: Bankruptcy) => {
-        patchState({ selected });
+        setState({ ...state, selected, loading: false });
       }),
       catchError((err) => throwError(() => err)),
-      finalize(() => patchState({ loading: false })),
     );
   }
 

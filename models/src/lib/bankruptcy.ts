@@ -16,4 +16,8 @@ export class Bankruptcy {
   public uri: string | null = null;
   public insurance_policies: InsurancePolicy[] = [];
   public deleted_at: Date | null = null;
+
+  constructor(init: Partial<Bankruptcy> = {}) {
+    Object.assign(this, init);
+  }
 }

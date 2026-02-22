@@ -3,7 +3,7 @@ import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { InsurancePolicyService } from '@sotbi/data-access';
 import { InsurancePolicy } from '@sotbi/models';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
   AddInsurancePolicy,
@@ -65,7 +65,7 @@ export class InsurancePolicyState {
     const state = getState();
     if (!state.items.length) {
       patchState({ loading: true });
-      this.itemsService.GetAll().pipe(
+      return this.itemsService.GetAll().pipe(
         tap((items) => {
           setState({
             ...state,
@@ -74,10 +74,11 @@ export class InsurancePolicyState {
             count: items.length,
           });
         }),
-        catchError((err) => throwError(err)),
+        catchError((err) => throwError(() => err)),
         finalize(() => patchState({ loading: false })),
       );
     }
+    return of();
   }
 
   @Action(GetInsurancePolicy)

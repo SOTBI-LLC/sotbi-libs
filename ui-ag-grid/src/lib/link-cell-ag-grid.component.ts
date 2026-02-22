@@ -38,7 +38,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
 })
 export class LinkCellAgGridComponent implements ICellRendererAngularComp {
   protected name = '';
-  protected routerLink = '';
+  protected routerLink: string[] | string = '';
   protected icon = '';
 
   public agInit(params: ICellRendererParams) {
@@ -50,7 +50,11 @@ export class LinkCellAgGridComponent implements ICellRendererAngularComp {
     if (params['route']) {
       r = '/' + params['route'];
     }
-    let id = 0;
+    if (params['routerLink']) {
+      this.routerLink = params['routerLink'];
+      return;
+    }
+    let id = '0';
     if (params.data[params['linkTo']]) {
       id =
         params.data[params['linkTo']].debtor_id ||
@@ -60,7 +64,7 @@ export class LinkCellAgGridComponent implements ICellRendererAngularComp {
     } else {
       id = params.data.id;
     }
-    this.routerLink = `${r}/${id}`;
+    this.routerLink = [r, id];
   }
 
   public refresh(): boolean {
