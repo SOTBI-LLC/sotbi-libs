@@ -25,12 +25,12 @@ export interface AccountStatement {
   doer_name?: string;
   executed_at: Date; // Дата исполнения
   executed_time: Date; // Время исполнения
-  pdf_file_name?: string; // ссылка на PDF file
-  txt_file_name?: string; // ссылка на TXT file
-  excel_file_name?: string; // ссылка на Excel file
+  pdf_file_name: string | null; // ссылка на PDF file
+  txt_file_name: string | null; // ссылка на TXT file
+  excel_file_name: string | null; // ссылка на Excel file
   description?: string; // примечание
   request_reason?: string; // причина создания заявки
-  reject_reason?: string; // причина отклонения заявки
+  reject_reason: string | null; // причина отклонения заявки
   duration: number;
   debtor_id?: number;
 }

@@ -21,10 +21,10 @@
     "utils"
   ],
   "dependencies": {
+    "@angular/animations": "^20.3.4",
     "@angular/cdk": "^20.2.8",
     "@angular/common": "^20.3.14",
     "@angular/compiler": "^20.3.15",
-    "@angular/animations": "^20.3.4",
     "@angular/core": "^20.3.4",
     "@angular/forms": "^20.3.4",
     "@angular/material": "^20.2.0",
