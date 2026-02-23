@@ -1,14 +1,4 @@
 import { HttpParams } from '@angular/common/http';
-import { type Bankruptcy } from '@sotbi/models';
-
-export const bankruptcyManagerFormatter = (item: Bankruptcy | null): string => {
-  if (!item) {
-    return '';
-  }
-  return `${item?.surname ?? ''} ${item?.name?.[0] ?? ''}. ${item?.patronymicname?.[0] ?? ''}. (ИНН:${
-    item?.inn ?? ''
-  })`; // , СНИЛС:${bankruptcyManager.snils||''})
-};
 
 export const canSave = <T extends { dirty?: boolean }>(
   items: T[],
