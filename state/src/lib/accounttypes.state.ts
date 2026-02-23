@@ -3,7 +3,7 @@ import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { SimpleEditService, SimpleEditServiceNames } from '@sotbi/data-access';
 import { forMap } from '@sotbi/utils';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import {
   AddAccountType,
@@ -66,7 +66,7 @@ export class AccountTypesState implements NgxsOnInit {
         }),
       );
     }
-    return undefined;
+    return of();
   }
 
   @Action(AddAccountType)

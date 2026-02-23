@@ -30,6 +30,9 @@ export class PaymentRequest {
   public updated_by_name = ''; // Юзер, последним обновивший запись
   public worked_by_name = ''; // Юзер, последним обновивший запись
   public project_owner_id = 0; // Ответственный по проекту на котором должник
+  constructor(init: Partial<PaymentRequest> = {}) {
+    Object.assign(this, init);
+  }
 }
 export interface PaymentRequestHistory extends PaymentRequest {
   created_at: Date;

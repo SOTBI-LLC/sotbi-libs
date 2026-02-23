@@ -73,10 +73,9 @@ export class AccessState {
     { patchState, getState }: StateContext<AccessStateModel>,
     { payload }: GetAccess,
   ) {
-    patchState({ loading: true });
     const state = getState();
     const selected = state.items.find(({ id }) => id === payload.id);
-    patchState({ selected, loading: false });
+    patchState({ selected });
   }
 
   @Action(CreateAccess)
