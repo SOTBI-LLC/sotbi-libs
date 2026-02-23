@@ -10,7 +10,6 @@
     "url": "git+https://github.com/SOTBI-LLC/sotbi-libs.git",
     "directory": "utils"
   },
-  "packageManager": "yarn@1.22.22",
   "peerDependencies": {
     "@sotbi/models": "file:./dist/models",
     "@angular/common": "^20.3.14",
