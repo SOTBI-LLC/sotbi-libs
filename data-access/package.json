@@ -11,8 +11,8 @@
     "directory": "data-access"
   },
   "peerDependencies": {
-    "@sotbi/models": "file:./dist/models",
-    "@sotbi/utils": "file:./dist/utils",
+    "@sotbi/models": "^0.0.13",
+    "@sotbi/utils": "^0.0.13",
     "@angular/common": "^20.3.14",
     "@angular/core": "^20.3.4",
     "rxjs": "^7.8.0",

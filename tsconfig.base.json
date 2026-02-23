@@ -18,11 +18,11 @@
     "baseUrl": ".",
     "paths": {
       "@sotbi/auth": ["auth/src/index"],
-      "@sotbi/data-access": ["data-access/src/index.ts"],
-      "@sotbi/models": ["models/src/index.ts"],
-      "@sotbi/state": ["state/src/index.ts"],
-      "@sotbi/ui": ["ui/src/index.ts"],
-      "@sotbi/ui-ag-grid": ["ui-ag-grid/src/index.ts"],
+      "@sotbi/data-access": ["data-access/src/index"],
+      "@sotbi/models": ["models/src/index"],
+      "@sotbi/state": ["state/src/index"],
+      "@sotbi/ui": ["ui/src/index"],
+      "@sotbi/ui-ag-grid": ["ui-ag-grid/src/index"],
       "@sotbi/utils": ["utils/src/index"]
     }
   },
