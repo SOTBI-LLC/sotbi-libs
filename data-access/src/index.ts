@@ -16,6 +16,7 @@ export {
   DebtCalcsGetAllModel,
 } from './lib/calculation.service';
 export { CalendarService } from './lib/calendar.service';
+export { DownloadFile } from './lib/common.service';
 export { CostRealService } from './lib/cost-real.service';
 export {
   CounterpartyAccessService,
@@ -69,6 +70,7 @@ export { SubMessageTypeService } from './lib/sub-message-type.service';
 export { TaskHistoryService, TaskListService } from './lib/task-list.service';
 export { TaskListTypeService } from './lib/task-list.types.service';
 export { TransitionService } from './lib/transition.service';
+export { DownloadUploadService } from './lib/upload.service';
 export { UserPositionService } from './lib/user-position.service';
 export { UserService } from './lib/user.service';
 export { UsergroupService } from './lib/usergroup.service';

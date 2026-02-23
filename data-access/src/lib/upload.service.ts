@@ -1,4 +1,8 @@
-import type { HttpErrorResponse, HttpEvent } from '@angular/common/http';
+import type {
+  HttpErrorResponse,
+  HttpEvent,
+  HttpResponse,
+} from '@angular/common/http';
 import {
   HttpClient,
   HttpEventType,
@@ -9,7 +13,7 @@ import { Injectable, inject } from '@angular/core';
 import type { Attachment, ExchangeFile, Remaining } from '@sotbi/models';
 import type { Observable } from 'rxjs';
 import { of, throwError } from 'rxjs';
-import { catchError, last, map, tap } from 'rxjs/operators';
+import { catchError, filter, map } from 'rxjs/operators';
 import { MessageService } from './message.service';
 
 export interface Upload1CResponse {
@@ -37,18 +41,24 @@ export class DownloadUploadService {
       const formData = new FormData();
       const fl = files.length;
       for (let i = 0; i < fl; i++) {
-        formData.append('files', files.item(i), files.item(i).name);
+        const file = files.item(i);
+        if (file) {
+          formData.append('files', file, file.name);
+        }
       }
       const req = new HttpRequest('POST', `/api/upload/${id}`, formData, {
         reportProgress: true,
       });
-      return this.http.request(req).pipe(
-        map((event) => this.getEventMessage(event, files)),
-        tap((message) => this.showProgress(message)),
-        last(), // return last (completed) message to caller
-        catchError((err) => throwError(err)),
+      return this.http.request<Attachment[] | ExchangeFile[]>(req).pipe(
+        filter(
+          (event): event is HttpResponse<Attachment[] | ExchangeFile[]> =>
+            event.type === HttpEventType.Response,
+        ),
+        map((event) => event.body as Attachment[] | ExchangeFile[]),
+        catchError((err) => throwError(() => err)),
       );
     }
+    return of([]);
   }
 
   public upload1С(formData: FormData): Observable<Remaining[]> {
@@ -94,7 +104,9 @@ export class DownloadUploadService {
 
       case HttpEventType.UploadProgress: {
         // Compute and show the % done:
-        const percentDone = Math.round((100 * event.loaded) / event.total);
+        const percentDone = event.total
+          ? Math.round((100 * event.loaded) / event.total)
+          : 0;
         return `Files is ${percentDone}% uploaded.`;
       }
 

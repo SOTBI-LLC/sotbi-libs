@@ -72,6 +72,7 @@ export interface ExchangeFile {
   account: string[];
   remainings: Remaining[];
   file?: string;
+  original_file_name?: string;
   type?: number;
   creator_id: number;
   creator?: User;

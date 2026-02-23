@@ -15,7 +15,7 @@ export interface Attachment {
   adNum: string; //                required, Номер объявления
   adDate: Date; //                 required, Дата объявления
   costs: number; //                required, Сумма
-  originalFileName: string; //    required, Имя исходного файла
+  original_file_name: string; //    required, Имя исходного файла
   file: string; //                required, Файл
   comment?: string;
   /** correct true = учитывать чекбокс = !this.isBankruptcy = не АУ */
