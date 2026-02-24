@@ -34,7 +34,7 @@ export { ScanType, UserScan } from './lib/user-scan';
 // Models with simple dependencies
 export { ActionPlan } from './lib/actionplan';
 export { AppraisalSubject } from './lib/appraisal-subject';
-export { Appraiser, AppraiserType } from './lib/appraiser';
+export { Appraiser, AppraiserType, SroChangedEvent } from './lib/appraiser';
 export { Asset } from './lib/asset';
 export {
   Creditor,

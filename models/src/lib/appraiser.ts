@@ -14,6 +14,11 @@ export interface Appraiser {
   sro_id?: number;
 }
 
+export interface SroChangedEvent {
+  rowIndex: number;
+  sroId: number;
+}
+
 export enum AppraiserType {
   APPRAISER = 1,
   EXPERT,

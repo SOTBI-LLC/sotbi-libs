@@ -120,6 +120,7 @@ export interface Message {
     /* message_type_id = 14 +  sub_message_type_id = 8 */
     evaluation_report_date: Date; // Дата отчета об оценке
     /* message_type_id = 14 +  sub_message_type_id = 8 */
+    /** is_expert_report = true если expert_report_no существует */
     expert_report_no: string; // Номер экспертизы отчета об оценке
     /* message_type_id = 14 +  sub_message_type_id = 8 */
     expert_report_date: Date; // Дата экспертизы отчета об оценке
