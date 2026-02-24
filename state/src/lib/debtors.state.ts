@@ -32,6 +32,7 @@ import {
 } from './debtors.actions';
 import type { itemMap } from './simple-edit.state.model';
 
+/** не используется */
 @Injectable({ providedIn: 'root' })
 export class UniqueDebtorINNValidator implements AsyncValidator {
   private readonly debtorSrv = inject(DebtorService);

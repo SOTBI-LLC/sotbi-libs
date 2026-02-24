@@ -30,8 +30,11 @@ export class EfrsbMessageService extends CommonService<Message> {
     );
   }
 
-  public getGetPublications(sub: number, debtor: number): Observable<number[]> {
-    return this.http.get<number[]>(`${this.path}s/${sub}/${debtor}`);
+  public getPublicationsBySubMessageIdAndDebtorId(
+    subMessageId: number,
+    debtorId: number,
+  ): Observable<number[]> {
+    return this.http.get<number[]>(`${this.path}s/${subMessageId}/${debtorId}`);
   }
 
   public getMessageByPublicationNum(

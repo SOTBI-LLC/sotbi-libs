@@ -75,11 +75,11 @@ export enum SubMessageTypes {
   DeclaringBankruptcy = 39,
   /** о завершении реализации имущества */
   PropertyRealization = 40,
-  /** Сведения о кредитной организации, в которой открыт специальный банковский счет должника, message_type=14=Сведения об активах:
+  /** message_type=14=Сведения об активах: => Сведения о кредитной организации, в которой открыт специальный банковский счет должника,
    * используется тут Dadata => вбили ИНН, получили Наименование+ОГРН
    */
   InformationCreditInstitution = 44,
-  /** Результаты рассмотрения/пересмотра заявлений об оспаривании сделок message_type=16=Оспаривание сделки*/
+  /** message_type=16=Оспаривание сделки => Результаты рассмотрения/пересмотра заявлений об оспаривании сделок */
   ResultsReviewApplicationsChallengingTransactions = 45,
 }
 
@@ -128,13 +128,13 @@ export const CompensationAndRuling =
   (1n << BigInt(SubMessageTypes.JoiningApplication));
 
 /**
- * Судебный акт по результатам рассмотрения заявления об оспаривании сделки должника 12
+ * Судебный акт по результатам рассмотрения заявления об оспаривании сделки должника (sub_message_type_id=12)
  *
- * Судебный акт по результатам пересмотра рассмотрения заявления об оспаривании сделки должника 13
+ * Судебный акт по результатам пересмотра рассмотрения заявления об оспаривании сделки должника (sub_message_type_id=13)
  *
- * Сообщение об отмене сообщения о наличии или об отсутствии признаков преднамеренного или фиктивного банкротства 23
+ * Сообщение об отмене сообщения о наличии или об отсутствии признаков преднамеренного или фиктивного банкротства (sub_message_type_id=23)
  *
- * Сообщение об изменении сообщения о наличии или об отсутствии признаков преднамеренного или фиктивного банкротства 24
+ * Сообщение об изменении сообщения о наличии или об отсутствии признаков преднамеренного или фиктивного банкротства (sub_message_type_id=24)
  */
 export const TransactionAndNotice =
   (1n << BigInt(SubMessageTypes.TransactionChallengeRuling)) |
@@ -142,13 +142,19 @@ export const TransactionAndNotice =
   (1n << BigInt(SubMessageTypes.CancellationNotice)) |
   (1n << BigInt(SubMessageTypes.AmendmentNotice));
 
+/**  message_type=14=Сведения об активах: => Сведения о кредитной организации, в которой открыт специальный банковский счет должника (sub_message_type_id=44)  */
 export const InformationCreditInstitution =
   1n << BigInt(SubMessageTypes.InformationCreditInstitution);
 
-export const informationCreditInstitutionOrResultsReviewApplicationsChallengingTransactions =
+/** message_type=16=Оспаривание сделки => Результаты рассмотрения/пересмотра заявлений об оспаривании сделок (sub_message_type_id=45)*/
+export const ResultsReviewApplicationsChallengingTransactions =
+  1n <<
+  BigInt(SubMessageTypes.ResultsReviewApplicationsChallengingTransactions);
+
+/** sub_message_type_id=44 + sub_message_type_id=45 */
+export const InformationCreditInstitutionOrResultsReviewApplicationsChallengingTransactions =
   InformationCreditInstitution |
-  (1n <<
-    BigInt(SubMessageTypes.ResultsReviewApplicationsChallengingTransactions));
+  ResultsReviewApplicationsChallengingTransactions;
 
 export class SubMessageType {
   public id = 0;

@@ -142,10 +142,12 @@ export interface Message {
     /* message_type_id = 16 +  sub_message_type_id = 13 */
     /* message_type_id = 19 */
     receiving_at: Date; // Дата получения - требований кредиторов|сведений о проведении собрания|Дата подачи заявления | Дата включения в реестр(MessageTypes.ClaimInclusionNotice, 19)
-
-    /* message_type_id = 16 +  sub_message_type_id = 11 */
-    /* message_type_id = 17 +  sub_message_type_id = 14 */
-    /* message_type_id = 17 +  sub_message_type_id = 17 */
+    /* используется в 
+    MessageTypes.ClaimInclusionNotice (message_type_id = 19) &&
+    MessageTypes.TransactionChallenging(message_type_id = 16) + SubMessageTypes.InvalidationPetition (sub_message_type_id = 11) &&
+    MessageTypes.LiabilityControlPersons(message_type_id = 17) + SubMessageTypes.LiabilityClaim (sub_message_type_id = 14) &&
+    MessageTypes.LiabilityControlPersons(message_type_id = 17) + SubMessageTypes.SubsidiaryLiabilityClaim (sub_message_type_id = 17) &&
+    MessageTypes.TransactionChallenging(message_type_id = 16) + SubMessageTypes.ResultsReviewApplicationsChallengingTransactions(sub_message_type_id = 45) */
     creditors: Creditor[]; // сообщение о включении заявленных требований в реестр требований кредиторов
     /* message_type_id = 19 */
     creditors_claim_received: CreditorClaimReceived[]; // <- Уведомление о получении требований кредитора -> */
@@ -176,6 +178,12 @@ export interface Message {
     basis_for_challenging_the_transaction: BasisForChallengingTransaction;
     tax_id: string;
     name_of_company: string;
+    /* Оспаривание сделки (message_type_id: 16) => Результаты рассмотрения/пересмотра заявлений об оспаривании сделок (sub_message_type_id: 45) } */
+    notice_application_not_published: boolean;
+    result_options: ResultOptions;
+    result_options_comment: string;
+    amount_of_satisfaction: number; // Сумма удолетворения, руб.
+    there_is_no_amount_of_satisfaction: boolean; // Сумма отсутствует
   };
 }
 
@@ -276,6 +284,21 @@ export enum BasisForChallengingTransaction {
   FOURTH = 'п.3. ст. 61.3 ФЗ 127',
   FIFTH = 'ст. 10 и ст. 168 ГК РФ',
   SIXTH = 'Иное',
+}
+
+export enum ResultOptions {
+  FIRST = 'Заявление об оспаривании сделки удовлетворено',
+  SECOND = 'Заявление  об оспаривании сделки удовлетворено частично',
+  THIRD = 'В удовлетворении заявления об оспаривании сделки отказано',
+  FOURTH = 'Заявление об оспаривании сделки остановлено без рассмотрения',
+  FIFTH = 'Производство прекращено',
+  SIXTH = 'Заявление направлено на новое рассмотрение',
+  SEVENTH = 'Иное',
+}
+
+export interface RequestPublicationsBySubMessageIdAndDebtorId {
+  subMessageId: number;
+  debtorId: number;
 }
 // Note: Form interfaces (PayloadForm, MessageForm, etc.) are moved to a separate
 // Angular-specific file since they depend on @angular/forms types

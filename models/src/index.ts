@@ -65,7 +65,8 @@ export {
   CompensationAndRuling,
   FictitiousBankruptcyAndAmendmentNotice,
   InformationCreditInstitution,
-  informationCreditInstitutionOrResultsReviewApplicationsChallengingTransactions,
+  ResultsReviewApplicationsChallengingTransactions,
+  InformationCreditInstitutionOrResultsReviewApplicationsChallengingTransactions,
   SubMessageType,
   SubMessageTypes,
   SubsidiaryAndLiabilityClaim,
@@ -267,6 +268,7 @@ export { Marketplace } from './lib/marketplace';
 export {
   BasisForChallengingTransaction,
   CreditOrganisation,
+  ResultOptions,
   CreditorMeetingType,
   CreditorType,
   CreditorTypeArr,
@@ -277,6 +279,7 @@ export {
   Message,
   MessageHistory,
   ProvidingCollateral,
+  RequestPublicationsBySubMessageIdAndDebtorId,
   ReleaseCitizenFromObligationsType,
   TypeOrderOfSatisfaction,
 } from './lib/message';
