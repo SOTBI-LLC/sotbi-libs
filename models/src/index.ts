@@ -40,6 +40,7 @@ export {
   Creditor,
   CreditorListType,
   CreditorResidentType,
+  CreditorClaimReceived,
 } from './lib/creditor';
 export { Calcs, InitiatorCalcs } from './lib/debtorcalcs';
 export {

@@ -1,6 +1,6 @@
 import type { AppraisalSubject } from './appraisal-subject';
 import type { Appraiser } from './appraiser';
-import type { Creditor } from './creditor';
+import type { Creditor, CreditorClaimReceived } from './creditor';
 import type { Debtor } from './debtor';
 import type { MessageAttachment } from './message-attachment';
 import type { PostAddress } from './post-address';
@@ -145,8 +145,9 @@ export interface Message {
     /* message_type_id = 16 +  sub_message_type_id = 11 */
     /* message_type_id = 17 +  sub_message_type_id = 14 */
     /* message_type_id = 17 +  sub_message_type_id = 17 */
+    creditors: Creditor[]; // сообщение о включении заявленных требований в реестр требований кредиторов
     /* message_type_id = 19 */
-    creditors: Creditor[] /* <- Уведомление о получении требований кредитора -> */;
+    creditors_claim_received: CreditorClaimReceived[]; // <- Уведомление о получении требований кредитора -> */
     /* message_type_id = 16 +  sub_message_type_id = 11 */
     other_persons: Creditor[]; // поле на фронте, для выделения иных лиц(type=2) из creditors /* <- Уведомление о получении требований кредитора -> */
     /* message_type_id = 18 +  sub_message_type_id = 22 */
@@ -199,7 +200,7 @@ export const CreditorTypeArr: { id: CreditorType; ru: string }[] = [
 ];
 
 export const CreditorTypeMap = new Map(
-  CreditorTypeArr.map((i): [number, string] => [i.id, i.ru])
+  CreditorTypeArr.map((i): [number, string] => [i.id, i.ru]),
 );
 
 export enum CreditorMeetingType {
@@ -249,7 +250,7 @@ export const DeliberateOrFictitiousValueArr: {
 ];
 
 export const DeliberateOrFictitiousValueMap = new Map(
-  DeliberateOrFictitiousValueArr.map((i): [number, string] => [i.id, i.ru])
+  DeliberateOrFictitiousValueArr.map((i): [number, string] => [i.id, i.ru]),
 );
 
 export enum TypeOrderOfSatisfaction {
