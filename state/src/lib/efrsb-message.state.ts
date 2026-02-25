@@ -15,6 +15,7 @@ import {
   GetPublicationsBySubMessageIdAndDebtorId,
   UpdateEfrsbMessage,
 } from './efrsb-message.actions';
+import { AUTH_NOTIFICATION } from '@sotbi/auth';
 
 export class EfrsbMessageStateModel {
   public items: Message[] = [];
@@ -35,6 +36,7 @@ export class EfrsbMessageStateModel {
 @Injectable()
 export class EfrsbMessageState {
   private readonly itemsService = inject(EfrsbMessageService);
+  private readonly notification = inject(AUTH_NOTIFICATION, { optional: true });
 
   private readonly empty: Message = {
     id: 0,
@@ -170,7 +172,6 @@ export class EfrsbMessageState {
     );
   }
 
-  /** TO DO: добавить логику с MatSnackBar, но не в стейте */
   @Action(GetPublicationsBySubMessageIdAndDebtorId)
   public getPublicationsBySubMessageIdAndDebtorId(
     { patchState, getState, setState }: StateContext<EfrsbMessageStateModel>,
@@ -187,6 +188,9 @@ export class EfrsbMessageState {
           });
         }),
         catchError((err) => {
+          this.notification?.showError(
+            err?.error || 'Произошла ошибка при поиске публикаций',
+          );
           return throwError(() => err);
         }),
         finalize(() => patchState({ loading: false })),
