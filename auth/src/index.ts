@@ -1,4 +1,8 @@
-export { AuthService } from './lib/auth.service';
+export {
+  AUTH_NOTIFICATION,
+  AuthNotificationService,
+  AuthService,
+} from './lib/auth.service';
 export {
   CanComponentDeactivate,
   deactivateGuard,
