@@ -121,11 +121,9 @@ export class StaffsState {
             maps,
           });
         },
-        error: (error) => {
-          console.error(error.message);
-        },
       }),
       catchError((err) => {
+        console.error(err);
         return throwError(() => err);
       }),
     );
@@ -137,7 +135,7 @@ export class StaffsState {
     setState,
     patchState,
   }: StateContext<StaffStateModel>) {
-    console.log('StaffsState::FetchRPG');
+    // console.log('StaffsState::FetchRPG');
     const state = getState();
     patchState({ loading: true });
     return this.staffService.getRPG$().pipe(
@@ -163,6 +161,7 @@ export class StaffsState {
         });
       }),
       catchError((err) => {
+        console.error(err);
         return throwError(() => err);
       }),
     );
@@ -229,7 +228,7 @@ export class StaffsState {
     { dispatch, patchState }: StateContext<StaffStateModel>,
     { payload }: AddStaff,
   ) {
-    console.log('StaffsState::AddStaff', payload);
+    // console.log('StaffsState::AddStaff', payload);
     patchState({ loading: true });
     return this.staffService.create(payload).pipe(
       tap((selectedItem) => {
@@ -267,7 +266,7 @@ export class StaffsState {
     { dispatch, patchState }: StateContext<StaffStateModel>,
     { payload }: DeleteStaff,
   ) {
-    console.log('StaffsState::DeleteStaff', payload);
+    // console.log('StaffsState::DeleteStaff', payload);
     patchState({ loading: true });
     return this.staffService.delete(payload).pipe(
       tap(() => {

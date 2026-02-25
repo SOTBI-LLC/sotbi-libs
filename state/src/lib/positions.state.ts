@@ -4,7 +4,7 @@ import { Action, Selector, State } from '@ngxs/store';
 import { PositionService } from '@sotbi/data-access';
 import { Position } from '@sotbi/models';
 import { canSave, isAllSaved } from '@sotbi/utils';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
   AddEmptyPosition,
@@ -86,7 +86,7 @@ export class PositionState implements NgxsOnInit {
     const state = getState();
     if (!state.items.length) {
       patchState({ loading: true });
-      this.itemsService.getAll(-1).pipe(
+      return this.itemsService.getAll(-1).pipe(
         catchError((err) => throwError(() => err)),
         tap({
           next: (items: Position[]) => {
@@ -109,6 +109,7 @@ export class PositionState implements NgxsOnInit {
         finalize(() => patchState({ loading: false })),
       );
     }
+    return of();
   }
 
   @Action(AddPosition)

@@ -4,7 +4,7 @@ import { Action, Selector, State } from '@ngxs/store';
 import { SimpleEditService, SimpleEditServiceNames } from '@sotbi/data-access';
 import type { SimpleEditModel } from '@sotbi/models';
 import { forMap } from '@sotbi/utils';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import type { SimpleEditStateModel } from './simple-edit.state.model';
 import {
@@ -49,25 +49,22 @@ export class StageState implements NgxsOnInit {
     // console.log('StageState::FetchStages');
     const state = getState();
     if (!state.items.length) {
-      this.itemsService.getAll(SimpleEditServiceNames.STAGE).pipe(
+      return this.itemsService.getAll(SimpleEditServiceNames.STAGE).pipe(
         catchError((err) => {
-          return throwError(err);
+          console.error(err);
+          return throwError(() => err);
         }),
-        tap({
-          next: (result) => {
-            const mapItems = new Map(result.map(forMap));
-            setState({
-              ...state,
-              items: result,
-              mapItems,
-            });
-          },
-          error: (error) => {
-            console.error(error.message);
-          },
+        tap((result) => {
+          const mapItems = new Map(result.map(forMap));
+          setState({
+            ...state,
+            items: result,
+            mapItems,
+          });
         }),
       );
     }
+    return of();
   }
 
   @Action(GetStage)
@@ -80,7 +77,8 @@ export class StageState implements NgxsOnInit {
         patchState({ selected: result });
       }),
       catchError((err) => {
-        return throwError(err);
+        console.error(err);
+        return throwError(() => err);
       }),
     );
   }
@@ -124,7 +122,8 @@ export class StageState implements NgxsOnInit {
         patchState({ items, mapItems });
       }),
       catchError((err) => {
-        throw err;
+        console.error(err);
+        return throwError(() => err);
       }),
     );
   }

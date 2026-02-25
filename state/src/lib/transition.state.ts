@@ -14,6 +14,7 @@ import {
 } from './transition.actions';
 
 import StateMachine from 'javascript-state-machine';
+import { throwError } from 'rxjs';
 
 export class TransitionStateModel {
   public items: Transition[] = [];
@@ -86,9 +87,11 @@ export class TransitionState {
           items,
         });
       }),
-      catchError((err) => {
-        throw 'error fetching items. Details: ' + err.message;
-      }),
+      catchError((err) =>
+        throwError(
+          () => new Error('error fetching items. Details: ' + err.message),
+        ),
+      ),
       finalize(() => patchState({ loading: false })),
     );
   }
@@ -103,15 +106,17 @@ export class TransitionState {
     let selected: Partial<Transition>;
     if (state.items.length > 0) {
       selected = state.items.find(({ id }) => id === payload) ?? {};
-      patchState({ selected, loading: false });
+      return patchState({ selected, loading: false });
     } else {
-      this.itemsService.get(payload).pipe(
+      return this.itemsService.get(payload).pipe(
         tap((selected) => {
           patchState({ selected });
         }),
-        catchError((err) => {
-          throw 'error fetching item. Details: ' + err.message;
-        }),
+        catchError((err) =>
+          throwError(
+            () => new Error('error fetching item. Details: ' + err.message),
+          ),
+        ),
         finalize(() => patchState({ loading: false })),
       );
     }
@@ -132,9 +137,11 @@ export class TransitionState {
           selected: result,
         });
       }),
-      catchError((err) => {
-        throw 'error creating item. Details: ' + err.message;
-      }),
+      catchError((err) =>
+        throwError(
+          () => new Error('error creating item. Details: ' + err.message),
+        ),
+      ),
       finalize(() => patchState({ loading: false })),
     );
   }

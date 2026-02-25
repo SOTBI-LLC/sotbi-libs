@@ -229,11 +229,10 @@ export class UsersState {
     patchState({ loading: true });
 
     if (payload.id === 0) {
-      patchState({
+      return patchState({
         selected: { id: 0, user: '', role: 2 } as User,
         loading: false,
       });
-      return;
     }
 
     const state = getState();
@@ -242,8 +241,7 @@ export class UsersState {
       // ✅ Proper null checking instead of force-casting
       const selected = state.items.find(({ id }) => id === payload.id);
       if (selected) {
-        patchState({ selected, loading: false });
-        return;
+        return patchState({ selected, loading: false });
       }
     }
 
