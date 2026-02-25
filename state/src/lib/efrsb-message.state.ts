@@ -15,7 +15,6 @@ import {
   GetPublicationsBySubMessageIdAndDebtorId,
   UpdateEfrsbMessage,
 } from './efrsb-message.actions';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 export class EfrsbMessageStateModel {
   public items: Message[] = [];
@@ -36,7 +35,6 @@ export class EfrsbMessageStateModel {
 @Injectable()
 export class EfrsbMessageState {
   private readonly itemsService = inject(EfrsbMessageService);
-  private readonly snackBar = inject(MatSnackBar);
 
   private readonly empty: Message = {
     id: 0,
@@ -172,6 +170,7 @@ export class EfrsbMessageState {
     );
   }
 
+  /** TO DO: добавить логику с MatSnackBar, но не в стейте */
   @Action(GetPublicationsBySubMessageIdAndDebtorId)
   public getPublicationsBySubMessageIdAndDebtorId(
     { patchState, getState, setState }: StateContext<EfrsbMessageStateModel>,
@@ -188,9 +187,6 @@ export class EfrsbMessageState {
           });
         }),
         catchError((err) => {
-          this.snackBar.open('Произошла ошибка при поиске публикаций', '', {
-            duration: 2500,
-          });
           return throwError(() => err);
         }),
         finalize(() => patchState({ loading: false })),
