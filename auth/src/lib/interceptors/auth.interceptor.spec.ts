@@ -8,7 +8,6 @@ import {
 } from '@angular/common/http';
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { of, throwError } from 'rxjs';
@@ -19,7 +18,6 @@ describe('AuthInterceptor', () => {
   let interceptor: AuthInterceptor;
   let store: jest.Mocked<Store>;
   let router: jest.Mocked<Router>;
-  let snackBar: jest.Mocked<MatSnackBar>;
   let location: jest.Mocked<Location>;
   let httpHandler: jest.Mocked<HttpHandler>;
   let tokenSignal: ReturnType<typeof signal<string>>;
@@ -38,10 +36,6 @@ describe('AuthInterceptor', () => {
     const routerSpy = {
       navigate: jest.fn(),
     } as unknown as jest.Mocked<Router>;
-
-    const snackBarSpy = {
-      open: jest.fn(),
-    } as unknown as jest.Mocked<MatSnackBar>;
 
     const locationSpy = {
       back: jest.fn(),
@@ -66,7 +60,6 @@ describe('AuthInterceptor', () => {
         AuthInterceptor,
         { provide: Store, useValue: storeSpy },
         { provide: Router, useValue: routerSpy },
-        { provide: MatSnackBar, useValue: snackBarSpy },
         { provide: Location, useValue: locationSpy },
       ],
     }).compileComponents();
@@ -74,7 +67,6 @@ describe('AuthInterceptor', () => {
     interceptor = TestBed.inject(AuthInterceptor);
     store = TestBed.inject(Store) as jest.Mocked<Store>;
     router = TestBed.inject(Router) as jest.Mocked<Router>;
-    snackBar = TestBed.inject(MatSnackBar) as jest.Mocked<MatSnackBar>;
     location = TestBed.inject(Location) as jest.Mocked<Location>;
     httpHandler = httpHandlerSpy;
   });
@@ -222,13 +214,6 @@ describe('AuthInterceptor', () => {
           expect(error).toBe(errorResponse);
         },
       });
-      expect(snackBar.open).toHaveBeenCalledWith(
-        'У ВАС НЕДОСТАТОЧНО ПРАВ!',
-        '',
-        {
-          duration: 2000,
-        },
-      );
       expect(location.back).toHaveBeenCalled();
     });
 
@@ -246,7 +231,6 @@ describe('AuthInterceptor', () => {
         },
       });
 
-      expect(snackBar.open).not.toHaveBeenCalled();
       expect(location.back).not.toHaveBeenCalled();
     });
 

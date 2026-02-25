@@ -1,10 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { CounterpartyService } from '@sotbi/data-access';
 import type { Counterparty } from '@sotbi/models';
-import { fromBase62, notifyError, removeID } from '@sotbi/utils';
+import { fromBase62, removeID } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
@@ -34,7 +33,6 @@ export class CounterpartyStateModel {
 @Injectable()
 export class CounterpartyState {
   private readonly itemsSvc = inject(CounterpartyService);
-  private readonly snackBar = inject(MatSnackBar);
 
   @Selector()
   public static getItems(state: CounterpartyStateModel): Counterparty[] {
@@ -194,10 +192,8 @@ export class CounterpartyState {
         });
       }),
       catchError((err) => {
-        this.snackBar.open(notifyError(err), '', {
-          duration: 4000,
-        });
-        return throwError(err);
+        console.error('CounterpartyState::DeleteCounterparty() -> Error:', err);
+        return throwError(() => err);
       }),
       finalize(() => patchState({ loading: false })),
     );

@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import type { NgxsOnInit, StateContext } from '@ngxs/store';
+import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State, Store } from '@ngxs/store';
-import { AuthState } from '@sotbi/auth';
 import { UsergroupService } from '@sotbi/data-access';
 import type { UserGroup } from '@sotbi/models';
 import { throwError } from 'rxjs';
@@ -31,7 +30,7 @@ export class UserGroupStateModel {
   },
 })
 @Injectable()
-export class UserGroupState implements NgxsOnInit {
+export class UserGroupState {
   private readonly itemsService = inject(UsergroupService);
   private readonly store = inject(Store);
 
@@ -55,18 +54,13 @@ export class UserGroupState implements NgxsOnInit {
     return state.count;
   }
 
-  public ngxsOnInit({ dispatch }: StateContext<UserGroupStateModel>) {
-    dispatch(new FetchGroups());
-  }
-
   @Action(FetchGroups, { cancelUncompleted: false })
-  public fetchGroups({
-    patchState,
-    getState,
-  }: StateContext<UserGroupStateModel>) {
+  public fetchGroups(
+    { patchState, getState }: StateContext<UserGroupStateModel>,
+    { payload }: FetchGroups,
+  ) {
     const state = getState();
-    const isAdmin = this.store.selectSnapshot(AuthState.isAdmin);
-    const notAdminFilter = (ug: UserGroup) => isAdmin || ug.level !== 256; // https://ourzoo.online:8443/browse/BH-304
+    const notAdminFilter = (ug: UserGroup) => payload || ug.level !== 256; // https://ourzoo.online:8443/browse/BH-304
     if (!state.loading && !state.items.length) {
       patchState({ loading: true });
       this.itemsService.getAll().pipe(

@@ -1,5 +1,4 @@
 import { inject, Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { UserPositionService, UserService } from '@sotbi/data-access';
@@ -11,11 +10,7 @@ import type {
   UserPosition,
   UserShort,
 } from '@sotbi/models';
-import {
-  extractProperty,
-  generateAvatarSvgUrl,
-  notifyError,
-} from '@sotbi/utils';
+import { extractProperty, generateAvatarSvgUrl } from '@sotbi/utils';
 import type { Observable } from 'rxjs';
 import { of, throwError } from 'rxjs';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
@@ -63,7 +58,6 @@ export class UsersStateModel {
 export class UsersState {
   private readonly userSrv = inject(UserService);
   private readonly userPosSrv = inject(UserPositionService);
-  private readonly snackBar = inject(MatSnackBar);
 
   // Error messages for consistent logging
   private readonly ERROR_MESSAGES = {
@@ -129,10 +123,8 @@ export class UsersState {
     const message = this.ERROR_MESSAGES[operation];
     const errorMessage = error instanceof Error ? error.message : String(error);
 
-    // show snackbar
-    this.snackBar.open(notifyError(error), '', {
-      duration: 4000,
-    });
+    console.error('UsersState::handleError() -> Error:', error);
+
     return throwError(() => new Error(`${message}: ${errorMessage}`));
   }
 
