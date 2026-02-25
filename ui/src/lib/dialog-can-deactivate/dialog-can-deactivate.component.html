@@ -1,0 +1,28 @@
+<div mat-dialog-content>
+  <p>Есть несохраненные изменения.</p>
+</div>
+<div class="dialog-actions" mat-dialog-actions>
+  <div class="action-buttons">
+    <button
+      (click)="save()"
+      [disabled]="!inputData.canBeSaved"
+      class="btn btn-primary action-buttons__item action-buttons__save-btn"
+    >
+      <span class="action-buttons__check-icon-wrap">✓</span>
+      Сохранить
+    </button>
+    <button (click)="cancelSave()" class="btn btn-outline action-buttons__item">
+      Не сохранять
+    </button>
+    <button (click)="close()" class="btn btn-outline action-buttons__item">
+      Продолжить редактирование
+    </button>
+  </div>
+</div>
+<button
+  (click)="close()"
+  class="dialog-can-deactivate__btn-close"
+  title="Продолжить редактирование"
+>
+  ✖️
+</button>

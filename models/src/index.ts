@@ -264,6 +264,13 @@ export { Marketplace } from './lib/marketplace';
 
 // Message models
 export {
+  itemMap,
+  itemMapPair,
+  itemMapString,
+  itemMapStrings,
+  Pair,
+} from './lib/maps';
+export {
   BasisForChallengingTransaction,
   CreditOrganisation,
   CreditorMeetingType,

@@ -1,8 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { LabelService } from '@sotbi/data-access';
-import type { Label } from '@sotbi/models';
+import type { itemMap, Label } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import {
@@ -12,7 +12,6 @@ import {
   FetchLabels,
   GetLabel,
 } from './labels.actions';
-import type { itemMap } from './simple-edit.state.model';
 
 export class LabelStateModel {
   public items: Label[] = [];

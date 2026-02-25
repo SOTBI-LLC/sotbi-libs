@@ -1,8 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { ProjectService } from '@sotbi/data-access';
-import type { Project } from '@sotbi/models';
+import type { itemMap, Project } from '@sotbi/models';
 import { forMap } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import {
@@ -19,7 +19,6 @@ import {
   FetchProjects,
   GetProject,
 } from './projects.actions';
-import type { itemMap } from './simple-edit.state.model';
 
 export class ProjectStateModel {
   public loading = false;

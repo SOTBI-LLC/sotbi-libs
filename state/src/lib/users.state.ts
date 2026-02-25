@@ -5,6 +5,8 @@ import { UserPositionService, UserService } from '@sotbi/data-access';
 import type {
   HeadDepartment,
   HeadDepartmentChef,
+  itemMapPair,
+  Pair,
   Staff,
   User,
   UserPosition,
@@ -14,7 +16,6 @@ import { extractProperty, generateAvatarSvgUrl } from '@sotbi/utils';
 import type { Observable } from 'rxjs';
 import { of, throwError } from 'rxjs';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
-import type { itemMapPair, Pair } from './simple-edit.state.model';
 import { EditStaff } from './staffs.actions';
 import {
   AddDirtyItem,

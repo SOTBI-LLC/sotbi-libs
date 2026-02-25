@@ -36,6 +36,7 @@ export {
 export {
   bankruptcyManagerFormatter,
   canSave,
+  dateFilterParams,
   isAllSaved,
   notifyError,
   paramsToOptions,

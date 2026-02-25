@@ -90,3 +90,31 @@ export const paramsToOptions = (
   }
   return options;
 };
+
+import { isSameDay } from 'date-fns';
+
+export const comparator = (
+  filterLocalDateAtMidnight: Date,
+  cellValue: string,
+) => {
+  if (cellValue) {
+    const timestamp = Date.parse(cellValue);
+    if (!isNaN(timestamp)) {
+      const cellDate = new Date(cellValue);
+      if (isSameDay(cellDate, filterLocalDateAtMidnight)) {
+        return 0;
+      } else if (cellDate.getTime() < filterLocalDateAtMidnight.getTime()) {
+        return -1;
+      } else {
+        return 1;
+      }
+    }
+    return -1;
+  }
+  return -1;
+};
+
+export const dateFilterParams = {
+  comparator,
+  buttons: ['clear', 'apply'],
+};

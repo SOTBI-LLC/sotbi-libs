@@ -1,8 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { BidStateService } from '@sotbi/data-access';
-import type { BidState } from '@sotbi/models';
+import type { BidState, itemMap } from '@sotbi/models';
 import { canSave, isAllSaved } from '@sotbi/utils';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
@@ -18,7 +18,6 @@ import {
   SaveAllBidState,
   UpdateBidState,
 } from './bidstate.actions';
-import type { itemMap } from './simple-edit.state.model';
 
 export const BidStateRequiredFields = ['name', 'order'];
 

@@ -2,11 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { StaffTypeService } from '@sotbi/data-access';
-import type { SimpleEdit2Model } from '@sotbi/models';
+import type { itemMap, SimpleEdit2Model } from '@sotbi/models';
 import { emptySimpleEdit2 } from '@sotbi/models';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import type { itemMap, SimpleEdit2StateModel } from './simple-edit.state.model';
+import type { SimpleEdit2StateModel } from './simple-edit.state.model';
 import {
   AddStaffItem,
   DeleteStaffItem,

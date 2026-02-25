@@ -449,11 +449,6 @@ export {
 
 // Simple Edit State Model
 export {
-  itemMap,
-  itemMapPair,
-  itemMapString,
-  itemMapStrings,
-  Pair,
   SimpleEdit2StateModel,
   SimpleEditStateModel,
 } from './lib/simple-edit.state.model';

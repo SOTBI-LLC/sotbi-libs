@@ -1,0 +1,51 @@
+:host {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.dialog-can-deactivate__btn-close,
+.dialog-property__btn-close {
+  margin: 0;
+  padding: 2px;
+  border: 0;
+  background-color: transparent;
+  &:not(:disabled) {
+    cursor: pointer;
+  }
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  clr-icon {
+    fill: #737373;
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+p {
+  margin: 0;
+}
+.action-buttons {
+  display: flex;
+}
+.action-buttons__item {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.action-buttons__item:last-child {
+  margin-right: 0;
+}
+.action-buttons__save-btn {
+  display: flex;
+}
+.action-buttons__check-icon-wrap {
+  padding-top: 1px;
+  margin-right: 0.3rem;
+  fill: currentColor;
+  stroke-width: 3px;
+  stroke: currentColor;
+}
+.dialog-actions {
+  padding-bottom: 20px;
+  display: flex;
+}

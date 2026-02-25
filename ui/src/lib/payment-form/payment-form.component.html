@@ -1,0 +1,280 @@
+<button class="payments-dialog__btn-print" (click)="print()" title="Печать">
+  🖨️
+</button>
+<table class="itbl payments-dialog__table" cellspacing="0">
+  <tbody>
+    <tr>
+      <!--<td rowspan="8" style="width: 10mm;"><div style="width: 10mm;"></div></td>-->
+      <td class="w-180">
+        <table cellspacing="0" class="table-style">
+          <tbody>
+            <tr>
+              <td class="field--bottom linebottom w-35">
+                {{ paymentDoc()?.income_date | date: 'dd.MM.yyyy' }}
+              </td>
+              <td class="field w-15">&nbsp;</td>
+              <td class="field--bottom linebottom w-35">
+                {{ paymentDoc()?.writen_off_date | date: 'dd.MM.yyyy' }}
+              </td>
+              <td class="field">&nbsp;</td>
+              <td class="rectangle w-15 h-7-fs-10">0401060</td>
+            </tr>
+            <tr>
+              <td class="field">Поступ. в банк плат.</td>
+              <td></td>
+              <td class="field">Списано со сч. плат.</td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table cellspacing="0" class="table-style mt-3">
+          <tbody>
+            <tr>
+              <td class="accent w-82-bottom">
+                <span class="nowr">{{ paymentDoc()?.document_type }}</span
+                >&nbsp;№&nbsp;{{ paymentDoc()?.number }}
+              </td>
+              <td class="field">&nbsp;</td>
+              <td class="w-35-bottom">
+                <span class="nowr">{{
+                  paymentDoc()?.date | date: 'dd.MM.yyyy'
+                }}</span>
+              </td>
+              <td class="field w-5">&nbsp;</td>
+              <td class="data w-35-bottom center">
+                {{ paymentDoc()?.payment_type || ' ' }}
+              </td>
+              <td class="field w-11">&nbsp;</td>
+              <td class="accent rectangle w-8h-8 center"></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td class="field linetop">Дата</td>
+              <td></td>
+              <td class="field linetop">Вид платежа</td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table cellspacing="0" class="mt-3 table-style">
+          <tbody>
+            <tr>
+              <td class="field w-20h-15">Сумма<br />прописью</td>
+              <td class="data lineleft">
+                {{
+                  (paymentDoc() &&
+                    paymentDoc().summ &&
+                    moneyToStr(paymentDoc().summ)) ||
+                    ''
+                }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table cellspacing="0" class="table-style">
+          <tbody>
+            <tr>
+              <td class="data linetop w-27">
+                ИНН <span class="nowr">{{ paymentDoc()?.payer_inn }}</span>
+              </td>
+              <td class="data linetop lineleft w-27">
+                КПП <span class="nowr">{{ paymentDoc()?.payer_kpp }}</span>
+              </td>
+              <td class="field linetop lineleft w-8">Сумма</td>
+              <td class="data linetop lineleft w-36" rowspan="2">
+                {{ postFormatNumber((paymentDoc()?.summ || 0).toFixed(2)) }}
+              </td>
+            </tr>
+            <tr>
+              <td class="data linetop" colspan="2" rowspan="2">
+                {{ paymentDoc()?.payer1 }}
+              </td>
+              <td class="field lineleft w-10">&nbsp;</td>
+            </tr>
+            <tr>
+              <td class="field linetop lineleft w-10">Сч.&nbsp;№</td>
+              <td class="data linetop lineleft w-10" rowspan="2">
+                <span class="nowr">{{ paymentDoc()?.payer_account }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="field w-5" colspan="2">Плательщик</td>
+              <td class="field lineleft w-5">&nbsp;</td>
+            </tr>
+            <tr>
+              <td class="data linetop" colspan="2" rowspan="2">
+                {{ paymentDoc()?.payer_bank1
+                }}{{
+                  paymentDoc()?.payer_bank2
+                    ? ', ' + paymentDoc().payer_bank2
+                    : ''
+                }}
+              </td>
+              <td class="field linetop lineleft w-5">БИК</td>
+              <td class="data lineleft">
+                <span class="nowr">{{ paymentDoc()?.payer_bik }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="field linetop lineleft w-5">Сч.&nbsp;№</td>
+              <td class="data lineleft" rowspan="2">
+                <span class="nowr">{{ paymentDoc()?.payer_corr_account }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="field h-5" colspan="2">Банк плательщика</td>
+              <td class="field lineleft h-5">&nbsp;</td>
+            </tr>
+            <tr>
+              <td class="data linetop" colspan="2" rowspan="2">
+                {{ paymentDoc()?.receiver_bank1
+                }}{{
+                  paymentDoc()?.receiver_bank2
+                    ? ', ' + paymentDoc().receiver_bank2
+                    : ''
+                }}
+              </td>
+              <td class="field linetop lineleft h-5">БИК</td>
+              <td class="data lineleft linetop">
+                <span class="nowr">{{ paymentDoc()?.receiver_bik }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="field linetop lineleft h-5">Сч.&nbsp;№</td>
+              <td class="data lineleft h-5" rowspan="2">
+                <span class="nowr">{{
+                  paymentDoc()?.receiver_corr_account
+                }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="field h-5" colspan="2">Банк получателя</td>
+              <td class="field lineleft h-5">&nbsp;</td>
+            </tr>
+            <tr>
+              <td class="data linetop h-5">
+                ИНН <span class="nowr">{{ paymentDoc()?.receiver_inn }}</span>
+              </td>
+              <td class="data linetop lineleft">
+                КПП <span class="nowr">{{ paymentDoc()?.receiver_kpp }}</span>
+              </td>
+              <td class="field linetop lineleft">Сч.&nbsp;№</td>
+              <td class="data lineleft" rowspan="2">
+                <span class="nowr">{{ paymentDoc()?.receiver_account }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="data linetop" colspan="2" rowspan="3">
+                {{ paymentDoc()?.receiver1 }}
+              </td>
+              <td class="field lineleft h-10">&nbsp;</td>
+            </tr>
+            <tr>
+              <td class="field linetop lineleft h-5">Вид&nbsp;оп.</td>
+              <td class="data linetop lineleft" rowspan="3">
+                <table cellspacing="0" class="w-100">
+                  <tbody>
+                    <tr>
+                      <td class="data w-30 h-5">01</td>
+                      <td class="field lineleft w-30">Срок&nbsp;плат.</td>
+                      <td class="data lineleft w-38">&nbsp;</td>
+                    </tr>
+                    <tr>
+                      <td class="data h-5">&nbsp;</td>
+                      <td class="field lineleft linetop">Очер.&nbsp;плат.</td>
+                      <td class="data lineleft">
+                        {{ paymentDoc()?.priority }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="data h-5">{{ paymentDoc()?.uin }}</td>
+                      <td class="field lineleft linetop">Рез.&nbsp;поле</td>
+                      <td class="data lineleft">&nbsp;</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td class="field linetop lineleft h-5">Наз.&nbsp;пл.</td>
+            </tr>
+            <tr>
+              <td class="field h-5" colspan="2">Получатель</td>
+              <td class="field linetop lineleft h-5">Код</td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table cellspacing="0" class="table-style">
+          <tbody>
+            <tr>
+              <td class="data linetop w-24ls-004 center h-5">
+                {{ paymentDoc()?.indicator_kbk }}
+              </td>
+              <td class="data linetop lineleft center w-15per">
+                {{ paymentDoc()?.okato }}
+                <span class="nowr"></span>
+              </td>
+              <td class="data linetop lineleft w-5per center">
+                {{ paymentDoc()?.indicator_basics || '0' }}
+              </td>
+              <td class="data linetop lineleft w-12per center">
+                {{ paymentDoc()?.indicator_period || '' }}
+              </td>
+              <td class="data linetop lineleft w-18per center">
+                @if (paymentDoc()?.indicator_basics === 'ТП') {
+                  <span class="nowr">0</span>
+                }
+              </td>
+              <td class="data linetop lineleft w-12per center">
+                {{ paymentDoc()?.date | date: 'dd.MM.yyyy' }}
+              </td>
+              <td class="data linetop lineleft w-5per center">&nbsp;</td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td class="data linetop h-25">{{ paymentDoc()?.payment_purpose }}</td>
+    </tr>
+    <tr>
+      <td class="field h-5">Назначение платежа</td>
+    </tr>
+    <tr>
+      <td>
+        <table cellspacing="0" class="table-style">
+          <tbody>
+            <tr class="h-15">
+              <td class="field linetop w-60">&nbsp;</td>
+              <td class="data linetop center w-60">Подписи</td>
+              <td class="data linetop center">Отметки банка</td>
+            </tr>
+            <tr>
+              <td class="field center h-10">М.П.</td>
+              <td class="field linetop center bottom">&nbsp;</td>
+            </tr>
+            <tr>
+              <td class="field h-5">&nbsp;</td>
+              <td class="field linetop">&nbsp;</td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -1,0 +1,9 @@
+<ag-grid-angular
+  #agGrid
+  id="myGrid"
+  class="ag-theme-balham employees-list"
+  [gridOptions]="gridOptions"
+  [rowData]="employeesList().value ?? []"
+  (gridReady)="onGridReady($event)"
+  [columnDefs]="columnDefs"
+/>

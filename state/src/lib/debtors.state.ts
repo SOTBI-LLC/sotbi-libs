@@ -8,7 +8,12 @@ import type {
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { DebtorService } from '@sotbi/data-access';
-import type { Debtor, DebtorsList, InsurancePolicy } from '@sotbi/models';
+import type {
+  Debtor,
+  DebtorsList,
+  InsurancePolicy,
+  itemMap,
+} from '@sotbi/models';
 import { conditionMap } from '@sotbi/models';
 import type { WithId } from '@sotbi/utils';
 import { bankruptcyManagerFormatter, deepEqual } from '@sotbi/utils';
@@ -29,7 +34,6 @@ import {
   UpdateDebtorItem,
   UpdateDebtorPolicy,
 } from './debtors.actions';
-import type { itemMap } from './simple-edit.state.model';
 
 @Injectable({ providedIn: 'root' })
 export class UniqueDebtorINNValidator implements AsyncValidator {

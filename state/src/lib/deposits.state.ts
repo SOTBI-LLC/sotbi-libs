@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { DepositService } from '@sotbi/data-access';
-import type { Deposit } from '@sotbi/models';
+import type { Deposit, itemMap } from '@sotbi/models';
 import { forMap } from '@sotbi/utils';
 import { catchError, of, tap, throwError } from 'rxjs';
 import {
@@ -12,7 +12,6 @@ import {
   FetchDeposits,
   GetDeposit,
 } from './deposits.actions';
-import type { itemMap } from './simple-edit.state.model';
 
 export class DepositStateModel {
   public items: Deposit[] = [];

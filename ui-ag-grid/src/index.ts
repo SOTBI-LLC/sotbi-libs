@@ -18,6 +18,7 @@ export {
   DatePickerEditor,
   TimePickerEditor,
 } from './lib/date-picker-editor.component';
+export { EmployeesListComponent } from './lib/employees-list';
 export { IMaskEdit } from './lib/imask-edit.component';
 export { LabelsAgGridComponent } from './lib/labels.component';
 export { LinkCellAgGridFootclothComponent } from './lib/link-cell-ag-grid-footcloth.component';
@@ -39,3 +40,4 @@ export {
 export { TextareaEditor } from './lib/textarea-editor.component';
 export { TooltipComponent } from './lib/tooltip-component.component';
 export { UserAvatarRendererComponent } from './lib/user-avatar-renderer.component';
+export { UserWithAvatarComponent } from './lib/user-with-avatar.component';

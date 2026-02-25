@@ -5,6 +5,7 @@ import {
   SimpleEdit2Service,
   SimpleEdit2ServiceNames,
 } from '@sotbi/data-access';
+import type { itemMap } from '@sotbi/models';
 import { emptySimpleEdit2 } from '@sotbi/models';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
@@ -14,7 +15,7 @@ import {
   EditProcedure,
   FetchProcedures,
 } from './procedure.actions';
-import type { itemMap, SimpleEdit2StateModel } from './simple-edit.state.model';
+import type { SimpleEdit2StateModel } from './simple-edit.state.model';
 
 @State<SimpleEdit2StateModel>({
   name: 'procedure',

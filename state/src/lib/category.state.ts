@@ -5,7 +5,7 @@ import {
   SimpleEdit2Service,
   SimpleEdit2ServiceNames,
 } from '@sotbi/data-access';
-import type { SimpleEdit2Model } from '@sotbi/models';
+import type { itemMap, SimpleEdit2Model } from '@sotbi/models';
 import { removeID } from '@sotbi/utils';
 import { catchError, tap, throwError } from 'rxjs';
 import {
@@ -14,7 +14,7 @@ import {
   EditCategory,
   FetchCategories,
 } from './category.actions';
-import type { itemMap, SimpleEdit2StateModel } from './simple-edit.state.model';
+import type { SimpleEdit2StateModel } from './simple-edit.state.model';
 
 @State<SimpleEdit2StateModel>({
   name: 'category',
