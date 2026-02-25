@@ -78,3 +78,27 @@ jobs:
           else
             npx nx run ${{ github.event.inputs.package }}:nx-release-publish
           fi
+
+      - name: Get published version(s)
+        id: version
+        run: |
+          if [ "${{ github.event.inputs.package }}" = "all" ]; then
+            VERSIONS=$(for pkg in utils models auth data-access state ui; do
+              [ -f "$pkg/package.json" ] && v=$(node -p "require('./$pkg/package.json').version" 2>/dev/null) && echo "$pkg@$v"
+            done | tr '\n' ' ')
+            echo "versions=$VERSIONS" >> $GITHUB_OUTPUT
+          else
+            VERSION=$(node -p "require('./${{ github.event.inputs.package }}/package.json').version")
+            echo "versions=${{ github.event.inputs.package }}@$VERSION" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send telegram message after image was built
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHANNEL }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ${{ github.actor }} published new version of ${{ github.event.inputs.package }}.
+            📦 Version(s): ${{ steps.version.outputs.versions }}
+            👀 changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
+            View job logs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
