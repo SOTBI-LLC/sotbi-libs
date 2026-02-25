@@ -11,15 +11,16 @@
     "directory": "ui"
   },
   "peerDependencies": {
+    "@sotbi/models": "0.0.14",
     "@angular/common": "^20.3.14",
     "@angular/core": "^20.3.0",
     "@angular/forms": "^20.3.4",
     "@angular/animations": "^20.3.4",
     "@angular/material": "^21.1.5",
-    "@sotbi/models": "0.0.14",
     "@clr/angular": "^17.12.2",
     "@ng-select/ng-select": "^20.7.0",
     "jest": "^30.2.0",
+    "number-to-words-ru": "^2.4.1",
     "jest-preset-angular": "^16.0.0"
   },
   "sideEffects": false
