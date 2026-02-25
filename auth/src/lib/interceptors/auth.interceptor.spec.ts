@@ -11,8 +11,9 @@ import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { of, throwError } from 'rxjs';
-import { AuthState, RefreshToken } from '../../';
-import { AuthInterceptor } from './';
+import { RefreshToken } from '../store/auth.actions';
+import { AuthState } from '../store/auth.state';
+import { AuthInterceptor } from './auth.interceptor';
 
 describe('AuthInterceptor', () => {
   let interceptor: AuthInterceptor;

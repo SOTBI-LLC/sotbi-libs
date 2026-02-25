@@ -12,7 +12,7 @@ import { Store } from '@ngxs/store';
 import type { Observable } from 'rxjs';
 import { BehaviorSubject, throwError } from 'rxjs';
 import { catchError, filter, finalize, switchMap, take } from 'rxjs/operators';
-import { AUTH_NOTIFICATION } from '../auth.service';
+import { AUTH_NOTIFICATION } from '../auth-notification.ervice';
 import { RefreshToken } from '../store/auth.actions';
 import { AuthState } from '../store/auth.state';
 
@@ -93,7 +93,6 @@ export class AuthInterceptor implements HttpInterceptor {
           case 401:
             return this.handle401Error(request, next, err);
           case 403:
-            console.error('У ВАС НЕДОСТАТОЧНО ПРАВ!');
             this.notification?.showError('У ВАС НЕДОСТАТОЧНО ПРАВ!');
             this.location.back();
             return throwError(() => err);

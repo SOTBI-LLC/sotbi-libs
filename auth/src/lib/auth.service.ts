@@ -1,18 +1,10 @@
-import { Injectable, InjectionToken, inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngxs/store';
 import type { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Login, LoginAs, Logout, RefreshToken } from './store/auth.actions';
 import type { AuthStateModel } from './store/auth.state';
 import { AuthState } from './store/auth.state';
-
-export const AUTH_NOTIFICATION = new InjectionToken<AuthNotificationService>(
-  'AUTH_NOTIFICATION',
-);
-
-export interface AuthNotificationService {
-  showError(message: string, duration?: number): void;
-}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
