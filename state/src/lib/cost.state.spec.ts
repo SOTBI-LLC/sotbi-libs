@@ -1,6 +1,5 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store, provideStates, provideStore } from '@ngxs/store';
 import { CostRealService } from '@sotbi/data-access';
 import type { CostReal, CostRealFilter, Interval } from '@sotbi/models';
@@ -93,15 +92,10 @@ describe('CostRealState', () => {
       getAnalytics: jest.fn(),
     } as unknown as jest.Mocked<CostRealService>;
 
-    const snackBarSpy = {
-      open: jest.fn(),
-    };
-
     await TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         { provide: CostRealService, useValue: serviceSpy },
-        { provide: MatSnackBar, useValue: snackBarSpy },
         provideStore([]),
         provideStates([CostRealState]),
       ],

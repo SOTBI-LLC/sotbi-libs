@@ -4,7 +4,7 @@ import { Action, Selector, State } from '@ngxs/store';
 import { DepositService } from '@sotbi/data-access';
 import type { Deposit } from '@sotbi/models';
 import { forMap } from '@sotbi/utils';
-import { catchError, tap, throwError } from 'rxjs';
+import { catchError, of, tap, throwError } from 'rxjs';
 import {
   AddDeposit,
   DeleteDeposit,
@@ -57,7 +57,7 @@ export class DepositsState implements NgxsOnInit {
   public fetchItems({ getState, setState }: StateContext<DepositStateModel>) {
     const state = getState();
     if (!state.items.length) {
-      this.DepositSrv.getAll().pipe(
+      return this.DepositSrv.getAll().pipe(
         tap((result) => {
           const mapItems = new Map(result.map(forMap));
           setState({
@@ -72,6 +72,7 @@ export class DepositsState implements NgxsOnInit {
         }),
       );
     }
+    return of();
   }
 
   @Action(GetDeposit)
@@ -83,20 +84,18 @@ export class DepositsState implements NgxsOnInit {
     const items = [...state.items];
     const idx = items.findIndex(({ id }) => payload === id);
     if (!items[idx].name) {
-      this.DepositSrv.get(payload)
-        .pipe(
-          tap((selected) => {
-            items[idx] = selected;
-            setState({ ...state, items, selected });
-          }),
-          catchError((err) => {
-            console.error(err.message);
-            return throwError(() => err);
-          }),
-        )
-        .subscribe();
+      return this.DepositSrv.get(payload).pipe(
+        tap((selected) => {
+          items[idx] = selected;
+          setState({ ...state, items, selected });
+        }),
+        catchError((err) => {
+          console.error(err.message);
+          return throwError(() => err);
+        }),
+      );
     } else {
-      setState({ ...state, selected: items[idx] });
+      return setState({ ...state, selected: items[idx] });
     }
   }
 
@@ -131,7 +130,7 @@ export class DepositsState implements NgxsOnInit {
   ) {
     const { id, ...rest } = payload;
     if (id) {
-      this.DepositSrv.save(id, rest).pipe(
+      return this.DepositSrv.save(id, rest).pipe(
         tap((selected: Deposit) => {
           const state = getState();
           const map = { ...state.map };
@@ -145,6 +144,7 @@ export class DepositsState implements NgxsOnInit {
         }),
       );
     }
+    return of();
   }
 
   @Action(DeleteDeposit)

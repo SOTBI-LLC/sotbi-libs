@@ -7,12 +7,12 @@ import type {
   HttpRequest,
 } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import type { Observable } from 'rxjs';
 import { BehaviorSubject, throwError } from 'rxjs';
 import { catchError, filter, finalize, switchMap, take } from 'rxjs/operators';
+import { AUTH_NOTIFICATION } from '../auth-notification.ervice';
 import { RefreshToken } from '../store/auth.actions';
 import { AuthState } from '../store/auth.state';
 
@@ -22,8 +22,8 @@ import { AuthState } from '../store/auth.state';
 export class AuthInterceptor implements HttpInterceptor {
   protected router = inject(Router);
   private readonly store = inject(Store);
-  private readonly snackBar = inject(MatSnackBar);
   private readonly location = inject(Location);
+  private readonly notification = inject(AUTH_NOTIFICATION, { optional: true });
 
   private token = this.store.selectSignal(AuthState.getToken);
 
@@ -93,9 +93,7 @@ export class AuthInterceptor implements HttpInterceptor {
           case 401:
             return this.handle401Error(request, next, err);
           case 403:
-            this.snackBar.open('У ВАС НЕДОСТАТОЧНО ПРАВ!', '', {
-              duration: 2000,
-            });
+            this.notification?.showError('У ВАС НЕДОСТАТОЧНО ПРАВ!');
             this.location.back();
             return throwError(() => err);
         }

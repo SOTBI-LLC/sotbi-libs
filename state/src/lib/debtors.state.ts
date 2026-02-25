@@ -5,7 +5,6 @@ import type {
   AsyncValidator,
   ValidationErrors,
 } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { DebtorService } from '@sotbi/data-access';
@@ -15,7 +14,7 @@ import type { WithId } from '@sotbi/utils';
 import { bankruptcyManagerFormatter, deepEqual } from '@sotbi/utils';
 import type { Observable } from 'rxjs';
 import { of, throwError } from 'rxjs';
-import { catchError, finalize, map, take, tap } from 'rxjs/operators';
+import { catchError, finalize, map, tap } from 'rxjs/operators';
 import {
   AddDebtor,
   AddDebtorPolicy,
@@ -81,7 +80,6 @@ export class DebtorStateModel {
 export class DebtorsState {
   private readonly debtorSrv = inject(DebtorService);
   private uniqueDebtor = inject(UniqueDebtorINNValidator);
-  private readonly snackBar = inject(MatSnackBar);
 
   @Selector()
   public static getLoading(state: DebtorStateModel): boolean {
@@ -371,36 +369,22 @@ export class DebtorsState {
 
   @Action(DeleteDebtorItem)
   public deleteItem(
-    { getState, patchState, dispatch }: StateContext<DebtorStateModel>,
+    { getState, patchState }: StateContext<DebtorStateModel>,
     { payload }: DeleteDebtorItem,
   ) {
     patchState({ loading: true });
     const state = getState();
     return this.debtorSrv.delete(payload).pipe(
       tap(() => {
-        const snackBarRef = this.snackBar.open(
-          `Должник успешно удален`,
-          'Отменить',
-          {
-            duration: 10000,
-          },
-        );
         patchState({
           debtors: state.debtors.filter(({ id }) => id !== payload),
           count: state.count--,
           selected: null,
           loading: false,
         });
-        snackBarRef
-          .onAction()
-          .pipe(take(1))
-          .subscribe(() => {
-            dispatch(new RestoreDebtor(payload));
-          });
       }),
       catchError((error) => {
         console.error(error.message);
-        this.snackBar.open(error.message);
         return throwError(() => error);
       }),
     );
@@ -422,7 +406,6 @@ export class DebtorsState {
       }),
       catchError((error) => {
         console.error(error.message);
-        this.snackBar.open(error.message);
         return throwError(() => error);
       }),
       finalize(() => {

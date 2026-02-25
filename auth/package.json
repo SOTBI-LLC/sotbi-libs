@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/auth",
-  "version": "0.0.13",
+  "version": "0.0.17",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "restricted"
@@ -18,7 +18,6 @@
     "@angular/core": "^20.3.4",
     "@angular/router": "^20.3.4",
     "@angular/platform-browser": "^20.3.4",
-    "@angular/material": "^20.2.0",
     "@ngxs/store": "^21.0.0",
     "date-fns": "^4.1.0",
     "jwt-decode": "^4.0.0",

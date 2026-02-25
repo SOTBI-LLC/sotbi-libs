@@ -3,7 +3,7 @@ import type { StateContext } from '@ngxs/store';
 import { Action, createSelector, Selector, State } from '@ngxs/store';
 import { SubMessageTypeService } from '@sotbi/data-access';
 import type { SubMessageType } from '@sotbi/models';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import type { itemMap } from './simple-edit.state.model';
 import {
@@ -73,7 +73,7 @@ export class EfrsbSubMessageTypeState {
     const state = getState();
     // console.log('EfrsbSubMessageTypeState::FetchItems', state);
     if (!state.items.length) {
-      this.itemsService.GetAll().pipe(
+      return this.itemsService.GetAll().pipe(
         tap((items) => {
           const maps = new Map(items.map((item) => [item.id, item.name]));
           setState({
@@ -83,9 +83,10 @@ export class EfrsbSubMessageTypeState {
             maps,
           });
         }),
-        catchError((err) => throwError(err)),
+        catchError((err) => throwError(() => err)),
       );
     }
+    return of();
   }
 
   @Action(AddSubMessageType)
@@ -107,7 +108,7 @@ export class EfrsbSubMessageTypeState {
           maps,
         });
       }),
-      catchError((err) => throwError(err)),
+      catchError((err) => throwError(() => err)),
     );
   }
 
@@ -131,7 +132,7 @@ export class EfrsbSubMessageTypeState {
           maps,
         });
       }),
-      catchError((err) => throwError(err)),
+      catchError((err) => throwError(() => err)),
     );
   }
 
@@ -153,7 +154,7 @@ export class EfrsbSubMessageTypeState {
           maps,
         });
       }),
-      catchError((err) => throwError(err)),
+      catchError((err) => throwError(() => err)),
     );
   }
 }

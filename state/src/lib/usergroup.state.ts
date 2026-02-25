@@ -1,10 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import type { NgxsOnInit, StateContext } from '@ngxs/store';
+import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State, Store } from '@ngxs/store';
-import { AuthState } from '@sotbi/auth';
 import { UsergroupService } from '@sotbi/data-access';
 import type { UserGroup } from '@sotbi/models';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, finalize, map, tap } from 'rxjs/operators';
 import {
   CreateUserGroup,
@@ -31,7 +30,7 @@ export class UserGroupStateModel {
   },
 })
 @Injectable()
-export class UserGroupState implements NgxsOnInit {
+export class UserGroupState {
   private readonly itemsService = inject(UsergroupService);
   private readonly store = inject(Store);
 
@@ -55,31 +54,27 @@ export class UserGroupState implements NgxsOnInit {
     return state.count;
   }
 
-  public ngxsOnInit({ dispatch }: StateContext<UserGroupStateModel>) {
-    dispatch(new FetchGroups());
-  }
-
   @Action(FetchGroups, { cancelUncompleted: false })
-  public fetchGroups({
-    patchState,
-    getState,
-  }: StateContext<UserGroupStateModel>) {
+  public fetchGroups(
+    { patchState, getState }: StateContext<UserGroupStateModel>,
+    { payload }: FetchGroups,
+  ) {
     const state = getState();
-    const isAdmin = this.store.selectSnapshot(AuthState.isAdmin);
-    const notAdminFilter = (ug: UserGroup) => isAdmin || ug.level !== 256; // https://ourzoo.online:8443/browse/BH-304
+    const notAdminFilter = (ug: UserGroup) => payload || ug.level !== 256; // https://ourzoo.online:8443/browse/BH-304
     if (!state.loading && !state.items.length) {
       patchState({ loading: true });
-      this.itemsService.getAll().pipe(
+      return this.itemsService.getAll().pipe(
         map((res) => res.filter(notAdminFilter)),
         tap((result) => {
           patchState({ items: result, count: result.length });
         }),
         catchError((err) => {
-          return throwError(err);
+          return throwError(() => err);
         }),
         finalize(() => patchState({ loading: false })),
       );
     }
+    return of();
   }
 
   @Action(GetUserGroup)
@@ -100,12 +95,12 @@ export class UserGroupState implements NgxsOnInit {
   ) {
     patchState({ loading: true });
     return this.itemsService.create(payload).pipe(
-      tap((result) => {
+      tap((selected) => {
         const state = getState();
         setState({
           ...state,
-          items: [...state.items, result],
-          selected: result,
+          items: [...state.items, selected],
+          selected,
           count: state.count++,
         });
       }),
@@ -121,17 +116,15 @@ export class UserGroupState implements NgxsOnInit {
     { getState, patchState }: StateContext<UserGroupStateModel>,
     { payload }: UpdateUserGroup,
   ) {
-    const state = getState();
     return this.itemsService.update(payload).pipe(
       tap((selected) => {
-        const items = state.items;
+        const state = getState();
+        const items = [...state.items];
         const idx = items.findIndex(({ id }) => id === selected.id);
         items[idx] = selected;
         patchState({ items, selected });
       }),
-      catchError((err) => {
-        return throwError(() => err);
-      }),
+      catchError((err) => throwError(() => err)),
     );
   }
 
@@ -144,7 +137,7 @@ export class UserGroupState implements NgxsOnInit {
     return this.itemsService.delete(payload).pipe(
       tap(() => {
         const state = getState();
-        const items = state.items;
+        const items = [...state.items];
         const idx = items.findIndex(({ id }) => id === payload);
         items.splice(idx, 1);
         setState({
@@ -154,9 +147,7 @@ export class UserGroupState implements NgxsOnInit {
           count: state.count--,
         });
       }),
-      catchError((err) => {
-        return throwError(() => err);
-      }),
+      catchError((err) => throwError(() => err)),
       finalize(() => patchState({ loading: false })),
     );
   }

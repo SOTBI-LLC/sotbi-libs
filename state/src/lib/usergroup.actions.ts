@@ -7,6 +7,7 @@ export class CreateUserGroup {
 
 export class FetchGroups {
   public static readonly type = '[USER_GROUP] Read items';
+  constructor(public payload: boolean) {}
 }
 
 export class GetUserGroup {

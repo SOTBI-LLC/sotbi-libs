@@ -52,38 +52,10 @@ jobs:
       - name: Run ESLint on affected projects
         run: npx nx run-many -t lint --parallel=3 --configuration=ci
 
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: lint
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Set SHAs for Nx
-        uses: nrwl/nx-set-shas@v4
-
-      - name: Build affected projects
-        run: npx nx affected -t build --parallel=3 --configuration=production
-
   test:
     name: Test
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: lint
 
     steps:
       - name: Checkout repository
@@ -137,3 +109,44 @@ jobs:
           reporter: jest-junit
           fail-on-error: false
           fail-on-empty: false
+
+      - name: Send telegram message after image was built
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHANNEL }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ${{ github.actor }} published new version of ${{ github.event.inputs.package }}.
+            ${{ steps.commit_message.outputs.trimmed_message }}
+            Used branch: ${{ env.branch }}
+            👀 changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
+            View job logs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs:
+      - test
+      - lint
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Set SHAs for Nx
+        uses: nrwl/nx-set-shas@v4
+
+      - name: Build affected projects
+        run: npx nx affected -t build --parallel=3 --configuration=production

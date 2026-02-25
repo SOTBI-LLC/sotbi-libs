@@ -3,7 +3,7 @@ import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { LabelService } from '@sotbi/data-access';
 import type { Label } from '@sotbi/models';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import {
   AddLabel,
@@ -58,7 +58,7 @@ export class LabelsState implements NgxsOnInit {
     // console.log('LabelsState::FetchLabels');
     const state = getState();
     if (!state.items.length) {
-      this.service.getAll().pipe(
+      return this.service.getAll().pipe(
         catchError((err) => {
           return throwError(() => err);
         }),
@@ -79,6 +79,7 @@ export class LabelsState implements NgxsOnInit {
         }),
       );
     }
+    return of();
   }
 
   @Action(GetLabel)
@@ -90,12 +91,15 @@ export class LabelsState implements NgxsOnInit {
     const items = [...state.items];
     const idx = items.findIndex(({ id }) => payload === id);
     if (!items[idx].name) {
-      this.service.get(payload).subscribe((selected: Label) => {
-        items[idx] = selected;
-        patchState({ items, selected });
-      });
+      return this.service.get(payload).pipe(
+        tap((selected: Label) => {
+          items[idx] = selected;
+          patchState({ items, selected });
+        }),
+        catchError((err) => throwError(() => err)),
+      );
     } else {
-      patchState({ items, selected: state.items[idx] });
+      return patchState({ items, selected: state.items[idx] });
     }
   }
 
@@ -111,7 +115,7 @@ export class LabelsState implements NgxsOnInit {
         map.set(result.id, result.name);
         patchState({ items: [result, ...state.items], map });
       }),
-      catchError((err) => throwError(err)),
+      catchError((err) => throwError(() => err)),
     );
   }
 
@@ -121,7 +125,7 @@ export class LabelsState implements NgxsOnInit {
     { payload }: EditLabel,
   ) {
     const { id } = payload;
-    this.service.update(id, payload).pipe(
+    return this.service.update(id, payload).pipe(
       tap((selected: Label) => {
         const state = getState();
         const map = state.map;
@@ -131,7 +135,7 @@ export class LabelsState implements NgxsOnInit {
         items[idx] = selected;
         patchState({ items, map, selected });
       }),
-      catchError((err) => throwError(err)),
+      catchError((err) => throwError(() => err)),
     );
   }
 
@@ -151,7 +155,7 @@ export class LabelsState implements NgxsOnInit {
           map,
         });
       }),
-      catchError((err) => throwError(err)),
+      catchError((err) => throwError(() => err)),
     );
   }
 }

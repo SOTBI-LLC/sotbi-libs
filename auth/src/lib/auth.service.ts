@@ -11,7 +11,7 @@ export class AuthService {
   private readonly store = inject(Store);
 
   public readonly userState = this.store.select<AuthStateModel>(
-    AuthState.getUserState
+    AuthState.getUserState,
   );
 
   public login(username: string, password: string): Observable<void> {
@@ -30,7 +30,7 @@ export class AuthService {
     return this.userState.pipe(
       map(({ user }) => {
         return !!((user.role ?? 0) > 1);
-      })
+      }),
     );
   }
 
@@ -43,7 +43,7 @@ export class AuthService {
     return this.userState.pipe(
       map(({ user }) => {
         return user.id === id;
-      })
+      }),
     );
   }
 
@@ -52,15 +52,15 @@ export class AuthService {
       map(({ user }) => {
         // tslint:disable-next-line: no-bitwise
         return !!(mask & (user.role ?? 0));
-      })
+      }),
     );
   }
 
   public hasAcces$(path: string): Observable<boolean> {
     return this.userState.pipe(
       map(({ access }) =>
-        AuthState.hasAccess(path, new Set(Array.from(access).filter(Boolean)))
-      )
+        AuthState.hasAccess(path, new Set(Array.from(access).filter(Boolean))),
+      ),
     );
   }
 }

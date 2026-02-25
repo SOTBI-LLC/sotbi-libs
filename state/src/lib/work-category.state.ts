@@ -4,7 +4,7 @@ import { Action, Selector, State } from '@ngxs/store';
 import { WorkCategoryService } from '@sotbi/data-access';
 import type { WorkCategory } from '@sotbi/models';
 import { canSave, isAllSaved } from '@sotbi/utils';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
   AddEmptyWorkCategory,
@@ -92,7 +92,7 @@ export class WorkCategoryState {
     if (this.limit !== payload /*|| !state.items.length*/) {
       this.limit = payload;
       patchState({ loading: true });
-      this.itemsService.getAll(payload).pipe(
+      return this.itemsService.getAll(payload).pipe(
         catchError((err) => {
           console.error(err);
           return throwError(() => err);
@@ -113,6 +113,7 @@ export class WorkCategoryState {
         finalize(() => patchState({ loading: false })),
       );
     }
+    return of();
   }
 
   @Action(GetWorkCategory)
@@ -147,9 +148,7 @@ export class WorkCategoryState {
           saved: isAllSaved(state.items),
         });
       }),
-      catchError((err) => {
-        return throwError(err);
-      }),
+      catchError((err) => throwError(() => err)),
       finalize(() => patchState({ loading: false })),
     );
   }
@@ -223,9 +222,7 @@ export class WorkCategoryState {
         items[idx] = selected;
         patchState({ items, selected });
       }),
-      catchError((err) => {
-        return throwError(err);
-      }),
+      catchError((err) => throwError(() => err)),
     );
   }
 

@@ -3,7 +3,7 @@ import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { InitiatorService } from '@sotbi/data-access';
 import { Initiator } from '@sotbi/models';
-import { catchError, tap, throwError } from 'rxjs';
+import { catchError, of, tap, throwError } from 'rxjs';
 import {
   AddInintiator,
   DeleteInitiator,
@@ -45,7 +45,7 @@ export class InitiatorsState {
   }: StateContext<InitiatorsStateModel>) {
     const state = getState();
     if (!state.items.length) {
-      this.initiatorSrv.GetAll().pipe(
+      return this.initiatorSrv.GetAll().pipe(
         tap((items) => {
           patchState({ items, selected: null });
         }),
@@ -55,6 +55,7 @@ export class InitiatorsState {
         }),
       );
     }
+    return of();
   }
 
   @Action(GetInintiator)

@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { SimpleEditService, SimpleEditServiceNames } from '@sotbi/data-access';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import type { SimpleEditStateModel } from './simple-edit.state.model';
 import {
@@ -42,9 +42,9 @@ export class TargetsState {
     // console.log('TargetsState::fetchItems() | method called');
     const state = getState();
     if (!state.items.length) {
-      this.itemsService.getAll(SimpleEditServiceNames.TARGET).pipe(
-        tap(
-          (result) => {
+      return this.itemsService.getAll(SimpleEditServiceNames.TARGET).pipe(
+        tap({
+          next: (result) => {
             const mapItems = new Map(
               result.map((i): [number, string] => [i.id ?? 0, i.name]),
             );
@@ -54,15 +54,17 @@ export class TargetsState {
               mapItems,
             });
           },
-          (error) => {
+          error: (error) => {
             console.error(error.message);
           },
-        ),
-        catchError((err) => {
-          return throwError(err);
+        }),
+        catchError((error) => {
+          console.error(error);
+          return throwError(() => error);
         }),
       );
     }
+    return of();
   }
 
   @Action(AddTarget)
@@ -105,8 +107,9 @@ export class TargetsState {
           items[idx] = result;
           patchState({ items, mapItems });
         },
-        catchError((err) => {
-          return throwError(err);
+        catchError((error) => {
+          console.error(error);
+          return throwError(() => error);
         }),
       ),
     );
@@ -117,13 +120,18 @@ export class TargetsState {
     { getState, patchState }: StateContext<SimpleEditStateModel>,
     { payload }: DeleteTarget,
   ) {
-    const state = getState();
-    await this.itemsService.delete(payload, SimpleEditServiceNames.TARGET);
-    const mapItems = state.mapItems;
-    mapItems.delete(payload);
-    patchState({
-      items: state.items.filter(({ id }) => id !== payload),
-      mapItems,
-    });
+    return this.itemsService
+      .delete(payload, SimpleEditServiceNames.TARGET)
+      .pipe(
+        tap(() => {
+          const state = getState();
+          const mapItems = state.mapItems;
+          mapItems.delete(payload);
+          patchState({
+            items: state.items.filter(({ id }) => id !== payload),
+            mapItems,
+          });
+        }),
+      );
   }
 }
