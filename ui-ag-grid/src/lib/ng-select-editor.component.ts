@@ -2,11 +2,13 @@ import { NgStyle } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
+  NgLabelTemplateDirective,
   NgOptionTemplateDirective,
   NgSelectComponent,
 } from '@ng-select/ng-select';
 import type { ICellEditorAngularComp } from 'ag-grid-angular';
-import type { ICellEditorParams } from 'ag-grid-community';
+import type { GridApi, ICellEditorParams } from 'ag-grid-community';
+import { UserWithAvatarComponent } from './user-with-avatar.component';
 
 @Component({
   template: `
@@ -87,5 +89,85 @@ export class ProjectAndDebtorSelectEditor<T> implements ICellEditorAngularComp {
 
   public getValue(): number {
     return this.value;
+  }
+}
+
+@Component({
+  template: `
+    <ng-select
+      class="ng-select"
+      [clearable]="clearable"
+      name="ngSelect"
+      id="ngSelect"
+      #ngSelect="ngModel"
+      [items]="items"
+      [bindLabel]="bindName"
+      [bindValue]="bindId"
+      [(ngModel)]="value"
+      notFoundText="Не найдено"
+      appendTo="body"
+      [ngStyle]="{ width: wide ? 'unset' : '300px' }"
+      (change)="onChange()"
+    >
+      @if (isUserWithAvatar; as item) {
+        <ng-template ng-label-tmp let-item="item">
+          <user-with-avatar
+            [user]="item.user"
+            [avatar]="item.avatar"
+            size="1rem"
+          />
+        </ng-template>
+      }
+    </ng-select>
+  `,
+  styles: [``],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    NgSelectComponent,
+    FormsModule,
+    NgStyle,
+    NgLabelTemplateDirective,
+    UserWithAvatarComponent,
+  ],
+})
+export class NgSelectEditor<T> implements ICellEditorAngularComp {
+  protected items: T[] = [];
+  protected value: number | string | null = null;
+  protected bindId = 'id';
+  protected bindName = 'name';
+  protected clearable = false;
+  protected wide = true;
+  protected isUserWithAvatar = false;
+
+  private api: GridApi | null = null;
+
+  public agInit(params: ICellEditorParams<T, number | string>): void {
+    this.api = params.api;
+    this.items = params['items'] ?? [];
+    if (params['bindId']) {
+      this.bindId = params['bindId'];
+    }
+    if (params['bindName']) {
+      this.bindName = params['bindName'];
+    }
+    if (params['wide'] !== undefined) {
+      this.wide = params['wide'] ?? true;
+    }
+    this.clearable = params['clearable'] ?? false;
+    this.isUserWithAvatar = params['isUserWithAvatar'] ?? false;
+    this.value = params.value ?? null;
+  }
+
+  public getValue(): number | string | null {
+    return this.value;
+  }
+
+  public refresh() {
+    return true;
+  }
+  protected onChange() {
+    if (this.api) {
+      this.api.stopEditing(false);
+    }
   }
 }

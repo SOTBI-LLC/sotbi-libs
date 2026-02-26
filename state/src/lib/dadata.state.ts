@@ -1,12 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
-import { DadataService } from '@sotbi/data-access';
+import { DadataService, NOTIFICATION } from '@sotbi/data-access';
 import type { Dadata } from '@sotbi/models';
-import { tap, catchError } from 'rxjs/operators';
-import { GetDadataInformationByInn } from './dadata.actions';
 import { of } from 'rxjs';
-import { AUTH_NOTIFICATION } from '@sotbi/auth';
+import { catchError, tap } from 'rxjs/operators';
+import { GetDadataInformationByInn } from './dadata.actions';
 
 export class DadataStateModel {
   public selectedObject: null | Dadata = null;
@@ -21,7 +20,7 @@ export class DadataStateModel {
 @Injectable()
 export class DadataState {
   private readonly itemsService = inject(DadataService);
-  private readonly notification = inject(AUTH_NOTIFICATION, { optional: true });
+  private readonly notification = inject(NOTIFICATION, { optional: true });
 
   @Selector()
   public static getSelectedObject(state: DadataStateModel) {

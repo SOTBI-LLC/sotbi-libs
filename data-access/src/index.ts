@@ -44,6 +44,7 @@ export { MarketplaceService } from './lib/marketpalce.service';
 export { MessageEfrsbAttachmentService } from './lib/message-attachment.service';
 export { MessageTypeService } from './lib/message-type.service';
 export { MessageService } from './lib/message.service';
+export { NOTIFICATION, NotificationService } from './lib/notification.service';
 export { PaymentAttachmentService } from './lib/payment-attachment.service';
 export { PaymentRequestService } from './lib/payment-request.service';
 export { PaymentService } from './lib/payment.service';

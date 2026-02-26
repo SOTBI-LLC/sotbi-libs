@@ -13,6 +13,10 @@ export const localeText = {
   previous: 'последняя',
   loadingOoo: 'Загружаем...',
 
+  loadingError: 'ОШИБКА',
+  noRowsToShow: 'нечего показывать',
+  noMatches: 'не найдено',
+  typeToSearchOoo: 'введите для поиска...',
   // for set filter
   selectAll: 'Выбрать все',
   selectAllSearchResults: 'Выбрать все найденные',
@@ -61,9 +65,6 @@ export const localeText = {
   pivotColumnsEmptyMessage: 'drag here to pivot',
   toolPanelButton: 'Панель инструментов',
 
-  // other
-  noRowsToShow: 'Нечего показывать',
-
   // enterprise menu
   pinColumn: 'Закрепить колонку',
   valueAggregation: 'Агрегирование значений',
@@ -102,6 +103,34 @@ export const localeText = {
   paste: 'Вставить',
   ctrlV: 'ctrl + V',
   rows: 'строк',
+
+  // Data types
+  true: 'Да',
+  false: 'Нет',
+  invalidDate: 'Некорректная дата',
+  invalidNumber: 'Некорректное число',
+  invalidBigInt: 'Некорректное BigInt',
+  january: 'Январь',
+  february: 'Февраль',
+  march: 'Март',
+  april: 'Апрель',
+  may: 'Май',
+  june: 'Июнь',
+  july: 'Июль',
+  august: 'Август',
+  september: 'Сентябрь',
+  october: 'Октябрь',
+  november: 'Ноябрь',
+  december: 'Декабрь',
+
+  // Date-time parts
+  year: 'Год',
+  quarter: 'Квартал',
+  month: 'Месяц',
+  day: 'День',
+  hour: 'Час',
+  minute: 'Минута',
+  second: 'Секунда',
 };
 
 export enum AgGridFilterType {

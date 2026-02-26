@@ -2,7 +2,7 @@ import { HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
-import { EfrsbMessageService } from '@sotbi/data-access';
+import { EfrsbMessageService, NOTIFICATION } from '@sotbi/data-access';
 import type { Message } from '@sotbi/models';
 import { StatusEnum } from '@sotbi/models';
 import { throwError } from 'rxjs';
@@ -15,7 +15,6 @@ import {
   GetPublicationsBySubMessageIdAndDebtorId,
   UpdateEfrsbMessage,
 } from './efrsb-message.actions';
-import { AUTH_NOTIFICATION } from '@sotbi/auth';
 
 export class EfrsbMessageStateModel {
   public items: Message[] = [];
@@ -36,7 +35,7 @@ export class EfrsbMessageStateModel {
 @Injectable()
 export class EfrsbMessageState {
   private readonly itemsService = inject(EfrsbMessageService);
-  private readonly notification = inject(AUTH_NOTIFICATION, { optional: true });
+  private readonly notification = inject(NOTIFICATION, { optional: true });
 
   private readonly empty: Message = {
     id: 0,

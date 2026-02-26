@@ -9,10 +9,10 @@ import type {
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
+import { NOTIFICATION } from '@sotbi/data-access';
 import type { Observable } from 'rxjs';
 import { BehaviorSubject, throwError } from 'rxjs';
 import { catchError, filter, finalize, switchMap, take } from 'rxjs/operators';
-import { AUTH_NOTIFICATION } from '../auth-notification.service';
 import { RefreshToken } from '../store/auth.actions';
 import { AuthState } from '../store/auth.state';
 
@@ -23,7 +23,7 @@ export class AuthInterceptor implements HttpInterceptor {
   protected router = inject(Router);
   private readonly store = inject(Store);
   private readonly location = inject(Location);
-  private readonly notification = inject(AUTH_NOTIFICATION, { optional: true });
+  private readonly notification = inject(NOTIFICATION, { optional: true });
 
   private token = this.store.selectSignal(AuthState.getToken);
 
