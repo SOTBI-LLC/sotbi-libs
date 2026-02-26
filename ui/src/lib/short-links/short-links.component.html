@@ -1,0 +1,36 @@
+<div class="flex" style="align-items: baseline">
+  <div class="clr-control-label" style="width: 50%">
+    <button
+      class="btn btn-sm btn-outline"
+      (click)="createLink()"
+      title="Добавить"
+    >
+      Добавить</button
+    ><span>Имя</span>
+  </div>
+  <div class="clr-control-label">Ссылка</div>
+</div>
+@for (item of shortLinks().controls; track item; let i = $index) {
+  <form [formGroup]="item" class="flex short-links">
+    <clr-input-container class="br w-100">
+      <input clrInput type="text" formControlName="name" />
+    </clr-input-container>
+    <clr-input-container class="br w-100">
+      <input
+        clrInput
+        type="text"
+        placeholder="URI"
+        required
+        formControlName="url"
+      />
+    </clr-input-container>
+    <button
+      type="button"
+      (click)="onRemoveLink(i)"
+      class="btn btn-icon btn-sm btn-link"
+      aria-label="trash"
+    >
+      <cds-icon shape="trash" class="is-error"></cds-icon>
+    </button>
+  </form>
+}

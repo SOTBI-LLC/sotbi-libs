@@ -13,5 +13,11 @@ export * from './lib/filter-block';
 export { FilterBlockComponent } from './lib/filter-block';
 export { FilterComponent } from './lib/filter-search';
 export { FooterComponent } from './lib/footer';
+export {
+  getLinks,
+  LinksComponent,
+  styleClassesForLinks,
+} from './lib/links/links.component';
 export { PaymentFormComponent } from './lib/payment-form';
 export { BeetwenType, PaymentsFilterComponent } from './lib/payments-filter';
+export { ShortLinksComponent } from './lib/short-links/short-links.component';

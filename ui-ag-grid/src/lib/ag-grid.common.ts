@@ -1,5 +1,5 @@
 import { formatCurrency, formatNumber, formatPercent } from '@angular/common';
-import type { ValueFormatterParams } from 'ag-grid-community';
+import type { GridApi, ValueFormatterParams } from 'ag-grid-community';
 
 export const localeText = {
   // for filter panel
@@ -178,4 +178,46 @@ export const percentFormatter = (
   } else {
     return null;
   }
+};
+
+export const setGridState = (api: GridApi, prefix: string): void => {
+  const columnState = JSON.parse(
+    sessionStorage.getItem(`${prefix}-columns`) || '{}',
+  );
+  if (columnState) {
+    api.applyColumnState({ state: columnState });
+  }
+  const filterState = sessionStorage.getItem(`${prefix}-filter`);
+  if (filterState !== null) {
+    api.setFilterModel(JSON.parse(filterState));
+  }
+};
+
+export const addGlobalListener = (api: GridApi, prefix: string): void => {
+  api.addGlobalListener((type) => {
+    if (
+      type === 'columnRowGroupChanged' ||
+      type === 'columnMoved' ||
+      type === 'columnVisible' ||
+      type === 'columnResized' ||
+      type === 'columnPinned' ||
+      type === 'sortChanged'
+    ) {
+      sessionStorage.setItem(
+        `${prefix}-columns`,
+        JSON.stringify(api?.getColumnState()),
+      );
+    }
+    if (type === 'filterChanged') {
+      const filterModel = api.getFilterModel();
+      if (Object.keys(filterModel)?.length) {
+        sessionStorage.setItem(
+          `${prefix}-filter`,
+          JSON.stringify(api.getFilterModel()),
+        );
+      } else {
+        sessionStorage.removeItem(`${prefix}-filter`);
+      }
+    }
+  });
 };

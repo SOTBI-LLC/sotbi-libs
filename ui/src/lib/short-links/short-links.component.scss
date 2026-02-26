@@ -1,0 +1,9 @@
+:host {
+  width: 100%;
+  display: block;
+}
+::ng-deep .short-links {
+  .clr-control-label {
+    display: none;
+  }
+}
