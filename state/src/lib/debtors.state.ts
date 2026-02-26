@@ -35,6 +35,7 @@ import {
   UpdateDebtorPolicy,
 } from './debtors.actions';
 
+/** не используется */
 @Injectable({ providedIn: 'root' })
 export class UniqueDebtorINNValidator implements AsyncValidator {
   private readonly debtorSrv = inject(DebtorService);

@@ -34,12 +34,13 @@ export { ScanType, UserScan } from './lib/user-scan';
 // Models with simple dependencies
 export { ActionPlan } from './lib/actionplan';
 export { AppraisalSubject } from './lib/appraisal-subject';
-export { Appraiser, AppraiserType } from './lib/appraiser';
+export { Appraiser, AppraiserType, SroChangedEvent } from './lib/appraiser';
 export { Asset } from './lib/asset';
 export {
   Creditor,
   CreditorListType,
   CreditorResidentType,
+  CreditorClaimReceived,
 } from './lib/creditor';
 export { Calcs, InitiatorCalcs } from './lib/debtorcalcs';
 export {
@@ -64,7 +65,8 @@ export {
   CompensationAndRuling,
   FictitiousBankruptcyAndAmendmentNotice,
   InformationCreditInstitution,
-  informationCreditInstitutionOrResultsReviewApplicationsChallengingTransactions,
+  ResultsReviewApplicationsChallengingTransactions,
+  InformationCreditInstitutionOrResultsReviewApplicationsChallengingTransactions,
   SubMessageType,
   SubMessageTypes,
   SubsidiaryAndLiabilityClaim,
@@ -273,6 +275,7 @@ export {
 export {
   BasisForChallengingTransaction,
   CreditOrganisation,
+  ResultOptions,
   CreditorMeetingType,
   CreditorType,
   CreditorTypeArr,
@@ -283,6 +286,7 @@ export {
   Message,
   MessageHistory,
   ProvidingCollateral,
+  RequestPublicationsBySubMessageIdAndDebtorId,
   ReleaseCitizenFromObligationsType,
   TypeOrderOfSatisfaction,
 } from './lib/message';

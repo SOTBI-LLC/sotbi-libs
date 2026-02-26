@@ -12,13 +12,16 @@ import {
   DeleteEfrsbMessage,
   FetchEfrsbMessages,
   GetEfrsbMessage,
+  GetPublicationsBySubMessageIdAndDebtorId,
   UpdateEfrsbMessage,
 } from './efrsb-message.actions';
+import { AUTH_NOTIFICATION } from '@sotbi/auth';
 
 export class EfrsbMessageStateModel {
   public items: Message[] = [];
   public selected: Message | null = null;
   public loading = false;
+  public publications: number[] = [];
 }
 
 @State<EfrsbMessageStateModel>({
@@ -27,11 +30,13 @@ export class EfrsbMessageStateModel {
     items: [],
     loading: false,
     selected: null,
+    publications: [],
   },
 })
 @Injectable()
 export class EfrsbMessageState {
   private readonly itemsService = inject(EfrsbMessageService);
+  private readonly notification = inject(AUTH_NOTIFICATION, { optional: true });
 
   private readonly empty: Message = {
     id: 0,
@@ -53,6 +58,12 @@ export class EfrsbMessageState {
     return state.items;
   }
 
+  @Selector()
+  public static getPublications(state: EfrsbMessageStateModel): number[] {
+    return state.publications;
+  }
+
+  /** не используется */
   @Action(FetchEfrsbMessages)
   public fetchItems({
     getState,
@@ -159,5 +170,30 @@ export class EfrsbMessageState {
       catchError((err) => throwError(() => err)),
       finalize(() => patchState({ loading: false })),
     );
+  }
+
+  @Action(GetPublicationsBySubMessageIdAndDebtorId)
+  public getPublicationsBySubMessageIdAndDebtorId(
+    { patchState, getState, setState }: StateContext<EfrsbMessageStateModel>,
+    { subMessageId, debtorId }: GetPublicationsBySubMessageIdAndDebtorId,
+  ) {
+    patchState({ loading: true });
+    return this.itemsService
+      .getPublicationsBySubMessageIdAndDebtorId(subMessageId, debtorId)
+      .pipe(
+        tap((items) => {
+          setState({
+            ...getState(),
+            publications: items,
+          });
+        }),
+        catchError((err) => {
+          this.notification?.showError(
+            err?.error || 'Произошла ошибка при поиске публикаций',
+          );
+          return throwError(() => err);
+        }),
+        finalize(() => patchState({ loading: false })),
+      );
   }
 }

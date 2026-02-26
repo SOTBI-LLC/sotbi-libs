@@ -11,6 +11,18 @@ export interface Creditor {
   claim_grounds: string; // Основание возникновения требования
 }
 
+export interface CreditorClaimReceived {
+  id: number;
+  receiving_at: Date; // Дата получения требований кредитора
+  amount: number; // Сумма требований
+  type: number; // Кредитор: ЮЛ/ИП/ФЛ/иностранная компания
+  tax_id: string; // 'ИНН/ОГРНИП/СНИЛС' || 'ИНН/ОГРН' || 'ИНН/ОГРНИП' || 'ИНН/СНИЛС' || Идентифицирующий номер
+  name: string; // ФИО/Наименование компании
+  country: string; // Страна
+  tax_type: string; // Тип идентифицирующего номера
+  claim_grounds: string; // Основание возникновения требования
+}
+
 export enum CreditorResidentType {
   NON_RESIDENT,
   RESIDENT,

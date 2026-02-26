@@ -12,7 +12,7 @@ import { Store } from '@ngxs/store';
 import type { Observable } from 'rxjs';
 import { BehaviorSubject, throwError } from 'rxjs';
 import { catchError, filter, finalize, switchMap, take } from 'rxjs/operators';
-import { AUTH_NOTIFICATION } from '../auth-notification.ervice';
+import { AUTH_NOTIFICATION } from '../auth-notification.service';
 import { RefreshToken } from '../store/auth.actions';
 import { AuthState } from '../store/auth.state';
 

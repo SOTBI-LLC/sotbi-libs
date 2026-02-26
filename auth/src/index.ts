@@ -4,7 +4,7 @@ import { AuthInterceptor } from './lib/interceptors/auth.interceptor';
 export {
   AUTH_NOTIFICATION,
   AuthNotificationService,
-} from './lib/auth-notification.ervice';
+} from './lib/auth-notification.service';
 export { AuthService } from './lib/auth.service';
 export {
   CanComponentDeactivate,

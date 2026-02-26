@@ -221,6 +221,7 @@ export { DepositsState, DepositStateModel } from './lib/deposits.state';
 export {
   AddEfrsbMessage,
   DeleteEfrsbMessage,
+  GetPublicationsBySubMessageIdAndDebtorId,
   FetchEfrsbMessages,
   GetEfrsbMessage,
   UpdateEfrsbMessage,

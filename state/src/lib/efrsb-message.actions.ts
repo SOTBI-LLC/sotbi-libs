@@ -24,3 +24,12 @@ export class DeleteEfrsbMessage {
   public static readonly type = '[EFRSB MESSAGE] Delete item';
   constructor(public payload: number) {}
 }
+
+export class GetPublicationsBySubMessageIdAndDebtorId {
+  public static readonly type =
+    '[EFRSB MESSAGE] Get publications by sub message id and debtor id';
+  constructor(
+    public subMessageId: number,
+    public debtorId: number,
+  ) {}
+}
