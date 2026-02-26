@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/ui-ag-grid",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "public"
@@ -17,8 +17,8 @@
     "@angular/core": "^20.3.17",
     "@angular/router": "^20.3.17",
     "@angular/forms": "^20.3.17",
-    "ag-grid-angular": "~34.2.0",
-    "ag-grid-community": "~34.2.0",
+    "ag-grid-angular": "~34.3.1",
+    "ag-grid-community": "~34.3.1",
     "@progress/kendo-angular-dateinputs": "~20.0.3",
     "date-fns": "^4.1.0",
     "@ng-select/ng-select": "^20.7.0",

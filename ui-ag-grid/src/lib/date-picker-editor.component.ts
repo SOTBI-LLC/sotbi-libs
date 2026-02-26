@@ -59,11 +59,9 @@ export class DatePickerEditor implements ICellEditorAngularComp {
   protected max: Date = new Date();
   protected readonly = false;
   protected readonly format = DD_MM_YYYY;
-  private api: GridApi | null = null;
   public readonly dateChange = output<Date>();
 
   public agInit(params: ICellEditorParams): void {
-    this.api = params.api;
     this.min = (params['min'] && new Date(params['min'])) || null;
     this.max = (params['max'] && new Date(params['max'])) || null;
     this.readonly = params['readonly'];

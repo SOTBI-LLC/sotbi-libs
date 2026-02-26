@@ -29,6 +29,10 @@ export {
   LinkCellComponent,
 } from './lib/link-cell-ag-grid.component';
 export {
+  NgSelectEditor,
+  ProjectAndDebtorSelectEditor,
+} from './lib/ng-select-editor.component';
+export {
   NumericEditor,
   SimpleNumericEditor,
 } from './lib/numeric-editor.component';

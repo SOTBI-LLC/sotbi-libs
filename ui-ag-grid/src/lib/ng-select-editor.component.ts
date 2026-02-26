@@ -143,7 +143,7 @@ export class NgSelectEditor<T> implements ICellEditorAngularComp {
 
   public agInit(params: ICellEditorParams<T, number | string>): void {
     this.api = params.api;
-    this.items = params['items'] ?? [];
+    this.items = params['values'] ?? [];
     if (params['bindId']) {
       this.bindId = params['bindId'];
     }
