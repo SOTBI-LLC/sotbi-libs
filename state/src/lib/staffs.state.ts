@@ -1,8 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { StaffService } from '@sotbi/data-access';
-import type { Staff, StaffFlat } from '@sotbi/models';
+import type { itemMap, Staff, StaffFlat } from '@sotbi/models';
 import { StaffGroupType } from '@sotbi/models';
 import { throwError } from 'rxjs';
 import {
@@ -11,7 +11,6 @@ import {
   finalize,
   tap,
 } from 'rxjs/operators';
-import type { itemMap } from './simple-edit.state.model';
 import {
   AddStaff,
   DeleteStaff,

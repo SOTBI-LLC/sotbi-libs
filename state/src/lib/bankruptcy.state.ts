@@ -1,8 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { BankruptcyService } from '@sotbi/data-access';
-import type { InsurancePolicy, PostAddress } from '@sotbi/models';
+import type { InsurancePolicy, itemMap, PostAddress } from '@sotbi/models';
 import { Bankruptcy } from '@sotbi/models';
 import { bankruptcyManagerFormatter, getDiff } from '@sotbi/utils';
 import { of, throwError } from 'rxjs';
@@ -18,7 +18,6 @@ import {
   UpdateBankruptcy,
   UpdateBankruptcyPolicy,
 } from './bankruptcy.actions';
-import type { itemMap } from './simple-edit.state.model';
 
 const emptyPostAddress: PostAddress = {
   id: 0,

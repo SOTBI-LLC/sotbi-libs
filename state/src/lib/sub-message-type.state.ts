@@ -2,10 +2,9 @@ import { inject, Injectable } from '@angular/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, createSelector, Selector, State } from '@ngxs/store';
 import { SubMessageTypeService } from '@sotbi/data-access';
-import type { SubMessageType } from '@sotbi/models';
+import type { itemMap, SubMessageType } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import type { itemMap } from './simple-edit.state.model';
 import {
   AddSubMessageType,
   DeleteSubMessageType,

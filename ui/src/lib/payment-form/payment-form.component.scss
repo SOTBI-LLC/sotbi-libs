@@ -1,0 +1,29 @@
+:host {
+  display: block;
+  position: relative;
+}
+.payments-dialog__btn-print {
+  background: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+
+  position: absolute;
+  top: -2px;
+  right: 85px;
+  z-index: 100000;
+
+  opacity: 0.5;
+
+  width: 30px;
+  height: 30px;
+  &:hover {
+    cursor: pointer;
+    opacity: 1;
+  }
+}
+
+.nowr {
+  white-space: nowrap;
+  text-transform: uppercase;
+}

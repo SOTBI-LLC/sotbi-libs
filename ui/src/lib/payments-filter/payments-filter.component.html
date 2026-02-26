@@ -1,0 +1,108 @@
+<form clrForm>
+  <div class="clr-row">
+    <div class="clr-col-3">
+      <ng-select
+        class="clr multiselect"
+        [multiple]="true"
+        [clearable]="true"
+        name="label"
+        id="label"
+        [items]="labels()"
+        bindLabel="name"
+        bindValue="id"
+        notFoundText="Не найдено"
+        placeholder="Выберите операции"
+        [(ngModel)]="internalFilter().label_id"
+        (change)="onLabelIDChanged($event)"
+        (clear)="onLabelIDClear()"
+      ></ng-select>
+    </div>
+    <div class="clr-col-3">
+      <ng-select
+        class="clr multiselect"
+        [multiple]="true"
+        [clearable]="true"
+        name="accounts"
+        id="accounts"
+        [items]="actuals()"
+        bindLabel="name"
+        bindValue="id"
+        notFoundText="Не найдено"
+        placeholder="Выберите счет"
+        [(ngModel)]="internalFilter().bank_detail_id"
+        (change)="onBankDetailIDChanged($event)"
+        (clear)="onBankDetailIDClear()"
+      ></ng-select>
+    </div>
+    <div class="clr-col-6">
+      <div class="clr-row">
+        <clr-select-container class="clr-col-6 mt-0">
+          <label for="options">Период</label>
+          <select
+            clrSelect
+            class="w-100"
+            name="options"
+            id="options"
+            [(ngModel)]="between"
+            (change)="filterByDateBetween(between())"
+          >
+            <option [ngValue]="beetwenType.TODAY">Платежи за сегодня</option>
+            <option [ngValue]="beetwenType.CURR_WEEK">
+              Платежи за текущую неделю
+            </option>
+            <option [ngValue]="beetwenType.LAST_7DAYS">
+              Платежи за последние 7 дней
+            </option>
+            <option [ngValue]="beetwenType.CURR_MONTH">
+              Платежи за текущий месяц
+            </option>
+            <option [ngValue]="beetwenType.LAST_MONTH">
+              Платежи за последний месяц
+            </option>
+            <option [ngValue]="beetwenType.CUSTOM">
+              Указать диапазон вручную
+            </option>
+          </select>
+        </clr-select-container>
+        @if (between() === beetwenType.CUSTOM) {
+          <div class="clr-col-6">
+            <div class="clr-row">
+              <div class="clr-col-12 clr-col-xl-6 flex pl-0">
+                <clr-date-container class="mt-0">
+                  <label for="start">с</label>
+                  <input
+                    type="date"
+                    autocomplete="off"
+                    clrDate
+                    name="start"
+                    id="start"
+                    [clrDate]="internalFilter().start ?? null"
+                    (clrDateChange)="dateStartChange($event)"
+                    placeholder="дд.мм.гггг"
+                    class="p-0"
+                  />
+                </clr-date-container>
+              </div>
+              <div class="clr-col-12 clr-col-xl-6 flex pl-0">
+                <clr-date-container class="mt-0">
+                  <label for="end">по</label>
+                  <input
+                    type="date"
+                    autocomplete="off"
+                    clrDate
+                    name="end"
+                    id="end"
+                    [clrDate]="internalFilter().end ?? null"
+                    (clrDateChange)="dateEndChange($event)"
+                    placeholder="дд.мм.гггг"
+                    class="p-0"
+                  />
+                </clr-date-container>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</form>

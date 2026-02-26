@@ -44,6 +44,7 @@ export default [
       '@angular-eslint/no-empty-lifecycle-method': 'error',
       // Рекомендовать OnPush стратегию для компонентов
       '@angular-eslint/prefer-on-push-component-change-detection': 'warn',
+      '@angular-eslint/component-selector': 'off',
     },
   },
   {

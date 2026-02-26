@@ -1,12 +1,11 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { SroService } from '@sotbi/data-access';
-import type { Sro } from '@sotbi/models';
+import type { itemMap, Sro } from '@sotbi/models';
 import { forMap } from '@sotbi/utils';
 import { of, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
-import type { itemMap } from './simple-edit.state.model';
 import { AddSro, DeleteSro, EditSro, FetchSros, GetSro } from './sros.actions';
 
 export class SroStateModel {

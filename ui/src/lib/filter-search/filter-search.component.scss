@@ -1,0 +1,31 @@
+.search-wrapper {
+  display: flex;
+  border: 1px solid #ddd;
+  position: sticky;
+  height: 1.2rem;
+  top: 0;
+  z-index: 999;
+  background-color: hsl(198, 0%, 98%);
+  .checkbox-wrapper {
+    padding: 0 0.6rem 0 0.4rem;
+    border-right: 1px solid #ddd;
+    .checkbox {
+      color: #b3b3b3;
+    }
+  }
+  .clr-form-control {
+    width: 100%;
+  }
+  input[type='search'] {
+    width: calc(100% - 1rem);
+    border: none;
+    &:focus {
+      outline: none;
+    }
+  }
+  .search {
+    position: absolute;
+    right: 0.2rem;
+    top: 0.2rem;
+  }
+}

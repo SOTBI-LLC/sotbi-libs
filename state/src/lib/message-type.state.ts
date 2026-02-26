@@ -1,7 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { MessageTypeService } from '@sotbi/data-access';
+import type { itemMap } from '@sotbi/models';
 import { MessageType } from '@sotbi/models';
 import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
@@ -11,7 +12,6 @@ import {
   FetchMessageTypes,
   UpdateMessageType,
 } from './message-type.actions';
-import type { itemMap } from './simple-edit.state.model';
 
 export class EfrsbMessageTypeStateModel {
   public items: MessageType[] = [];

@@ -25,6 +25,7 @@ export {
   removeID,
   WithId,
 } from './lib/prop';
+export { amountToWords } from './lib/propis';
 export {
   ArrFromMap,
   forMap,
@@ -36,6 +37,8 @@ export {
 export {
   bankruptcyManagerFormatter,
   canSave,
+  comparator,
+  dateFilterParams,
   isAllSaved,
   notifyError,
   paramsToOptions,
