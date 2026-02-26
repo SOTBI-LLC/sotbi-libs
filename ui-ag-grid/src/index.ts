@@ -1,4 +1,5 @@
 export {
+  addGlobalListener,
   AgGridFilterType,
   AgGridFilterTypeOperation,
   AgGridFilterValue,
@@ -8,6 +9,7 @@ export {
   localeText,
   numericFormatter,
   percentFormatter,
+  setGridState,
 } from './lib/ag-grid.common';
 export { ButtonActionsComponent } from './lib/button-actions.component';
 export { ButtonRendererComponent } from './lib/button-renderer.component';
@@ -30,6 +32,7 @@ export {
   NumericEditor,
   SimpleNumericEditor,
 } from './lib/numeric-editor.component';
+export { PostAddresGridComponent } from './lib/post-addres-grid.component';
 export { RequestStatusComponent } from './lib/request-status.component';
 export { RightSideBarAgGridComponent } from './lib/right-side-bar.component';
 export {

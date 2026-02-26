@@ -1,0 +1,137 @@
+@if (showAsTable()) {
+  <table
+    class="table table-compact"
+    tabindex="0"
+    (click)="clickedInside($event)"
+    (keydown)="clickedInside($event)"
+  >
+    <thead>
+      <tr>
+        <th class="width--type">Тип</th>
+        <th class="width--uri">Ссылка</th>
+        @if (!isEditMode()) {
+          <th class="width--ctrl">&nbsp;</th>
+        }
+        <th class="width--del">&nbsp;</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of linkRefs(); track $index; let i = $index) {
+        <tr>
+          <td class="width--type" [ngClass]="{ 'cell--ptopX': !canEdit(item) }">
+            @if (!canEdit(item)) {
+              <span>
+                {{ item.type?.name }}
+              </span>
+            }
+            @if (canEdit(item)) {
+              <div>
+                <select [(ngModel)]="item.type_id" [disabled]="isDisabled()">
+                  @for (linkType of links(); track linkType.id) {
+                    <option [ngValue]="linkType.id">
+                      {{ linkType.name }}
+                    </option>
+                  }
+                </select>
+              </div>
+            }
+          </td>
+          <td
+            class="width--uri"
+            [ngClass]="{
+              'cell--ptopX': !canEdit(item),
+              'links-wrap__uri-text': !canEdit(item),
+            }"
+          >
+            <clr-input-container class="subnav_select">
+              @if (!canEdit(item)) {
+                <span>
+                  {{ item.uri }}
+                </span>
+              }
+              @if (canEdit(item)) {
+                <input
+                  clrInput
+                  style="height: 1rem !important"
+                  type="text"
+                  placeholder="URI"
+                  [(ngModel)]="item.uri"
+                  [disabled]="isDisabled()"
+                  required
+                />
+              }
+            </clr-input-container>
+          </td>
+          @if (!isEditMode()) {
+            <td class="width--ctrl cell--ptopX">
+              @if (!canEdit(item)) {
+                <cds-icon (click)="onTryEdit(item)" shape="pencil"></cds-icon>
+              }
+              @if (canEdit(item)) {
+                <cds-icon (click)="onSave()" shape="check"></cds-icon>
+              }
+            </td>
+          }
+          <td class="width--del">
+            <button
+              class="btn btn-icon btn-sm btn-secondary btn-link links-wrap__btn-transparent"
+              title="Удалить ссылку"
+              (click)="del(item, i)"
+            >
+              <cds-icon shape="trash"></cds-icon>
+            </button>
+          </td>
+        </tr>
+      }
+      <tr>
+        <td class="width--type">
+          <div class="clr-select-wrapper">
+            <select
+              id="type_id"
+              name="type_id"
+              [(ngModel)]="create.type_id"
+              [disabled]="isDisabled()"
+            >
+              <option [ngValue]="-1">- не выбран -</option>
+              @for (linkType of getLinksForSelect(links()); track linkType.id) {
+                <option [ngValue]="linkType.id">
+                  {{ linkType.name }}
+                </option>
+              }
+            </select>
+          </div>
+        </td>
+        <td class="width--type">
+          <clr-input-container class="subnav_select">
+            <input
+              clrInput
+              type="text"
+              placeholder="URI"
+              [(ngModel)]="create.uri"
+              [disabled]="isDisabled()"
+              required
+            />
+          </clr-input-container>
+        </td>
+        <td class="cell--ptopX width--ctrl">
+          <cds-icon (click)="add()" shape="floppy"></cds-icon>
+        </td>
+        @if (!isEditMode()) {
+          <td>&nbsp;</td>
+        }
+      </tr>
+    </tbody>
+  </table>
+} @else {
+  <div>
+    @for (item of linkRefs(); track item) {
+      <a
+        [href]="item.uri"
+        class="label clickable links-wrap__link"
+        target="_blank"
+      >
+        {{ item.type?.name }}
+      </a>
+    }
+  </div>
+}

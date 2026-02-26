@@ -12,8 +12,8 @@
   },
   "packageManager": "yarn@1.22.22",
   "peerDependencies": {
-    "@sotbi/data-access": "^0.0.13",
-    "@sotbi/models": "^0.0.14",
+    "@sotbi/data-access": "^0.0.14",
+    "@sotbi/models": "^0.0.15",
     "@angular/common": "^20.3.14",
     "@angular/core": "^20.3.4",
     "@angular/router": "^20.3.4",

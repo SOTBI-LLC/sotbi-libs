@@ -1,0 +1,49 @@
+:host {
+  width: 100%;
+}
+.width--type {
+  width: 150px;
+}
+.width--uri {
+  max-width: 10px;
+}
+.width--ctrl {
+  width: 40px;
+}
+.width--del {
+  width: 40px;
+}
+.links-wrap__uri-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.links-wrap__btn-transparent {
+  margin: 0;
+  padding: 0;
+  padding-top: 2px;
+  svg {
+    fill: #565656;
+  }
+}
+::ng-deep app-links-wrap .table.table-compact td.cell--ptopX {
+  padding-top: 9px;
+}
+::ng-deep app-links-wrap .table td {
+  text-align: left;
+}
+::ng-deep app-links-wrap a.label:link {
+  color: #0079b8;
+}
+::ng-deep app-links-wrap a.label:visited {
+  color: #0079b8;
+}
+::ng-deep app-links-wrap a.label:hover {
+  text-decoration: underline;
+}
+.select select {
+  height: 0.82rem !important;
+}
+.subnav_select {
+  margin-top: 0 !important;
+}

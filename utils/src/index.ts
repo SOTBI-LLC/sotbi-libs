@@ -1,3 +1,12 @@
+export {
+  validateBik,
+  validateINN,
+  validateKs,
+  validateOgrn,
+  validateOgrnip,
+  validateRs,
+  validateSnils,
+} from './lib/account-validation';
 export { generateAvatarSvgUrl } from './lib/avatars/generate';
 export { fromBase62, toBase62 } from './lib/base62';
 export { Level, maskForSumm } from './lib/consts';
