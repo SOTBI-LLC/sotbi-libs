@@ -62,7 +62,6 @@
     "imask": "~7.6.1",
     "javascript-state-machine": "~2.4.0",
     "jwt-decode": "^4.0.0",
-    "number-to-words-ru": "^2.4.1",
     "rxjs": "7.8.2",
     "ts-node": "^10.9.2",
     "zone.js": "~0.16.0"

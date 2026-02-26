@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import type { AfterViewInit } from '@angular/core';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import type { PaymentDocument } from '@sotbi/models';
-import { convert } from 'number-to-words-ru';
+import { amountToWords } from '@sotbi/utils';
 
 // Angular всегда выпиливает стили и вставляет их в head
 // Такое его поведение делает невозможной задачу напечатать
@@ -262,7 +262,7 @@ clr-icon{
 })
 export class PaymentFormComponent implements AfterViewInit {
   public readonly paymentDoc = input.required<PaymentDocument>();
-  protected readonly moneyToStr = convert;
+  protected readonly moneyToStr = amountToWords;
   private readonly targetElementSelectorName = '.payments-dialog__table';
 
   public ngAfterViewInit(): void {

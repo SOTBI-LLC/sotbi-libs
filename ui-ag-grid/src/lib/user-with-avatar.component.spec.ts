@@ -8,11 +8,6 @@ describe('UserWithAvatarComponent', () => {
   let component: UserWithAvatarComponent;
   let fixture: ComponentFixture<UserWithAvatarComponent>;
 
-  const getUser = (comp: UserWithAvatarComponent): string | null =>
-    (comp as unknown as { user: () => string | null }).user();
-  const getAvatar = (comp: UserWithAvatarComponent): string | null =>
-    (comp as unknown as { avatar: () => string | null }).avatar();
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [UserWithAvatarComponent],
@@ -38,16 +33,16 @@ describe('UserWithAvatarComponent', () => {
       component.agInit(params);
       fixture.detectChanges();
 
-      expect(getUser(component)).toBe('John Doe');
-      expect(getAvatar(component)).toBe('https://example.com/avatar.png');
+      expect(component.user).toBe('John Doe');
+      expect(component.avatar).toBe('https://example.com/avatar.png');
     });
 
     it('should use defaults when params missing', () => {
       component.agInit({} as ICellRendererParams);
       fixture.detectChanges();
 
-      expect(getUser(component)).toBe('Guest');
-      expect(getAvatar(component)).toBeNull();
+      expect(component.user).toBe('Guest');
+      expect(component.avatar).toBeNull();
     });
   });
 

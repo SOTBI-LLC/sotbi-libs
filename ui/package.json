@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/ui",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "public"
@@ -12,6 +12,7 @@
   },
   "peerDependencies": {
     "@sotbi/models": "0.0.14",
+    "@sotbi/utils": "0.0.15",
     "@angular/common": "^20.3.14",
     "@angular/core": "^20.3.0",
     "@angular/forms": "^20.3.4",
@@ -20,7 +21,6 @@
     "@clr/angular": "^17.12.2",
     "@ng-select/ng-select": "^20.7.0",
     "jest": "^30.2.0",
-    "number-to-words-ru": "^2.4.1",
     "jest-preset-angular": "^16.0.0"
   },
   "sideEffects": false

@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  Input,
   input,
-  signal,
 } from '@angular/core';
 import type {
   ICellEditorAngularComp,
@@ -11,17 +11,19 @@ import type {
 import type { ICellEditorParams, ICellRendererParams } from 'ag-grid-community';
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector
+  selector: 'user-with-avatar',
   imports: [],
   template: `
-    @if (avatar()) {
+    @if (avatar) {
       <img
         [style.--avatar-size]="size()"
-        [src]="avatar()"
-        [alt]="user()"
+        [src]="avatar"
+        [alt]="user"
         class="avatar"
       />
     }
-    {{ user() }}
+    {{ user }}
   `,
   styles: `
     :root {
@@ -45,12 +47,12 @@ export class UserWithAvatarComponent
   implements ICellEditorAngularComp, ICellRendererAngularComp
 {
   public readonly size = input<string>('1rem');
-  protected readonly user = signal<string | null>('Guest');
-  protected readonly avatar = signal<string | null>('');
+  @Input() public user = 'Guest';
+  @Input() public avatar: string | null = null;
 
   public agInit(params: ICellEditorParams | ICellRendererParams): void {
-    this.user.set(params['user'] ?? 'Guest');
-    this.avatar.set(params['avatar'] ?? null);
+    this.user = params['user'] ?? 'Guest';
+    this.avatar = params['avatar'] ?? null;
   }
 
   public refresh() {
@@ -58,6 +60,6 @@ export class UserWithAvatarComponent
   }
 
   public getValue(): string {
-    return this.user() ?? '';
+    return this.user;
   }
 }

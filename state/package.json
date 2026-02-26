@@ -13,7 +13,7 @@
   "peerDependencies": {
     "@sotbi/models": "^0.0.14",
     "@sotbi/data-access": "^0.0.13",
-    "@sotbi/utils": "^0.0.14",
+    "@sotbi/utils": "^0.0.15",
     "@angular/common": "^20.3.14",
     "@angular/core": "^20.3.4",
     "@angular/forms": "^20.3.4",
