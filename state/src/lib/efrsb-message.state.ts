@@ -5,7 +5,7 @@ import { Action, Selector, State } from '@ngxs/store';
 import { EfrsbMessageService, NOTIFICATION } from '@sotbi/data-access';
 import type { Message } from '@sotbi/models';
 import { StatusEnum } from '@sotbi/models';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
   AddEfrsbMessage,
@@ -73,7 +73,7 @@ export class EfrsbMessageState {
     if (!state.items.length) {
       patchState({ loading: true });
       // по факту отдаёт только 25 элементов
-      this.itemsService.getAllMessages(new HttpParams()).pipe(
+      return this.itemsService.getAllMessages(new HttpParams()).pipe(
         tap((res) => {
           setState({
             ...state,
@@ -85,6 +85,7 @@ export class EfrsbMessageState {
         finalize(() => patchState({ loading: false })),
       );
     }
+    return of([]);
   }
 
   @Action(GetEfrsbMessage)
@@ -96,9 +97,9 @@ export class EfrsbMessageState {
     const state = getState();
     if (payload === 0) {
       patchState({ selected: this.empty, loading: false });
-      return;
+      return of(null);
     }
-    this.itemsService.get(payload).pipe(
+    return this.itemsService.get(payload).pipe(
       tap((item) => {
         setState({
           ...state,
@@ -116,7 +117,7 @@ export class EfrsbMessageState {
     { payload }: AddEfrsbMessage,
   ) {
     patchState({ loading: true });
-    this.itemsService.add(payload).pipe(
+    return this.itemsService.add(payload).pipe(
       tap((result) => {
         const state = getState();
         setState({
@@ -137,7 +138,7 @@ export class EfrsbMessageState {
   ) {
     patchState({ loading: true });
     const state = getState();
-    this.itemsService.update(payload).pipe(
+    return this.itemsService.update(payload).pipe(
       tap((selected) => {
         setState({
           ...state,
@@ -158,7 +159,7 @@ export class EfrsbMessageState {
     { payload }: DeleteEfrsbMessage,
   ) {
     patchState({ loading: true });
-    this.itemsService.delete(payload).pipe(
+    return this.itemsService.delete(payload).pipe(
       tap(() => {
         const state = getState();
         setState({

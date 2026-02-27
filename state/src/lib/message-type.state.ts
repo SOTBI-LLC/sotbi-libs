@@ -4,7 +4,7 @@ import { Action, Selector, State } from '@ngxs/store';
 import { MessageTypeService } from '@sotbi/data-access';
 import type { itemMap } from '@sotbi/models';
 import { MessageType } from '@sotbi/models';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import {
   AddMessageType,
@@ -69,7 +69,7 @@ export class EfrsbMessageTypeState {
     const state = getState();
     // console.log('EfrsbMessageTypeState::FetchItems', state);
     if (!state.items.length) {
-      this.itemsService.GetAll().pipe(
+      return this.itemsService.GetAll().pipe(
         tap((items) => {
           const subMaps = new Map<number, itemMap>();
           const maps = new Map();
@@ -77,7 +77,7 @@ export class EfrsbMessageTypeState {
             maps.set(item.id, item.name);
             subMaps.set(
               item.id,
-              new Map(item.sub_message_types.map((a) => [a.id, a.name])),
+              new Map(item.sub_message_types?.map((a) => [a.id, a.name])),
             );
           }
           setState({
@@ -91,6 +91,7 @@ export class EfrsbMessageTypeState {
         catchError((err) => throwError(() => err)),
       );
     }
+    return of();
   }
 
   @Action(AddMessageType)
