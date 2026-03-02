@@ -289,4 +289,5 @@ export {
   RequestPublicationsBySubMessageIdAndDebtorId,
   ReleaseCitizenFromObligationsType,
   TypeOrderOfSatisfaction,
+  PublicationBySubMessageIdAndDebtorId,
 } from './lib/message';

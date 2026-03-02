@@ -3,7 +3,10 @@ import { Injectable, inject } from '@angular/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { EfrsbMessageService, NOTIFICATION } from '@sotbi/data-access';
-import type { Message } from '@sotbi/models';
+import type {
+  Message,
+  PublicationBySubMessageIdAndDebtorId,
+} from '@sotbi/models';
 import { StatusEnum } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
@@ -19,8 +22,10 @@ import {
 export class EfrsbMessageStateModel {
   public items: Message[] = [];
   public selected: Message | null = null;
+  /** используем для подстановки данных из старого заявки в новую при создании judicial-act-consideration-application-challenging-debtor-transaction */
+  public oldSelected: Message | null = null;
   public loading = false;
-  public publications: number[] = [];
+  public publications: PublicationBySubMessageIdAndDebtorId[] = [];
 }
 
 @State<EfrsbMessageStateModel>({
@@ -29,6 +34,7 @@ export class EfrsbMessageStateModel {
     items: [],
     loading: false,
     selected: null,
+    oldSelected: null,
     publications: [],
   },
 })
@@ -48,8 +54,13 @@ export class EfrsbMessageState {
   }
 
   @Selector()
-  public static getSelected(state: EfrsbMessageStateModel) {
+  public static getSelected(state: EfrsbMessageStateModel): Message | null {
     return state.selected;
+  }
+
+  @Selector()
+  public static getOldSelected(state: EfrsbMessageStateModel): Message | null {
+    return state.oldSelected;
   }
 
   @Selector()
@@ -58,7 +69,9 @@ export class EfrsbMessageState {
   }
 
   @Selector()
-  public static getPublications(state: EfrsbMessageStateModel): number[] {
+  public static getPublications(
+    state: EfrsbMessageStateModel,
+  ): PublicationBySubMessageIdAndDebtorId[] {
     return state.publications;
   }
 
@@ -78,6 +91,7 @@ export class EfrsbMessageState {
           setState({
             ...state,
             selected: null,
+            oldSelected: null,
             items: res.requests,
           });
         }),
@@ -91,7 +105,7 @@ export class EfrsbMessageState {
   @Action(GetEfrsbMessage)
   public getItem(
     { patchState, getState, setState }: StateContext<EfrsbMessageStateModel>,
-    { payload }: GetEfrsbMessage,
+    { payload, old }: GetEfrsbMessage,
   ) {
     patchState({ loading: true });
     const state = getState();
@@ -104,6 +118,7 @@ export class EfrsbMessageState {
         setState({
           ...state,
           selected: item,
+          oldSelected: old ? item : null,
         });
       }),
       catchError((err) => throwError(() => err)),
