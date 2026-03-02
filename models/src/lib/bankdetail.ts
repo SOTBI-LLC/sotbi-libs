@@ -10,35 +10,41 @@ import type { User } from './user';
 
 export type UUID = `${string}-${string}-${string}-${string}-${string}`;
 
-export interface ActualAccount {
-  id?: number;
-  name: string;
+export class ActualAccount {
+  public id = 0;
+  public name = '';
+  constructor(data: Partial<ActualAccount> = {}) {
+    Object.assign(this, data);
+  }
 }
 
-export interface BankDetail extends ActualAccount {
-  market_place_id?: number;
-  debtor_id?: number;
-  debtor?: Debtor;
-  initiator_id?: number;
-  bank_account: string;
-  bank: string;
-  corr_account: string;
-  bik: string;
-  city: string;
-  location: string;
-  open_date: Date | null;
-  close_date: Date | null;
-  account_type: SimpleEditModel;
-  account_type_id?: number;
-  created_at?: Date;
-  remainings?: Remaining[];
-  final_balance?: number;
-  end_date?: Date;
-  file_created_at?: Date;
-  has_client_bank: boolean;
-  account_statement_requests?: AccountStatement[];
-  payment_request?: PaymentRequest[];
-  request_id?: string;
+export class BankDetail extends ActualAccount {
+  public debtor_id?: number;
+  public debtor?: Debtor;
+  public initiator_id?: number;
+  public bank_account = '';
+  public bank: string | null = null;
+  public corr_account: string | null = null;
+  public bik: string | null = null;
+  public city: string | null = null;
+  public location: string | null = null;
+  public open_date: Date | null = null;
+  public close_date: Date | null = null;
+  public account_type: SimpleEditModel | null = null;
+  public account_type_id: number | null = null;
+  public created_at: Date | null = null;
+  public remainings: Remaining[] = [];
+  public final_balance: number | null = null;
+  public end_date: Date | null = null;
+  public file_created_at: Date | null = null;
+  public has_client_bank = false;
+  public account_statement_requests: AccountStatement[] = [];
+  public payment_request: PaymentRequest[] = [];
+  public request_id: string | null = null;
+  constructor(data: Partial<BankDetail> = {}) {
+    super();
+    Object.assign(this, data);
+  }
 }
 
 export interface Remaining {
