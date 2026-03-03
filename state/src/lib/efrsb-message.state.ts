@@ -9,7 +9,6 @@ import { of, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
   AddEfrsbMessage,
-  ClearOldSelectedEfrsbMessage,
   DeleteEfrsbMessage,
   FetchEfrsbMessages,
   GetEfrsbMessage,
@@ -20,8 +19,6 @@ import {
 export class EfrsbMessageStateModel {
   public items: Message[] = [];
   public selected: Message | null = null;
-  /** используем для подстановки данных из старого заявки в новую при создании judicial-act-consideration-application-challenging-debtor-transaction */
-  public oldSelected: Message | null = null;
   public loading = false;
   public publications: PublicationBySubMsgAndDebtor[] = [];
 }
@@ -32,7 +29,6 @@ export class EfrsbMessageStateModel {
     items: [],
     loading: false,
     selected: null,
-    oldSelected: null,
     publications: [],
   },
 })
@@ -54,11 +50,6 @@ export class EfrsbMessageState {
   @Selector()
   public static getSelected(state: EfrsbMessageStateModel): Message | null {
     return state.selected;
-  }
-
-  @Selector()
-  public static getOldSelected(state: EfrsbMessageStateModel): Message | null {
-    return state.oldSelected;
   }
 
   @Selector()
@@ -89,7 +80,6 @@ export class EfrsbMessageState {
           setState({
             ...state,
             selected: null,
-            oldSelected: null,
             items: res.requests,
           });
         }),
@@ -107,24 +97,16 @@ export class EfrsbMessageState {
   ) {
     patchState({ loading: true });
     const state = getState();
-    const { id, old } = payload;
-    if (id === 0) {
+    if (payload === 0) {
       patchState({ selected: this.empty, loading: false });
       return of(null);
     }
-    return this.itemsService.get(id).pipe(
+    return this.itemsService.get(payload).pipe(
       tap((item) => {
-        if (old) {
-          setState({
-            ...state,
-            oldSelected: item,
-          });
-        } else {
-          setState({
-            ...state,
-            selected: item,
-          });
-        }
+        setState({
+          ...state,
+          selected: item,
+        });
       }),
       catchError((err) => throwError(() => err)),
       finalize(() => patchState({ loading: false })),
@@ -144,7 +126,6 @@ export class EfrsbMessageState {
           ...state,
           items: [...state.items, result],
           selected: result,
-          oldSelected: null,
         });
       }),
       catchError((err) => throwError(() => err)),
@@ -216,12 +197,5 @@ export class EfrsbMessageState {
         }),
         finalize(() => patchState({ loading: false })),
       );
-  }
-
-  @Action(ClearOldSelectedEfrsbMessage)
-  public clearOldSelectedEfrsbMessage({
-    patchState,
-  }: StateContext<EfrsbMessageStateModel>) {
-    patchState({ oldSelected: null });
   }
 }

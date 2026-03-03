@@ -7,7 +7,7 @@ export class FetchEfrsbMessages {
 
 export class GetEfrsbMessage {
   public static readonly type = '[EFRSB MESSAGE] Get item';
-  constructor(public payload: { id: number; old?: boolean }) {}
+  constructor(public payload: number) {}
 }
 
 export class AddEfrsbMessage {
@@ -32,8 +32,4 @@ export class GetPublicationsBySubMessageIdAndDebtorId {
     public subMessageId: number,
     public debtorId: number,
   ) {}
-}
-
-export class ClearOldSelectedEfrsbMessage {
-  public static readonly type = '[EFRSB MESSAGE] Clear old selected';
 }
