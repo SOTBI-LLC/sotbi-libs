@@ -301,7 +301,7 @@ export interface RequestPublicationsBySubMessageIdAndDebtorId {
   debtorId: number;
 }
 
-export interface PublicationBySubMessageIdAndDebtorId {
+export interface PublicationBySubMsgAndDebtor {
   id: number;
   publication_at: Date;
   publication_num: number;

@@ -1,10 +1,7 @@
 import type { HttpParams } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import type {
-  Message,
-  PublicationBySubMessageIdAndDebtorId,
-} from '@sotbi/models';
+import type { Message, PublicationBySubMsgAndDebtor } from '@sotbi/models';
 import type { Observable } from 'rxjs';
 import { CommonService } from './common.service';
 
@@ -36,8 +33,8 @@ export class EfrsbMessageService extends CommonService<Message> {
   public getPublicationsBySubMessageIdAndDebtorId(
     subMessageId: number,
     debtorId: number,
-  ): Observable<PublicationBySubMessageIdAndDebtorId[]> {
-    return this.http.get<PublicationBySubMessageIdAndDebtorId[]>(
+  ): Observable<PublicationBySubMsgAndDebtor[]> {
+    return this.http.get<PublicationBySubMsgAndDebtor[]>(
       `${this.path}s/${subMessageId}/${debtorId}`,
     );
   }

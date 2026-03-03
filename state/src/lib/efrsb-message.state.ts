@@ -3,10 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { EfrsbMessageService, NOTIFICATION } from '@sotbi/data-access';
-import type {
-  Message,
-  PublicationBySubMessageIdAndDebtorId,
-} from '@sotbi/models';
+import type { Message, PublicationBySubMsgAndDebtor } from '@sotbi/models';
 import { StatusEnum } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
@@ -26,7 +23,7 @@ export class EfrsbMessageStateModel {
   /** используем для подстановки данных из старого заявки в новую при создании judicial-act-consideration-application-challenging-debtor-transaction */
   public oldSelected: Message | null = null;
   public loading = false;
-  public publications: PublicationBySubMessageIdAndDebtorId[] = [];
+  public publications: PublicationBySubMsgAndDebtor[] = [];
 }
 
 @State<EfrsbMessageStateModel>({
@@ -72,7 +69,7 @@ export class EfrsbMessageState {
   @Selector()
   public static getPublications(
     state: EfrsbMessageStateModel,
-  ): PublicationBySubMessageIdAndDebtorId[] {
+  ): PublicationBySubMsgAndDebtor[] {
     return state.publications;
   }
 
@@ -106,15 +103,16 @@ export class EfrsbMessageState {
   @Action(GetEfrsbMessage)
   public getItem(
     { patchState, getState, setState }: StateContext<EfrsbMessageStateModel>,
-    { payload, old }: GetEfrsbMessage,
+    { payload }: GetEfrsbMessage,
   ) {
     patchState({ loading: true });
     const state = getState();
-    if (payload === 0) {
+    const { id, old } = payload;
+    if (id === 0) {
       patchState({ selected: this.empty, loading: false });
       return of(null);
     }
-    return this.itemsService.get(payload).pipe(
+    return this.itemsService.get(id).pipe(
       tap((item) => {
         if (old) {
           setState({

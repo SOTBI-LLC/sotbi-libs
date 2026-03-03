@@ -7,10 +7,7 @@ export class FetchEfrsbMessages {
 
 export class GetEfrsbMessage {
   public static readonly type = '[EFRSB MESSAGE] Get item';
-  constructor(
-    public payload: number,
-    public old?: boolean,
-  ) {}
+  constructor(public payload: { id: number; old?: boolean }) {}
 }
 
 export class AddEfrsbMessage {
