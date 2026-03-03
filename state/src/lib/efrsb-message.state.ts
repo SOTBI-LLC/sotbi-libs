@@ -12,6 +12,7 @@ import { of, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
   AddEfrsbMessage,
+  ClearOldSelectedEfrsbMessage,
   DeleteEfrsbMessage,
   FetchEfrsbMessages,
   GetEfrsbMessage,
@@ -115,11 +116,17 @@ export class EfrsbMessageState {
     }
     return this.itemsService.get(payload).pipe(
       tap((item) => {
-        setState({
-          ...state,
-          selected: item,
-          oldSelected: old ? item : null,
-        });
+        if (old) {
+          setState({
+            ...state,
+            oldSelected: item,
+          });
+        } else {
+          setState({
+            ...state,
+            selected: item,
+          });
+        }
       }),
       catchError((err) => throwError(() => err)),
       finalize(() => patchState({ loading: false })),
@@ -210,5 +217,12 @@ export class EfrsbMessageState {
         }),
         finalize(() => patchState({ loading: false })),
       );
+  }
+
+  @Action(ClearOldSelectedEfrsbMessage)
+  public clearOldSelectedEfrsbMessage({
+    patchState,
+  }: StateContext<EfrsbMessageStateModel>) {
+    patchState({ oldSelected: null });
   }
 }

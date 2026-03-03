@@ -36,3 +36,7 @@ export class GetPublicationsBySubMessageIdAndDebtorId {
     public debtorId: number,
   ) {}
 }
+
+export class ClearOldSelectedEfrsbMessage {
+  public static readonly type = '[EFRSB MESSAGE] Clear old selected';
+}

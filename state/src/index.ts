@@ -223,6 +223,7 @@ export {
   DeleteEfrsbMessage,
   GetPublicationsBySubMessageIdAndDebtorId,
   FetchEfrsbMessages,
+  ClearOldSelectedEfrsbMessage,
   GetEfrsbMessage,
   UpdateEfrsbMessage,
 } from './lib/efrsb-message.actions';
