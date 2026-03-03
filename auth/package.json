@@ -11,8 +11,8 @@
     "directory": "auth"
   },
   "peerDependencies": {
-    "@sotbi/data-access": "^0.0.17",
-    "@sotbi/models": "^0.0.17",
+    "@sotbi/data-access": "0.0.17",
+    "@sotbi/models": "0.0.17",
     "@angular/common": "^20.3.17",
     "@angular/core": "^20.3.17",
     "@angular/router": "^20.3.17",

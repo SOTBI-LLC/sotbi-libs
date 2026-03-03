@@ -6,7 +6,7 @@ import { Action, Selector, State } from '@ngxs/store';
 import { PaymentService } from '@sotbi/data-access';
 import type { IPaymentDocumentFilter, PaymentDocument } from '@sotbi/models';
 import { DD_MM_YYYY_HH_MM_SS } from '@sotbi/utils';
-import { catchError, finalize, tap, throwError } from 'rxjs';
+import { catchError, finalize, of, tap, throwError } from 'rxjs';
 import { GetDebtorPayments, GetPayment } from './payments.actions';
 
 export interface PaymentDocumentsStateModel {
@@ -93,7 +93,7 @@ export class PaymentDocumentsState {
     }
     patchState({ loading: true });
 
-    this.paymentSrv
+    return this.paymentSrv
       .getDebtorsPayments(PaymentDocumentsState.getHttpParams(payload))
       .pipe(
         tap(({ payments, count }) => {
@@ -120,7 +120,7 @@ export class PaymentDocumentsState {
   ) {
     patchState({ loading: true });
     if (payload) {
-      this.paymentSrv.getItem(payload).pipe(
+      return this.paymentSrv.getItem(payload).pipe(
         tap((selected: PaymentDocument) => {
           patchState({ selected });
         }),
@@ -133,5 +133,6 @@ export class PaymentDocumentsState {
         }),
       );
     }
+    return of();
   }
 }
