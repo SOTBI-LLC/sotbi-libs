@@ -146,6 +146,7 @@ export class EfrsbMessageState {
           ...state,
           items: [...state.items, result],
           selected: result,
+          oldSelected: null,
         });
       }),
       catchError((err) => throwError(() => err)),
