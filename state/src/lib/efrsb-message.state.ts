@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { EfrsbMessageService, NOTIFICATION } from '@sotbi/data-access';
-import type { Message } from '@sotbi/models';
+import type { Message, PublicationBySubMsgAndDebtor } from '@sotbi/models';
 import { StatusEnum } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
@@ -20,7 +20,7 @@ export class EfrsbMessageStateModel {
   public items: Message[] = [];
   public selected: Message | null = null;
   public loading = false;
-  public publications: number[] = [];
+  public publications: PublicationBySubMsgAndDebtor[] = [];
 }
 
 @State<EfrsbMessageStateModel>({
@@ -48,7 +48,7 @@ export class EfrsbMessageState {
   }
 
   @Selector()
-  public static getSelected(state: EfrsbMessageStateModel) {
+  public static getSelected(state: EfrsbMessageStateModel): Message | null {
     return state.selected;
   }
 
@@ -58,7 +58,9 @@ export class EfrsbMessageState {
   }
 
   @Selector()
-  public static getPublications(state: EfrsbMessageStateModel): number[] {
+  public static getPublications(
+    state: EfrsbMessageStateModel,
+  ): PublicationBySubMsgAndDebtor[] {
     return state.publications;
   }
 

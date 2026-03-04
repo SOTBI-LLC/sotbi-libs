@@ -300,5 +300,11 @@ export interface RequestPublicationsBySubMessageIdAndDebtorId {
   subMessageId: number;
   debtorId: number;
 }
+
+export interface PublicationBySubMsgAndDebtor {
+  id: number;
+  publication_at: Date;
+  publication_num: number;
+}
 // Note: Form interfaces (PayloadForm, MessageForm, etc.) are moved to a separate
 // Angular-specific file since they depend on @angular/forms types

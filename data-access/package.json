@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/data-access",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "restricted"
@@ -11,7 +11,7 @@
     "directory": "data-access"
   },
   "peerDependencies": {
-    "@sotbi/models": "^0.0.17",
+    "@sotbi/models": "^0.0.18",
     "@sotbi/utils": "^0.0.17",
     "@angular/common": "^20.3.17",
     "@angular/core": "^20.3.17",
