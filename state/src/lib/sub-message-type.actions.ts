@@ -1,5 +1,6 @@
 import type { SubMessageType } from '@sotbi/models';
 
+/** отдаёт только активные подтипы  */
 export class FetchSubMessageTypes {
   public static readonly type = '[EFRSB SUB MESSAGE TYPE] Fetch items';
 }

@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/data-access",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "restricted"
