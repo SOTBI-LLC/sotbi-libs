@@ -1,6 +1,7 @@
 import type { MessageType } from '@sotbi/models';
 import type { WithId } from '@sotbi/utils';
 
+/* отдаёт в том числе удаленные sub_message_types */
 export class FetchMessageTypes {
   public static readonly type = '[EFRSB MESSAGE TYPE] Fetch items';
 }
