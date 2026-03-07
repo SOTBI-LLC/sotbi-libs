@@ -85,7 +85,7 @@ export class AddRowsStatusBarComponent implements IStatusPanelAngularComp {
 
   public agInit(params: IStatusPanelParams): void {
     this.params = params;
-    this.editable = params['editable'];
+    this.editable = params['editable'] ?? true;
   }
 
   protected inputClicked(count = 1) {

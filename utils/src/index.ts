@@ -46,6 +46,7 @@ export {
 export {
   bankruptcyManagerFormatter,
   canSave,
+  cleanObject,
   comparator,
   dateFilterParams,
   isAllSaved,

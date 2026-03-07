@@ -32,7 +32,7 @@ export class EgrnRequest {
   public doer_comment: string | null = null; // комментарий исполнителя
   public request_num: string | null = null; // № запроса для "О правах отдельного лица)
   public key: string | null = null; // ключ запроса для "О правах отдельного лица)
-  public receiver_id = 0; // Кто получил документы ID
+  public receiver_id: number | null = null; // Кто получил документы ID
   public receiver: User | null = null; // то получил документы
   public egrn_attachments: EgrnAttachment[] = []; // массив вложений
   public real_estates: RealEstate[] = []; // массив объектов

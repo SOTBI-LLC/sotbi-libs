@@ -16,7 +16,11 @@ import type {
 } from '@sotbi/models';
 import { conditionMap } from '@sotbi/models';
 import type { WithId } from '@sotbi/utils';
-import { bankruptcyManagerFormatter, deepEqual } from '@sotbi/utils';
+import {
+  bankruptcyManagerFormatter,
+  cleanObject,
+  deepEqual,
+} from '@sotbi/utils';
 import type { Observable } from 'rxjs';
 import { of, throwError } from 'rxjs';
 import { catchError, finalize, map, tap } from 'rxjs/operators';
@@ -165,22 +169,36 @@ export class DebtorsState {
   }
 
   public static prepForSave(
-    old: Debtor,
+    old: Debtor | null,
     current: Debtor,
     nullables: Set<string>,
   ): WithId<Debtor> | null {
-    const update: Record<string, unknown> = { id: old.id };
+    if (!old) {
+      const upd = Object.fromEntries(
+        Object.entries(current).filter(([key]) => {
+          if (nullables.has(key)) {
+            return false;
+          }
+          return true;
+        }),
+      );
+      return {
+        ...cleanObject(upd),
+        id: 0,
+      };
+    }
+    const update: Record<string, unknown> = { id: old?.id ?? 0 };
     for (const prop in current) {
       const key = prop as keyof Debtor;
       if (Object.prototype.hasOwnProperty.call(current, prop)) {
-        if (old.id === 0 && current[key] === null) {
+        if ((old?.id ?? 0) === 0 && current[key] === null) {
           continue;
         }
         if (nullables.has(prop)) {
           continue;
         }
         if (Array.isArray(current[key])) {
-          if (!deepEqual(old[key], current[key])) {
+          if (old && !deepEqual(old[key], current[key])) {
             if (
               current[key].length > 0 &&
               Object.prototype.hasOwnProperty.call(current[key][0], 'type') &&
@@ -197,7 +215,7 @@ export class DebtorsState {
               update[key] = current[key];
             }
           }
-        } else if (old[key] !== current[key]) {
+        } else if (old && old[key] !== current[key]) {
           update[key] = current[key];
         }
       }

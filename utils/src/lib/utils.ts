@@ -118,3 +118,23 @@ export const dateFilterParams = {
   comparator,
   buttons: ['clear', 'apply'],
 };
+
+export const cleanObject = <T extends Record<string, unknown>>(
+  obj: T,
+): Partial<T> => {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([_, value]) => {
+      if (value === null) return false;
+      if (value === 0) return false;
+      if (value === '') return false;
+      if (Array.isArray(value) && value.length === 0) return false;
+      if (
+        typeof value === 'object' &&
+        value !== null &&
+        Object.keys(value).length === 0
+      )
+        return false;
+      return true;
+    }),
+  ) as Partial<T>;
+};
