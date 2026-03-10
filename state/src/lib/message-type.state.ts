@@ -15,6 +15,7 @@ import {
 
 export class EfrsbMessageTypeStateModel {
   public items: MessageType[] = [];
+  public activeItems: MessageType[] = [];
   public selected: MessageType | null = null;
   public maps: itemMap = new Map();
   public subMaps: Map<number, itemMap> = new Map();
@@ -24,6 +25,7 @@ export class EfrsbMessageTypeStateModel {
   name: 'efrsb_message_type',
   defaults: {
     items: [],
+    activeItems: [],
     selected: null,
     maps: new Map(),
     subMaps: new Map(),
@@ -41,10 +43,15 @@ export class EfrsbMessageTypeState {
   }
 
   @Selector()
-  public static getItems(
-    state: EfrsbMessageTypeStateModel,
-  ): Partial<MessageType>[] {
+  public static getItems(state: EfrsbMessageTypeStateModel): MessageType[] {
     return state.items;
+  }
+
+  @Selector()
+  public static getActiveItems(
+    state: EfrsbMessageTypeStateModel,
+  ): MessageType[] {
+    return state.activeItems;
   }
 
   @Selector()
@@ -83,6 +90,15 @@ export class EfrsbMessageTypeState {
           setState({
             ...state,
             selected: null,
+            // убираем удаленные в типах и в подтипах сразу
+            activeItems: items
+              ?.filter((item) => !item?.deleted_at)
+              .map((item) => ({
+                ...item,
+                sub_message_types:
+                  item?.sub_message_types?.filter((sub) => !sub?.deleted_at) ||
+                  [],
+              })),
             items: [...items, Object.assign({}, this.empty)],
             maps,
             subMaps,
@@ -150,9 +166,17 @@ export class EfrsbMessageTypeState {
     return this.itemsService.delete(payload).pipe(
       tap(() => {
         const state = getState();
-        const items = state.items.filter((el) => el.id !== payload);
-        const maps = state.maps;
-        maps.delete(payload);
+
+        const items = state.items.map((el) =>
+          el.id === payload ? { ...el, deleted_at: new Date() } : el,
+        );
+
+        const maps = new Map(state.maps);
+        const item = state.items.find((el) => el.id === payload);
+        if (item) {
+          maps.set(payload, item.name);
+        }
+
         setState({
           ...state,
           items,
