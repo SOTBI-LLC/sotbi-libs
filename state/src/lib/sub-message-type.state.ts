@@ -144,9 +144,16 @@ export class EfrsbSubMessageTypeState {
     return this.itemsService.delete(payload).pipe(
       tap(() => {
         const state = getState();
-        const items = state.items.filter((el) => el.id !== payload);
-        const maps = state.maps;
-        maps.delete(payload);
+
+        const items = state.items.map((el) =>
+          el.id === payload ? { ...el, deleted_at: new Date() } : el,
+        );
+
+        const maps = new Map(state.maps);
+        const item = state.items.find((el) => el.id === payload);
+        if (item) {
+          maps.set(payload, item.name);
+        }
         setState({
           ...state,
           items,
