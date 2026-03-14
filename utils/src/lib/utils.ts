@@ -130,6 +130,7 @@ export const cleanObject = <T extends Record<string, unknown>>(
       if (
         typeof value === 'object' &&
         value !== null &&
+        !(value instanceof Date) &&
         Object.keys(value).length === 0
       )
         return false;
