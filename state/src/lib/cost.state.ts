@@ -226,6 +226,7 @@ export class CostRealState {
         allItems = allItems.map((el) => {
           return {
             ...el,
+            date: el.date ? new Date(el.date) : new Date(),
             dirty: false,
             rowId: rowId++ + '',
           };
@@ -263,7 +264,7 @@ export class CostRealState {
       .map((el) => {
         return {
           ...el,
-          date: el.date ? new Date(el.date) : new Date(),
+          // date: el.date ? new Date(el.date) : new Date(),
           dirty: false,
           rowId: rowId++ + '',
         };
@@ -292,6 +293,7 @@ export class CostRealState {
         result = {
           ...result,
           dirty: false,
+          date: result.date ? new Date(result.date) : new Date(),
           description: result.description,
           rowId: cost.rowId,
         };
