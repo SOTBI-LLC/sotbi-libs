@@ -3,12 +3,12 @@
   "version": "0.0.20",
   "license": "MIT",
   "scripts": {
-    "lint": "nx run-many -t lint",
+    "lint": "nx run-many -t lint --fix",
     "format": "nx format:write",
     "format:check": "nx format:check",
     "test": "nx run-many -t test",
     "test:coverage": "nx run-many -t test --coverage",
-    "knip": "knip"
+    "build": "nx run-many -t build"
   },
   "private": true,
   "workspaces": [
