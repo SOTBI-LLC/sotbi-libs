@@ -66,7 +66,7 @@ jobs:
       - name: Build packages
         run: |
           if [ "${{ github.event.inputs.package }}" = "all" ]; then
-            npx nx run-many -t build --exclude=ui-ag-grid
+            npx nx run-many -t build
           else
             npx nx run ${{ github.event.inputs.package }}:build
           fi
@@ -74,7 +74,7 @@ jobs:
       - name: Publish packages
         run: |
           if [ "${{ github.event.inputs.package }}" = "all" ]; then
-            npx nx run-many -t nx-release-publish --exclude=ui-ag-grid
+            npx nx run-many -t nx-release-publish
           else
             npx nx run ${{ github.event.inputs.package }}:nx-release-publish
           fi
@@ -83,7 +83,7 @@ jobs:
         id: version
         run: |
           if [ "${{ github.event.inputs.package }}" = "all" ]; then
-            VERSIONS=$(for pkg in utils models auth data-access state ui; do
+            VERSIONS=$(for pkg in utils models auth data-access state ui ui-ag-grid; do
               [ -f "$pkg/package.json" ] && v=$(node -p "require('./$pkg/package.json').version" 2>/dev/null) && echo "$pkg@$v"
             done | tr '\n' ' ')
             echo "versions=$VERSIONS" >> $GITHUB_OUTPUT
