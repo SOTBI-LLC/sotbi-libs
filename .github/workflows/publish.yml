@@ -58,7 +58,7 @@ jobs:
       - name: Get published version(s)
         id: version
         run: |
-          VERSIONS=$(for pkg in utils models auth data-access state ui; do
+          VERSIONS=$(for pkg in utils models auth data-access state ui ui-ag-grid; do
             [ -f "$pkg/package.json" ] && v=$(node -p "require('./$pkg/package.json').version" 2>/dev/null) && echo "$pkg@$v"
           done | tr '\n' ' ')
           echo "versions=$VERSIONS" >> $GITHUB_OUTPUT
