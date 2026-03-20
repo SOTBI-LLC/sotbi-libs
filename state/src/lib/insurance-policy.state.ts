@@ -91,10 +91,11 @@ export class InsurancePolicyState {
     const state = getState();
     if (payload === 0) {
       patchState({ selected: this.empty, loading: false });
+      return of(this.empty);
     } else {
       const idx = state.items.findIndex(({ id }) => id === payload);
       if (idx >= 0) {
-        const selected = state.items[idx];
+        const selected = structuredClone(state.items[idx]);
         if (selected.from) {
           selected.from = new Date(selected.from);
         }
@@ -102,8 +103,9 @@ export class InsurancePolicyState {
           selected.to = new Date(selected.to);
         }
         patchState({ selected, loading: false });
+        return of(selected);
       } else {
-        this.itemsService.get(payload).pipe(
+        return this.itemsService.get(payload).pipe(
           tap((selected) => {
             if (selected.from) {
               selected.from = new Date(selected.from);
