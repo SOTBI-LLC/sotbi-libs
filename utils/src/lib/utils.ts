@@ -119,22 +119,53 @@ export const dateFilterParams = {
   buttons: ['clear', 'apply'],
 };
 
+const isPlainObject = (value: unknown): value is Record<string, unknown> => {
+  if (value === null || typeof value !== 'object') return false;
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+};
+
+const isValueKept = (value: unknown): boolean => {
+  if (value === null || value === 0 || value === '') return false;
+  if (Array.isArray(value)) return value.length > 0;
+  if (value instanceof Date) {
+    const t = value.getTime();
+    return !Number.isNaN(t) && t !== 0;
+  }
+  if (isPlainObject(value)) return Object.keys(value).length > 0;
+  return true;
+};
+
+const cleanValue = (value: unknown): unknown => {
+  if (value instanceof Date) return value;
+
+  if (Array.isArray(value)) {
+    const cleaned: unknown[] = [];
+    for (let i = 0; i < value.length; i++) {
+      const item = cleanValue(value[i]);
+      if (isValueKept(item)) cleaned.push(item);
+    }
+    return cleaned;
+  }
+
+  if (isPlainObject(value)) {
+    return cleanObject(value);
+  }
+
+  return value;
+};
+
 export const cleanObject = <T extends Record<string, unknown>>(
   obj: T,
 ): Partial<T> => {
-  return Object.fromEntries(
-    Object.entries(obj).filter(([_, value]) => {
-      if (value === null) return false;
-      if (value === 0) return false;
-      if (value === '') return false;
-      if (Array.isArray(value) && value.length === 0) return false;
-      if (
-        typeof value === 'object' &&
-        value !== null &&
-        Object.keys(value).length === 0
-      )
-        return false;
-      return true;
-    }),
-  ) as Partial<T>;
+  const result: Record<string, unknown> = {};
+  const keys = Object.keys(obj);
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    const cleaned = cleanValue(obj[key]);
+    if (isValueKept(cleaned)) {
+      result[key] = cleaned;
+    }
+  }
+  return result as Partial<T>;
 };

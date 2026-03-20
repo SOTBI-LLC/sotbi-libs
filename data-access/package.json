@@ -12,9 +12,9 @@
   },
   "peerDependencies": {
     "@sotbi/models": "0.0.20",
-    "@sotbi/utils": "0.0.18",
-    "@angular/common": "^20.3.17",
-    "@angular/core": "^20.3.17",
+    "@sotbi/utils": "0.0.19",
+    "@angular/common": "^20.3.18",
+    "@angular/core": "^20.3.18",
     "rxjs": "^7.8.0",
     "jest": "^30.2.0",
     "jest-preset-angular": "^16.0.0"

@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/ui-ag-grid",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "public"
@@ -11,12 +11,12 @@
     "directory": "ui-ag-grid"
   },
   "peerDependencies": {
-    "@sotbi/utils": "0.0.18",
+    "@sotbi/utils": "0.0.19",
     "@sotbi/models": "0.0.20",
-    "@angular/common": "^20.3.17",
-    "@angular/core": "^20.3.17",
-    "@angular/router": "^20.3.17",
-    "@angular/forms": "^20.3.17",
+    "@angular/common": "^20.3.18",
+    "@angular/core": "^20.3.18",
+    "@angular/router": "^20.3.18",
+    "@angular/forms": "^20.3.18",
     "ag-grid-angular": "~34.3.1",
     "ag-grid-community": "~34.3.1",
     "@progress/kendo-angular-dateinputs": "~20.0.3",

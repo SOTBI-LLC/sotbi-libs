@@ -3,12 +3,12 @@
   "version": "0.0.20",
   "license": "MIT",
   "scripts": {
-    "lint": "nx run-many -t lint",
+    "lint": "nx run-many -t lint --fix",
     "format": "nx format:write",
     "format:check": "nx format:check",
     "test": "nx run-many -t test",
     "test:coverage": "nx run-many -t test --coverage",
-    "knip": "knip"
+    "build": "nx run-many -t build"
   },
   "private": true,
   "workspaces": [
@@ -21,15 +21,15 @@
     "utils"
   ],
   "dependencies": {
-    "@angular/animations": "^20.3.17",
-    "@angular/common": "^20.3.17",
-    "@angular/compiler": "^20.3.17",
-    "@angular/core": "^20.3.17",
-    "@angular/forms": "^20.3.17",
-    "@angular/router": "^20.3.17",
-    "@angular/platform-browser": "^20.3.17",
-    "@angular/platform-browser-dynamic": "^20.3.17",
-    "@angular/material": "^21.1.5",
+    "@angular/animations": "^20.3.18",
+    "@angular/common": "^20.3.18",
+    "@angular/compiler": "^20.3.18",
+    "@angular/core": "^20.3.18",
+    "@angular/forms": "^20.3.18",
+    "@angular/router": "^20.3.18",
+    "@angular/platform-browser": "^20.3.18",
+    "@angular/platform-browser-dynamic": "^20.3.18",
+    "@angular/material": "^20.2.8",
     "@angular/cdk": "^20.2.8",
     "@cds/angular": "^6.17.0",
     "@cds/core": "^6.17.0",

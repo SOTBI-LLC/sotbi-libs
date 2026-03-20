@@ -144,7 +144,7 @@ export enum NotificationType {
 }
 
 export enum SubType1 {
-  GENERAL,
+  GENERAL = 1,
   TRANSFERS,
   CONTENT,
   CADASTRAL,
@@ -162,7 +162,7 @@ export const SubType1Map = new Map(
 );
 
 export enum SubType2 {
-  ON_DATE,
+  ON_DATE = 1,
   PERIOD,
   FROM_DATE,
   TO_DATE,
