@@ -34,7 +34,6 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '24'
-          cache: 'yarn'
 
       - name: Enable Corepack (Yarn)
         run: corepack enable
@@ -70,7 +69,6 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '24'
-          cache: 'yarn'
 
       - name: Enable Corepack (Yarn)
         run: corepack enable
@@ -145,7 +143,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          cache: 'yarn'
+          node-version: '24'
+
+      - name: Enable Corepack (Yarn)
+        run: corepack enable
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
