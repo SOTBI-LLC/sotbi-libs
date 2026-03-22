@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           filter: tree:0
@@ -35,6 +35,9 @@ jobs:
         with:
           node-version: '24'
           cache: 'yarn'
+
+      - name: Enable Corepack (Yarn)
+        run: corepack enable
 
       - name: Install NX
         run: yarn global add nx
@@ -54,13 +57,12 @@ jobs:
 
   test:
     name: Test
-    # runs-on: ubuntu-latest
-    runs-on: [self-hosted, bazys-home-mac]
+    runs-on: sotbi-runners
     timeout-minutes: 15
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -69,6 +71,9 @@ jobs:
         with:
           node-version: '24'
           cache: 'yarn'
+
+      - name: Enable Corepack (Yarn)
+        run: corepack enable
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -125,8 +130,7 @@ jobs:
 
   build:
     name: Build
-    # runs-on: ubuntu-latest
-    runs-on: [self-hosted, bazys-home-mac]
+    runs-on: sotbi-runners
     timeout-minutes: 15
     needs:
       - test
@@ -134,14 +138,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '24'
           cache: 'yarn'
 
       - name: Install dependencies
