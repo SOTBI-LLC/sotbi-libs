@@ -114,18 +114,6 @@ jobs:
           fail-on-error: false
           fail-on-empty: false
 
-      - name: Send telegram message after image was built
-        uses: appleboy/telegram-action@master
-        with:
-          to: ${{ secrets.TELEGRAM_CHANNEL }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: |
-            ${{ github.actor }} published new version of ${{ github.event.inputs.package }}.
-            ${{ steps.commit_message.outputs.trimmed_message }}
-            Used branch: ${{ env.branch }}
-            👀 changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
-            View job logs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
   build:
     name: Build
     runs-on: sotbi-runners
@@ -156,3 +144,39 @@ jobs:
 
       - name: Build affected projects
         run: npx nx affected -t build --parallel=3 --configuration=production
+
+      - name: Get and trim commit message
+        id: commit_message
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Safely read the commit message (subject + body) without breaking bash quoting.
+          COMMIT_MSG="$(git log -1 --pretty=%B)"
+
+          COMMIT_MSG_SINGLE_LINE="$(printf '%s' "$COMMIT_MSG" | tr '\n' ' ' | tr -s ' ')"
+          TRIMMED_MSG="${COMMIT_MSG_SINGLE_LINE:0:512}"
+
+          # Use a unique delimiter to avoid conflicts with commit content.
+          DELIM="EOF_${RANDOM}_${RANDOM}"
+          {
+            echo "trimmed_message<<$DELIM"
+            echo "$TRIMMED_MSG"
+            echo "$DELIM"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Send telegram message after build
+        uses: an3park/telegram-action@v2
+        # uses: appleboy/telegram-action@master
+        with:
+          chat_id: ${{ secrets.TELEGRAM_CHANNEL }}
+          bot_token: ${{ secrets.TELEGRAM_TOKEN }}
+          parse_mode: Markdown
+          # to: ${{ secrets.TELEGRAM_CHANNEL }}
+          # token: ${{ secrets.TELEGRAM_TOKEN }}
+          text: |
+            ${{ github.actor }} published new version of ${{ github.event.inputs.package }}.
+            ${{ steps.commit_message.outputs.trimmed_message }}
+            Used branch: ${{ env.branch }}
+            👀 changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
+            View job logs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
