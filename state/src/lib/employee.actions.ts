@@ -1,4 +1,5 @@
 import type { Employee } from '@sotbi/models';
+import type { WithId } from '@sotbi/utils';
 
 export class GetEmployees {
   public static readonly type = '[EMPLOYEE] Get all items';
@@ -7,5 +8,5 @@ export class GetEmployees {
 
 export class UpdateEmployees {
   public static readonly type = '[EMPLOYEE] Update items';
-  constructor(public payload: Partial<Employee>[]) {}
+  constructor(public payload: WithId<Employee>[]) {}
 }

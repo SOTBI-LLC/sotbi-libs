@@ -1,14 +1,12 @@
-import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  Input,
   input,
   output,
   signal,
 } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import type { DateInputFormatPlaceholder } from '@progress/kendo-angular-dateinputs';
 import {
   DateInputsModule,
@@ -27,78 +25,64 @@ import { isSameDay } from 'date-fns';
     <kendo-datepicker
       #timePicker
       class="grid-picker"
-      [class.hide]="readonly"
+      [class.hide]="readonly()"
       [min]="min"
       [max]="max"
-      [footer]="true"
-      placeholder="дд.мм.гггг"
+      [format]="format"
+      [formatPlaceholder]="{
+        year: 'ГГГГ',
+        month: 'ММ',
+        day: 'ДД',
+      }"
       [navigation]="false"
       [value]="value"
-      [formControl]="ourFormControl()"
       (valueChange)="dateChanged($event)"
-      [readOnlyInput]="!!readonly"
+      [readOnlyInput]="readonly()"
       [format]="format"
       [disabled]="disabled()"
-      (click)="readonly ? timePicker.toggle() : ''"
+      [clearButton]="true"
     >
       <kendo-datepicker-messages today="Сегодня" toggle="Показать календарь" />
-      <ng-template kendoCalendarFooterTemplate let-date="date">
-        <button
-          class="btn btn-primary"
-          (click)="clearDate()"
-          aria-label="Очистить"
-          alt="Очистить"
-        >
-          🗑️
-        </button>
-      </ng-template>
     </kendo-datepicker>
   `,
   styleUrls: ['./date-picker-editor.component.scss'],
 })
 export class DatePickerEditor implements ICellEditorAngularComp {
-  #value: Date | null = null;
+  protected value: Date | null = null;
   public readonly disabled = input(false);
-  public readonly ourFormControl = input(new FormControl<Date | null>(null));
-  @Input() public set value(value: Date | null) {
-    this.#value = value ? new Date(value) : null;
-    this.ourFormControl().setValue(this.#value, { emitEvent: false });
-  }
-  public get value(): Date | null {
-    return this.#value ? this.#value : null;
-  }
   protected min: Date = new Date();
   protected max: Date = new Date();
-  protected readonly = false;
+  protected readonly readonly = signal<boolean>(false);
   protected readonly format = DD_MM_YYYY;
   public readonly dateChange = output<Date | null>();
+  private api: GridApi | null = null;
 
-  public agInit(params: ICellEditorParams): void {
-    this.min = (params['min'] && new Date(params['min'])) || null;
-    this.max = (params['max'] && new Date(params['max'])) || null;
-    this.readonly = params['readonly'];
-    if (isSameDay(this.min, this.max)) {
+  public agInit(params: ICellEditorParams<unknown, Date | null>): void {
+    this.min = (params['min'] && new Date(params['min'])) ?? null;
+    this.max = (params['max'] && new Date(params['max'])) ?? null;
+    this.readonly.set(params['readonly']);
+    this.api = params.api;
+    if (this.min && this.max && isSameDay(this.min, this.max)) {
       this.value = this.min;
     } else {
-      this.value = (params.value && new Date(params.value)) || null;
+      this.value = (params.value && new Date(params.value)) ?? null;
     }
   }
 
-  protected clearDate() {
-    this.value = null;
-    this.dateChange.emit(null);
-  }
-
-  public dateChanged(value: Date) {
-    this.value = new Date(value);
-    this.dateChange.emit(value);
+  protected dateChanged(value: Date | null) {
+    this.value = value ? new Date(value) : null;
+    this.dateChange.emit(this.value);
+    this.api?.stopEditing();
   }
 
   public getValue(): Date | null {
-    if (isNaN(Number(this.value?.getTime()))) {
+    if (
+      this.value &&
+      (isNaN(Number(this.value?.getTime())) || this.value?.getTime() === 0)
+    ) {
       return null;
     }
-    return this.value;
+    return this.value ? new Date(this.value) : null;
   }
 
   public isPopup(): boolean {
@@ -121,17 +105,10 @@ export class DatePickerEditor implements ICellEditorAngularComp {
     >
       <kendo-datetimepicker-messages accept="ВЫБРАТЬ" acceptLabel="Выбрать">
       </kendo-datetimepicker-messages>
-      <ng-template kendoCalendarFooterTemplate let-date="date">
-        <span class="highlight-template">{{ date | date }}</span>
-      </ng-template>
     </kendo-timepicker>
   `,
   styleUrls: ['./date-picker-editor.component.scss'],
-  imports: [
-    TimePickerComponent,
-    DateTimePickerCustomMessagesComponent,
-    DatePipe,
-  ],
+  imports: [TimePickerComponent, DateTimePickerCustomMessagesComponent],
 })
 export class TimePickerEditor implements ICellEditorAngularComp {
   private readonly value = signal<number>(0);

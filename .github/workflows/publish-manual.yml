@@ -20,7 +20,8 @@ on:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
+    runs-on: [self-hosted, bazys-mome-mac]
 
     permissions:
       contents: read

@@ -20,7 +20,8 @@ concurrency:
 jobs:
   lint:
     name: Lint
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
+    runs-on: [self-hosted, bazys-mome-mac]
     timeout-minutes: 10
 
     steps:

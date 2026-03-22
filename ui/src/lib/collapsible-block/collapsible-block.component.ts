@@ -83,13 +83,13 @@ export class CollapsibleBlockComponent {
     return this.currentlyEditedBlock()?.id === this.block()?.id;
   }
 
-  protected readonly isSaveBtnActive = computed<boolean>(() => {
+  protected get isSaveBtnActive() {
     if (this.isChanged()) {
-      return !!this.isValid() && this.canBeSaved();
+      return this.isValid() && this.canBeSaved();
     } else {
       return false;
     }
-  });
+  }
 
   constructor() {
     effect(() => {

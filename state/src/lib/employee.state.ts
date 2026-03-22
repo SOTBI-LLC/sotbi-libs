@@ -37,29 +37,16 @@ export class EmployeeState {
 
   @Action(GetEmployees, { cancelUncompleted: true })
   public getEmployees(
-    { getState, patchState }: StateContext<EmployeeStateModel>,
+    { patchState }: StateContext<EmployeeStateModel>,
     { payload }: GetEmployees,
   ) {
-    const state = getState();
-    // if (state.items.length < 1) {
     const id = fromBase62(payload);
-    if (id !== +(state.current_counterparty_id ?? 0)) {
-      patchState({ loading: true });
-      this.srv.GetAll(id).pipe(
-        catchError((err) => {
-          return throwError(() => err);
-        }),
-        tap({
-          next: (items) => {
-            patchState({ items, current_counterparty_id: id });
-          },
-        }),
-        finalize(() => {
-          patchState({ loading: false });
-        }),
-      );
-    }
-    //  }
+    patchState({ loading: true });
+    return this.srv.GetAll(id).pipe(
+      tap((items) => patchState({ items, current_counterparty_id: id })),
+      catchError((err) => throwError(() => err)),
+      finalize(() => patchState({ loading: false })),
+    );
   }
 
   @Action(UpdateEmployees)
@@ -69,12 +56,12 @@ export class EmployeeState {
   ) {
     patchState({ loading: true });
     const state = getState();
-    this.srv.updateAll(+(state.current_counterparty_id ?? 0), payload).pipe(
-      tap((items) => {
-        patchState({ items });
-      }),
-      catchError((err) => throwError(() => err)),
-      finalize(() => patchState({ loading: false })),
-    );
+    return this.srv
+      .updateAll(+(state.current_counterparty_id ?? 0), payload)
+      .pipe(
+        tap((items) => patchState({ items })),
+        catchError((err) => throwError(() => err)),
+        finalize(() => patchState({ loading: false })),
+      );
   }
 }

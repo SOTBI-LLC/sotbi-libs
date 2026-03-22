@@ -66,13 +66,13 @@
           (focus)="mouseOver.emit()"
           tabindex="0"
           class="mouse"
-          [style.z-index]="!isSaveBtnActive() ? 1 : 0"
+          [style.z-index]="!isSaveBtnActive ? 1 : 0"
         ></div>
         <button
           class="btn btn-sm btn-primary block-btns__item block-btns__save-btn"
-          [disabled]="!isSaveBtnActive()"
+          [disabled]="!isSaveBtnActive"
           (click)="saveBtnClick.emit()"
-          [style.z-index]="!isSaveBtnActive() ? 0 : 1"
+          [style.z-index]="!isSaveBtnActive ? 0 : 1"
         >
           Сохранить
         </button>

@@ -11,7 +11,8 @@ permissions:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
+    runs-on: [self-hosted, bazys-mome-mac]
     env:
       NPM_REGISTRY_URL: 'https://npm.bazys.io'
       NPM_TOKEN: ${{ secrets['NPM_TOKEN'] }}
