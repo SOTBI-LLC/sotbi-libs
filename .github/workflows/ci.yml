@@ -79,8 +79,8 @@ jobs:
       - name: Set SHAs for Nx
         uses: nrwl/nx-set-shas@v4
 
-      - name: Run tests on affected projects
-        run: npx nx affected -t test --parallel=3 --configuration=ci --coverage -- --reporters=default --reporters=jest-junit --watch=false
+      - name: Run tests on all projects
+        run: npx nx run-many -t test --parallel=3 --configuration=ci --coverage -- --reporters=default --reporters=jest-junit --watch=false
         env:
           JEST_JUNIT_OUTPUT_DIR: ./test-results
           JEST_JUNIT_OUTPUT_NAME: junit.xml
