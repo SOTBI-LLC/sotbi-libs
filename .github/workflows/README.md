@@ -103,7 +103,7 @@ No special environment variables required for basic workflows.
 
 ## Caching
 
-- **Node modules**: Cached using `actions/setup-node@v4` with `cache: 'yarn'`
+- **Node modules**: Cached using `actions/setup-node@v6` with `cache: 'yarn'`
 - **Nx cache**: Automatically managed by Nx Cloud (if configured)
 
 ## Timeouts
