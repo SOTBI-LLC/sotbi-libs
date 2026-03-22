@@ -123,6 +123,16 @@ jobs:
       - lint
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
       - name: Get and trim commit message
         id: commit_message
         shell: bash
