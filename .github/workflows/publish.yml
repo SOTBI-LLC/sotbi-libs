@@ -18,13 +18,12 @@ jobs:
       NODE_AUTH_TOKEN: ${{ secrets['NPM_TOKEN'] }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: '24'
-          cache: 'yarn'
           registry-url: 'https://npm.bazys.io'
 
       - name: Validate publish token
@@ -64,11 +63,12 @@ jobs:
           echo "versions=$VERSIONS" >> $GITHUB_OUTPUT
 
       - name: Send telegram message after image was built
-        uses: appleboy/telegram-action@master
+        uses: an3park/telegram-action@v2
         with:
-          to: ${{ secrets.TELEGRAM_CHANNEL }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: |
+          chat_id: ${{ secrets.TELEGRAM_CHANNEL }}
+          bot_token: ${{ secrets.TELEGRAM_TOKEN }}
+          parse_mode: Markdown
+          text: |
             ${{ github.actor }} published new version of ${{ github.event.inputs.package }}.
             📦 Version(s): ${{ steps.version.outputs.versions }}
             👀 changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}

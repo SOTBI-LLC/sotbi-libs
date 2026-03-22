@@ -114,8 +114,8 @@ jobs:
           fail-on-error: false
           fail-on-empty: false
 
-  build:
-    name: Build
+  info:
+    name: Send telegram message after success lint and test
     runs-on: sotbi-runners
     timeout-minutes: 15
     needs:
@@ -123,28 +123,6 @@ jobs:
       - lint
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-
-      - name: Enable Corepack (Yarn)
-        run: corepack enable
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Set SHAs for Nx
-        uses: nrwl/nx-set-shas@v4
-
-      - name: Build affected projects
-        run: npx nx affected -t build --parallel=3 --configuration=production
-
       - name: Get and trim commit message
         id: commit_message
         shell: bash
@@ -167,15 +145,12 @@ jobs:
 
       - name: Send telegram message after build
         uses: an3park/telegram-action@v2
-        # uses: appleboy/telegram-action@master
         with:
           chat_id: ${{ secrets.TELEGRAM_CHANNEL }}
           bot_token: ${{ secrets.TELEGRAM_TOKEN }}
           parse_mode: Markdown
-          # to: ${{ secrets.TELEGRAM_CHANNEL }}
-          # token: ${{ secrets.TELEGRAM_TOKEN }}
           text: |
-            ${{ github.actor }} published new version of ${{ github.event.inputs.package }}.
+            ${{ github.actor }} published new version of SOTBI LIBS.
             ${{ steps.commit_message.outputs.trimmed_message }}
             Used branch: ${{ env.branch }}
             👀 changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
