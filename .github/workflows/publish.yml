@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: sotbi-runners
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -64,10 +64,10 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build all packages
-        run: npx nx run-many -t build --configuration=production
+        run: yarn nx run-many -t build --configuration=production
 
       - name: Publish packages
-        run: npx nx run-many -t nx-release-publish
+        run: yarn nx run-many -t nx-release-publish
 
       - name: Get published version(s)
         id: version
