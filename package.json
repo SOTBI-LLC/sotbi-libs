@@ -1,6 +1,6 @@
 {
   "name": "@sotbi-libs/source",
-  "version": "0.0.20",
+  "version": "0.0.29",
   "license": "MIT",
   "scripts": {
     "lint": "nx run-many -t lint --fix",
