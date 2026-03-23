@@ -79,8 +79,6 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs:
-      - lint
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
