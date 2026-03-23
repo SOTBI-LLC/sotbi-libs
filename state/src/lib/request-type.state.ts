@@ -3,7 +3,7 @@ import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { RequestTypeService } from '@sotbi/data-access';
 import type { RequestType } from '@sotbi/models';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import { FetchRequests, GetRequest } from './request-type.actions';
 
@@ -54,11 +54,11 @@ export class RequestTypeState implements NgxsOnInit {
     const state = getState();
     if (!state.loading && state.items.length === 0) {
       patchState({ loading: true });
-      this.itemsService.GetAll().pipe(
-        tap((result: RequestType[]) => {
+      return this.itemsService.GetAll().pipe(
+        tap((items: RequestType[]) => {
           patchState({
-            items: result,
-            count: result.length,
+            items,
+            count: items.length,
           });
         }),
         catchError((err) => {
@@ -68,6 +68,7 @@ export class RequestTypeState implements NgxsOnInit {
         finalize(() => patchState({ loading: false })),
       );
     }
+    return of([]);
   }
   @Action(GetRequest)
   public getItem(
@@ -79,9 +80,9 @@ export class RequestTypeState implements NgxsOnInit {
     let selected: RequestType | undefined;
     if (state.items.length > 0) {
       selected = state.items.find(({ id }) => id === payload);
-      patchState({ selected, loading: false });
+      return patchState({ selected, loading: false });
     } else {
-      this.itemsService.get(payload).pipe(
+      return this.itemsService.get(payload).pipe(
         tap((selected) => {
           patchState({ selected });
         }),
