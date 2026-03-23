@@ -163,6 +163,11 @@ jobs:
       - test
       - lint
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
       - name: Get and trim commit message
         id: commit_message
         shell: bash
