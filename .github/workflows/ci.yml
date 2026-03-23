@@ -73,12 +73,14 @@ jobs:
         continue-on-error: true
 
       - name: Run ESLint on affected projects
-        run: npx nx run-many -t lint --parallel=3 --configuration=ci
+        run: yarn nx affected -t lint --parallel=3 --configuration=ci
 
   test:
     name: Test
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    needs:
+      - lint
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -120,7 +122,7 @@ jobs:
       - name: Set SHAs for Nx
         uses: nrwl/nx-set-shas@v4
 
-      - name: Run tests on all projects
+      - name: Run tests on affected projects
         run: npx nx affected -t test --parallel=3 --configuration=ci --coverage -- --reporters=default --reporters=jest-junit
         env:
           JEST_JUNIT_OUTPUT_DIR: ./test-results
