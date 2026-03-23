@@ -12,10 +12,6 @@ permissions:
 jobs:
   publish:
     runs-on: sotbi-runners
-    env:
-      NPM_REGISTRY_URL: 'https://npm.bazys.io'
-      NPM_TOKEN: ${{ secrets['NPM_TOKEN'] }}
-      NODE_AUTH_TOKEN: ${{ secrets['NPM_TOKEN'] }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -24,11 +20,10 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '24'
-          registry-url: 'https://npm.bazys.io'
 
       - name: Validate publish token
         run: |
-          if [ -z "${NPM_TOKEN}" ]; then
+          if [ -z "${{ secrets['NPM_TOKEN'] }}" ]; then
             echo "::error::NPM_TOKEN secret is not set"
             exit 1
           fi
@@ -36,14 +31,34 @@ jobs:
       - name: Configure npm authentication
         run: |
           cat > "$HOME/.npmrc" << EOF
-          registry=${NPM_REGISTRY_URL}
-          @sotbi:registry=${NPM_REGISTRY_URL}
-          //npm.bazys.io/:_authToken=${NPM_TOKEN}
+          @sotbi:registry=https://npm.bazys.io
+          //npm.bazys.io/:_authToken=${{ secrets['NPM_TOKEN'] }}
           always-auth=true
           EOF
 
+      - name: Cache node modules
+        uses: actions/cache@v5
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
       - name: Enable Corepack
         run: corepack enable
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache yarn dependencies
+        uses: actions/cache@v5
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -63,11 +78,10 @@ jobs:
           echo "versions=$VERSIONS" >> $GITHUB_OUTPUT
 
       - name: Send telegram message after image was built
-        uses: an3park/telegram-action@v2
+        uses: ./.github/actions/notify-telegram
         with:
           chat_id: ${{ secrets.TELEGRAM_CHANNEL }}
           bot_token: ${{ secrets.TELEGRAM_TOKEN }}
-          parse_mode: Markdown
           text: |
             ${{ github.actor }} published new version of ${{ github.event.inputs.package }}.
             📦 Version(s): ${{ steps.version.outputs.versions }}

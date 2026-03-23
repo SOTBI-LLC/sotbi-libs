@@ -70,8 +70,29 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Enable Corepack (Yarn)
+      - name: Cache node modules
+        uses: actions/cache@v5
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Enable Corepack
         run: corepack enable
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache yarn dependencies
+        uses: actions/cache@v5
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -123,16 +144,6 @@ jobs:
       - lint
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-
       - name: Get and trim commit message
         id: commit_message
         shell: bash
@@ -154,11 +165,10 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Send telegram message after build
-        uses: an3park/telegram-action@v2
+        uses: ./.github/actions/notify-telegram
         with:
           chat_id: ${{ secrets.TELEGRAM_CHANNEL }}
           bot_token: ${{ secrets.TELEGRAM_TOKEN }}
-          parse_mode: Markdown
           text: |
             ${{ github.actor }} published new version of SOTBI LIBS.
             ${{ steps.commit_message.outputs.trimmed_message }}
