@@ -174,8 +174,7 @@ export class WorkCategoryState {
     const { workcategory, idx } = payload;
     const state = getState();
     const items = [...state.items];
-    workcategory.dirty = true;
-    items[idx] = workcategory;
+    items[idx] = { ...workcategory, dirty: true };
     return setState({ ...state, items, saved: false });
   }
 
@@ -217,9 +216,9 @@ export class WorkCategoryState {
     const state = getState();
     return this.itemsService.update(payload).pipe(
       tap((selected) => {
-        const items = state.items;
-        const idx = items.findIndex(({ id }) => id === selected.id);
-        items[idx] = selected;
+        const items = state.items.map((el) =>
+          el.id === selected.id ? selected : el,
+        );
         patchState({ items, selected });
       }),
       catchError((err) => throwError(() => err)),
