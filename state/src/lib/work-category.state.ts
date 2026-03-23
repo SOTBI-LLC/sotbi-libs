@@ -89,7 +89,7 @@ export class WorkCategoryState {
     { payload }: FetchWorkCategory,
   ) {
     const state = getState();
-    if (this.limit !== payload /*|| !state.items.length*/) {
+    if (this.limit !== payload || !state.items.length) {
       this.limit = payload;
       patchState({ loading: true });
       return this.itemsService.getAll(payload).pipe(
