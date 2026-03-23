@@ -21,8 +21,7 @@ jobs:
   lint:
     name: Lint
     runs-on: sotbi-runners
-    timeout-minutes: 5
-
+    timeout-minutes: 15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -60,7 +59,6 @@ jobs:
     timeout-minutes: 20
     needs:
       - lint
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -103,7 +101,7 @@ jobs:
         uses: nrwl/nx-set-shas@v4
 
       - name: Run tests on all projects
-        run: npx nx run-many -t test --parallel=3 --configuration=ci --coverage -- --reporters=default --reporters=jest-junit --watch=false
+        run: npx nx run-many -t test --configuration=ci --coverage -- --reporters=default --reporters=jest-junit --watch=false
         env:
           JEST_JUNIT_OUTPUT_DIR: ./test-results
           JEST_JUNIT_OUTPUT_NAME: junit.xml
@@ -140,11 +138,10 @@ jobs:
   info:
     name: Send telegram message after success lint and test
     runs-on: sotbi-runners
-    timeout-minutes: 15
+    timeout-minutes: 2
     needs:
       - test
       - lint
-
     steps:
       - name: Get and trim commit message
         id: commit_message
