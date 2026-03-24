@@ -7,7 +7,7 @@ import {
 } from '@sotbi/data-access';
 import type { itemMap } from '@sotbi/models';
 import { emptySimpleEdit2 } from '@sotbi/models';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import {
   AddProcedure,
@@ -62,7 +62,7 @@ export class ProcedureState implements NgxsOnInit {
     // console.log('ProcedureState::FetchProcedures() | method called');
     const state = getState();
     if (!state.items.length) {
-      this.itemsService.getAll(SimpleEdit2ServiceNames.PROCEDURE).pipe(
+      return this.itemsService.getAll(SimpleEdit2ServiceNames.PROCEDURE).pipe(
         tap(
           (result) => {
             const filteredT = result.filter((el) => el.kind);
@@ -89,6 +89,7 @@ export class ProcedureState implements NgxsOnInit {
         }),
       );
     }
+    return of(state.items);
   }
 
   @Action(AddProcedure)
