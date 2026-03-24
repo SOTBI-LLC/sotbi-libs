@@ -68,20 +68,20 @@ export class LinksComponent implements OnInit {
     this.old = structuredClone(this.linkRefs());
   }
 
-  private reset() {
+  private reset(): void {
     this.selected = new Link({ id: 0 });
     this.create = new Link({ id: 0, uri: '', type_id: -1 });
   }
 
-  private isSelectedItem(item: Link) {
+  private isSelectedItem(item: Link): boolean {
     return this.selected.id === item.id;
   }
 
-  protected canEdit(item: Link) {
+  protected canEdit(item: Link): boolean {
     return this.isEditMode() || this.isSelectedItem(item);
   }
 
-  protected add() {
+  protected add(): void {
     if (this.isDisabled()) {
       return;
     }
@@ -93,20 +93,20 @@ export class LinksComponent implements OnInit {
     }
   }
 
-  private isChangedEmit() {
+  private isChangedEmit(): void {
     if (!deepEqual(this.old, this.linkRefs())) {
       this.isChanged.emit();
     }
   }
 
-  protected onTryEdit(item: Link) {
+  protected onTryEdit(item: Link): void {
     if (this.isDisabled()) {
       return;
     }
     this.selected = item;
   }
 
-  protected onSave() {
+  protected onSave(): void {
     if (this.isDisabled()) {
       return;
     }
@@ -119,17 +119,17 @@ export class LinksComponent implements OnInit {
     }
   }
 
-  protected clickedInside($event: Event) {
-    $event.preventDefault();
+  protected clickedInside($event: Event): void {
+    /*     $event.preventDefault(); */ // не работало редактирование url по клавиатуре
     $event.stopPropagation(); // <- that will stop propagation on lower layers
   }
 
   @HostListener('document:click')
-  public clickedOutside() {
+  public clickedOutside(): void {
     this.isChangedEmit();
   }
 
-  protected async del(link: Link, index: number) {
+  protected async del(link: Link, index: number): Promise<void> {
     if (link.id === 0) {
       this.linkRefs().splice(index, 1);
       this.isChangedEmit();
