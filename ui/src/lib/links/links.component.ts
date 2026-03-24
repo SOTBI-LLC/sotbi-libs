@@ -120,8 +120,9 @@ export class LinksComponent implements OnInit {
   }
 
   protected clickedInside($event: Event): void {
-    /*     $event.preventDefault(); */ // не работало редактирование url по клавиатуре
-    $event.stopPropagation(); // <- that will stop propagation on lower layers
+    // Stop propagation to prevent the document-level click listener from firing,
+    // which would prematurely trigger change detection logic.
+    $event.stopPropagation();
   }
 
   @HostListener('document:click')
