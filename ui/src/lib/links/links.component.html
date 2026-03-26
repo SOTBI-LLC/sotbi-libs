@@ -16,8 +16,10 @@
       </tr>
     </thead>
     <tbody>
+      <!-- уже существующие ссылки -->
       @for (item of linkRefs(); track $index; let i = $index) {
         <tr>
+          <!-- Тип -->
           <td class="width--type" [ngClass]="{ 'cell--ptopX': !canEdit(item) }">
             @if (!canEdit(item)) {
               <span>
@@ -36,6 +38,7 @@
               </div>
             }
           </td>
+          <!-- Ссылка -->
           <td
             class="width--uri"
             [ngClass]="{
@@ -83,7 +86,9 @@
           </td>
         </tr>
       }
+      <!-- используется для создания -->
       <tr>
+        <!-- Тип -->
         <td class="width--type">
           <div class="clr-select-wrapper">
             <select
@@ -101,6 +106,7 @@
             </select>
           </div>
         </td>
+        <!-- Ссылка -->
         <td class="width--type">
           <clr-input-container class="subnav_select">
             <input
@@ -113,7 +119,7 @@
             />
           </clr-input-container>
         </td>
-        <td class="cell--ptopX width--ctrl">
+        <td class="cell--ptopX width--ctrl cursor-pointer">
           <cds-icon (click)="add()" shape="floppy"></cds-icon>
         </td>
         @if (!isEditMode()) {
