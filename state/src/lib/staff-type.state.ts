@@ -53,11 +53,7 @@ export class StaffTypeState implements NgxsOnInit {
   }
 
   @Action(FetchStaffTypes, { cancelUncompleted: true })
-  public fetchItems({
-    getState,
-    setState,
-  }: StateContext<SimpleEdit2StateModel>) {
-    const state = getState();
+  public fetchItems({ patchState }: StateContext<SimpleEdit2StateModel>) {
     return this.staffTypeService.getAll().pipe(
       tap((items) => {
         console.log('StaffTypeState::fetchItems', items);
@@ -69,8 +65,7 @@ export class StaffTypeState implements NgxsOnInit {
         const mapFItems = new Map(
           filteredF.map((i): [number, string] => [i.id, i.name]),
         );
-        setState({
-          ...state,
+        patchState({
           items: [...items, Object.assign({}, emptySimpleEdit2)],
           selected: null,
           mapTItems,
