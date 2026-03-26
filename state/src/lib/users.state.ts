@@ -163,7 +163,6 @@ export class UsersState {
 
     if (!state.avatars.size) {
       patchState({ loading: true }); // ✅ Set loading to true
-
       return this.userSrv.getUsersShort().pipe(
         tap((shortItems: UserShort[]) => {
           const avatars = new Map();

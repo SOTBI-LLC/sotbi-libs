@@ -4,7 +4,7 @@ import { Action, Selector, State } from '@ngxs/store';
 import { StaffTypeService } from '@sotbi/data-access';
 import type { itemMap, SimpleEdit2Model } from '@sotbi/models';
 import { emptySimpleEdit2 } from '@sotbi/models';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import type { SimpleEdit2StateModel } from './simple-edit.state.model';
 import {
@@ -60,7 +60,7 @@ export class StaffTypeState implements NgxsOnInit {
     // console.log('StaffTypeState::FetchStaffTypes');
     const state = getState();
     if (!state.items.length) {
-      this.staffTypeService.getAll().pipe(
+      return this.staffTypeService.getAll().pipe(
         tap((items) => {
           const filteredT = items.filter((el) => el.kind);
           const mapTItems = new Map(
@@ -81,6 +81,7 @@ export class StaffTypeState implements NgxsOnInit {
         catchError((err) => throwError(err)),
       );
     }
+    return of([]);
   }
 
   @Action(AddStaffItem)

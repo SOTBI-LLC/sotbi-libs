@@ -4,7 +4,7 @@ import { Action, Selector, State } from '@ngxs/store';
 import { HelpFileService } from '@sotbi/data-access';
 import { HelpFile } from '@sotbi/models';
 import { removeID } from '@sotbi/utils';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
   AddEmptyHelpFile,
@@ -59,7 +59,7 @@ export class HelpFileState {
     const state = getState();
     if (!state.items.length) {
       patchState({ loading: true });
-      this.itemsService.GetAll().pipe(
+      return this.itemsService.GetAll().pipe(
         tap((items) => {
           items = items.map((el) => {
             el.dirty = false;
@@ -75,6 +75,7 @@ export class HelpFileState {
         finalize(() => patchState({ loading: false })),
       );
     }
+    return of([]);
   }
 
   @Action(AddHelpFile)

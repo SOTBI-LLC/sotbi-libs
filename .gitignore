@@ -47,3 +47,7 @@ Thumbs.db
 .angular
 .npmrc
 .env
+
+.nx/polygraph
+.claude/worktrees
+.claude/settings.local.json
