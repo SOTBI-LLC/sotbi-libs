@@ -56,7 +56,6 @@ export class StaffTypeState implements NgxsOnInit {
   public fetchItems({ patchState }: StateContext<SimpleEdit2StateModel>) {
     return this.staffTypeService.getAll().pipe(
       tap((items) => {
-        console.log('StaffTypeState::fetchItems', items);
         const filteredT = items.filter((el) => el.kind);
         const mapTItems = new Map(
           filteredT.map((i): [number, string] => [i.id, i.name]),
