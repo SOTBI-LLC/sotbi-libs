@@ -315,11 +315,11 @@ export class DebtorsState {
 
   @Action(GetDebtor, { cancelUncompleted: true })
   public getItem(
-    { setState, getState }: StateContext<DebtorStateModel>,
+    { setState, getState, dispatch }: StateContext<DebtorStateModel>,
     { payload }: GetDebtor,
   ) {
     if (payload === 0) {
-      return;
+      return dispatch(new ClearSelectedDebtor());
     } else {
       const state = getState();
       if (
