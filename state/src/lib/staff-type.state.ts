@@ -4,7 +4,7 @@ import { Action, Selector, State } from '@ngxs/store';
 import { StaffTypeService } from '@sotbi/data-access';
 import type { itemMap, SimpleEdit2Model } from '@sotbi/models';
 import { emptySimpleEdit2 } from '@sotbi/models';
-import { of, throwError } from 'rxjs';
+import { throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import type { SimpleEdit2StateModel } from './simple-edit.state.model';
 import {
@@ -57,31 +57,28 @@ export class StaffTypeState implements NgxsOnInit {
     getState,
     setState,
   }: StateContext<SimpleEdit2StateModel>) {
-    // console.log('StaffTypeState::FetchStaffTypes');
     const state = getState();
-    if (!state.items.length) {
-      return this.staffTypeService.getAll().pipe(
-        tap((items) => {
-          const filteredT = items.filter((el) => el.kind);
-          const mapTItems = new Map(
-            filteredT.map((i): [number, string] => [i.id, i.name]),
-          );
-          const filteredF = items.filter((el) => !el.kind);
-          const mapFItems = new Map(
-            filteredF.map((i): [number, string] => [i.id, i.name]),
-          );
-          setState({
-            ...state,
-            items: [...items, Object.assign({}, emptySimpleEdit2)],
-            selected: null,
-            mapTItems,
-            mapFItems,
-          });
-        }),
-        catchError((err) => throwError(err)),
-      );
-    }
-    return of([]);
+    return this.staffTypeService.getAll().pipe(
+      tap((items) => {
+        console.log('StaffTypeState::fetchItems', items);
+        const filteredT = items.filter((el) => el.kind);
+        const mapTItems = new Map(
+          filteredT.map((i): [number, string] => [i.id, i.name]),
+        );
+        const filteredF = items.filter((el) => !el.kind);
+        const mapFItems = new Map(
+          filteredF.map((i): [number, string] => [i.id, i.name]),
+        );
+        setState({
+          ...state,
+          items: [...items, Object.assign({}, emptySimpleEdit2)],
+          selected: null,
+          mapTItems,
+          mapFItems,
+        });
+      }),
+      catchError((err) => throwError(() => err)),
+    );
   }
 
   @Action(AddStaffItem)
