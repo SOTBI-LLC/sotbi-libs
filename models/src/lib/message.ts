@@ -124,13 +124,13 @@ export interface Message {
      *  message_type_id = 12
      */
     hide_prev_message: boolean;
-    /** Тип кредитора: 1.Юр.лицо 2.ИП 3.Физ лицо 4.Иностранная компания
+    /** Тип кредитора: 0.Юр.лицо 1.ИП 2.Физ лицо 3.Иностранная компания
      *
      *  message_type_id = 13 +  sub_message_type_id = 3
      *
      * message_type_id = 15 +  sub_message_type_id = 9
      */
-    type: number;
+    type: CreditorType | CreditorMeetingType;
     /** Дата/время начала собрания/заседания */
     meeting_start: Date;
 
@@ -341,7 +341,7 @@ export interface Message {
     /** Сумма отсутствует */
     there_is_no_amount_of_satisfaction: boolean;
   };
-};
+}
 
 export interface CreditOrganisation {
   name: string;

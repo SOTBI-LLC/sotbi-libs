@@ -1,8 +1,13 @@
+import type { CreditorType } from '..';
+
 // Creditor : Кредитор | Участник сделки | Контролирующее должника лицо
 export interface Creditor {
   id: number;
   message_id: number;
-  type: number; // 0=Резидент 1=Нерезидент 2=Иное лицо
+  /** CreditorType ===  0=ЮЛ/1=ИП/2=ФЛ/3=иностранная компания
+   *
+   * CreditorResidentType === 0=Резидент 1=Нерезидент 2=Иное лицо */
+  type: CreditorType | CreditorResidentType;
   tax_id: string; // ИНН | ОГРНИП | СНИЛС | TaxID
   name: string; // ФИО | Company Name
   tax_type: string; // Тип идентифицирующего номера | Тип привлекаемого лица
