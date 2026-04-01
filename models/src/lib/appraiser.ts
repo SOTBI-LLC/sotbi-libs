@@ -4,7 +4,7 @@ import type { Sro } from './sro';
 export interface Appraiser {
   id: number;
   message_id: number;
-  type: number; // 1. Оценщик 2. Эксперт
+  type: AppraiserType; // 1. Оценщик 2. Эксперт
   name: string; // Имя
   surname: string; // Фамилия
   patronymic_name: string; // Отчество
