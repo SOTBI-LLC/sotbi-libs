@@ -360,6 +360,7 @@ export interface CreditOrganisation {
 }
 
 export enum CreditorType {
+  UNSPECIFIED,
   LEGAL_PERSON,
   INDIVIDUAL_BUSINESSMAN,
   PRIVATE_PERSON,
