@@ -380,6 +380,7 @@ export const CreditorTypeMap = new Map(
 );
 
 export enum CreditorMeetingType {
+  UNSPECIFIED,
   IN_PERSON,
   ABSENTEE,
   ELECTRONIC,
