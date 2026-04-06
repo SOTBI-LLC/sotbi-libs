@@ -63,6 +63,7 @@ export class Debtor {
   public insurance_policies: InsurancePolicy[] = []; // Страховые полисы
   public updated_at: Date | null = null;
   public selected: boolean | ClrSelectedState | null = null;
+  public payment_approvers: number[] = [];
 
   constructor(data: Partial<Debtor> = {}) {
     Object.assign(this, data);
