@@ -29,6 +29,10 @@ export class EgrnRequest {
   public birthday: Date | null = null; // физ лицо - дата рождения
   public passport: string | null = null; // физ лицо - паспорт
   public passport_date: Date | null = null; // физ лицо - дата выдачи паспорта
+  /** физ лицо - Орган, выдавший документ */
+  public passport_issued: string | null = null;
+  /** физ лицо - Адрес регистрации */
+  public registration_address: string | null = null;
   public doer_comment: string | null = null; // комментарий исполнителя
   public request_num: string | null = null; // № запроса для "О правах отдельного лица)
   public key: string | null = null; // ключ запроса для "О правах отдельного лица)
