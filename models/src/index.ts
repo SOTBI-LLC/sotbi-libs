@@ -194,6 +194,7 @@ export {
   ViewType,
   ViewTypeArr,
   ViewTypeMap,
+  EGRN_FORM_ERRORS,
 } from './lib/egrn-request';
 export { RealEstate } from './lib/real-estate';
 
