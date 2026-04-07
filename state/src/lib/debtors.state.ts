@@ -104,6 +104,7 @@ export class DebtorsState {
     return state.selected;
   }
 
+  /** возвращает state.selected?.id ?? 0 */
   @Selector()
   public static getSelected(state: DebtorStateModel): number {
     return state.selected?.id ?? 0;
