@@ -29,12 +29,14 @@ export interface CreditorClaimReceived {
 }
 
 export enum CreditorResidentType {
+  UNSPECIFIED,
   NON_RESIDENT,
   RESIDENT,
   OTHER_PERSON,
 }
 
 export enum CreditorListType {
+  UNSPECIFIED,
   PARTNERS_DEAL,
   CONTROLLING_PERSONS_DEBTOR,
   OTHER_PERSONS,

@@ -124,7 +124,7 @@ export interface Message {
      *  message_type_id = 12
      */
     hide_prev_message: boolean;
-    /** Тип кредитора: 0.Юр.лицо 1.ИП 2.Физ лицо 3.Иностранная компания
+    /** Тип кредитора: 0.Не указан 1.Юр.лицо 2.ИП 3.Физ лицо 4.Иностранная компания
      *
      *  message_type_id = 13 +  sub_message_type_id = 3
      *
@@ -360,6 +360,7 @@ export interface CreditOrganisation {
 }
 
 export enum CreditorType {
+  UNSPECIFIED,
   LEGAL_PERSON,
   INDIVIDUAL_BUSINESSMAN,
   PRIVATE_PERSON,
@@ -367,6 +368,7 @@ export enum CreditorType {
 }
 
 export const CreditorTypeArr: { id: CreditorType; ru: string }[] = [
+  { id: CreditorType.UNSPECIFIED, ru: 'Не указан' },
   { id: CreditorType.LEGAL_PERSON, ru: 'ЮЛ' },
   { id: CreditorType.INDIVIDUAL_BUSINESSMAN, ru: 'ИП' },
   { id: CreditorType.PRIVATE_PERSON, ru: 'ФЛ' },
@@ -378,6 +380,7 @@ export const CreditorTypeMap = new Map(
 );
 
 export enum CreditorMeetingType {
+  UNSPECIFIED,
   IN_PERSON,
   ABSENTEE,
   ELECTRONIC,
