@@ -183,5 +183,18 @@ export const SubType2Map = new Map(
   SubType2Arr.map((i): [number, string] => [i.id, i.ru]),
 );
 
+export const EGRN_FORM_ERRORS = {
+  uniqNumError: 'uniqNumError',
+  attachmentsAuthorityConditionallyRequired:
+    'attachmentsAuthorityConditionallyRequired',
+  attachmentsRefConditionallyRequired: 'attachmentsRefConditionallyRequired',
+  attachmentsListConditionallyRequired: 'attachmentsListConditionallyRequired',
+  realEstatesConditionallyRequired: 'realEstatesConditionallyRequired',
+  thirdPersonInnNameConditionallyRequired:
+    'thirdPersonInnNameConditionallyRequired',
+  realEstatesFieldConditionallyRequired:
+    'realEstatesFieldConditionallyRequired',
+} as const;
+
 // Note: Form interfaces are moved to a separate Angular-specific file
 // since they depend on @angular/forms types

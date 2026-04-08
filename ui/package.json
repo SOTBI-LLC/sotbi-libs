@@ -11,7 +11,7 @@
     "directory": "ui"
   },
   "peerDependencies": {
-    "@sotbi/models": "^0.0.31",
+    "@sotbi/models": "^0.0.32",
     "@sotbi/utils": "^0.0.29",
     "@angular/common": "^20.3.18",
     "@angular/core": "^20.3.18",
