@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/state",
-  "version": "0.0.33",
+  "version": "0.0.34",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "public"
@@ -13,7 +13,7 @@
   "peerDependencies": {
     "@sotbi/models": "^0.0.32",
     "@sotbi/data-access": "^0.0.29",
-    "@sotbi/utils": "^0.0.29",
+    "@sotbi/utils": "^0.0.30",
     "@angular/common": "^20.3.18",
     "@angular/core": "^20.3.18",
     "@angular/forms": "^20.3.18",

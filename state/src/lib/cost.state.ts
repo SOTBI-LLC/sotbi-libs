@@ -3,9 +3,14 @@ import type { EventInput, EventSourceInput } from '@fullcalendar/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { CostRealService } from '@sotbi/data-access';
-import type { CostRealFilter, Interval } from '@sotbi/models';
+import type { CostRealFilter } from '@sotbi/models';
 import { calcSumHours, CostReal } from '@sotbi/models';
-import { canSave, formatEventDuraton, isAllSaved } from '@sotbi/utils';
+import {
+  canSave,
+  formatEventDuraton,
+  isAllSaved,
+  toUtcDateOnly,
+} from '@sotbi/utils';
 import { isAfter, isBefore, isSameDay, isSameSecond } from 'date-fns';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
@@ -36,7 +41,7 @@ export const CostRequiredFields = [
 const makeEvent = (cost: CostReal): EventInput => {
   const res = {
     id: cost.id + '',
-    start: cost.date ? new Date(cost.date) : new Date(),
+    start: toUtcDateOnly(cost.date ?? new Date()),
     title: '',
     allDay: true,
     extendedProps: {
@@ -85,25 +90,21 @@ const mergeEvent = (old: EventInput, cost: CostReal): EventInput => {
 };
 
 const compareCost = (a: CostReal, b: CostReal): number => {
-  a.date ??= new Date();
-  b.date ??= new Date();
-  if (isBefore(a.date, b.date)) {
-    return 1;
+  const aDate = toUtcDateOnly(a?.date ?? new Date());
+  const bDate = toUtcDateOnly(b?.date ?? new Date());
+
+  if (isBefore(aDate, bDate)) return 1;
+  if (isAfter(aDate, bDate)) return -1;
+
+  if (isSameDay(aDate, bDate)) {
+    const aName = a.debtor?.name ?? '';
+    const bName = b.debtor?.name ?? '';
+
+    if (aName < bName) return -1;
+    if (aName > bName) return 1;
+    return 0;
   }
-  if (isAfter(a.date, b.date)) {
-    return -1;
-  }
-  if (isSameDay(a.date, b.date)) {
-    if ((a.debtor?.name ?? '') < (b.debtor?.name ?? '')) {
-      return -1;
-    }
-    if ((a.debtor?.name ?? '') > (b.debtor?.name ?? '')) {
-      return 1;
-    }
-    if ((a.debtor?.name ?? '') === (b.debtor?.name ?? '')) {
-      return 0;
-    }
-  }
+
   return 0;
 };
 
@@ -114,7 +115,12 @@ const makeEvents = (inCosts: CostReal[]): EventSourceInput => {
     const events: EventInput[] = [makeEvent(costs[0])];
     for (let i = 1; i < costs.length; i++) {
       const idx = events.length - 1;
-      if (isSameDay(events[idx].start as Date, costs[i].date ?? new Date())) {
+      if (
+        isSameDay(
+          toUtcDateOnly(events[idx].start as Date),
+          toUtcDateOnly(costs[i]?.date ?? new Date()),
+        )
+      ) {
         if (
           events[idx].title === 'Отпуск' ||
           events[idx].title === 'Больничный'
@@ -226,7 +232,7 @@ export class CostRealState {
         allItems = allItems.map((el) => {
           return {
             ...el,
-            date: el.date ? new Date(el.date) : new Date(),
+            date: toUtcDateOnly(el?.date ?? new Date()),
             dirty: false,
             rowId: rowId++ + '',
           };
@@ -250,15 +256,19 @@ export class CostRealState {
   ) {
     // console.log('CostRealState::FilterCostsReal', payload);
     patchState({ loading: true });
-    const interval = payload as Interval;
+    const interval = payload;
     const state = getState();
     let rowId = 0;
+
+    const start = toUtcDateOnly(interval.start);
+    const end = toUtcDateOnly(interval.end);
+
     const items = state.allItems
       .filter((el) => {
-        const dt = el.date ? new Date(el.date) : new Date();
+        const dt = toUtcDateOnly(el?.date ?? new Date());
+
         return (
-          (isAfter(dt, interval.start) || isSameSecond(dt, interval.start)) &&
-          isBefore(dt, interval.end)
+          (isAfter(dt, start) || isSameSecond(dt, start)) && isBefore(dt, end)
         );
       })
       .map((el) => {
@@ -293,7 +303,7 @@ export class CostRealState {
         result = {
           ...result,
           dirty: false,
-          date: result.date ? new Date(result.date) : new Date(),
+          date: toUtcDateOnly(result?.date ?? new Date()),
           description: result.description,
           rowId: cost.rowId,
         };
@@ -328,7 +338,7 @@ export class CostRealState {
     for (const day of days) {
       const hasAbsence = state.allItems.findIndex(
         ({ date, debtor: dbt }) =>
-          date?.getDate() === day &&
+          toUtcDateOnly(date ?? new Date())?.getUTCDate() === day &&
           (debtor.id === dbt?.id || debtor.category_id === dbt?.category_id),
       );
       if (hasAbsence > -1) {
@@ -465,7 +475,7 @@ export class CostRealState {
         const state = getState();
         const items = [...state.items];
         const allItems = [...state.allItems];
-        const date = result.date ? new Date(result.date) : new Date();
+        const date = toUtcDateOnly(result?.date ?? new Date());
         result = { ...result, date, dirty: false, rowId: idx + '' };
         items[idx] = result;
         const index = state.allItems.findIndex(({ id }) => id === result.id);

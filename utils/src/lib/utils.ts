@@ -169,3 +169,8 @@ export const cleanObject = <T extends Record<string, unknown>>(
   }
   return result as Partial<T>;
 };
+
+export const toUtcDateOnly = (value: Date | string): Date => {
+  const d = new Date(value);
+  return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+};
