@@ -9,7 +9,7 @@ import {
   canSave,
   formatEventDuraton,
   isAllSaved,
-  toUtcDateOnly,
+  toUtcCalendarDate,
 } from '@sotbi/utils';
 import { isAfter, isBefore, isSameDay, isSameSecond } from 'date-fns';
 import { throwError } from 'rxjs';
@@ -41,7 +41,7 @@ export const CostRequiredFields = [
 const makeEvent = (cost: CostReal): EventInput => {
   const res = {
     id: cost.id + '',
-    start: toUtcDateOnly(cost.date ?? new Date()),
+    start: toUtcCalendarDate(cost.date ?? new Date()),
     title: '',
     allDay: true,
     extendedProps: {
@@ -90,8 +90,8 @@ const mergeEvent = (old: EventInput, cost: CostReal): EventInput => {
 };
 
 const compareCost = (a: CostReal, b: CostReal): number => {
-  const aDate = toUtcDateOnly(a?.date ?? new Date());
-  const bDate = toUtcDateOnly(b?.date ?? new Date());
+  const aDate = toUtcCalendarDate(a?.date ?? new Date());
+  const bDate = toUtcCalendarDate(b?.date ?? new Date());
 
   if (isBefore(aDate, bDate)) return 1;
   if (isAfter(aDate, bDate)) return -1;
@@ -117,8 +117,8 @@ const makeEvents = (inCosts: CostReal[]): EventSourceInput => {
       const idx = events.length - 1;
       if (
         isSameDay(
-          toUtcDateOnly(events[idx].start as Date),
-          toUtcDateOnly(costs[i]?.date ?? new Date()),
+          toUtcCalendarDate(events[idx].start as Date),
+          toUtcCalendarDate(costs[i]?.date ?? new Date()),
         )
       ) {
         if (
@@ -232,7 +232,7 @@ export class CostRealState {
         allItems = allItems.map((el) => {
           return {
             ...el,
-            date: toUtcDateOnly(el?.date ?? new Date()),
+            date: toUtcCalendarDate(el?.date ?? new Date()),
             dirty: false,
             rowId: rowId++ + '',
           };
@@ -260,12 +260,12 @@ export class CostRealState {
     const state = getState();
     let rowId = 0;
 
-    const start = toUtcDateOnly(interval.start);
-    const end = toUtcDateOnly(interval.end);
+    const start = toUtcCalendarDate(interval.start);
+    const end = toUtcCalendarDate(interval.end);
 
     const items = state.allItems
       .filter((el) => {
-        const dt = toUtcDateOnly(el?.date ?? new Date());
+        const dt = toUtcCalendarDate(el?.date ?? new Date());
 
         return (
           (isAfter(dt, start) || isSameSecond(dt, start)) && isBefore(dt, end)
@@ -303,7 +303,7 @@ export class CostRealState {
         result = {
           ...result,
           dirty: false,
-          date: toUtcDateOnly(result?.date ?? new Date()),
+          date: toUtcCalendarDate(result?.date ?? new Date()),
           description: result.description,
           rowId: cost.rowId,
         };
@@ -338,7 +338,7 @@ export class CostRealState {
     for (const day of days) {
       const hasAbsence = state.allItems.findIndex(
         ({ date, debtor: dbt }) =>
-          toUtcDateOnly(date ?? new Date())?.getUTCDate() === day &&
+          toUtcCalendarDate(date ?? new Date())?.getUTCDate() === day &&
           (debtor.id === dbt?.id || debtor.category_id === dbt?.category_id),
       );
       if (hasAbsence > -1) {
@@ -475,7 +475,7 @@ export class CostRealState {
         const state = getState();
         const items = [...state.items];
         const allItems = [...state.allItems];
-        const date = toUtcDateOnly(result?.date ?? new Date());
+        const date = toUtcCalendarDate(result?.date ?? new Date());
         result = { ...result, date, dirty: false, rowId: idx + '' };
         items[idx] = result;
         const index = state.allItems.findIndex(({ id }) => id === result.id);

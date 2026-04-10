@@ -170,7 +170,18 @@ export const cleanObject = <T extends Record<string, unknown>>(
   return result as Partial<T>;
 };
 
-export const toUtcDateOnly = (value: Date | string): Date => {
+/**
+ * Преобразует дату в "календарный день" в UTC.
+ *
+ * ⚠️ ВАЖНО:
+ * Это НЕ конвертация часового пояса и НЕ сохранение момента времени.
+ *
+ * Функция берёт локальные (год/месяц/день) и создаёт UTC-дату с временем 00:00:00.
+ * Таким образом дата используется как сущность "день", одинаковая для всех пользователей.
+ *
+ * Используется только когда важен именно календарный день, а не точное время.
+ */
+export const toUtcCalendarDate = (value: Date | string): Date => {
   const d = new Date(value);
   return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
 };

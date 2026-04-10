@@ -53,5 +53,5 @@ export {
   notifyError,
   paramsToOptions,
   uniqueElementsBy,
-  toUtcDateOnly,
+  toUtcCalendarDate,
 } from './lib/utils';
