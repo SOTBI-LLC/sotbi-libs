@@ -11,7 +11,7 @@
     "directory": "ui-ag-grid"
   },
   "peerDependencies": {
-    "@sotbi/utils": "^0.0.29",
+    "@sotbi/utils": "^0.0.30",
     "@sotbi/models": "^0.0.32",
     "@angular/common": "^20.3.18",
     "@angular/core": "^20.3.18",
