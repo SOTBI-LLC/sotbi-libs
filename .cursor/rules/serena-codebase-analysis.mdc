@@ -1,0 +1,25 @@
+---
+description: Prefer Serena MCP for exploring and analyzing code (symbols, references, patterns)
+alwaysApply: true
+---
+
+# Codebase analysis: prefer Serena MCP
+
+When **exploring or analyzing** this repository, prefer **Serena MCP** tools over bulk file reads and ad-hoc search when they fit the task.
+
+## Do this first (when Serena is available)
+
+- **Overview**: Use symbol overviews to see structure in a file before opening the whole file.
+- **Locate code**: Use symbolic search (`find_symbol` / equivalent) for classes, functions, and methods by name or path.
+- **Impact**: Use reference-finding tools to see who calls or imports a symbol before changing APIs.
+- **Flexible text search**: Use Serena’s pattern search when the target is not a known symbol name.
+
+## When not to rely on Serena alone
+
+- **Small or non-code files**: Config, JSON, markdown, single-purpose scripts — ordinary read/grep is fine.
+- **You already have the full file**: No need to re-query symbols for the same content.
+- **Serena unavailable or failing**: Fall back to workspace `Grep`, `SemanticSearch`, and `Read` without blocking the task.
+
+## Principle
+
+Prefer **incremental, symbol-oriented** exploration (overview → body of the symbol you need → references) instead of reading large source files end-to-end unless the task requires full-file context.
