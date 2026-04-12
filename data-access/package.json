@@ -12,7 +12,7 @@
   },
   "peerDependencies": {
     "@sotbi/models": "^0.0.32",
-    "@sotbi/utils": "^0.0.29",
+    "@sotbi/utils": "^0.0.30",
     "@angular/common": "^20.3.18",
     "@angular/core": "^20.3.18",
     "rxjs": "^7.8.0",
