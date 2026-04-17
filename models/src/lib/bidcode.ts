@@ -61,6 +61,7 @@ export interface AllBidCodes {
   about_results: Date;
   about_agreem: Date;
   project_name: string;
+  rpg: string;
   debtor_name: string;
   debtor_id: string;
   initiator_name: string;
@@ -79,6 +80,7 @@ export interface AllBidCodes {
   profit: number; // прибыль проекта
   internal_cost: number; // внутренняя стоимость
   project_transfer: number; // передано в проект
+  transfer_date: Date; // Дата передачи
   balance: number; // сальдо по проекту
   procedure_name: string;
   reward_paid_at: Date;
@@ -87,6 +89,9 @@ export interface AllBidCodes {
   compensation_paid_number: number;
   bankruptcy_manager: string;
   sro_name: string;
+  trading_code_start_date: Date; // Начало приёма
+  trading_code_end_date: Date; // Окончание приёма
+  trading_code_bid_date: Date; // Торги
 }
 
 interface MyType {
