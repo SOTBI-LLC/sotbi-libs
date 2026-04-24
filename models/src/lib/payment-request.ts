@@ -30,6 +30,7 @@ export class PaymentRequest {
   public updated_by_name = ''; // Юзер, последним обновивший запись
   public worked_by_name = ''; // Юзер, последним обновивший запись
   public project_owner_id = 0; // Ответственный по проекту на котором должник
+  public payment_approvers: number[] = []; // Список ID пользователей, которые могут согласовать платеж
   constructor(init: Partial<PaymentRequest> = {}) {
     Object.assign(this, init);
   }

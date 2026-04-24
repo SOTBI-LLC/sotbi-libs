@@ -627,10 +627,10 @@ describe('CalendarState - State Management & Business Logic', () => {
     });
 
     it('should maintain state consistency across operations', () => {
-      let state = createInitialStateStatic();
+      // let state = createInitialStateStatic();
 
       // Load active periods
-      state = processGetActivePeriodsStatic(mockCalendarData, false, false);
+      let state = processGetActivePeriodsStatic(mockCalendarData, false, false);
 
       // Verify initial consistency
       const initialValidation = validateStateStructureStatic(state);
@@ -859,16 +859,10 @@ describe('CalendarState - State Management & Business Logic', () => {
     });
 
     it('should handle rapid state changes', () => {
-      // Simulate rapid user interactions
-      let state = createInitialStateStatic();
-
-      // Load data
-      state = processGetActivePeriodsStatic(mockCalendarData, false, false);
-
       // Select month
       const monthResult = processGetMonthStatic(mockCalendarData, '2023-06');
-      state = {
-        ...state,
+      let state = {
+        ...processGetActivePeriodsStatic(mockCalendarData, false, false),
         selected: monthResult.selected || null,
         workingDays: monthResult.workingDays,
       };

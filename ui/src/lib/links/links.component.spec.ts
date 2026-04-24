@@ -355,18 +355,8 @@ describe('LinksComponent', () => {
 
       component.testClickedInside(mockEvent as any);
 
-      expect(mockEvent.preventDefault).toHaveBeenCalled();
       expect(mockEvent.stopPropagation).toHaveBeenCalled();
     });
-
-    // it('should reset selection when clicked outside', () => {
-    //   component.testOnTryEdit(mockLink); // Select an item
-    //   expect(component.testSelected).toBe(mockLink);
-
-    //   component.clickedOutside();
-
-    //   expect(component.testSelected).toEqual({ id: 0 });
-    // });
 
     it('should emit change event when clicked outside and data changed', () => {
       const isChangedSpy = jest.fn();

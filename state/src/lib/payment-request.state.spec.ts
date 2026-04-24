@@ -164,6 +164,7 @@ describe('PaymentRequestState', () => {
     updated_by_id: 0,
     histories: [history],
     updated_by: mockUser,
+    payment_approvers: [],
   };
 
   const mockPaymentRequest2 = {

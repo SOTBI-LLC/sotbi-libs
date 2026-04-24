@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/state",
-  "version": "0.0.33",
+  "version": "0.0.34",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "public"
@@ -11,12 +11,12 @@
     "directory": "state"
   },
   "peerDependencies": {
-    "@sotbi/models": "^0.0.33",
-    "@sotbi/data-access": "^0.0.29",
+    "@sotbi/models": "0.0.34",
+    "@sotbi/data-access": "^0.0.30",
     "@sotbi/utils": "^0.0.29",
-    "@angular/common": "^20.3.18",
-    "@angular/core": "^20.3.18",
-    "@angular/forms": "^20.3.18",
+    "@angular/common": "^21.2.10",
+    "@angular/core": "^21.2.10",
+    "@angular/forms": "^21.2.10",
     "@ngxs/store": "^21.0.0",
     "@fullcalendar/core": "~6.1.20",
     "rxjs": "~7.8.2",

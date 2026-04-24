@@ -54,15 +54,13 @@ export class LinkCellAgGridComponent implements ICellRendererAngularComp {
       this.routerLink = params['routerLink'];
       return;
     }
-    let id = '0';
+    let id = params.data.id;
     if (params.data[params['linkTo']]) {
       id =
         params.data[params['linkTo']].debtor_id ||
         params.data[params['linkTo']] ||
         params.data[params['linkTo']].id ||
         0;
-    } else {
-      id = params.data.id;
     }
     this.routerLink = [r, id];
   }

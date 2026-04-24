@@ -135,9 +135,8 @@ export class CalendarState {
     { payload }: GetMonth,
   ) {
     const state = getState();
-    let holidays: Date[] = [];
     const selected = state.items.find(({ month }) => month === payload);
-    holidays = selected?.holidays?.map((el) => new Date(el)) ?? [];
+    const holidays = selected?.holidays?.map((el) => new Date(el)) ?? [];
     const workingDays =
       selected &&
       deepFlatten(selected?.working_days).map((el: Date) =>
