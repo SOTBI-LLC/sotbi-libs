@@ -3,26 +3,28 @@
   "compilerOptions": {
     "forceConsistentCasingInFileNames": true,
     "strict": true,
+    "ignoreDeprecations": "6.0",
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "ES2020",
-    "module": "esnext",
+    "target": "ES2022",
+    "module": "ES2022",
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "baseUrl": ".",
     "paths": {
-      "@sotbi/auth": ["auth/src/index"],
-      "@sotbi/data-access": ["data-access/src/index"],
-      "@sotbi/models": ["models/src/index"],
-      "@sotbi/state": ["state/src/index"],
-      "@sotbi/ui": ["ui/src/index"],
-      "@sotbi/ui-ag-grid": ["ui-ag-grid/src/index"],
-      "@sotbi/utils": ["utils/src/index"]
+      "@sotbi/auth": ["./auth/src/index"],
+      "@sotbi/data-access": ["./data-access/src/index"],
+      "@sotbi/models": ["./models/src/index"],
+      "@sotbi/state": ["./state/src/index"],
+      "@sotbi/ui": ["./ui/src/index"],
+      "@sotbi/ui-ag-grid": ["./ui-ag-grid/src/index"],
+      "@sotbi/utils": ["./utils/src/index"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,14 +1,16 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "forceConsistentCasingInFileNames": true,
+    "target": "es2022",
+    "moduleResolution": "bundler",
     "strict": true,
-    "importHelpers": true,
     "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
     "noFallthroughCasesInSwitch": true,
-    "noPropertyAccessFromIndexSignature": true
+    "module": "ES2022"
   },
   "files": [],
   "include": [],

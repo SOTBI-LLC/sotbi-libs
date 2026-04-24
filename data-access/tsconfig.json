@@ -7,6 +7,8 @@
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
     "noFallthroughCasesInSwitch": true,
     "module": "ES2022"
   },

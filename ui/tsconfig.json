@@ -7,8 +7,10 @@
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
     "noFallthroughCasesInSwitch": true,
-    "module": "preserve"
+    "module": "ES2022"
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
