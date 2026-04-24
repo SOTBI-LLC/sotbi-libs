@@ -78,7 +78,7 @@ jobs:
           echo "versions=$VERSIONS" >> $GITHUB_OUTPUT
 
       - name: Send telegram message after image was built
-        uses: SOTBI-LLC/gh-actions/.github/actions/notify-telegram@main
+        uses: SOTBI-LLC/gh-actions/actions/notify-telegram@main
         with:
           chat_id: ${{ secrets.TELEGRAM_CHANNEL }}
           bot_token: ${{ secrets.TELEGRAM_TOKEN }}
