@@ -338,6 +338,8 @@ export interface Message {
     /**message_type_id = 16("Оспаривание сделки"), sub_message_type_id = 11 ("Заявление о признании сделки должника недействительной")  */
     there_is_no_price: boolean;
     /** Основания для оспаривания сделки */
+    /** поле переходит в challenging_transactions, тут оставлено для обратной совместимости  */
+    basis_for_challenging_the_transaction: BasisForChallengingTransaction;
     challenging_transactions: ChallengingTransaction[];
     tax_id: string;
     name_of_company: string;
