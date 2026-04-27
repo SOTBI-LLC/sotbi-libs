@@ -291,4 +291,5 @@ export {
   ReleaseCitizenFromObligationsType,
   TypeOrderOfSatisfaction,
   PublicationBySubMsgAndDebtor,
+  ChallengingTransaction,
 } from './lib/message';
