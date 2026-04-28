@@ -6,8 +6,8 @@ export interface TaskResponse {
 }
 
 export interface DebtorDownloadRequest {
-  accounts: string; // или string[] — если forLink возвращает массив
+  accounts: string;
   start: string;
   end: string;
-  filterModel: FilterModel; // лучше уточнить тип, если знаешь структуру
+  filterModel: FilterModel;
 }
