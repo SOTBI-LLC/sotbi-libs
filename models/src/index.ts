@@ -291,5 +291,6 @@ export {
   ReleaseCitizenFromObligationsType,
   TypeOrderOfSatisfaction,
   PublicationBySubMsgAndDebtor,
+  ChallengingTransaction,
 } from './lib/message';
 export { TaskResponse, DebtorDownloadRequest } from './lib/make-task';

@@ -338,7 +338,9 @@ export interface Message {
     /**message_type_id = 16("Оспаривание сделки"), sub_message_type_id = 11 ("Заявление о признании сделки должника недействительной")  */
     there_is_no_price: boolean;
     /** Основания для оспаривания сделки */
+    /** поле переходит в challenging_transactions, тут оставлено для обратной совместимости  */
     basis_for_challenging_the_transaction: BasisForChallengingTransaction;
+    challenging_transactions: ChallengingTransaction[];
     tax_id: string;
     name_of_company: string;
     /** Оспаривание сделки (message_type_id: 16) => Результаты рассмотрения/пересмотра заявлений об оспаривании сделок (sub_message_type_id: 45) }*/
@@ -470,6 +472,11 @@ export interface PublicationBySubMsgAndDebtor {
   id: number;
   publication_at: Date;
   publication_num: number;
+}
+
+export interface ChallengingTransaction {
+  basis: BasisForChallengingTransaction;
+  comment: string;
 }
 // Note: Form interfaces (PayloadForm, MessageForm, etc.) are moved to a separate
 // Angular-specific file since they depend on @angular/forms types

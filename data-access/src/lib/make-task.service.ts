@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { DebtorDownloadRequest, TaskResponse } from '@sotbi/models';
+import type { DebtorDownloadRequest, TaskResponse } from '@sotbi/models';
 import type { Observable } from 'rxjs';
 
 @Injectable({

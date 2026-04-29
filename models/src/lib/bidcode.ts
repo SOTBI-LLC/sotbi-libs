@@ -44,7 +44,7 @@ export class TradingCode {
   }
 }
 
-// use in app-footcloth-comp
+/** use in app-footcloth-comp */
 export interface AllBidCodes {
   trading_code: string;
   trading_code_id: number;
