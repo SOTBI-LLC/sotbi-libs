@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
+import { DebtorDownloadRequest, TaskResponse } from '@sotbi/models';
 import type { Observable } from 'rxjs';
 
 @Injectable({
@@ -11,7 +12,14 @@ export class MakeTaskService {
   public Do(
     path: string,
     params: HttpParams = new HttpParams(),
-  ): Observable<{ task_id: bigint; status: string }> {
-    return this.http.get<{ task_id: bigint; status: string }>(path, { params });
+  ): Observable<TaskResponse> {
+    return this.http.get<TaskResponse>(path, { params });
+  }
+
+  public post(
+    path: string,
+    body: DebtorDownloadRequest,
+  ): Observable<TaskResponse> {
+    return this.http.post<TaskResponse>(path, body);
   }
 }

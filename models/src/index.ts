@@ -292,3 +292,4 @@ export {
   TypeOrderOfSatisfaction,
   PublicationBySubMsgAndDebtor,
 } from './lib/message';
+export { TaskResponse, DebtorDownloadRequest } from './lib/make-task';
