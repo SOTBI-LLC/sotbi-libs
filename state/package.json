@@ -11,8 +11,8 @@
     "directory": "state"
   },
   "peerDependencies": {
-    "@sotbi/models": "0.0.37",
-    "@sotbi/data-access": "^0.0.31",
+    "@sotbi/models": "0.0.38",
+    "@sotbi/data-access": "0.0.32",
     "@sotbi/utils": "^0.0.29",
     "@angular/common": "^21.2.10",
     "@angular/core": "^21.2.10",

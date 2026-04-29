@@ -38,9 +38,9 @@ export { Appraiser, AppraiserType, SroChangedEvent } from './lib/appraiser';
 export { Asset } from './lib/asset';
 export {
   Creditor,
+  CreditorClaimReceived,
   CreditorListType,
   CreditorResidentType,
-  CreditorClaimReceived,
 } from './lib/creditor';
 export { Calcs, InitiatorCalcs } from './lib/debtorcalcs';
 export {
@@ -65,8 +65,8 @@ export {
   CompensationAndRuling,
   FictitiousBankruptcyAndAmendmentNotice,
   InformationCreditInstitution,
-  ResultsReviewApplicationsChallengingTransactions,
   InformationCreditInstitutionOrResultsReviewApplicationsChallengingTransactions,
+  ResultsReviewApplicationsChallengingTransactions,
   SubMessageType,
   SubMessageTypes,
   SubsidiaryAndLiabilityClaim,
@@ -168,6 +168,7 @@ export {
 
 // EGRN models
 export {
+  EGRN_FORM_ERRORS,
   EgrnRequest,
   EgrnRequestHistory,
   NotificationType,
@@ -194,7 +195,6 @@ export {
   ViewType,
   ViewTypeArr,
   ViewTypeMap,
-  EGRN_FORM_ERRORS,
 } from './lib/egrn-request';
 export { RealEstate } from './lib/real-estate';
 
@@ -266,6 +266,7 @@ export {
 export { Marketplace } from './lib/marketplace';
 
 // Message models
+export { DebtorDownloadRequest, TaskResponse } from './lib/make-task';
 export {
   itemMap,
   itemMapPair,
@@ -275,8 +276,8 @@ export {
 } from './lib/maps';
 export {
   BasisForChallengingTransaction,
+  ChallengingTransaction,
   CreditOrganisation,
-  ResultOptions,
   CreditorMeetingType,
   CreditorType,
   CreditorTypeArr,
@@ -287,10 +288,16 @@ export {
   Message,
   MessageHistory,
   ProvidingCollateral,
-  RequestPublicationsBySubMessageIdAndDebtorId,
-  ReleaseCitizenFromObligationsType,
-  TypeOrderOfSatisfaction,
   PublicationBySubMsgAndDebtor,
-  ChallengingTransaction,
+  ReleaseCitizenFromObligationsType,
+  RequestPublicationsBySubMessageIdAndDebtorId,
+  ResultOptions,
+  TypeOrderOfSatisfaction,
 } from './lib/message';
-export { TaskResponse, DebtorDownloadRequest } from './lib/make-task';
+export {
+  BaseCriteria,
+  PerformanceCriteria,
+  PerformancePeriod,
+  UserPercentage,
+  UserPercentageRequest,
+} from './lib/motivation';
