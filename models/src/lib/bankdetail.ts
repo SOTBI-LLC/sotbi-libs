@@ -92,6 +92,8 @@ export interface PaymentDocument {
   // https://nalog-nalog.ru/uplata_nalogov/poryadok_uplaty_nalogov_vznosov/osnovnye_polya_platezhnogo_porucheniya_obrazec/
   //
   id: number;
+  debet: number;
+  credit: number;
   document_type: string;
   request_id: UUID;
   number: string; //                   ПЛАТЕЖНОЕ ПОРУЧЕНИЕ №
@@ -125,6 +127,7 @@ export interface PaymentDocument {
   receiver_bik: string; //             БИК
   receiver_corr_account: string; //    Сч. №  - корр
   indicator_kbk: string; //            КБК
+  indicator_number: string;
   okato: string; //                    Код ОКТМО вместо ОКАТО
   indicator_basics: string; //         Основание платежа
   indicator_period: string; //         Налоговый период
