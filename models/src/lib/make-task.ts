@@ -6,7 +6,7 @@ export interface TaskResponse {
 }
 
 export interface DebtorDownloadRequest {
-  accounts: string;
+  accounts: string[];
   start: string;
   end: string;
   filterModel: FilterModel;
