@@ -6,6 +6,7 @@ import type {
   PerformancePeriod,
   UserPercentage,
   UserPercentageRequest,
+  UserPerformance,
 } from '@sotbi/models';
 import type { Observable } from 'rxjs';
 import { CommonService } from './common.service';
@@ -54,6 +55,21 @@ export class PerformanceCriteriaService extends CommonService<PerformanceCriteri
     this.http = http;
   }
 }
+@Injectable({
+  providedIn: 'root',
+})
+export class UserPerformanceService extends CommonService<UserPerformance> {
+  protected override readonly http: HttpClient;
+
+  public override readonly path = '/api/motivation/performance';
+  constructor() {
+    const http = inject(HttpClient);
+
+    super(http);
+    this.http = http;
+  }
+}
+
 @Injectable({
   providedIn: 'root',
 })

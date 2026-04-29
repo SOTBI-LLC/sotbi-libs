@@ -300,4 +300,5 @@ export {
   PerformancePeriod,
   UserPercentage,
   UserPercentageRequest,
+  UserPerformance,
 } from './lib/motivation';
