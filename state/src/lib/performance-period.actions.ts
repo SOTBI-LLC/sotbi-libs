@@ -1,6 +1,9 @@
 import type { PerformancePeriod } from '@sotbi/models';
 
-export class PerformancePeriodAction {
-  public static readonly type = '[PerformancePeriod] Add item';
+export class PerformancePeriodGetActions {
+  public static readonly type = '[PerformancePeriod] Get items';
+}
+export class PerformancePeriodPutAction {
+  public static readonly type = '[PerformancePeriod] Put item';
   constructor(public readonly payload: PerformancePeriod) {}
 }

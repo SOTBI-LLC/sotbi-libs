@@ -3,12 +3,15 @@ import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { PerformancePeriodService } from '@sotbi/data-access';
 import type { PerformancePeriod } from '@sotbi/models';
-import { catchError, finalize, tap, throwError } from 'rxjs';
-import { PerformancePeriodAction } from './performance-period.actions';
+import { catchError, finalize, of, tap, throwError } from 'rxjs';
+import {
+  PerformancePeriodGetActions,
+  PerformancePeriodPutAction,
+} from './performance-period.actions';
 
-export interface PerformancePeriodStateModel {
-  items: PerformancePeriod[];
-  loading: boolean;
+export class PerformancePeriodStateModel {
+  public items: PerformancePeriod[] = [];
+  public loading = false;
 }
 
 @State<PerformancePeriodStateModel>({
@@ -27,22 +30,31 @@ export class PerformancePeriodState {
     return state;
   }
 
-  @Action(PerformancePeriodAction)
+  @Action(PerformancePeriodPutAction)
   public add(
     {
       patchState,
       getState,
       setState,
     }: StateContext<PerformancePeriodStateModel>,
-    { payload }: PerformancePeriodAction,
+    { payload }: PerformancePeriodPutAction,
   ) {
-    return this.performancePeriodSrv.add(payload).pipe(
+    patchState({ loading: true });
+    return this.performancePeriodSrv.update(payload).pipe(
       tap((item: PerformancePeriod) => {
         const state = getState();
+        const items = [...state.items];
+        const idx = state.items.findIndex(
+          ({ year, month }) => year === item.year && month === item.month,
+        );
+        if (idx !== -1) {
+          items[idx] = item;
+        } else {
+          items.push(item);
+        }
         setState({
           ...state,
-          items: [...state.items, item],
-          loading: false,
+          items,
         });
       }),
       catchError((err) => {
@@ -53,5 +65,28 @@ export class PerformancePeriodState {
         patchState({ loading: false });
       }),
     );
+  }
+  @Action(PerformancePeriodGetActions)
+  public get({
+    patchState,
+    getState,
+  }: StateContext<PerformancePeriodStateModel>) {
+    patchState({ loading: true });
+    if (getState().items.length === 0) {
+      return this.performancePeriodSrv.GetAll().pipe(
+        tap((items: PerformancePeriod[]) => {
+          patchState({ items });
+        }),
+        catchError((err) => {
+          console.error(err);
+          return throwError(() => err);
+        }),
+        finalize(() => {
+          patchState({ loading: false });
+        }),
+      );
+    } else {
+      return of(getState().items);
+    }
   }
 }

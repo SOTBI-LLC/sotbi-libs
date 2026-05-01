@@ -1,4 +1,5 @@
 export class PerformancePeriod {
+  public id = 0;
   public year = 2026;
   public month = 1;
   public is_active = false;

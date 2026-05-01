@@ -68,6 +68,19 @@ export class UserPerformanceService extends CommonService<UserPerformance> {
     super(http);
     this.http = http;
   }
+  public upsert(item: UserPerformance): Observable<UserPerformance> {
+    return this.http.put<UserPerformance>(this.path, item);
+  }
+
+  public getAll(request: UserPercentageRequest): Observable<UserPerformance[]> {
+    const queryParams = new HttpParams();
+    queryParams.set('user_id', request.user_id.toString());
+    queryParams.set('year', request.year.toString());
+    queryParams.set('month', request.month.toString());
+    return this.http.get<UserPerformance[]>(this.path, {
+      params: queryParams,
+    });
+  }
 }
 
 @Injectable({

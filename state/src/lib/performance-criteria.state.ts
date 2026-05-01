@@ -1,12 +1,18 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
+import { PerformanceCriteriaService } from '@sotbi/data-access';
 import type { PerformanceCriteria } from '@sotbi/models';
-import { PerformanceCriteriaAction } from './performance-criteria.actions';
+import { catchError, finalize, of, tap, throwError } from 'rxjs';
+import {
+  PerformanceCriteriaAddAction,
+  PerformanceCriteriaGetActions,
+  PerformanceCriteriaPutAction,
+} from './performance-criteria.actions';
 
-export interface PerformanceCriteriaStateModel {
-  items: PerformanceCriteria[];
-  loading: boolean;
+export class PerformanceCriteriaStateModel {
+  public items: PerformanceCriteria[] = [];
+  public loading = false;
 }
 
 @State<PerformanceCriteriaStateModel>({
@@ -18,18 +24,79 @@ export interface PerformanceCriteriaStateModel {
 })
 @Injectable()
 export class PerformanceCriteriaState {
+  private readonly performanceCriteriaSrv = inject(PerformanceCriteriaService);
+
   @Selector()
-  public static getState(state: PerformanceCriteriaStateModel) {
-    return state;
+  public static getItems(state: PerformanceCriteriaStateModel) {
+    return state.items;
   }
 
-  @Action(PerformanceCriteriaAction)
+  @Selector()
+  public static getLoading(state: PerformanceCriteriaStateModel) {
+    return state.loading;
+  }
+
+  @Action(PerformanceCriteriaAddAction)
   public add(
-    { getState, setState }: StateContext<PerformanceCriteriaStateModel>,
-    { payload }: PerformanceCriteriaAction,
+    { getState, patchState }: StateContext<PerformanceCriteriaStateModel>,
+    { payload }: PerformanceCriteriaAddAction,
   ) {
-    const stateModel = getState();
-    stateModel.items = [...stateModel.items, payload];
-    setState(stateModel);
+    patchState({ loading: true });
+    return this.performanceCriteriaSrv.add(payload).pipe(
+      tap((item: PerformanceCriteria) => {
+        patchState({ items: [...getState().items, item] });
+      }),
+      catchError((err) => {
+        console.error(err);
+        return throwError(() => err);
+      }),
+      finalize(() => {
+        patchState({ loading: false });
+      }),
+    );
+  }
+
+  @Action(PerformanceCriteriaGetActions)
+  public get({
+    patchState,
+    getState,
+  }: StateContext<PerformanceCriteriaStateModel>) {
+    if (getState().items.length === 0) {
+      patchState({ loading: true });
+      return this.performanceCriteriaSrv.GetAll().pipe(
+        tap((items: PerformanceCriteria[]) => {
+          patchState({ items });
+        }),
+        catchError((err) => {
+          console.error(err);
+          return throwError(() => err);
+        }),
+        finalize(() => {
+          patchState({ loading: false });
+        }),
+      );
+    } else {
+      return of(getState().items);
+    }
+  }
+
+  @Action(PerformanceCriteriaPutAction)
+  public put(
+    { getState, patchState }: StateContext<PerformanceCriteriaStateModel>,
+    { payload }: PerformanceCriteriaPutAction,
+  ) {
+    patchState({ loading: true });
+    return this.performanceCriteriaSrv.update(payload).pipe(
+      tap((item: PerformanceCriteria) => {
+        patchState({ items: [...getState().items, item] });
+      }),
+      catchError((err) => {
+        console.error(err);
+        return throwError(() => err);
+      }),
+      finalize(() => {
+        patchState({ loading: false });
+      }),
+    );
   }
 }

@@ -1,8 +1,14 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
+import { BaseCriteriaService } from '@sotbi/data-access';
 import type { BaseCriteria } from '@sotbi/models';
-import { BaseCriteriaAction } from './base-criteria.actions';
+import { catchError, finalize, of, tap, throwError } from 'rxjs';
+import {
+  BaseCriteriaAddAction,
+  BaseCriteriaGetActions,
+  BaseCriteriaPutAction,
+} from './base-criteria.actions';
 
 export interface BaseCriteriaStateModel {
   items: BaseCriteria[];
@@ -18,18 +24,75 @@ export interface BaseCriteriaStateModel {
 })
 @Injectable()
 export class BaseCriteriaState {
+  private readonly baseCriteriaSrv = inject(BaseCriteriaService);
   @Selector()
-  public static getState(state: BaseCriteriaStateModel) {
-    return state;
+  public static getItems(state: BaseCriteriaStateModel) {
+    return state.items;
   }
 
-  @Action(BaseCriteriaAction)
+  @Selector()
+  public static getLoading(state: BaseCriteriaStateModel) {
+    return state.loading;
+  }
+
+  @Action(BaseCriteriaAddAction)
   public add(
-    { getState, setState }: StateContext<BaseCriteriaStateModel>,
-    { payload }: BaseCriteriaAction,
+    { getState, patchState }: StateContext<BaseCriteriaStateModel>,
+    { payload }: BaseCriteriaAddAction,
   ) {
-    const stateModel = getState();
-    stateModel.items = [...stateModel.items, payload];
-    setState(stateModel);
+    patchState({ loading: true });
+    return this.baseCriteriaSrv.add(payload).pipe(
+      tap((item: BaseCriteria) => {
+        patchState({ items: [...getState().items, item] });
+      }),
+      catchError((err) => {
+        console.error(err);
+        return throwError(() => err);
+      }),
+      finalize(() => {
+        patchState({ loading: false });
+      }),
+    );
+  }
+
+  @Action(BaseCriteriaPutAction)
+  public put(
+    { getState, patchState }: StateContext<BaseCriteriaStateModel>,
+    { payload }: BaseCriteriaPutAction,
+  ) {
+    patchState({ loading: true });
+    return this.baseCriteriaSrv.update(payload).pipe(
+      tap((item: BaseCriteria) => {
+        patchState({ items: [...getState().items, item] });
+      }),
+      catchError((err) => {
+        console.error(err);
+        return throwError(() => err);
+      }),
+      finalize(() => {
+        patchState({ loading: false });
+      }),
+    );
+  }
+
+  @Action(BaseCriteriaGetActions)
+  public get({ patchState, getState }: StateContext<BaseCriteriaStateModel>) {
+    if (getState().items.length === 0) {
+      patchState({ loading: true });
+      return this.baseCriteriaSrv.GetAll().pipe(
+        tap((items: BaseCriteria[]) => {
+          patchState({ items });
+        }),
+        catchError((err) => {
+          console.error(err);
+          return throwError(() => err);
+        }),
+        finalize(() => {
+          patchState({ loading: false });
+        }),
+      );
+    } else {
+      return of(getState().items);
+    }
   }
 }
