@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/auth",
-  "version": "0.0.30",
+  "version": "0.0.40",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "restricted"
@@ -11,18 +11,18 @@
     "directory": "auth"
   },
   "peerDependencies": {
-    "@sotbi/data-access": "0.0.32",
-    "@sotbi/models": "0.0.38",
-    "@angular/common": "^21.2.9",
-    "@angular/core": "^21.2.9",
-    "@angular/router": "^21.2.9",
-    "@angular/platform-browser": "^21.2.9",
+    "@sotbi/data-access": "0.0.40",
+    "@sotbi/models": "0.0.40",
+    "jest": "^30.3.0",
+    "@angular/common": "^21.2.11",
+    "@angular/core": "^21.2.11",
     "@ngxs/store": "^21.0.0",
-    "date-fns": "~4.1.0",
-    "jwt-decode": "~4.0.0",
-    "rxjs": "^7.8.2",
-    "jest": "^30.2.0",
-    "jest-preset-angular": "^16.0.0"
+    "rxjs": "7.8.2",
+    "@angular/router": "^21.2.11",
+    "@angular/platform-browser": "^21.2.11",
+    "date-fns": "^4.1.0",
+    "jwt-decode": "^4.0.0",
+    "jest-preset-angular": "^16.1.4"
   },
   "sideEffects": false
 }

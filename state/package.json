@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/state",
-  "version": "0.0.34",
+  "version": "0.0.40",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "public"
@@ -11,19 +11,19 @@
     "directory": "state"
   },
   "peerDependencies": {
-    "@sotbi/models": "0.0.38",
-    "@sotbi/data-access": "0.0.32",
-    "@sotbi/utils": "^0.0.29",
-    "@angular/common": "^21.2.10",
-    "@angular/core": "^21.2.10",
-    "@angular/forms": "^21.2.10",
+    "@sotbi/models": "0.0.40",
+    "@sotbi/data-access": "0.0.40",
+    "@sotbi/utils": "0.0.40",
+    "jest": "^30.3.0",
+    "@angular/core": "^21.2.11",
     "@ngxs/store": "^21.0.0",
-    "@fullcalendar/core": "~6.1.20",
-    "rxjs": "~7.8.2",
+    "rxjs": "7.8.2",
     "date-fns": "^4.1.0",
+    "@fullcalendar/core": "^6.1.20",
+    "@angular/forms": "^21.2.11",
+    "@angular/common": "^21.2.11",
     "javascript-state-machine": "~2.4.0",
-    "jest": "^30.2.0",
-    "jest-preset-angular": "^16.0.0"
+    "jest-preset-angular": "^16.1.4"
   },
   "sideEffects": false
 }
