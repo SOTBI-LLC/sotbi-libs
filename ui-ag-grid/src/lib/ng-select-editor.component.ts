@@ -106,6 +106,7 @@ export class ProjectAndDebtorSelectEditor<T> implements ICellEditorAngularComp {
       [(ngModel)]="value"
       notFoundText="Не найдено"
       appendTo="body"
+      [addTag]="addTag"
       [ngStyle]="{ width: wide ? 'unset' : '300px' }"
       (change)="onChange()"
     >
@@ -138,6 +139,7 @@ export class NgSelectEditor<T> implements ICellEditorAngularComp {
   protected clearable = false;
   protected wide = true;
   protected isUserWithAvatar = false;
+  protected addTag = false;
 
   private api: GridApi | null = null;
 
@@ -152,6 +154,9 @@ export class NgSelectEditor<T> implements ICellEditorAngularComp {
     }
     if (params['wide'] !== undefined) {
       this.wide = params['wide'] ?? true;
+    }
+    if (params['addTag'] !== undefined) {
+      this.addTag = params['addTag'] ?? false;
     }
     this.clearable = params['clearable'] ?? false;
     this.isUserWithAvatar = params['isUserWithAvatar'] ?? false;
