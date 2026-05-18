@@ -42,6 +42,11 @@ export const getDiff = <T>(
           update[key] = newValue;
           changed = true;
         }
+      } else if (newValue instanceof Boolean) {
+        if (oldValue !== newValue) {
+          update[key] = newValue;
+          changed = true;
+        }
       } else if (oldValue !== newValue && newValue) {
         update[key] = newValue;
         changed = true;

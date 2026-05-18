@@ -68,10 +68,10 @@
           @if (!isEditMode()) {
             <td class="width--ctrl cell--ptopX">
               @if (!canEdit(item)) {
-                <cds-icon (click)="onTryEdit(item)" shape="pencil"></cds-icon>
+                <clr-icon (click)="onTryEdit(item)" shape="pencil"></clr-icon>
               }
               @if (canEdit(item)) {
-                <cds-icon (click)="onSave()" shape="check"></cds-icon>
+                <clr-icon (click)="onSave()" shape="check"></clr-icon>
               }
             </td>
           }
@@ -81,7 +81,7 @@
               title="Удалить ссылку"
               (click)="del(item, i)"
             >
-              <cds-icon shape="trash"></cds-icon>
+              <clr-icon shape="trash"></clr-icon>
             </button>
           </td>
         </tr>
@@ -120,7 +120,7 @@
           </clr-input-container>
         </td>
         <td class="cell--ptopX width--ctrl cursor-pointer">
-          <cds-icon (click)="add()" shape="floppy"></cds-icon>
+          <clr-icon (click)="add()" shape="floppy"></clr-icon>
         </td>
         @if (!isEditMode()) {
           <td>&nbsp;</td>

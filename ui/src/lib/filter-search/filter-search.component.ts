@@ -31,7 +31,7 @@ import { ClarityModule } from '@clr/angular';
           clrInput
           (keyup)="onKeyUp(searchinput.value)"
       /></clr-input-container>
-      <cds-icon class="search" shape="search"></cds-icon>
+      <clr-icon class="search" shape="search"></clr-icon>
     </div>
   `,
   styleUrls: ['./filter-search.component.scss'],

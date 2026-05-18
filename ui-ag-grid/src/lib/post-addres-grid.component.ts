@@ -113,7 +113,7 @@ export class PostAddresGridComponent {
           if (value) {
             shape = 'success-standard';
           }
-          return `<cds-icon shape="${shape}" class="is-highlight"></cds-icon>`;
+          return `<clr-icon shape="${shape}" class="is-highlight"></clr-icon>`;
         },
       },
       {
