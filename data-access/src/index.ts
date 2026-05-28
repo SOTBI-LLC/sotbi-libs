@@ -83,3 +83,4 @@ export { UserService } from './lib/user.service';
 export { UsergroupService } from './lib/usergroup.service';
 export { WeekService } from './lib/week.service';
 export { WorkCategoryService } from './lib/work-category.service';
+export { UserPerformanceService } from './lib/motivation.service';

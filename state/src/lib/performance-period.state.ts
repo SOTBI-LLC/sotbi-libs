@@ -5,6 +5,7 @@ import { PerformancePeriodService } from '@sotbi/data-access';
 import type { PerformancePeriod } from '@sotbi/models';
 import { catchError, finalize, of, tap, throwError } from 'rxjs';
 import {
+  PerformancePeriodAddAction,
   PerformancePeriodGetActions,
   PerformancePeriodPutAction,
 } from './performance-period.actions';
@@ -30,8 +31,34 @@ export class PerformancePeriodState {
     return state;
   }
 
-  @Action(PerformancePeriodPutAction)
+  @Selector()
+  public static getItems(state: PerformancePeriodStateModel) {
+    return state.items;
+  }
+
+  // check : добавлен, на бэке нет пока
+  @Action(PerformancePeriodAddAction)
   public add(
+    { getState, patchState }: StateContext<PerformancePeriodStateModel>,
+    { payload }: PerformancePeriodAddAction,
+  ) {
+    patchState({ loading: true });
+    return this.performancePeriodSrv.add(payload).pipe(
+      tap((item: PerformancePeriod) => {
+        patchState({ items: [...getState().items, item] });
+      }),
+      catchError((err) => {
+        console.error(err);
+        return throwError(() => err);
+      }),
+      finalize(() => {
+        patchState({ loading: false });
+      }),
+    );
+  }
+
+  @Action(PerformancePeriodPutAction)
+  public put(
     {
       patchState,
       getState,
@@ -66,6 +93,7 @@ export class PerformancePeriodState {
       }),
     );
   }
+
   @Action(PerformancePeriodGetActions)
   public get({
     patchState,
@@ -73,9 +101,9 @@ export class PerformancePeriodState {
   }: StateContext<PerformancePeriodStateModel>) {
     patchState({ loading: true });
     if (getState().items.length === 0) {
-      return this.performancePeriodSrv.GetAll().pipe(
-        tap((items: PerformancePeriod[]) => {
-          patchState({ items });
+      return this.performancePeriodSrv.getAll().pipe(
+        tap((response: { items: PerformancePeriod[] }) => {
+          patchState({ items: response.items });
         }),
         catchError((err) => {
           console.error(err);

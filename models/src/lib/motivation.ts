@@ -28,8 +28,11 @@ export class PerformanceCriteria {
   public description = '';
   public max_score = 0;
   public is_absolute = false;
-  public valid_from = new Date();
-  public valid_to = new Date();
+  public year = 0;
+  public month = 0;
+  public department_id = 0;
+  /*  public valid_from = new Date();
+  public valid_to = new Date(); */
   constructor(init: Partial<PerformanceCriteria> = {}) {
     Object.assign(this, init);
   }
@@ -60,6 +63,45 @@ export class UserPercentage {
 
 export interface UserPercentageRequest {
   user_id: number;
+  year: number;
+  month: number;
+}
+
+// новое
+
+/* export interface MotivationEmployee {
+  id: number;
+  fullName: string;
+  email: string;
+  position: string;
+  department: string;
+  avatar?: string;
+  basePercent: number;
+  totalPercent: number;
+  averagePercent: number;
+  color?: 'success' | 'warning' | 'danger';
+}
+
+export interface CriterionWithScore {
+  id: number;
+  criteria_id: number;
+  name: string;
+  description: string;
+  max_score: number;
+  is_absolute: boolean;
+  earned_score: number; // из UserPerformance
+  comment?: string;
+  sign: '+' | '-'; // для отображения
+} */
+
+export interface PerformanceCriteriaRequest {
+  year: number;
+  month: number;
+  department_id?: number;
+  user_id?: number;
+}
+
+export interface SelectedPeriod {
   year: number;
   month: number;
 }

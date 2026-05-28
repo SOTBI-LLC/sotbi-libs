@@ -301,4 +301,8 @@ export {
   UserPercentage,
   UserPercentageRequest,
   UserPerformance,
+  PerformanceCriteriaRequest,
+  SelectedPeriod,
+  /*   MotivationEmployee,
+  CriterionWithScore, */
 } from './lib/motivation';

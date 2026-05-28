@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import type {
   BaseCriteria,
   PerformanceCriteria,
+  PerformanceCriteriaRequest,
   PerformancePeriod,
   UserPercentage,
   UserPercentageRequest,
@@ -24,6 +25,10 @@ export class PerformancePeriodService extends CommonService<PerformancePeriod> {
     super(http);
     this.http = http;
   }
+
+  public getAll(): Observable<{ items: PerformancePeriod[] }> {
+    return this.http.get<{ items: PerformancePeriod[] }>(this.path);
+  }
 }
 
 @Injectable({
@@ -39,6 +44,10 @@ export class BaseCriteriaService extends CommonService<BaseCriteria> {
     super(http);
     this.http = http;
   }
+
+  public getAll(): Observable<BaseCriteria[]> {
+    return this.http.get<BaseCriteria[]>(this.path);
+  }
 }
 
 @Injectable({
@@ -53,6 +62,27 @@ export class PerformanceCriteriaService extends CommonService<PerformanceCriteri
 
     super(http);
     this.http = http;
+  }
+
+  public getAll(
+    request: PerformanceCriteriaRequest,
+  ): Observable<{ items: PerformanceCriteria[] }> {
+    let queryParams = new HttpParams();
+    if (request.user_id) {
+      queryParams = queryParams.set('user_id', request?.user_id?.toString());
+    }
+    if (request?.department_id) {
+      queryParams = queryParams.set(
+        'department_id',
+        request?.department_id?.toString(),
+      );
+    }
+
+    queryParams = queryParams.set('year', request.year.toString());
+    queryParams = queryParams.set('month', request.month.toString());
+    return this.http.get<{ items: PerformanceCriteria[] }>(this.path, {
+      params: queryParams,
+    });
   }
 }
 @Injectable({
@@ -72,12 +102,14 @@ export class UserPerformanceService extends CommonService<UserPerformance> {
     return this.http.put<UserPerformance>(this.path, item);
   }
 
-  public getAll(request: UserPercentageRequest): Observable<UserPerformance[]> {
-    const queryParams = new HttpParams();
-    queryParams.set('user_id', request.user_id.toString());
-    queryParams.set('year', request.year.toString());
-    queryParams.set('month', request.month.toString());
-    return this.http.get<UserPerformance[]>(this.path, {
+  public getAll(
+    request: UserPercentageRequest,
+  ): Observable<{ items: UserPerformance[] }> {
+    let queryParams = new HttpParams();
+    queryParams = queryParams.set('user_id', request.user_id.toString());
+    queryParams = queryParams.set('year', request.year.toString());
+    queryParams = queryParams.set('month', request.month.toString());
+    return this.http.get<{ items: UserPerformance[] }>(this.path, {
       params: queryParams,
     });
   }
@@ -86,6 +118,7 @@ export class UserPerformanceService extends CommonService<UserPerformance> {
 @Injectable({
   providedIn: 'root',
 })
+// check: нет стейта
 export class UserPercentageService extends CommonService<UserPercentage> {
   protected override readonly http: HttpClient;
 
@@ -100,10 +133,10 @@ export class UserPercentageService extends CommonService<UserPercentage> {
   public getPercentage(
     request: UserPercentageRequest,
   ): Observable<UserPercentage> {
-    const queryParams = new HttpParams();
-    queryParams.set('user_id', request.user_id.toString());
-    queryParams.set('year', request.year.toString());
-    queryParams.set('month', request.month.toString());
+    let queryParams = new HttpParams();
+    queryParams = queryParams.set('user_id', request.user_id.toString());
+    queryParams = queryParams.set('year', request.year.toString());
+    queryParams = queryParams.set('month', request.month.toString());
     return this.http.get<UserPercentage>(this.path, {
       params: queryParams,
     });

@@ -1,4 +1,7 @@
-import type { PerformanceCriteria } from '@sotbi/models';
+import type {
+  PerformanceCriteria,
+  PerformanceCriteriaRequest,
+} from '@sotbi/models';
 
 export class PerformanceCriteriaAddAction {
   public static readonly type = '[PerformanceCriteria] Add item';
@@ -7,6 +10,7 @@ export class PerformanceCriteriaAddAction {
 
 export class PerformanceCriteriaGetActions {
   public static readonly type = '[PerformanceCriteria] Get items';
+  constructor(public readonly payload: PerformanceCriteriaRequest) {}
 }
 
 export class PerformanceCriteriaPutAction {

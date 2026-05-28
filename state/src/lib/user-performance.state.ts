@@ -1,17 +1,19 @@
 import { inject, Injectable } from '@angular/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
-import type { UserPerformance } from '@sotbi/models';
-import { UserPerformanceService } from 'data-access/src/lib/motivation.service';
+import type { SelectedPeriod, UserPerformance } from '@sotbi/models';
+import { UserPerformanceService } from '@sotbi/data-access';
 import { catchError, finalize, of, tap, throwError } from 'rxjs';
 import {
   UserPerformanceGetActions,
+  UserPerformanceSelectPeriod,
   UserPerformanceUpsertAction,
 } from './user-performance.actions';
 
 export class UserPerformanceStateModel {
   public items: UserPerformance[] = [];
   public loading = false;
+  public selectedPeriod: SelectedPeriod | null = null;
 }
 
 @State<UserPerformanceStateModel>({
@@ -19,8 +21,13 @@ export class UserPerformanceStateModel {
   defaults: {
     items: [],
     loading: false,
+    selectedPeriod: {
+      year: new Date().getFullYear(),
+      month: new Date().getMonth() + 1,
+    },
   },
 })
+// check: нужен ли ADD-action ?
 @Injectable()
 export class UserPerformanceState {
   private readonly userPerformanceSrv = inject(UserPerformanceService);
@@ -33,6 +40,11 @@ export class UserPerformanceState {
   @Selector()
   public static getLoading(state: UserPerformanceStateModel) {
     return state.loading;
+  }
+
+  @Selector()
+  public static getSelectedPeriod(state: UserPerformanceStateModel) {
+    return state.selectedPeriod;
   }
 
   @Action(UserPerformanceUpsertAction)
@@ -70,8 +82,8 @@ export class UserPerformanceState {
     if (getState().items.length === 0) {
       patchState({ loading: true });
       return this.userPerformanceSrv.getAll(payload).pipe(
-        tap((items: UserPerformance[]) => {
-          patchState({ items });
+        tap((response: { items: UserPerformance[] }) => {
+          patchState({ items: response.items });
         }),
         catchError((err) => {
           console.error(err);
@@ -84,5 +96,13 @@ export class UserPerformanceState {
     } else {
       return of(getState().items);
     }
+  }
+
+  @Action(UserPerformanceSelectPeriod)
+  public selectPeriod(
+    { patchState }: StateContext<UserPerformanceStateModel>,
+    { payload }: UserPerformanceSelectPeriod,
+  ) {
+    patchState({ selectedPeriod: payload });
   }
 }

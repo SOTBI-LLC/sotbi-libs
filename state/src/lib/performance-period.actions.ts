@@ -7,3 +7,9 @@ export class PerformancePeriodPutAction {
   public static readonly type = '[PerformancePeriod] Put item';
   constructor(public readonly payload: PerformancePeriod) {}
 }
+
+// check : добавлен, на бэке нет пока
+export class PerformancePeriodAddAction {
+  public static readonly type = '[PerformancePeriod] Add item';
+  constructor(public readonly payload: PerformancePeriod) {}
+}
