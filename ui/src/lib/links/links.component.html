@@ -1,10 +1,5 @@
 @if (showAsTable()) {
-  <table
-    class="table table-compact"
-    tabindex="0"
-    (click)="clickedInside($event)"
-    (keydown)="clickedInside($event)"
-  >
+  <table class="table table-compact" tabindex="0" (click)="clickedInside($event)" (keydown)="clickedInside($event)">
     <thead>
       <tr>
         <th class="width--type">Тип</th>
@@ -71,12 +66,7 @@
           @if (!isEditMode()) {
             <td class="width--ctrl cell--ptopX">
               @if (!canEdit(item)) {
-                <button
-                  type="button"
-                  class="links-wrap__icon-btn"
-                  title="Редактировать"
-                  (click)="onTryEdit(item)"
-                >
+                <button type="button" class="links-wrap__icon-btn" title="Редактировать" (click)="onTryEdit(item)">
                   <svg
                     class="links-wrap__icon"
                     xmlns="http://www.w3.org/2000/svg"
@@ -91,12 +81,7 @@
                 </button>
               }
               @if (canEdit(item)) {
-                <button
-                  type="button"
-                  class="links-wrap__icon-btn"
-                  title="Сохранить"
-                  (click)="onSave()"
-                >
+                <button type="button" class="links-wrap__icon-btn" title="Сохранить" (click)="onSave()">
                   <svg
                     class="links-wrap__icon"
                     xmlns="http://www.w3.org/2000/svg"
@@ -172,12 +157,7 @@
           </div>
         </td>
         <td class="width--ctrl">
-          <button
-            type="button"
-            class="links-wrap__icon-btn cursor-pointer"
-            title="Добавить"
-            (click)="add()"
-          >
+          <button type="button" class="links-wrap__icon-btn cursor-pointer" title="Добавить" (click)="add()">
             <svg
               class="links-wrap__icon"
               xmlns="http://www.w3.org/2000/svg"
@@ -200,12 +180,7 @@
 } @else {
   <div class="links-wrap__labels">
     @for (item of linkRefs(); track item) {
-      <a
-        [href]="item.uri"
-        class="label clickable links-wrap__link"
-        target="_blank"
-        rel="noopener"
-      >
+      <a [href]="item.uri" class="label clickable links-wrap__link" target="_blank" rel="noopener">
         {{ item.type?.name }}
       </a>
     }

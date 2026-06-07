@@ -76,11 +76,7 @@ export class LinkCellAgGridComponent implements ICellRendererAngularComp {
 @Component({
   template: `
     @if (!absoluteURL) {
-      <a
-        class="link-cell-ag-grid__link"
-        [routerLink]="link"
-        [queryParams]="query"
-      >
+      <a class="link-cell-ag-grid__link" [routerLink]="link" [queryParams]="query">
         {{ value }}
       </a>
     }

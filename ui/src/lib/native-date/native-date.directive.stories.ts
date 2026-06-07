@@ -13,9 +13,7 @@ import { NativeDateValueAccessorDirective } from './native-date.directive';
       <span>Дата</span>
       <input type="date" nativeDate [(ngModel)]="dateValue" />
     </label>
-    <p class="mt-2 text-sm text-gray-600">
-      Модель: {{ dateValue ? (dateValue | date: 'mediumDate') : '—' }}
-    </p>
+    <p class="mt-2 text-sm text-gray-600">Модель: {{ dateValue ? (dateValue | date: 'mediumDate') : '—' }}</p>
   `,
 })
 class NativeDateDemoComponent {

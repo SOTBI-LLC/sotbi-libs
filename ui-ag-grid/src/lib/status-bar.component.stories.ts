@@ -1,11 +1,5 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  ViewChild,
-  ViewContainerRef,
-} from '@angular/core';
+import type { AfterViewInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewChild, ViewContainerRef } from '@angular/core';
 import type { Meta, StoryObj } from '@storybook/angular';
 import type { IStatusPanelParams } from 'ag-grid-community';
 
@@ -31,7 +25,6 @@ class AddRowsStatusBarStoryHost implements AfterViewInit {
       context: undefined,
       editable: this.editable,
       onAdd: (count: number) => {
-        // eslint-disable-next-line no-console
         console.log('add rows', count);
       },
     } as IStatusPanelParams & {

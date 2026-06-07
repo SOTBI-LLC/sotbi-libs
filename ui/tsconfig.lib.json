@@ -6,15 +6,6 @@
     "inlineSources": true,
     "types": []
   },
-  "exclude": [
-    "src/**/*.spec.ts",
-    "jest.config.ts",
-    "src/**/*.test.ts",
-    "**/*.stories.ts",
-    "**/*.stories.js"
-  ],
-  "include": [
-    "src/**/*.ts",
-    "../ui-ag-grid/src/lib/post-addres-grid.component.ts"
-  ]
+  "exclude": ["src/**/*.spec.ts", "jest.config.ts", "src/**/*.test.ts", "**/*.stories.ts", "**/*.stories.js"],
+  "include": ["src/**/*.ts", "../ui-ag-grid/src/lib/post-addres-grid.component.ts"]
 }

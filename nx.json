@@ -9,10 +9,7 @@
       "!{projectRoot}/tsconfig.storybook.json"
     ],
     "sharedGlobals": [],
-    "eslint": [
-      "{workspaceRoot}/eslint.config.mjs",
-      "{projectRoot}/eslint.config.mjs"
-    ]
+    "eslint": ["{workspaceRoot}/eslint.config.mjs", "{projectRoot}/eslint.config.mjs"]
   },
   "plugins": [
     {

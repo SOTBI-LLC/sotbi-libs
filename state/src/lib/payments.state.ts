@@ -43,16 +43,10 @@ export class PaymentDocumentsState {
       //   params = params.set('accounts', actuals.map((el) => el) + '');
     }
     if (filter.start) {
-      params = params.set(
-        'start',
-        formatDate(filter.start, DD_MM_YYYY_HH_MM_SS, 'ru-Ru'),
-      );
+      params = params.set('start', formatDate(filter.start, DD_MM_YYYY_HH_MM_SS, 'ru-Ru'));
     }
     if (filter.end) {
-      params = params.set(
-        'end',
-        formatDate(filter.end, DD_MM_YYYY_HH_MM_SS, 'ru-Ru'),
-      );
+      params = params.set('end', formatDate(filter.end, DD_MM_YYYY_HH_MM_SS, 'ru-Ru'));
     }
     if (filter.query) {
       params = params.set('query', filter.query);
@@ -79,10 +73,7 @@ export class PaymentDocumentsState {
   }
 
   @Action(GetDebtorPayments)
-  public getDebtorPayments(
-    { patchState }: StateContext<PaymentDocumentsStateModel>,
-    { payload }: GetDebtorPayments,
-  ) {
+  public getDebtorPayments({ patchState }: StateContext<PaymentDocumentsStateModel>, { payload }: GetDebtorPayments) {
     if (payload.bank_detail_id?.length === 0) {
       patchState({
         items: [],
@@ -93,31 +84,26 @@ export class PaymentDocumentsState {
     }
     patchState({ loading: true });
 
-    return this.paymentSrv
-      .getDebtorsPayments(PaymentDocumentsState.getHttpParams(payload))
-      .pipe(
-        tap(({ payments, count }) => {
-          patchState({
-            selected: null,
-            items: payments,
-            count,
-          });
-        }),
-        catchError((err) => {
-          console.error(err);
-          return throwError(() => err);
-        }),
-        finalize(() => {
-          patchState({ loading: false });
-        }),
-      );
+    return this.paymentSrv.getDebtorsPayments(PaymentDocumentsState.getHttpParams(payload)).pipe(
+      tap(({ payments, count }) => {
+        patchState({
+          selected: null,
+          items: payments,
+          count,
+        });
+      }),
+      catchError((err) => {
+        console.error(err);
+        return throwError(() => err);
+      }),
+      finalize(() => {
+        patchState({ loading: false });
+      }),
+    );
   }
 
   @Action(GetPayment)
-  public getItem(
-    { patchState }: StateContext<PaymentDocumentsStateModel>,
-    { payload }: GetPayment,
-  ) {
+  public getItem({ patchState }: StateContext<PaymentDocumentsStateModel>, { payload }: GetPayment) {
     patchState({ loading: true });
     if (payload) {
       return this.paymentSrv.getItem(payload).pipe(

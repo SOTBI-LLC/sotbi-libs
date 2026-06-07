@@ -17,26 +17,14 @@ export { ButtonRendererComponent } from './lib/button-renderer.component';
 export { CheckboxFilterComponent } from './lib/checkbox-filter.component';
 export { ColorEditorComponent } from './lib/color-editor.component';
 export { CustomHeaderComponent } from './lib/custom-header.component';
-export {
-  DatePickerEditor,
-  TimePickerEditor,
-} from './lib/date-picker-editor.component';
+export { DatePickerEditor, TimePickerEditor } from './lib/date-picker-editor.component';
 export { EmployeesListComponent } from './lib/employees-list';
 export { IMaskEdit } from './lib/imask-edit.component';
 export { LabelsAgGridComponent } from './lib/labels.component';
 export { LinkCellAgGridFootclothComponent } from './lib/link-cell-ag-grid-footcloth.component';
-export {
-  LinkCellAgGridComponent,
-  LinkCellComponent,
-} from './lib/link-cell-ag-grid.component';
-export {
-  NgSelectEditor,
-  ProjectAndDebtorSelectEditor,
-} from './lib/ng-select-editor.component';
-export {
-  NumericEditor,
-  SimpleNumericEditor,
-} from './lib/numeric-editor.component';
+export { LinkCellAgGridComponent, LinkCellComponent } from './lib/link-cell-ag-grid.component';
+export { NgSelectEditor, ProjectAndDebtorSelectEditor } from './lib/ng-select-editor.component';
+export { NumericEditor, SimpleNumericEditor } from './lib/numeric-editor.component';
 export { PostAddresGridComponent } from './lib/post-addres-grid.component';
 export { RequestStatusComponent } from './lib/request-status.component';
 export { RightSideBarAgGridComponent } from './lib/right-side-bar.component';

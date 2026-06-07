@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   standalone: true,
   imports: [NativeDateValueAccessorDirective, FormsModule],
-  template: `<input type="date" nativeDate [(ngModel)]="dateValue">`,
+  template: `<input type="date" nativeDate [(ngModel)]="dateValue" />`,
 })
 class TestComponent {
   public dateValue: Date | null = null;

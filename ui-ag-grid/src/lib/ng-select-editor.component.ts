@@ -1,11 +1,7 @@
 import { NgStyle } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  NgLabelTemplateDirective,
-  NgOptionTemplateDirective,
-  NgSelectComponent,
-} from '@ng-select/ng-select';
+import { NgLabelTemplateDirective, NgOptionTemplateDirective, NgSelectComponent } from '@ng-select/ng-select';
 import type { ICellEditorAngularComp } from 'ag-grid-angular';
 import type { GridApi, ICellEditorParams } from 'ag-grid-community';
 import { UserWithAvatarComponent } from './user-with-avatar.component';
@@ -46,10 +42,7 @@ import { UserWithAvatarComponent } from './user-with-avatar.component';
   `,
   styles: [
     `
-      ::ng-deep
-        ng-dropdown-panel.ng-dropdown-panel
-        .ng-dropdown-panel-items
-        div.ng-option {
+      ::ng-deep ng-dropdown-panel.ng-dropdown-panel .ng-dropdown-panel-items div.ng-option {
         white-space: pre;
         cursor: pointer;
       }
@@ -76,15 +69,9 @@ export class ProjectAndDebtorSelectEditor<T> implements ICellEditorAngularComp {
     this.value = params.value;
   }
 
-  protected customSearchFn(
-    term: string,
-    item: { name: string; project_name: string },
-  ) {
+  protected customSearchFn(term: string, item: { name: string; project_name: string }) {
     term = term.toLowerCase();
-    return (
-      item.name.toLowerCase().indexOf(term) > -1 ||
-      item.project_name?.toLowerCase().indexOf(term) > -1
-    );
+    return item.name.toLowerCase().indexOf(term) > -1 || item.project_name?.toLowerCase().indexOf(term) > -1;
   }
 
   public getValue(): number {
@@ -113,24 +100,14 @@ export class ProjectAndDebtorSelectEditor<T> implements ICellEditorAngularComp {
     >
       @if (isUserWithAvatar; as item) {
         <ng-template ng-label-tmp let-item="item">
-          <user-with-avatar
-            [user]="item.user"
-            [avatar]="item.avatar"
-            size="1rem"
-          />
+          <user-with-avatar [user]="item.user" [avatar]="item.avatar" size="1rem" />
         </ng-template>
       }
     </ng-select>
   `,
   styles: [``],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    NgSelectComponent,
-    FormsModule,
-    NgStyle,
-    NgLabelTemplateDirective,
-    UserWithAvatarComponent,
-  ],
+  imports: [NgSelectComponent, FormsModule, NgStyle, NgLabelTemplateDirective, UserWithAvatarComponent],
 })
 export class NgSelectEditor<T> implements ICellEditorAngularComp {
   protected items: T[] = [];
@@ -177,7 +154,7 @@ export class NgSelectEditor<T> implements ICellEditorAngularComp {
     if (this.api) {
       this.api.stopEditing(false);
     }
-	}
+  };
 
   protected onChange() {
     if (this.api) {

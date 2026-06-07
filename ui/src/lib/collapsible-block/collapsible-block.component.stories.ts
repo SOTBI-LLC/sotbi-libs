@@ -2,10 +2,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import type { Meta, StoryObj } from '@storybook/angular';
 import { applicationConfig } from '@storybook/angular';
 
-import {
-  CollapsibleBlockComponent,
-  CollapsibleBlockModel,
-} from './collapsible-block.component';
+import { CollapsibleBlockComponent, CollapsibleBlockModel } from './collapsible-block.component';
 
 const meta: Meta<CollapsibleBlockComponent> = {
   title: 'CollapsibleBlock',

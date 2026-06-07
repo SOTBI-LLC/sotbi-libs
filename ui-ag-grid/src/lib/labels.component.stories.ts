@@ -1,11 +1,5 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  ViewChild,
-  ViewContainerRef,
-} from '@angular/core';
+import type { AfterViewInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewChild, ViewContainerRef } from '@angular/core';
 import type { Meta, StoryObj } from '@storybook/angular';
 import type { ICellRendererParams } from 'ag-grid-community';
 

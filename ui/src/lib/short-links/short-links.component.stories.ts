@@ -1,10 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import {
-  FormArray,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { ShortLinksComponent } from './short-links.component';
 
@@ -13,10 +8,7 @@ type ShortLinksForm = FormGroup<{
   url: FormControl<string | null>;
 }>;
 
-function createShortLinkForm(
-  name: string | null,
-  url: string | null,
-): ShortLinksForm {
+function createShortLinkForm(name: string | null, url: string | null): ShortLinksForm {
   return new FormGroup({
     name: new FormControl(name),
     url: new FormControl(url, [Validators.required]),
@@ -60,9 +52,7 @@ export const Default: Story = {
 
 export const SingleLink: Story = {
   args: {
-    shortLinks: createShortLinksFormArray([
-      { name: 'Сайт', url: 'https://sotbi.ru' },
-    ]),
+    shortLinks: createShortLinksFormArray([{ name: 'Сайт', url: 'https://sotbi.ru' }]),
   },
 };
 

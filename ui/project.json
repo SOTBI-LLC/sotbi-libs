@@ -60,10 +60,7 @@
         "browser": "ui/.storybook/storybook-bootstrap.ts",
         "polyfills": ["zone.js"],
         "tsConfig": "ui/.storybook/tsconfig.json",
-        "styles": [
-          "node_modules/@progress/kendo-theme-default/dist/all.css",
-          "ui/styles.css"
-        ],
+        "styles": ["node_modules/@progress/kendo-theme-default/dist/all.css", "ui/styles.css"],
         "scripts": []
       }
     },
@@ -100,10 +97,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}",
-        "{workspaceRoot}/test-results"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}", "{workspaceRoot}/test-results"],
       "options": {
         "jestConfig": "{projectRoot}/jest.config.ts"
       },

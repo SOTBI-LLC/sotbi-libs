@@ -1,36 +1,13 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  effect,
-  input,
-  output,
-  signal,
-} from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
-import {
-  BeetwenType,
-  PaymentsFilter,
-  type ActualAccount,
-  type Label,
-} from '@sotbi/models';
+import { BeetwenType, PaymentsFilter, type ActualAccount, type Label } from '@sotbi/models';
 import { deepEqual } from '@sotbi/utils';
 import { NativeDateValueAccessorDirective } from '../native-date/native-date.directive';
 
 @Component({
   selector: 'payments-filter',
-  imports: [
-    FormsModule,
-    NgSelectModule,
-    ReactiveFormsModule,
-    NativeDateValueAccessorDirective,
-  ],
+  imports: [FormsModule, NgSelectModule, ReactiveFormsModule, NativeDateValueAccessorDirective],
   templateUrl: './payments-filter.component.html',
   styleUrl: './payments-filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,9 +23,7 @@ export class PaymentsFilterComponent {
   protected readonly filterForm = new FormGroup({
     start: new FormControl<Date>(new Date(), [Validators.required]),
     end: new FormControl<Date>(new Date(), [Validators.required]),
-    between: new FormControl<BeetwenType>(BeetwenType.TODAY, [
-      Validators.required,
-    ]),
+    between: new FormControl<BeetwenType>(BeetwenType.TODAY, [Validators.required]),
     label_id: new FormControl<number[] | null>(null),
     bank_detail_id: new FormControl<number[] | null>(null),
   });
@@ -59,6 +34,9 @@ export class PaymentsFilterComponent {
     // Sync external filter input to internal filter, but avoid circular updates
     effect(() => {
       const externalFilter = this.filter();
+      if (!externalFilter) {
+        return;
+      }
 
       // Only update if the external filter is actually different
       const current = this.filterForm.value;
@@ -103,11 +81,7 @@ export class PaymentsFilterComponent {
     switch (value as BeetwenType) {
       case BeetwenType.CURR_WEEK:
         filter.start = new Date();
-        filter.start.setDate(
-          filter.start.getDate() -
-            filter.start.getDay() +
-            (filter.start.getDay() === 0 ? -6 : 1),
-        );
+        filter.start.setDate(filter.start.getDate() - filter.start.getDay() + (filter.start.getDay() === 0 ? -6 : 1));
         filter.end = new Date();
         break;
       case BeetwenType.LAST_7DAYS:

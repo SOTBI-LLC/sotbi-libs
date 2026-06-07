@@ -6,13 +6,13 @@ todos:
     content: Add tailwindcss v4 + @tailwindcss/postcss to devDeps; create ui/src/styles.css and ui-ag-grid/src/styles.css with @import tailwindcss and @layer components (btn/table/label/is-error/spinner/form classes); wire Tailwind CLI build into each lib's package output and expose via package.json exports
     status: completed
   - id: ui-payments-filter
-    content: "Rewrite payments-filter: drop ClarityModule, native <select>, kendo-datepicker for both dates (DateInputsModule), Tailwind grid replacing clr-row/clr-col"
+    content: 'Rewrite payments-filter: drop ClarityModule, native <select>, kendo-datepicker for both dates (DateInputsModule), Tailwind grid replacing clr-row/clr-col'
     status: completed
   - id: ui-links-shortlinks
-    content: "Rewrite links + short-links: native inputs replacing clr-input-container/clrInput, Heroicon SVGs replacing clr-icon (pencil/check/trash/floppy), drop ClarityModule, update SCSS"
+    content: 'Rewrite links + short-links: native inputs replacing clr-input-container/clrInput, Heroicon SVGs replacing clr-icon (pencil/check/trash/floppy), drop ClarityModule, update SCSS'
     status: completed
   - id: ui-filter-search
-    content: "Rewrite filter-search: native checkbox + input replacing clr-checkbox-wrapper/clr-input-container, Heroicon search icon, drop ClarityModule, update SCSS"
+    content: 'Rewrite filter-search: native checkbox + input replacing clr-checkbox-wrapper/clr-input-container, Heroicon search icon, drop ClarityModule, update SCSS'
     status: completed
   - id: ui-misc
     content: payment-form STYLE string clr-icon rule removal; dialog-can-deactivate SCSS clr-icon selector update; verify collapsible-block btn classes covered
@@ -95,7 +95,7 @@ flowchart LR
 
 - Remove `@clr/angular` and `@clr/ui` from dependencies in [package.json](package.json).
 - Remove `@clr/angular` from peerDependencies in [ui/package.json](ui/package.json).
-- Delete the Jest mock [ui/src/__mocks__/clr-angular.mock.ts](ui/src/__mocks__/clr-angular.mock.ts) and the `^@clr/angular$` `moduleNameMapper` entry in [ui/jest.config.ts](ui/jest.config.ts) and [ui-ag-grid/jest.config.ts](ui-ag-grid/jest.config.ts).
+- Delete the Jest mock [ui/src/**mocks**/clr-angular.mock.ts](ui/src/__mocks__/clr-angular.mock.ts) and the `^@clr/angular$` `moduleNameMapper` entry in [ui/jest.config.ts](ui/jest.config.ts) and [ui-ag-grid/jest.config.ts](ui-ag-grid/jest.config.ts).
 - Grep to confirm zero remaining `@clr/`, `clr-`, `clrInput`, `clrDate`, `ClarityModule` references.
 
 ### 5. Verify
