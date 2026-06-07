@@ -1,5 +1,5 @@
-<div class="flex" style="align-items: baseline">
-  <div class="clr-control-label" style="width: 50%">
+<div class="short-links__header flex" style="align-items: baseline">
+  <div class="short-links__label" style="width: 50%">
     <button
       class="btn btn-sm btn-outline"
       (click)="createLink()"
@@ -8,29 +8,37 @@
       Добавить</button
     ><span>Имя</span>
   </div>
-  <div class="clr-control-label">Ссылка</div>
+  <div class="short-links__label">Ссылка</div>
 </div>
 @for (item of shortLinks().controls; track item; let i = $index) {
   <form [formGroup]="item" class="flex short-links">
-    <clr-input-container class="br w-100">
-      <input clrInput type="text" formControlName="name" />
-    </clr-input-container>
-    <clr-input-container class="br w-100">
-      <input
-        clrInput
-        type="text"
-        placeholder="URI"
-        required
-        formControlName="url"
-      />
-    </clr-input-container>
+    <input class="form-control br w-100" type="text" formControlName="name" />
+    <input
+      class="form-control br w-100"
+      type="text"
+      placeholder="URI"
+      required
+      formControlName="url"
+    />
     <button
       type="button"
       (click)="onRemoveLink(i)"
       class="btn btn-icon btn-sm btn-link"
-      aria-label="trash"
+      aria-label="Удалить ссылку"
     >
-      <clr-icon shape="trash" class="is-error"></clr-icon>
+      <svg
+        class="short-links__icon is-error"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 0 0-.23 1.482l.149.022.841 9.519A2.75 2.75 0 0 0 7.597 18h4.806a2.75 2.75 0 0 0 2.742-2.53l.841-9.52.149-.023a.75.75 0 0 0-.23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c-.84 0-1.673.025-2.5.075V3.75c0-.69.56-1.25 1.25-1.25h2.5c.69 0 1.25.56 1.25 1.25v.325C11.673 4.025 10.84 4 10 4Zm3 5.25a.75.75 0 0 0-1.5 0v4.5a.75.75 0 0 0 1.5 0v-4.5Zm-3 0a.75.75 0 0 0-1.5 0v4.5a.75.75 0 0 0 1.5 0v-4.5Zm-3 0a.75.75 0 0 0-1.5 0v4.5a.75.75 0 0 0 1.5 0v-4.5Z"
+          clip-rule="evenodd"
+        />
+      </svg>
     </button>
   </form>
 }

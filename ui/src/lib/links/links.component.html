@@ -27,8 +27,12 @@
               </span>
             }
             @if (canEdit(item)) {
-              <div>
-                <select [(ngModel)]="item.type_id" [disabled]="isDisabled()">
+              <div class="clr-select-wrapper">
+                <select
+                  class="form-control links-wrap__field-control"
+                  [(ngModel)]="item.type_id"
+                  [disabled]="isDisabled()"
+                >
                   @for (linkType of links(); track linkType.id) {
                     <option [ngValue]="linkType.id">
                       {{ linkType.name }}
@@ -46,7 +50,7 @@
               'links-wrap__uri-text': !canEdit(item),
             }"
           >
-            <clr-input-container class="subnav_select">
+            <div class="subnav_select">
               @if (!canEdit(item)) {
                 <span>
                   {{ item.uri }}
@@ -54,8 +58,7 @@
               }
               @if (canEdit(item)) {
                 <input
-                  clrInput
-                  style="height: 1rem !important"
+                  class="form-control links-wrap__field-control"
                   type="text"
                   placeholder="URI"
                   [(ngModel)]="item.uri"
@@ -63,15 +66,51 @@
                   required
                 />
               }
-            </clr-input-container>
+            </div>
           </td>
           @if (!isEditMode()) {
             <td class="width--ctrl cell--ptopX">
               @if (!canEdit(item)) {
-                <clr-icon (click)="onTryEdit(item)" shape="pencil"></clr-icon>
+                <button
+                  type="button"
+                  class="links-wrap__icon-btn"
+                  title="Редактировать"
+                  (click)="onTryEdit(item)"
+                >
+                  <svg
+                    class="links-wrap__icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="m13.586 3.586 2.828 2.828a.75.75 0 0 1 0 1.06l-8.586 8.586a2 2 0 0 1-1.061.53l-2.828.707.707-2.828a2 2 0 0 1 .53-1.061l8.586-8.586a.75.75 0 0 1 1.06 0Z"
+                    />
+                  </svg>
+                </button>
               }
               @if (canEdit(item)) {
-                <clr-icon (click)="onSave()" shape="check"></clr-icon>
+                <button
+                  type="button"
+                  class="links-wrap__icon-btn"
+                  title="Сохранить"
+                  (click)="onSave()"
+                >
+                  <svg
+                    class="links-wrap__icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 1 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
               }
             </td>
           }
@@ -81,7 +120,19 @@
               title="Удалить ссылку"
               (click)="del(item, i)"
             >
-              <clr-icon shape="trash"></clr-icon>
+              <svg
+                class="links-wrap__icon is-error"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 0 0-.23 1.482l.149.022.841 9.519A2.75 2.75 0 0 0 7.597 18h4.806a2.75 2.75 0 0 0 2.742-2.53l.841-9.52.149-.023a.75.75 0 0 0-.23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c-.84 0-1.673.025-2.5.075V3.75c0-.69.56-1.25 1.25-1.25h2.5c.69 0 1.25.56 1.25 1.25v.325C11.673 4.025 10.84 4 10 4Zm3 5.25a.75.75 0 0 0-1.5 0v4.5a.75.75 0 0 0 1.5 0v-4.5Zm-3 0a.75.75 0 0 0-1.5 0v4.5a.75.75 0 0 0 1.5 0v-4.5Zm-3 0a.75.75 0 0 0-1.5 0v4.5a.75.75 0 0 0 1.5 0v-4.5Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
             </button>
           </td>
         </tr>
@@ -94,6 +145,7 @@
             <select
               id="type_id"
               name="type_id"
+              class="form-control links-wrap__field-control"
               [(ngModel)]="create.type_id"
               [disabled]="isDisabled()"
             >
@@ -108,19 +160,36 @@
         </td>
         <!-- Ссылка -->
         <td class="width--type">
-          <clr-input-container class="subnav_select">
+          <div class="subnav_select">
             <input
-              clrInput
+              class="form-control links-wrap__field-control"
               type="text"
               placeholder="URI"
               [(ngModel)]="create.uri"
               [disabled]="isDisabled()"
               required
             />
-          </clr-input-container>
+          </div>
         </td>
-        <td class="cell--ptopX width--ctrl cursor-pointer">
-          <clr-icon (click)="add()" shape="floppy"></clr-icon>
+        <td class="width--ctrl">
+          <button
+            type="button"
+            class="links-wrap__icon-btn cursor-pointer"
+            title="Добавить"
+            (click)="add()"
+          >
+            <svg
+              class="links-wrap__icon"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M3 3.5A1.5 1.5 0 0 1 4.5 2h6.879a1.5 1.5 0 0 1 1.06.44l4.122 4.12A1.5 1.5 0 0 1 17 7.622V16.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 3 16.5v-13ZM4.5 3.5a.5.5 0 0 0-.5.5v13a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5V7.879a.5.5 0 0 0-.146-.353l-4.122-4.12A.5.5 0 0 0 11.378 3.5H4.5ZM8 8.75a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Zm0 3a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"
+              />
+            </svg>
+          </button>
         </td>
         @if (!isEditMode()) {
           <td>&nbsp;</td>
@@ -129,12 +198,13 @@
     </tbody>
   </table>
 } @else {
-  <div>
+  <div class="links-wrap__labels">
     @for (item of linkRefs(); track item) {
       <a
         [href]="item.uri"
         class="label clickable links-wrap__link"
         target="_blank"
+        rel="noopener"
       >
         {{ item.type?.name }}
       </a>

@@ -2,8 +2,17 @@
   width: 100%;
   display: block;
 }
-::ng-deep .short-links {
-  .clr-control-label {
-    display: none;
-  }
+
+.short-links__label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.5rem;
+  font-weight: 600;
+  line-height: 0.75rem;
+  color: #565656;
+}
+
+.short-links__icon {
+  width: 16px;
+  height: 16px;
 }

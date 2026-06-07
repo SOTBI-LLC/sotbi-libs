@@ -1,0 +1,117 @@
+@import 'tailwindcss';
+
+/* nx-tailwind-sources:start */
+@source "../../models";
+@source "../../utils";
+/* nx-tailwind-sources:end */
+
+@source './lib/**/*.{html,ts}';
+
+@layer components {
+  .ng-select {
+    padding-bottom: 0 !important;
+  }
+
+  .ng-select .ng-select-container {
+    position: relative;
+    align-items: center !important;
+    min-height: 1rem !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    color: #454545;
+  }
+
+  .ng-select.ng-select-single .ng-select-container {
+    height: 1rem !important;
+    max-height: 1rem !important;
+  }
+
+  .ng-select .ng-select-container::after {
+    display: block !important;
+    content: '' !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid #9a9a9a !important;
+    background: none !important;
+    pointer-events: none;
+  }
+
+  .ng-select.ng-select-focused .ng-select-container::after {
+    border-bottom-color: #0072a3 !important;
+  }
+
+  .ng-select .ng-select-container .ng-value-container {
+    align-items: center !important;
+    border-top: 0 !important;
+    padding: 0 0.25rem !important;
+  }
+
+  .ng-select .ng-select-container .ng-value-container .ng-value,
+  .ng-select .ng-select-container .ng-value-container .ng-placeholder,
+  .ng-select .ng-select-container .ng-value-container .ng-input > input {
+    font-size: 0.65rem !important;
+    line-height: 1rem !important;
+  }
+
+  .ng-select .ng-select-container .ng-value-container .ng-placeholder,
+  .ng-select.ng-select-focused .ng-select-container .ng-value-container .ng-placeholder,
+  .ng-select .ng-has-value .ng-placeholder {
+    position: static !important;
+    transform: none !important;
+  }
+
+  .ng-select .ng-clear-wrapper {
+    align-self: center !important;
+    top: auto !important;
+    bottom: auto !important;
+    height: 1rem !important;
+  }
+
+  .ng-select .ng-arrow-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    align-self: center !important;
+    top: auto !important;
+    bottom: auto !important;
+    width: 0.8125rem !important;
+    min-width: 0.8125rem;
+    height: 1rem !important;
+    padding: 0 !important;
+  }
+
+  .ng-select .ng-arrow-wrapper .ng-arrow {
+    border: 0 !important;
+    border-color: transparent !important;
+    width: 0.8125rem !important;
+    height: 0.8125rem !important;
+    min-width: 0.8125rem !important;
+    min-height: 0.8125rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-block !important;
+    color: transparent !important;
+    background: transparent !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%239a9a9a' stroke-width='1.65' stroke-linecap='round' stroke-linejoin='round' d='M2.25 4.75 6 8.25 9.75 4.75'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: contain !important;
+  }
+
+  .ng-select:hover .ng-arrow-wrapper .ng-arrow {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%23747474' stroke-width='1.65' stroke-linecap='round' stroke-linejoin='round' d='M2.25 4.75 6 8.25 9.75 4.75'/%3E%3C/svg%3E") !important;
+  }
+
+  .ng-select.ng-select-focused .ng-arrow-wrapper .ng-arrow {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%230072a3' stroke-width='1.65' stroke-linecap='round' stroke-linejoin='round' d='M2.25 4.75 6 8.25 9.75 4.75'/%3E%3C/svg%3E") !important;
+  }
+
+  .ng-select .ng-dropdown-panel.ng-select-bottom {
+    top: 100% !important;
+  }
+}

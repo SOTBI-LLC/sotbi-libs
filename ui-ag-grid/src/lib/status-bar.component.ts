@@ -59,7 +59,7 @@ export class AggregationStatusBarComponent implements OnDestroy {
         >&nbsp;строки&nbsp;внизу:&nbsp;
         <span class="ag-name-value-value">
           <input
-            class="clr-input"
+            class="form-control"
             type="number"
             id="count"
             #ctrl="ngModel"

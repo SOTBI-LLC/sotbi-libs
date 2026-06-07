@@ -2,7 +2,12 @@
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
-    "production": ["default"],
+    "production": [
+      "default",
+      "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
+      "!{projectRoot}/.storybook/**/*",
+      "!{projectRoot}/tsconfig.storybook.json"
+    ],
     "sharedGlobals": [],
     "eslint": [
       "{workspaceRoot}/eslint.config.mjs",
@@ -24,6 +29,17 @@
         }
       },
       "exclude": ["ui-ag-grid/**"]
+    },
+    {
+      "plugin": "@nx/storybook/plugin",
+      "options": {
+        "serveStorybookTargetName": "storybook",
+        "buildStorybookTargetName": "build-storybook",
+        "testStorybookTargetName": "test-storybook",
+        "staticStorybookTargetName": "static-storybook",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps"
+      }
     }
   ],
   "targetDefaults": {
@@ -32,6 +48,9 @@
     },
     "test": {
       "inputs": ["default", "^production"],
+      "cache": true
+    },
+    "build-storybook": {
       "cache": true
     }
   },

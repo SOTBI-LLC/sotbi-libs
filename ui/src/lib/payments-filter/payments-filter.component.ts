@@ -6,130 +6,101 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ClarityModule } from '@clr/angular';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
-import type {
-  ActualAccount,
-  IPaymentDocumentFilter,
-  Label,
+import {
+  BeetwenType,
+  PaymentsFilter,
+  type ActualAccount,
+  type Label,
 } from '@sotbi/models';
-
-export enum BeetwenType {
-  TODAY = 1,
-  CURR_WEEK,
-  LAST_7DAYS,
-  CURR_MONTH,
-  LAST_MONTH,
-  CUSTOM,
-}
+import { deepEqual } from '@sotbi/utils';
+import { NativeDateValueAccessorDirective } from '../native-date/native-date.directive';
 
 @Component({
   selector: 'payments-filter',
-  imports: [ClarityModule, FormsModule, NgSelectModule],
+  imports: [
+    FormsModule,
+    NgSelectModule,
+    ReactiveFormsModule,
+    NativeDateValueAccessorDirective,
+  ],
   templateUrl: './payments-filter.component.html',
   styleUrl: './payments-filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaymentsFilterComponent {
-  public readonly filterEvent = output<Partial<IPaymentDocumentFilter>>();
+  public readonly filterEvent = output<PaymentsFilter>();
 
-  public readonly filter = input<Partial<IPaymentDocumentFilter>>({
-    start: new Date(),
-    end: new Date(),
-    between: BeetwenType.TODAY,
-  });
+  public readonly filter = input<PaymentsFilter>(new PaymentsFilter());
 
   public readonly actuals = input<ActualAccount[]>([]);
   public readonly labels = input<Label[]>([]);
 
-  protected readonly internalFilter = signal<Partial<IPaymentDocumentFilter>>({
-    start: new Date(),
-    end: new Date(),
-    between: BeetwenType.TODAY,
+  protected readonly filterForm = new FormGroup({
+    start: new FormControl<Date>(new Date(), [Validators.required]),
+    end: new FormControl<Date>(new Date(), [Validators.required]),
+    between: new FormControl<BeetwenType>(BeetwenType.TODAY, [
+      Validators.required,
+    ]),
+    label_id: new FormControl<number[] | null>(null),
+    bank_detail_id: new FormControl<number[] | null>(null),
   });
-
   protected readonly between = signal<BeetwenType>(BeetwenType.TODAY);
-
-  private isInternalUpdate = false;
   protected readonly beetwenType = BeetwenType;
 
   constructor() {
     // Sync external filter input to internal filter, but avoid circular updates
     effect(() => {
       const externalFilter = this.filter();
-      if (!externalFilter || this.isInternalUpdate) {
-        return;
-      }
 
       // Only update if the external filter is actually different
-      const current = this.internalFilter();
-      if (JSON.stringify(current) !== JSON.stringify(externalFilter)) {
-        this.internalFilter.set({ ...externalFilter });
+      const current = this.filterForm.value;
+      if (!deepEqual(current, externalFilter)) {
+        this.filterForm.patchValue(externalFilter);
+        if (externalFilter.between != null) {
+          this.between.set(externalFilter.between);
+        }
       }
     });
   }
 
   protected onLabelIDChanged(items: Label[]): void {
-    this.updateFilter({ label_id: items.map((el: Label) => el.id) });
+    this.filterForm.patchValue({ label_id: items.map((el: Label) => el.id) });
+    this.filterEvent.emit(this.filterForm.value as PaymentsFilter);
   }
 
   protected onBankDetailIDChanged(items: ActualAccount[]): void {
-    this.updateFilter({
+    this.filterForm.patchValue({
       bank_detail_id: items.map((el: ActualAccount) => el.id ?? 0) ?? [],
     });
+    this.filterEvent.emit(this.filterForm.value as PaymentsFilter);
   }
 
   protected onBankDetailIDClear(): void {
-    this.isInternalUpdate = true;
-    const updatedFilter = { ...this.internalFilter() };
-    delete updatedFilter.bank_detail_id;
-    this.internalFilter.set(updatedFilter);
-    this.filterEvent.emit(this.internalFilter());
-    Promise.resolve().then(() => {
-      this.isInternalUpdate = false;
-    });
+    this.filterForm.patchValue({ bank_detail_id: null });
+    this.filterEvent.emit(this.filterForm.value as PaymentsFilter);
   }
 
   protected onLabelIDClear(): void {
-    this.isInternalUpdate = true;
-    const updatedFilter = { ...this.internalFilter() };
-    delete updatedFilter.label_id;
-    this.internalFilter.set(updatedFilter);
-    this.filterEvent.emit(this.internalFilter());
-    Promise.resolve().then(() => {
-      this.isInternalUpdate = false;
-    });
+    this.filterForm.patchValue({ label_id: null });
+    this.filterEvent.emit(this.filterForm.value as PaymentsFilter);
   }
 
-  protected dateStartChange(value: Date) {
-    this.updateFilter({ start: value });
+  protected onCustomDateChange(): void {
+    this.filterEvent.emit(this.filterForm.value as PaymentsFilter);
   }
 
-  protected dateEndChange(value: Date) {
-    this.updateFilter({ end: value });
-  }
-
-  private updateFilter(partialFilter: Partial<IPaymentDocumentFilter>): void {
-    // Mark this as an internal update to prevent the effect from triggering
-    this.isInternalUpdate = true;
-
-    this.internalFilter.set({ ...this.internalFilter(), ...partialFilter });
-    this.filterEvent.emit(this.internalFilter());
-
-    // Reset the flag after a microtask to allow the effect to run again
-    Promise.resolve().then(() => {
-      this.isInternalUpdate = false;
-    });
-  }
-
-  protected filterByDateBetween(value: number) {
-    const filter: Partial<IPaymentDocumentFilter> = {};
-    switch (value) {
-      case BeetwenType.TODAY:
-        filter.start = new Date();
-        filter.end = new Date();
-        break;
+  protected filterByDateBetween(value: BeetwenType) {
+    this.between.set(value);
+    const filter = new PaymentsFilter();
+    switch (value as BeetwenType) {
       case BeetwenType.CURR_WEEK:
         filter.start = new Date();
         filter.start.setDate(
@@ -154,12 +125,8 @@ export class PaymentsFilterComponent {
         filter.start.setMonth(filter.start.getMonth() - 1);
         filter.end = new Date();
         break;
-      case BeetwenType.CUSTOM:
-      default:
-        filter.start = new Date();
-        filter.end = new Date();
-        break;
     }
-    this.updateFilter(filter);
+    this.filterForm.patchValue({ start: filter.start, end: filter.end });
+    this.filterEvent.emit(this.filterForm.value as PaymentsFilter);
   }
 }

@@ -2,6 +2,8 @@
 
 # compiled output
 dist
+ui/styles.css
+ui-ag-grid/styles.css
 tmp
 out-tsc
 
@@ -52,3 +54,8 @@ Thumbs.db
 .claude/worktrees
 .claude/settings.local.json
 .serena/
+
+
+storybook-static
+dist/storybook
+dist/storybook-browser

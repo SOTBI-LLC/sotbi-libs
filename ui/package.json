@@ -10,6 +10,9 @@
     "url": "https://github.com/SOTBI-LLC/sotbi-libs.git",
     "directory": "ui"
   },
+  "exports": {
+    "./styles.css": "./styles.css"
+  },
   "peerDependencies": {
     "@sotbi/models": "0.0.40",
     "@sotbi/utils": "0.0.42",
@@ -19,9 +22,13 @@
     "@angular/animations": "^21.2.11",
     "@angular/common": "^21.2.11",
     "@angular/material": "^21.2.10",
-    "@clr/angular": "18.0.0",
     "@ng-select/ng-select": "^21.8.2",
-    "jest-preset-angular": "^16.1.4"
+    "jest-preset-angular": "^16.1.4",
+    "@storybook/angular": "^10.4.1",
+    "@angular/platform-browser": "^21.2.13",
+    "storybook": "^10.4.1"
   },
-  "sideEffects": false
+  "sideEffects": [
+    "*.css"
+  ]
 }

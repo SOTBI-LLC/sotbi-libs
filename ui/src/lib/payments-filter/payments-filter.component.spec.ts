@@ -6,10 +6,8 @@ import type {
   IPaymentDocumentFilter,
   Label,
 } from '@sotbi/models';
-import {
-  BeetwenType,
-  PaymentsFilterComponent,
-} from './payments-filter.component';
+import { BeetwenType } from '@sotbi/models';
+import { PaymentsFilterComponent } from './payments-filter.component';
 
 describe('PaymentsFilterComponent', () => {
   let component: PaymentsFilterComponent;
@@ -43,7 +41,7 @@ describe('PaymentsFilterComponent', () => {
   };
 
   beforeEach(async () => {
-    // Override template to avoid complex Clarity/ng-select dependencies
+    // Override template to avoid ng-select / Kendo datepicker dependencies
     TestBed.overrideComponent(PaymentsFilterComponent, {
       set: {
         template: `
@@ -134,10 +132,7 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      callProtectedMethod(component, 'onLabelIDChanged', [
-        mockLabels[0],
-        mockLabels[1],
-      ]);
+      callProtectedMethod(component, 'onLabelIdsModelChange', [1, 2]);
 
       expect(emittedFilters.length).toBe(1);
       expect(emittedFilters[0].label_id).toEqual([1, 2]);
@@ -151,7 +146,7 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      callProtectedMethod(component, 'onBankDetailIDChanged', [mockActuals[0]]);
+      callProtectedMethod(component, 'onBankDetailIdsModelChange', [1]);
 
       expect(emittedFilters.length).toBe(1);
       expect(emittedFilters[0].bank_detail_id).toEqual([1]);
@@ -204,16 +199,31 @@ describe('PaymentsFilterComponent', () => {
     });
   });
 
-  describe('between signal', () => {
-    it('should initialize with TODAY', () => {
+  describe('showCustomDateRange', () => {
+    it('should be false for TODAY', () => {
       fixture.detectChanges();
 
-      const between = getPrivateProp<() => BeetwenType>(component, 'between')();
-      expect(between).toBe(BeetwenType.TODAY);
+      const showCustom = getPrivateProp<() => boolean>(
+        component,
+        'showCustomDateRange',
+      )();
+      expect(showCustom).toBe(false);
+    });
+
+    it('should be true when between is CUSTOM as string from native select', () => {
+      fixture.detectChanges();
+
+      callProtectedMethod(component, 'onBetweenChange', '6');
+
+      const showCustom = getPrivateProp<() => boolean>(
+        component,
+        'showCustomDateRange',
+      )();
+      expect(showCustom).toBe(true);
     });
   });
 
-  describe('onLabelIDChanged', () => {
+  describe('onLabelIdsModelChange', () => {
     it('should update filter with selected label ids', () => {
       fixture.detectChanges();
       const emittedFilters: Partial<IPaymentDocumentFilter>[] = [];
@@ -222,12 +232,12 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      callProtectedMethod(component, 'onLabelIDChanged', mockLabels);
+      callProtectedMethod(component, 'onLabelIdsModelChange', [1, 2, 3]);
 
       expect(emittedFilters[0].label_id).toEqual([1, 2, 3]);
     });
 
-    it('should emit empty array when no labels selected', () => {
+    it('should clear label_id when no labels selected', () => {
       fixture.detectChanges();
       const emittedFilters: Partial<IPaymentDocumentFilter>[] = [];
 
@@ -235,13 +245,13 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      callProtectedMethod(component, 'onLabelIDChanged', []);
+      callProtectedMethod(component, 'onLabelIdsModelChange', []);
 
-      expect(emittedFilters[0].label_id).toEqual([]);
+      expect(emittedFilters[0].label_id).toBeUndefined();
     });
   });
 
-  describe('onBankDetailIDChanged', () => {
+  describe('onBankDetailIdsModelChange', () => {
     it('should update filter with selected bank detail ids', () => {
       fixture.detectChanges();
       const emittedFilters: Partial<IPaymentDocumentFilter>[] = [];
@@ -250,7 +260,7 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      callProtectedMethod(component, 'onBankDetailIDChanged', mockActuals);
+      callProtectedMethod(component, 'onBankDetailIdsModelChange', [1, 2, 3]);
 
       expect(emittedFilters[0].bank_detail_id).toEqual([1, 2, 3]);
     });
@@ -263,7 +273,7 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      callProtectedMethod(component, 'onBankDetailIDChanged', [mockActuals[1]]);
+      callProtectedMethod(component, 'onBankDetailIdsModelChange', [2]);
 
       expect(emittedFilters[0].bank_detail_id).toEqual([2]);
     });
@@ -274,7 +284,7 @@ describe('PaymentsFilterComponent', () => {
       fixture.detectChanges();
 
       // First set bank detail
-      callProtectedMethod(component, 'onBankDetailIDChanged', mockActuals);
+      callProtectedMethod(component, 'onBankDetailIdsModelChange', [1, 2, 3]);
 
       const emittedFilters: Partial<IPaymentDocumentFilter>[] = [];
       component.filterEvent.subscribe((filter) => {
@@ -293,7 +303,7 @@ describe('PaymentsFilterComponent', () => {
       fixture.detectChanges();
 
       // First set labels
-      callProtectedMethod(component, 'onLabelIDChanged', mockLabels);
+      callProtectedMethod(component, 'onLabelIdsModelChange', [1, 2, 3]);
 
       const emittedFilters: Partial<IPaymentDocumentFilter>[] = [];
       component.filterEvent.subscribe((filter) => {
@@ -465,7 +475,7 @@ describe('PaymentsFilterComponent', () => {
       expect(emittedFilters[0].end?.toDateString()).toBe(today.toDateString());
     });
 
-    it('should handle unknown type with default dates', () => {
+    it('should coerce unknown type to TODAY with default dates', () => {
       fixture.detectChanges();
       const emittedFilters: Partial<IPaymentDocumentFilter>[] = [];
 
@@ -475,6 +485,7 @@ describe('PaymentsFilterComponent', () => {
 
       callProtectedMethod(component, 'filterByDateBetween', 999);
 
+      expect(emittedFilters[0].between).toBe(BeetwenType.TODAY);
       const today = new Date();
       expect(emittedFilters[0].start?.toDateString()).toBe(
         today.toDateString(),
@@ -546,8 +557,8 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push({ ...filter });
       });
 
-      callProtectedMethod(component, 'onLabelIDChanged', [mockLabels[0]]);
-      callProtectedMethod(component, 'onBankDetailIDChanged', [mockActuals[0]]);
+      callProtectedMethod(component, 'onLabelIdsModelChange', [1]);
+      callProtectedMethod(component, 'onBankDetailIdsModelChange', [1]);
       callProtectedMethod(component, 'dateStartChange', new Date('2024-01-01'));
 
       expect(emittedFilters.length).toBe(3);

@@ -13,8 +13,23 @@
   },
   "tags": [],
   "targets": {
+    "build-styles": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/styles.css",
+        "{workspaceRoot}/ui/src/sotbi-component-layer.css",
+        "{projectRoot}/src/**/*.{html,ts}"
+      ],
+      "outputs": ["{projectRoot}/styles.css"],
+      "options": {
+        "command": "npx @tailwindcss/cli -i src/styles.css -o styles.css --minify",
+        "cwd": "{projectRoot}"
+      }
+    },
     "build": {
       "executor": "@nx/angular:package",
+      "dependsOn": ["build-styles"],
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
         "project": "ui-ag-grid/ng-package.json",
@@ -36,6 +51,52 @@
     "lint": {
       "executor": "@nx/eslint:lint"
     },
+    "storybook-browser": {
+      "executor": "@angular-devkit/build-angular:application",
+      "options": {
+        "outputPath": "dist/storybook-browser/ui-ag-grid",
+        "index": "ui-ag-grid/.storybook/index.html",
+        "browser": "ui-ag-grid/.storybook/storybook-bootstrap.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "ui-ag-grid/.storybook/tsconfig.json",
+        "styles": [
+          "node_modules/@progress/kendo-theme-default/dist/all.css",
+          "ui-ag-grid/styles.css"
+        ],
+        "scripts": []
+      }
+    },
+    "storybook": {
+      "dependsOn": ["build-styles", "ui:build-styles"],
+      "executor": "@storybook/angular:start-storybook",
+      "options": {
+        "port": 4401,
+        "configDir": "ui-ag-grid/.storybook",
+        "browserTarget": "ui-ag-grid:storybook-browser",
+        "compodoc": false
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "dependsOn": ["build-styles", "ui:build-styles"],
+      "executor": "@storybook/angular:build-storybook",
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "outputDir": "dist/storybook/ui-ag-grid",
+        "configDir": "ui-ag-grid/.storybook",
+        "browserTarget": "ui-ag-grid:storybook-browser",
+        "compodoc": false
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": [
@@ -49,6 +110,20 @@
         "ci": {
           "ci": true,
           "codeCoverage": true
+        }
+      }
+    },
+    "static-storybook": {
+      "executor": "@nx/web:file-server",
+      "dependsOn": ["build-storybook"],
+      "options": {
+        "buildTarget": "ui-ag-grid:build-storybook",
+        "staticFilePath": "dist/storybook/ui-ag-grid",
+        "spa": true
+      },
+      "configurations": {
+        "ci": {
+          "buildTarget": "ui-ag-grid:build-storybook:ci"
         }
       }
     }

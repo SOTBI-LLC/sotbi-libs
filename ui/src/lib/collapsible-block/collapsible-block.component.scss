@@ -70,9 +70,15 @@
     outline: none;
   }
 }
+.btn-section-toggle__title {
+  margin-left: 10px;
+}
 .btn-section-toggle__btn-edit {
-  width: 12px;
-  height: 12px;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
   margin: 0;
   margin-left: 10px;
   padding: 0 5px;
@@ -85,8 +91,15 @@
     opacity: 1;
   }
 }
+.btn-section-toggle__edit-icon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
 .btn-section-toggle__roll-up-wrap {
   margin-left: auto;
+  display: flex;
+  align-items: center;
   svg {
     fill: black;
   }

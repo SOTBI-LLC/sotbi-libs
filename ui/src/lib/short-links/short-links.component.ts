@@ -7,8 +7,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ClarityModule } from '@clr/angular';
-
 type shortLinksForm = FormGroup<{
   name: FormControl<string | null>;
   url: FormControl<string | null>;
@@ -16,7 +14,7 @@ type shortLinksForm = FormGroup<{
 
 @Component({
   selector: 'app-short-links-wrap',
-  imports: [FormsModule, ReactiveFormsModule, ClarityModule],
+  imports: [FormsModule, ReactiveFormsModule],
   templateUrl: './short-links.component.html',
   styleUrls: ['./short-links.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

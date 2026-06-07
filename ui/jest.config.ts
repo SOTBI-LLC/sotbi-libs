@@ -15,9 +15,6 @@ const config: Config = {
     ],
   },
   transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
-  moduleNameMapper: {
-    '^@clr/angular$': '<rootDir>/src/__mocks__/clr-angular.mock.ts',
-  },
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',
     'jest-preset-angular/build/serializers/ng-snapshot',

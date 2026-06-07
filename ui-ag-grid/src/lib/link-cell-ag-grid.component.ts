@@ -15,6 +15,9 @@ import type { ICellRendererParams } from 'ag-grid-community';
   `,
   styles: [
     `
+      :host {
+        display: flex;
+      }
       .link-cell-ag-grid__link:link {
         text-decoration: none;
         color: #0079b8;
@@ -29,6 +32,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
         vertical-align: middle;
         width: 1rem;
         height: 1rem;
+        margin-right: 5px;
         border-radius: 50%;
       }
     `,

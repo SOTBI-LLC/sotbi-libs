@@ -104,9 +104,10 @@ export class ProjectAndDebtorSelectEditor<T> implements ICellEditorAngularComp {
       [bindLabel]="bindName"
       [bindValue]="bindId"
       [(ngModel)]="value"
+      [selectOnTab]="addTag"
       notFoundText="Не найдено"
       appendTo="body"
-      [addTag]="addTag"
+      [addTag]="addTag && addTagFn"
       [ngStyle]="{ width: wide ? 'unset' : '300px' }"
       (change)="onChange()"
     >
@@ -170,6 +171,14 @@ export class NgSelectEditor<T> implements ICellEditorAngularComp {
   public refresh() {
     return true;
   }
+
+  protected addTagFn = (name: string) => {
+    this.value = name;
+    if (this.api) {
+      this.api.stopEditing(false);
+    }
+	}
+
   protected onChange() {
     if (this.api) {
       this.api.stopEditing(false);
