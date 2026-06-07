@@ -37,7 +37,7 @@ export class PaymentDocumentsState {
       filter.end.setHours(23, 59, 59);
     }
     let params = new HttpParams();
-    if (filter.bank_detail_id?.length && filter.bank_detail_id.length > 0) {
+    if (filter.bank_detail_id?.length) {
       params = params.set('accounts', filter.bank_detail_id + '');
       // } else {
       //   params = params.set('accounts', actuals.map((el) => el) + '');
