@@ -221,7 +221,7 @@ export enum SortDirection {
   NONE = '',
 }
 
-export enum BeetwenType {
+export enum BetweenType {
   TODAY = 1,
   CURR_WEEK,
   LAST_7DAYS,
@@ -233,7 +233,7 @@ export enum BeetwenType {
 export class PaymentsFilter {
   public start: Date = new Date();
   public end: Date = new Date();
-  public between: number = BeetwenType.TODAY;
+  public between: number = BetweenType.TODAY;
   public label_id: number[] | null = null;
   public bank_detail_id: number[] | null = null;
 

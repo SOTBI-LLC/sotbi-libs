@@ -3,7 +3,7 @@ import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 import type { FormGroup } from '@angular/forms';
 import type { ActualAccount, IPaymentDocumentFilter, Label } from '@sotbi/models';
-import { BeetwenType } from '@sotbi/models';
+import { BetweenType } from '@sotbi/models';
 import { PaymentsFilterComponent } from './payments-filter.component';
 
 describe('PaymentsFilterComponent', () => {
@@ -32,7 +32,7 @@ describe('PaymentsFilterComponent', () => {
 
   const getFilterForm = (): FormGroup => getPrivateProp<FormGroup>(component, 'filterForm');
 
-  const getBetween = (): BeetwenType => getPrivateProp<() => BeetwenType>(component, 'between')();
+  const getBetween = (): BetweenType => getPrivateProp<() => BetweenType>(component, 'between')();
 
   beforeEach(async () => {
     TestBed.overrideComponent(PaymentsFilterComponent, {
@@ -65,7 +65,7 @@ describe('PaymentsFilterComponent', () => {
         fixture.detectChanges();
 
         const filter = component.filter();
-        expect(filter.between).toBe(BeetwenType.TODAY);
+        expect(filter.between).toBe(BetweenType.TODAY);
         expect(filter.start).toBeInstanceOf(Date);
         expect(filter.end).toBeInstanceOf(Date);
       });
@@ -74,7 +74,7 @@ describe('PaymentsFilterComponent', () => {
         const customFilter: Partial<IPaymentDocumentFilter> = {
           start: new Date('2024-01-01'),
           end: new Date('2024-01-31'),
-          between: BeetwenType.CURR_MONTH,
+          between: BetweenType.CURR_MONTH,
           label_id: [1, 2],
         };
 
@@ -168,7 +168,7 @@ describe('PaymentsFilterComponent', () => {
 
       const formValue = getFilterForm().value;
 
-      expect(formValue.between).toBe(BeetwenType.TODAY);
+      expect(formValue.between).toBe(BetweenType.TODAY);
       expect(formValue.start).toBeInstanceOf(Date);
       expect(formValue.end).toBeInstanceOf(Date);
     });
@@ -177,13 +177,13 @@ describe('PaymentsFilterComponent', () => {
       const customFilter: Partial<IPaymentDocumentFilter> = {
         start: new Date('2024-01-01'),
         end: new Date('2024-01-31'),
-        between: BeetwenType.CURR_MONTH,
+        between: BetweenType.CURR_MONTH,
       };
 
       fixture.componentRef.setInput('filter', customFilter);
       fixture.detectChanges();
 
-      expect(getFilterForm().value.between).toBe(BeetwenType.CURR_MONTH);
+      expect(getFilterForm().value.between).toBe(BetweenType.CURR_MONTH);
     });
   });
 
@@ -191,15 +191,15 @@ describe('PaymentsFilterComponent', () => {
     it('should be false for TODAY', () => {
       fixture.detectChanges();
 
-      expect(getBetween()).toBe(BeetwenType.TODAY);
+      expect(getBetween()).toBe(BetweenType.TODAY);
     });
 
     it('should be true when between is CUSTOM', () => {
       fixture.detectChanges();
 
-      callProtectedMethod(component, 'filterByDateBetween', BeetwenType.CUSTOM);
+      callProtectedMethod(component, 'filterByDateBetween', BetweenType.CUSTOM);
 
-      expect(getBetween()).toBe(BeetwenType.CUSTOM);
+      expect(getBetween()).toBe(BetweenType.CUSTOM);
     });
   });
 
@@ -334,7 +334,7 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      callProtectedMethod(component, 'filterByDateBetween', BeetwenType.TODAY);
+      callProtectedMethod(component, 'filterByDateBetween', BetweenType.TODAY);
 
       const today = new Date();
       expect(emittedFilters[0].start?.toDateString()).toBe(today.toDateString());
@@ -349,7 +349,7 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      callProtectedMethod(component, 'filterByDateBetween', BeetwenType.CURR_WEEK);
+      callProtectedMethod(component, 'filterByDateBetween', BetweenType.CURR_WEEK);
 
       const today = new Date();
       expect(emittedFilters[0].start).toBeInstanceOf(Date);
@@ -364,7 +364,7 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      callProtectedMethod(component, 'filterByDateBetween', BeetwenType.LAST_7DAYS);
+      callProtectedMethod(component, 'filterByDateBetween', BetweenType.LAST_7DAYS);
 
       const today = new Date();
       const sevenDaysAgo = new Date();
@@ -382,7 +382,7 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      callProtectedMethod(component, 'filterByDateBetween', BeetwenType.CURR_MONTH);
+      callProtectedMethod(component, 'filterByDateBetween', BetweenType.CURR_MONTH);
 
       const today = new Date();
       const firstOfMonth = new Date();
@@ -400,7 +400,7 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      callProtectedMethod(component, 'filterByDateBetween', BeetwenType.LAST_MONTH);
+      callProtectedMethod(component, 'filterByDateBetween', BetweenType.LAST_MONTH);
 
       const today = new Date();
       const lastMonth = new Date();
@@ -418,7 +418,7 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      callProtectedMethod(component, 'filterByDateBetween', BeetwenType.CUSTOM);
+      callProtectedMethod(component, 'filterByDateBetween', BetweenType.CUSTOM);
 
       const today = new Date();
       expect(emittedFilters[0].start?.toDateString()).toBe(today.toDateString());
@@ -435,28 +435,28 @@ describe('PaymentsFilterComponent', () => {
 
       callProtectedMethod(component, 'filterByDateBetween', 999);
 
-      expect(emittedFilters[0].between).toBe(BeetwenType.TODAY);
+      expect(emittedFilters[0].between).toBe(BetweenType.TODAY);
       const today = new Date();
       expect(emittedFilters[0].start?.toDateString()).toBe(today.toDateString());
       expect(emittedFilters[0].end?.toDateString()).toBe(today.toDateString());
     });
   });
 
-  describe('BeetwenType enum', () => {
+  describe('BetweenType enum', () => {
     it('should have correct enum values', () => {
-      expect(BeetwenType.TODAY).toBe(1);
-      expect(BeetwenType.CURR_WEEK).toBe(2);
-      expect(BeetwenType.LAST_7DAYS).toBe(3);
-      expect(BeetwenType.CURR_MONTH).toBe(4);
-      expect(BeetwenType.LAST_MONTH).toBe(5);
-      expect(BeetwenType.CUSTOM).toBe(6);
+      expect(BetweenType.TODAY).toBe(1);
+      expect(BetweenType.CURR_WEEK).toBe(2);
+      expect(BetweenType.LAST_7DAYS).toBe(3);
+      expect(BetweenType.CURR_MONTH).toBe(4);
+      expect(BetweenType.LAST_MONTH).toBe(5);
+      expect(BetweenType.CUSTOM).toBe(6);
     });
 
     it('should expose beetwenType in component', () => {
       fixture.detectChanges();
 
-      const beetwenType = getPrivateProp<typeof BeetwenType>(component, 'beetwenType');
-      expect(beetwenType).toBe(BeetwenType);
+      const beetwenType = getPrivateProp<typeof BetweenType>(component, 'beetwenType');
+      expect(beetwenType).toBe(BetweenType);
     });
   });
 

@@ -1,5 +1,5 @@
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { BeetwenType, PaymentsFilter, type ActualAccount, type Label } from '@sotbi/models';
+import { BetweenType, PaymentsFilter, type ActualAccount, type Label } from '@sotbi/models';
 import type { Meta, StoryObj } from '@storybook/angular';
 import { applicationConfig } from '@storybook/angular';
 import { fn } from 'storybook/test';
@@ -172,7 +172,7 @@ export const Default: Story = {
     filter: new PaymentsFilter({
       start: new Date(),
       end: new Date(),
-      between: BeetwenType.TODAY,
+      between: BetweenType.TODAY,
     }),
   },
 };
@@ -182,7 +182,7 @@ export const CustomDateRange: Story = {
     filter: new PaymentsFilter({
       start: new Date(2025, 0, 1),
       end: new Date(2025, 0, 31),
-      between: BeetwenType.CUSTOM,
+      between: BetweenType.CUSTOM,
     }),
   },
 };
@@ -192,7 +192,7 @@ export const CurrentMonth: Story = {
     filter: new PaymentsFilter({
       start: new Date(),
       end: new Date(),
-      between: BeetwenType.CURR_MONTH,
+      between: BetweenType.CURR_MONTH,
     }),
   },
 };
@@ -202,7 +202,7 @@ export const LastSevenDays: Story = {
     filter: new PaymentsFilter({
       start: new Date(),
       end: new Date(),
-      between: BeetwenType.LAST_7DAYS,
+      between: BetweenType.LAST_7DAYS,
     }),
   },
 };
@@ -212,7 +212,7 @@ export const WithSelections: Story = {
     filter: new PaymentsFilter({
       start: new Date(2025, 5, 1),
       end: new Date(2025, 5, 15),
-      between: BeetwenType.CUSTOM,
+      between: BetweenType.CUSTOM,
       label_id: [1, 2],
       bank_detail_id: [1],
     }),
@@ -226,7 +226,7 @@ export const EmptyOptions: Story = {
     filter: new PaymentsFilter({
       start: new Date(),
       end: new Date(),
-      between: BeetwenType.TODAY,
+      between: BetweenType.TODAY,
     }),
   },
 };

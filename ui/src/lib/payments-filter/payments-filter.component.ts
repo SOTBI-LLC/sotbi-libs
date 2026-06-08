@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { BeetwenType, PaymentsFilter, type ActualAccount, type Label } from '@sotbi/models';
+import { BetweenType, PaymentsFilter, type ActualAccount, type Label } from '@sotbi/models';
 import { deepEqual } from '@sotbi/utils';
 import { NativeDateValueAccessorDirective } from '../native-date/native-date.directive';
 
@@ -23,12 +23,12 @@ export class PaymentsFilterComponent {
   protected readonly filterForm = new FormGroup({
     start: new FormControl<Date>(new Date(), [Validators.required]),
     end: new FormControl<Date>(new Date(), [Validators.required]),
-    between: new FormControl<BeetwenType>(BeetwenType.TODAY, [Validators.required]),
+    between: new FormControl<BetweenType>(BetweenType.TODAY, [Validators.required]),
     label_id: new FormControl<number[] | null>(null),
     bank_detail_id: new FormControl<number[] | null>(null),
   });
-  protected readonly between = signal<BeetwenType>(BeetwenType.TODAY);
-  protected readonly beetwenType = BeetwenType;
+  protected readonly between = signal<BetweenType>(BetweenType.TODAY);
+  protected readonly beetwenType = BetweenType;
 
   constructor() {
     // Sync external filter input to internal filter, but avoid circular updates
@@ -75,26 +75,26 @@ export class PaymentsFilterComponent {
     this.filterEvent.emit(this.filterForm.value as PaymentsFilter);
   }
 
-  protected filterByDateBetween(value: BeetwenType) {
+  protected filterByDateBetween(value: BetweenType) {
     this.between.set(value);
     const filter = new PaymentsFilter();
-    switch (value as BeetwenType) {
-      case BeetwenType.CURR_WEEK:
+    switch (value as BetweenType) {
+      case BetweenType.CURR_WEEK:
         filter.start = new Date();
         filter.start.setDate(filter.start.getDate() - filter.start.getDay() + (filter.start.getDay() === 0 ? -6 : 1));
         filter.end = new Date();
         break;
-      case BeetwenType.LAST_7DAYS:
+      case BetweenType.LAST_7DAYS:
         filter.start = new Date();
         filter.start.setDate(filter.start.getDate() - 7);
         filter.end = new Date();
         break;
-      case BeetwenType.CURR_MONTH:
+      case BetweenType.CURR_MONTH:
         filter.start = new Date();
         filter.start.setDate(1);
         filter.end = new Date();
         break;
-      case BeetwenType.LAST_MONTH:
+      case BetweenType.LAST_MONTH:
         filter.start = new Date();
         filter.start.setMonth(filter.start.getMonth() - 1);
         filter.end = new Date();
