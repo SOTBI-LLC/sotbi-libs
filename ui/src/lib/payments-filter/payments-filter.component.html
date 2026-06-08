@@ -38,7 +38,7 @@
         class="form-control"
         id="options"
         formControlName="between"
-        (change)="filterByDateBetween(filterForm.controls['between'].value ?? beetwenType.TODAY)"
+        (change)="filterByDateBetween(filterForm.controls.between.value ?? betweenType.TODAY)"
       >
         <option [ngValue]="beetwenType.TODAY">Платежи за сегодня</option>
         <option [ngValue]="beetwenType.CURR_WEEK">Платежи за текущую неделю</option>
