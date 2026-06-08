@@ -28,7 +28,7 @@ export class PaymentsFilterComponent {
     bank_detail_id: new FormControl<number[] | null>(null),
   });
   protected readonly between = signal<BetweenType>(BetweenType.TODAY);
-  protected readonly beetwenType = BetweenType;
+  protected readonly betweenType = BetweenType;
 
   constructor() {
     // Sync external filter input to internal filter, but avoid circular updates
@@ -49,9 +49,20 @@ export class PaymentsFilterComponent {
     });
   }
 
+  private buildPaymentsFilter(): PaymentsFilter {
+    const value = this.filterForm.value;
+    return new PaymentsFilter({
+      start: value.start ?? new Date(),
+      end: value.end ?? new Date(),
+      between: value.between ?? BetweenType.TODAY,
+      label_id: value.label_id ?? null,
+      bank_detail_id: value.bank_detail_id ?? null,
+    });
+  }
+
   protected onLabelIDChanged(items: Label[]): void {
     this.filterForm.patchValue({ label_id: items.map((el: Label) => el.id) });
-    this.filterEvent.emit(this.filterForm.value as PaymentsFilter);
+    this.filterEvent.emit(this.buildPaymentsFilter());
   }
 
   protected onBankDetailIDChanged(items: ActualAccount[]): void {

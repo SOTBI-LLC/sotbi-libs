@@ -18,7 +18,7 @@ $field-height: 1.2rem;
   height: $field-height;
   top: 0;
   z-index: 999;
-  background-color: hsl(198, 0%, 98%);
+  background-color: hsl(198deg, 0%, 98%);
 
   .checkbox-wrapper {
     @extend %stretch-row;
@@ -37,7 +37,6 @@ $field-height: 1.2rem;
       line-height: 1;
       color: #b3b3b3;
       cursor: pointer;
-      -webkit-user-select: none;
       user-select: none;
     }
   }

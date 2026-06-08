@@ -34,10 +34,7 @@
   position: relative;
   .mouse {
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 0;
+    inset: 0;
     height: 24px;
     width: 100px;
   }
@@ -52,9 +49,9 @@
 .block-btns__check-icon-wrap {
   padding-top: 2px;
   margin-right: 0.3rem;
-  fill: currentColor;
+  fill: currentcolor;
   stroke-width: 3px;
-  stroke: currentColor;
+  stroke: currentcolor;
 }
 .edit-background {
   background-color: white;

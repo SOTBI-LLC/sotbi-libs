@@ -7,7 +7,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
   selector: 'input[type=date][nativeDate]',
   standalone: true,
   host: {
-    class: 'clr-input',
+    class: 'border rounded px-3 py-2',
   },
   providers: [
     {

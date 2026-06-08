@@ -120,6 +120,13 @@
           "buildTarget": "ui-ag-grid:build-storybook:ci"
         }
       }
+    },
+    "stylelint": {
+      "executor": "nx-stylelint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["ui-ag-grid/src/**/*.scss"]
+      }
     }
   }
 }

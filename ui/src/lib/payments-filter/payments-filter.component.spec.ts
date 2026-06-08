@@ -455,7 +455,7 @@ describe('PaymentsFilterComponent', () => {
     it('should expose beetwenType in component', () => {
       fixture.detectChanges();
 
-      const beetwenType = getPrivateProp<typeof BetweenType>(component, 'beetwenType');
+      const beetwenType = getPrivateProp<typeof BetweenType>(component, 'betweenType');
       expect(beetwenType).toBe(BetweenType);
     });
   });

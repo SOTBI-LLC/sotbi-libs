@@ -121,6 +121,13 @@
           "buildTarget": "ui:build-storybook:ci"
         }
       }
+    },
+    "stylelint": {
+      "executor": "nx-stylelint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["ui/src/**/*.scss"]
+      }
     }
   }
 }

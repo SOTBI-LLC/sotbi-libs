@@ -32,7 +32,7 @@ export {
   StatusEvent,
   StatusEventRecipientType,
   StatusEventRecipientTypeArr,
-  StatusEventRecipientTypeMap
+  StatusEventRecipientTypeMap,
 } from './lib/event';
 export { Expense } from './lib/expense';
 export { Income } from './lib/income';
@@ -49,7 +49,7 @@ export {
   SubMessageTypes,
   SubsidiaryAndLiabilityClaim,
   TransactionAndCreditorAndNotice,
-  TransactionAndNotice
+  TransactionAndNotice,
 } from './lib/sub-message-type';
 export { Target } from './lib/target';
 export { Task } from './lib/task';
@@ -72,24 +72,32 @@ export {
   StaffChronicle,
   StaffFlat,
   StaffGroupType,
-  StaffHistory, StaffsHistory, StaffType,
+  StaffHistory,
+  StaffsHistory,
+  StaffType,
   StaffTypeArr,
   StaffTypeMap,
-  StaffUnit
+  StaffUnit,
 } from './lib/staff';
 export {
-  emptyUser, HeadDepartment,
+  emptyUser,
+  HeadDepartment,
   HeadDepartmentChef,
   SettingsType,
-  SettingsTypeArr, useFavBit, User,
+  SettingsTypeArr,
+  useFavBit,
+  User,
   UserGroup,
-  UserPosition, UsersHistory, UserShort
+  UserPosition,
+  UsersHistory,
+  UserShort,
 } from './lib/user';
 export { WorkCategory, WorkCategoryArr, WorkCategoryStatusMap, WorkCategoryType } from './lib/work-category';
 
 // Project and Cost models
 export {
-  calcSumHours, Cost,
+  calcSumHours,
+  Cost,
   CostMonitoring,
   CostReal,
   CostRealAnalyticsMonth,
@@ -97,7 +105,7 @@ export {
   ProjectCost,
   ResponseCostMonitoring,
   ResultUserCost,
-  WeekCost
+  WeekCost,
 } from './lib/cost';
 export { conditionArr, conditionMap, ConditionType, Project } from './lib/project';
 
@@ -108,14 +116,14 @@ export {
   InsuranceAttachment,
   InsuranceAttachmentType,
   InsuranceAttachmentTypeArr,
-  InsuranceAttachmentTypeMap
+  InsuranceAttachmentTypeMap,
 } from './lib/insurance-attachment';
 export { InsuranceActive, InsuranceActiveArr, InsuranceCompany } from './lib/insurance-company';
 export {
   InsurancePolicy,
   InsurancePolicyType,
   InsurancePolicyTypeArr,
-  InsurancePolicyTypeMap
+  InsurancePolicyTypeMap,
 } from './lib/insurance-policy';
 
 // EGRN models
@@ -146,7 +154,7 @@ export {
   SubType2Map,
   ViewType,
   ViewTypeArr,
-  ViewTypeMap
+  ViewTypeMap,
 } from './lib/egrn-request';
 export { RealEstate } from './lib/real-estate';
 
@@ -171,7 +179,7 @@ export {
   CounterpartyLink,
   Header,
   Request,
-  Rule
+  Rule,
 } from './lib/counterparty';
 
 // Bank detail models
@@ -188,14 +196,14 @@ export {
   PaymentsOnFilterDataModel,
   Remaining,
   SortDirection,
-  UUID
+  UUID,
 } from './lib/bankdetail';
 // Payment models
 export {
   PaymentAttachment,
   PaymentAttachmentType,
   PaymentAttachmentTypeArr,
-  PaymentAttachmentTypeMap
+  PaymentAttachmentTypeMap,
 } from './lib/payment-attachment';
 export {
   PaymentRequest,
@@ -205,7 +213,7 @@ export {
   PaymentRequestTargetMap,
   PaymentRequestType,
   PaymentRequestTypeArr,
-  PaymentRequestTypeMap
+  PaymentRequestTypeMap,
 } from './lib/payment-request';
 
 // Marketplace
@@ -232,7 +240,7 @@ export {
   ReleaseCitizenFromObligationsType,
   RequestPublicationsBySubMessageIdAndDebtorId,
   ResultOptions,
-  TypeOrderOfSatisfaction
+  TypeOrderOfSatisfaction,
 } from './lib/message';
 export {
   BaseCriteria,
@@ -240,6 +248,5 @@ export {
   PerformancePeriod,
   UserPercentage,
   UserPercentageRequest,
-  UserPerformance
+  UserPerformance,
 } from './lib/motivation';
-

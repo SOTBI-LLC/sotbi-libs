@@ -1,12 +1,12 @@
-import { Component, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, viewChild } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { NativeDateValueAccessorDirective } from './native-date.directive';
 import { FormsModule } from '@angular/forms';
+import { NativeDateValueAccessorDirective } from './native-date.directive';
 
 @Component({
-  standalone: true,
   imports: [NativeDateValueAccessorDirective, FormsModule],
   template: `<input type="date" nativeDate [(ngModel)]="dateValue" />`,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class TestComponent {
   public dateValue: Date | null = null;
@@ -17,6 +17,7 @@ describe('NativeDateValueAccessorDirective', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TestComponent],
+      providers: [provideZonelessChangeDetection()],
     }).compileComponents();
   });
 
@@ -25,12 +26,5 @@ describe('NativeDateValueAccessorDirective', () => {
     fixture.detectChanges();
     const directive = fixture.componentInstance.inputEl();
     expect(directive).toBeTruthy();
-  });
-
-  it('should apply clr-input class for Clarity-compatible styling', () => {
-    const fixture = TestBed.createComponent(TestComponent);
-    fixture.detectChanges();
-    const input = fixture.nativeElement.querySelector('input[type="date"]') as HTMLInputElement;
-    expect(input.classList.contains('clr-input')).toBe(true);
   });
 });

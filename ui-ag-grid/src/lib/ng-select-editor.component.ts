@@ -95,7 +95,7 @@ export class ProjectAndDebtorSelectEditor<T> implements ICellEditorAngularComp {
       notFoundText="Не найдено"
       appendTo="body"
       [addTag]="addTag && addTagFn"
-      [ngStyle]="{ width: wide ? 'unset' : '300px' }"
+      [style.width]="wide ? 'unset' : '300px'"
       (change)="onChange()"
     >
       @if (isUserWithAvatar; as item) {
@@ -107,7 +107,7 @@ export class ProjectAndDebtorSelectEditor<T> implements ICellEditorAngularComp {
   `,
   styles: [``],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgSelectComponent, FormsModule, NgStyle, NgLabelTemplateDirective, UserWithAvatarComponent],
+  imports: [NgSelectComponent, FormsModule, NgLabelTemplateDirective, UserWithAvatarComponent],
 })
 export class NgSelectEditor<T> implements ICellEditorAngularComp {
   protected items: T[] = [];
@@ -154,6 +154,7 @@ export class NgSelectEditor<T> implements ICellEditorAngularComp {
     if (this.api) {
       this.api.stopEditing(false);
     }
+    return { [this.bindId]: 0, [this.bindName]: name };
   };
 
   protected onChange() {
