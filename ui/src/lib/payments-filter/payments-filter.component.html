@@ -38,13 +38,25 @@
         class="form-control"
         id="options"
         formControlName="between"
-        (change)="filterByDateBetween(filterForm.controls.between.value ?? betweenType.TODAY)"
+        (change)="
+          filterByDateBetween(
+            filterForm.controls.between.value ?? betweenType.TODAY
+          )
+        "
       >
         <option [ngValue]="beetwenType.TODAY">Платежи за сегодня</option>
-        <option [ngValue]="beetwenType.CURR_WEEK">Платежи за текущую неделю</option>
-        <option [ngValue]="beetwenType.LAST_7DAYS">Платежи за последние 7 дней</option>
-        <option [ngValue]="beetwenType.CURR_MONTH">Платежи за текущий месяц</option>
-        <option [ngValue]="beetwenType.LAST_MONTH">Платежи за последний месяц</option>
+        <option [ngValue]="beetwenType.CURR_WEEK">
+          Платежи за текущую неделю
+        </option>
+        <option [ngValue]="beetwenType.LAST_7DAYS">
+          Платежи за последние 7 дней
+        </option>
+        <option [ngValue]="beetwenType.CURR_MONTH">
+          Платежи за текущий месяц
+        </option>
+        <option [ngValue]="beetwenType.LAST_MONTH">
+          Платежи за последний месяц
+        </option>
         <option [ngValue]="beetwenType.CUSTOM">Указать диапазон вручную</option>
       </select>
     </div>

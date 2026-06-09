@@ -1,7 +1,17 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+} from '@angular/core';
 import type { PostAddress } from '@sotbi/models';
 import { AgGridAngular } from 'ag-grid-angular';
-import type { ColDef, GridOptions, ICellRendererParams, RowNode } from 'ag-grid-community';
+import type {
+  ColDef,
+  GridOptions,
+  ICellRendererParams,
+  RowNode,
+} from 'ag-grid-community';
 import { localeText, settingsCheckboxCellIcon } from './ag-grid.common';
 import { ButtonActionsComponent } from './button-actions.component';
 
@@ -98,7 +108,8 @@ export class PostAddresGridComponent {
         width: 220,
         maxWidth: 220,
         cellEditor: 'agCheckboxCellEditor',
-        cellRenderer: ({ value }: ICellRendererParams) => settingsCheckboxCellIcon(!!value, true),
+        cellRenderer: ({ value }: ICellRendererParams) =>
+          settingsCheckboxCellIcon(!!value, true),
       },
       {
         headerName: '⋮',

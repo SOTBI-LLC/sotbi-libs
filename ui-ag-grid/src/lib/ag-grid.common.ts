@@ -151,7 +151,9 @@ export interface AgGridFilterValue {
   filterType: AgGridFilterType;
 }
 
-export const dateFormatter = ({ value }: ValueFormatterParams): string | null => {
+export const dateFormatter = ({
+  value,
+}: ValueFormatterParams): string | null => {
   if (value === null || value === undefined) {
     return null;
   }
@@ -163,7 +165,9 @@ export const dateFormatter = ({ value }: ValueFormatterParams): string | null =>
   return new Date(value).toLocaleDateString('ru-RU', options);
 };
 
-export const delPercentFormatter = (params: ValueFormatterParams): string | null => {
+export const delPercentFormatter = (
+  params: ValueFormatterParams,
+): string | null => {
   if (params.value && params.value !== 0) {
     const val = +params.value;
     return formatPercent(val / 100, 'ru-RU');
@@ -172,7 +176,9 @@ export const delPercentFormatter = (params: ValueFormatterParams): string | null
   }
 };
 
-export const currencyFormatter = (params: ValueFormatterParams): string | null => {
+export const currencyFormatter = (
+  params: ValueFormatterParams,
+): string | null => {
   if (params.value && params.value !== 0) {
     const val = +params.value;
     return formatCurrency(val, 'ru-RU', '');
@@ -181,7 +187,9 @@ export const currencyFormatter = (params: ValueFormatterParams): string | null =
   }
 };
 
-export const numericFormatter = (params: ValueFormatterParams): string | null => {
+export const numericFormatter = (
+  params: ValueFormatterParams,
+): string | null => {
   if (params.value && params.value !== 0) {
     const val = +params.value;
     return formatNumber(val, 'ru-RU', '1.2-2');
@@ -190,7 +198,9 @@ export const numericFormatter = (params: ValueFormatterParams): string | null =>
   }
 };
 
-export const percentFormatter = (params: ValueFormatterParams): string | null => {
+export const percentFormatter = (
+  params: ValueFormatterParams,
+): string | null => {
   if (params.value && params.value !== 0) {
     const val = +params.value;
     return formatPercent(val, 'ru-RU');
@@ -200,8 +210,10 @@ export const percentFormatter = (params: ValueFormatterParams): string | null =>
 };
 
 export const setGridState = (api: GridApi, prefix: string): void => {
-  const columnState = JSON.parse(sessionStorage.getItem(`${prefix}-columns`) || '{}');
-  if (columnState) {
+  const columnState = JSON.parse(
+    sessionStorage.getItem(`${prefix}-columns`) || 'null',
+  );
+  if (Array.isArray(columnState)) {
     api.applyColumnState({ state: columnState });
   }
   const filterState = sessionStorage.getItem(`${prefix}-filter`);
@@ -211,8 +223,13 @@ export const setGridState = (api: GridApi, prefix: string): void => {
 };
 
 /** Inline SVG for AG Grid string cell renderers (clr-icon does not upgrade via innerHTML). */
-export const settingsCheckboxCellIcon = (checked: boolean, highlighted = false): string => {
-  const classes = [checked ? 'is-solid' : '', highlighted ? 'is-highlight' : ''].filter(Boolean).join(' ');
+export const settingsCheckboxCellIcon = (
+  checked: boolean,
+  highlighted = false,
+): string => {
+  const classes = [checked ? 'is-solid' : '', highlighted ? 'is-highlight' : '']
+    .filter(Boolean)
+    .join(' ');
   const classAttr = classes ? ` class="${classes}"` : '';
   if (checked) {
     return `<svg${classAttr} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" width="1rem" height="1rem"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>`;
@@ -230,12 +247,18 @@ export const addGlobalListener = (api: GridApi, prefix: string): void => {
       type === 'columnPinned' ||
       type === 'sortChanged'
     ) {
-      sessionStorage.setItem(`${prefix}-columns`, JSON.stringify(api?.getColumnState()));
+      sessionStorage.setItem(
+        `${prefix}-columns`,
+        JSON.stringify(api?.getColumnState()),
+      );
     }
     if (type === 'filterChanged') {
       const filterModel = api.getFilterModel();
       if (Object.keys(filterModel)?.length) {
-        sessionStorage.setItem(`${prefix}-filter`, JSON.stringify(api.getFilterModel()));
+        sessionStorage.setItem(
+          `${prefix}-filter`,
+          JSON.stringify(api.getFilterModel()),
+        );
       } else {
         sessionStorage.removeItem(`${prefix}-filter`);
       }

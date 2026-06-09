@@ -1,5 +1,10 @@
 import type { OnDestroy } from '@angular/core';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import type { CostReal } from '@sotbi/models';
 import { calcSumHours } from '@sotbi/models';
@@ -45,7 +50,12 @@ export class AggregationStatusBarComponent implements OnDestroy {
   template: `
     @if (editable) {
       <div class="ag-name-value p-0">
-        <button type="button" class="btn btn-sm" (click)="inputClicked(ctrl.value)">Добавить</button
+        <button
+          type="button"
+          class="btn btn-sm"
+          (click)="inputClicked(ctrl.value)"
+        >
+          Добавить</button
         >&nbsp;строки&nbsp;внизу:&nbsp;
         <span class="ag-name-value-value">
           <input
@@ -96,7 +106,9 @@ export class AddRowsStatusBarComponent implements IStatusPanelAngularComp {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
-export class SumHourStatusBarComponent implements IStatusPanelAngularComp, OnDestroy {
+export class SumHourStatusBarComponent
+  implements IStatusPanelAngularComp, OnDestroy
+{
   private readonly cdr = inject(ChangeDetectorRef);
 
   protected hours = '';

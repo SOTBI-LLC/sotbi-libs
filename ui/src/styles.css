@@ -122,7 +122,10 @@
   }
 
   .ng-select .ng-select-container .ng-value-container .ng-placeholder,
-  .ng-select.ng-select-focused .ng-select-container .ng-value-container .ng-placeholder,
+  .ng-select.ng-select-focused
+    .ng-select-container
+    .ng-value-container
+    .ng-placeholder,
   .ng-select.ng-select-opened .ng-placeholder,
   .ng-select .ng-has-value .ng-placeholder {
     position: static !important;

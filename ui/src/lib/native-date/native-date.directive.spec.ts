@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  provideZonelessChangeDetection,
+  viewChild,
+} from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { NativeDateValueAccessorDirective } from './native-date.directive';
@@ -10,7 +15,9 @@ import { NativeDateValueAccessorDirective } from './native-date.directive';
 })
 class TestComponent {
   public dateValue: Date | null = null;
-  public inputEl = viewChild<NativeDateValueAccessorDirective>(NativeDateValueAccessorDirective);
+  public inputEl = viewChild<NativeDateValueAccessorDirective>(
+    NativeDateValueAccessorDirective,
+  );
 }
 
 describe('NativeDateValueAccessorDirective', () => {

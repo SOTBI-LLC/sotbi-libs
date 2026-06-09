@@ -1,5 +1,10 @@
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { BetweenType, PaymentsFilter, type ActualAccount, type Label } from '@sotbi/models';
+import {
+  BetweenType,
+  PaymentsFilter,
+  type ActualAccount,
+  type Label,
+} from '@sotbi/models';
 import type { Meta, StoryObj } from '@storybook/angular';
 import { applicationConfig } from '@storybook/angular';
 import { fn } from 'storybook/test';
@@ -51,7 +56,8 @@ const mockLabels: Label[] = [
     id: 7,
     name: 'Задатки',
     color: '#eaeaea',
-    description: 'Вхождение строк "задаток" и/или "задатки" в назначение платежа',
+    description:
+      'Вхождение строк "задаток" и/или "задатки" в назначение платежа',
   },
   {
     id: 9,

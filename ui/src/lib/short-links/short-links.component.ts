@@ -1,5 +1,12 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 type shortLinksForm = FormGroup<{
   name: FormControl<string | null>;
   url: FormControl<string | null>;
@@ -13,7 +20,9 @@ type shortLinksForm = FormGroup<{
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ShortLinksComponent {
-  public readonly shortLinks = input<FormArray<shortLinksForm>>(new FormArray<shortLinksForm>([]));
+  public readonly shortLinks = input<FormArray<shortLinksForm>>(
+    new FormArray<shortLinksForm>([]),
+  );
 
   protected createLink() {
     const fg = new FormGroup({

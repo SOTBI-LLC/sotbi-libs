@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import type { OnInit } from '@angular/core';
-import { ChangeDetectionStrategy, Component, HostListener, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  input,
+  output,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import type { itemMap, ShortLink, SimpleEditModel } from '@sotbi/models';
 import { Link } from '@sotbi/models';
@@ -17,7 +23,10 @@ export const getLinks = (arr: Link[], links: itemMap): ShortLink[] => {
   }, []);
 };
 
-export const styleClassesForLinks = ['table-aggrid--cell-wrap-text', 'table-aggrid--overflow-auto'];
+export const styleClassesForLinks = [
+  'table-aggrid--cell-wrap-text',
+  'table-aggrid--overflow-auto',
+];
 
 @Component({
   selector: 'app-links-wrap',
@@ -46,7 +55,11 @@ export class LinksComponent implements OnInit {
   }
 
   protected getLinksForSelect(links: SimpleEditModel[]): SimpleEditModel[] {
-    return (Array.isArray(links) && links.filter(({ id }) => !this.shortLinkRefs.has(id))) || [];
+    return (
+      (Array.isArray(links) &&
+        links.filter(({ id }) => !this.shortLinkRefs.has(id))) ||
+      []
+    );
   }
 
   public ngOnInit(): void {

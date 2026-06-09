@@ -1,13 +1,36 @@
-import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  input,
+  output,
+  signal,
+} from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { BetweenType, PaymentsFilter, type ActualAccount, type Label } from '@sotbi/models';
+import {
+  BetweenType,
+  PaymentsFilter,
+  type ActualAccount,
+  type Label,
+} from '@sotbi/models';
 import { deepEqual } from '@sotbi/utils';
 import { NativeDateValueAccessorDirective } from '../native-date/native-date.directive';
 
 @Component({
   selector: 'payments-filter',
-  imports: [FormsModule, NgSelectModule, ReactiveFormsModule, NativeDateValueAccessorDirective],
+  imports: [
+    FormsModule,
+    NgSelectModule,
+    ReactiveFormsModule,
+    NativeDateValueAccessorDirective,
+  ],
   templateUrl: './payments-filter.component.html',
   styleUrl: './payments-filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,7 +46,9 @@ export class PaymentsFilterComponent {
   protected readonly filterForm = new FormGroup({
     start: new FormControl<Date>(new Date(), [Validators.required]),
     end: new FormControl<Date>(new Date(), [Validators.required]),
-    between: new FormControl<BetweenType>(BetweenType.TODAY, [Validators.required]),
+    between: new FormControl<BetweenType>(BetweenType.TODAY, [
+      Validators.required,
+    ]),
     label_id: new FormControl<number[] | null>(null),
     bank_detail_id: new FormControl<number[] | null>(null),
   });
@@ -92,7 +117,11 @@ export class PaymentsFilterComponent {
     switch (value as BetweenType) {
       case BetweenType.CURR_WEEK:
         filter.start = new Date();
-        filter.start.setDate(filter.start.getDate() - filter.start.getDay() + (filter.start.getDay() === 0 ? -6 : 1));
+        filter.start.setDate(
+          filter.start.getDate() -
+            filter.start.getDay() +
+            (filter.start.getDay() === 0 ? -6 : 1),
+        );
         filter.end = new Date();
         break;
       case BetweenType.LAST_7DAYS:

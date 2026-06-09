@@ -34,17 +34,36 @@
           [title]="customBtnTitle()"
           (click)="clickCustomBtn($event)"
         >
-          <svg width="18" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            width="18"
+            height="22"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <use [attr.xlink:href]="customBtnSvgId()" />
           </svg>
         </button>
       }
       @if (_block().visible) {
-        <svg class="collapse-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <svg
+          class="collapse-icon"
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="currentColor"
+          aria-hidden="true"
+        >
           <path d="M8 10L3 5h10L8 10z" />
         </svg>
       } @else {
-        <svg class="collapse-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <svg
+          class="collapse-icon"
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="currentColor"
+          aria-hidden="true"
+        >
           <path d="M8 6l5 5H3l5-5z" />
         </svg>
       }
@@ -74,11 +93,19 @@
           Сохранить
         </button>
         @if (additionalBtn()) {
-          <button class="btn btn-sm block-btns__item" (click)="additionalBtnClick.emit()">
+          <button
+            class="btn btn-sm block-btns__item"
+            (click)="additionalBtnClick.emit()"
+          >
             {{ additionalBtn() }}
           </button>
         }
-        <button class="btn btn-sm block-btns__item btn-link btn-red" (click)="cancelBtnClick.emit()">Закрыть</button>
+        <button
+          class="btn btn-sm block-btns__item btn-link btn-red"
+          (click)="cancelBtnClick.emit()"
+        >
+          Закрыть
+        </button>
         <a
           href="javascript:void(0)"
           role="tooltip"
@@ -87,11 +114,18 @@
           style="margin-left: auto"
         >
           @if (showDeleteBtn()) {
-            <button [disabled]="!canBeDeleted()" class="btn btn-sm btn-warning-outline" (click)="deleteBtnClick.emit()">
+            <button
+              [disabled]="!canBeDeleted()"
+              class="btn btn-sm btn-warning-outline"
+              (click)="deleteBtnClick.emit()"
+            >
               Удалить
             </button>
           }
-          <span class="tooltip-content" [style.display]="!canBeDeleted() ? 'block' : 'none'">
+          <span
+            class="tooltip-content"
+            [style.display]="!canBeDeleted() ? 'block' : 'none'"
+          >
             {{ deleteInfo() }}
           </span>
         </a>

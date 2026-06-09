@@ -6,6 +6,12 @@
     "inlineSources": true,
     "types": []
   },
-  "exclude": ["src/**/*.spec.ts", "jest.config.ts", "src/**/*.test.ts", "**/*.stories.ts", "**/*.stories.js"],
+  "exclude": [
+    "src/**/*.spec.ts",
+    "jest.config.ts",
+    "src/**/*.test.ts",
+    "**/*.stories.ts",
+    "**/*.stories.js"
+  ],
   "include": ["src/**/*.ts"]
 }

@@ -1,9 +1,4 @@
-@import 'tailwindcss';
-
-/* nx-tailwind-sources:start */
-@source "../../models";
-@source "../../utils";
-/* nx-tailwind-sources:end */
+@import url('tailwindcss');
 
 @source './lib/**/*.{html,ts}';
 
@@ -51,18 +46,22 @@
     padding: 0 0.25rem !important;
   }
 
-  .ng-select .ng-select-container .ng-value-container .ng-value,
+  .ng-select .ng-has-value .ng-placeholder,
   .ng-select .ng-select-container .ng-value-container .ng-placeholder,
-  .ng-select .ng-select-container .ng-value-container .ng-input > input {
+  .ng-select.ng-select-focused
+    .ng-select-container
+    .ng-value-container
+    .ng-placeholder {
+    position: static !important;
+    transform: none !important;
     font-size: 0.65rem !important;
     line-height: 1rem !important;
   }
 
-  .ng-select .ng-select-container .ng-value-container .ng-placeholder,
-  .ng-select.ng-select-focused .ng-select-container .ng-value-container .ng-placeholder,
-  .ng-select .ng-has-value .ng-placeholder {
-    position: static !important;
-    transform: none !important;
+  .ng-select .ng-select-container .ng-value-container .ng-value,
+  .ng-select .ng-select-container .ng-value-container .ng-input > input {
+    font-size: 0.65rem !important;
+    line-height: 1rem !important;
   }
 
   .ng-select .ng-clear-wrapper {

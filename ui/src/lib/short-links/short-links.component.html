@@ -1,14 +1,31 @@
 <div class="short-links__header flex" style="align-items: baseline">
   <div class="short-links__label" style="width: 50%">
-    <button class="btn btn-sm btn-outline" (click)="createLink()" title="Добавить">Добавить</button><span>Имя</span>
+    <button
+      class="btn btn-sm btn-outline"
+      (click)="createLink()"
+      title="Добавить"
+    >
+      Добавить</button
+    ><span>Имя</span>
   </div>
   <div class="short-links__label">Ссылка</div>
 </div>
 @for (item of shortLinks().controls; track item; let i = $index) {
   <form [formGroup]="item" class="flex short-links">
     <input class="form-control br w-100" type="text" formControlName="name" />
-    <input class="form-control br w-100" type="text" placeholder="URI" required formControlName="url" />
-    <button type="button" (click)="onRemoveLink(i)" class="btn btn-icon btn-sm btn-link" aria-label="Удалить ссылку">
+    <input
+      class="form-control br w-100"
+      type="text"
+      placeholder="URI"
+      required
+      formControlName="url"
+    />
+    <button
+      type="button"
+      (click)="onRemoveLink(i)"
+      class="btn btn-icon btn-sm btn-link"
+      aria-label="Удалить ссылку"
+    >
       <svg
         class="short-links__icon is-error"
         xmlns="http://www.w3.org/2000/svg"

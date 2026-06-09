@@ -261,7 +261,9 @@ export class PaymentFormComponent implements AfterViewInit {
 
   public ngAfterViewInit(): void {
     setTimeout(() => {
-      const table = document.querySelector(this.targetElementSelectorName) as HTMLTableElement;
+      const table = document.querySelector(
+        this.targetElementSelectorName,
+      ) as HTMLTableElement;
       if (table) {
         this.styling(table);
       }
@@ -279,7 +281,9 @@ export class PaymentFormComponent implements AfterViewInit {
       'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=650,height=800,top=20,left=200',
     );
     // важно: если не клонировать, физически удаляет тег из документа!!
-    const elem = document?.querySelector(this.targetElementSelectorName)?.cloneNode(true);
+    const elem = document
+      ?.querySelector(this.targetElementSelectorName)
+      ?.cloneNode(true);
     // win.document.write(elem.innerHTML); // <-- не подходит из-за существующей конвертации тегов при рендеренге
     win?.document.body.appendChild(elem ?? new Node());
     // this.styling(win.document.getElementsByTagName('head')[0]);

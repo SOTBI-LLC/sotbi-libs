@@ -10,7 +10,10 @@
       "!{projectRoot}/.stylelintrc(.(json|yml|yaml|js))?"
     ],
     "sharedGlobals": [],
-    "eslint": ["{workspaceRoot}/eslint.config.mjs", "{projectRoot}/eslint.config.mjs"]
+    "eslint": [
+      "{workspaceRoot}/eslint.config.mjs",
+      "{projectRoot}/eslint.config.mjs"
+    ]
   },
   "plugins": [
     {
@@ -59,7 +62,10 @@
       "cache": true
     },
     "stylelint": {
-      "inputs": ["default", "{workspaceRoot}/.stylelintrc(.(json|yml|yaml|js))?"],
+      "inputs": [
+        "default",
+        "{workspaceRoot}/.stylelintrc(.(json|yml|yaml|js))?"
+      ],
       "cache": true
     }
   },

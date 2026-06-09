@@ -8,7 +8,10 @@ type ShortLinksForm = FormGroup<{
   url: FormControl<string | null>;
 }>;
 
-function createShortLinkForm(name: string | null, url: string | null): ShortLinksForm {
+function createShortLinkForm(
+  name: string | null,
+  url: string | null,
+): ShortLinksForm {
   return new FormGroup({
     name: new FormControl(name),
     url: new FormControl(url, [Validators.required]),
@@ -52,7 +55,9 @@ export const Default: Story = {
 
 export const SingleLink: Story = {
   args: {
-    shortLinks: createShortLinksFormArray([{ name: 'Сайт', url: 'https://sotbi.ru' }]),
+    shortLinks: createShortLinksFormArray([
+      { name: 'Сайт', url: 'https://sotbi.ru' },
+    ]),
   },
 };
 
