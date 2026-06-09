@@ -60,10 +60,7 @@
         "browser": "ui/.storybook/storybook-bootstrap.ts",
         "polyfills": ["zone.js"],
         "tsConfig": "ui/.storybook/tsconfig.json",
-        "styles": [
-          "node_modules/@progress/kendo-theme-default/dist/all.css",
-          "ui/styles.css"
-        ],
+        "styles": ["ui/styles.css"],
         "scripts": []
       }
     },

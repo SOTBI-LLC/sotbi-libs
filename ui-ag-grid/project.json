@@ -62,7 +62,6 @@
         "styles": [
           "node_modules/ag-grid-community/styles/ag-grid.css",
           "node_modules/ag-grid-community/styles/ag-theme-balham.css",
-          "node_modules/@progress/kendo-theme-default/dist/all.css",
           "ui-ag-grid/styles.css"
         ],
         "scripts": []

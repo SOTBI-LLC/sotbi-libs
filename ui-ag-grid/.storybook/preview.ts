@@ -1,10 +1,8 @@
 import { registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
-import { importProvidersFrom, LOCALE_ID } from '@angular/core';
-import { applicationConfig, type Preview } from '@storybook/angular';
+import { LOCALE_ID } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { IntlModule } from '@progress/kendo-angular-intl';
-import '@progress/kendo-angular-intl/locales/ru/all';
+import { applicationConfig, type Preview } from '@storybook/angular';
 import {
   AllCommunityModule,
   ModuleRegistry,
@@ -19,7 +17,6 @@ const preview: Preview = {
   decorators: [
     applicationConfig({
       providers: [
-        importProvidersFrom(IntlModule),
         { provide: LOCALE_ID, useValue: 'ru-RU' },
         provideAnimations(),
       ],

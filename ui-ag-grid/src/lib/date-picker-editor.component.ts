@@ -5,7 +5,6 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
 import {
   NativeDateValueAccessorDirective,
   NativeTimeValueAccessorDirective,
@@ -16,12 +15,7 @@ import { isSameDay } from 'date-fns';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    DateInputsModule,
-    ReactiveFormsModule,
-    NativeDateValueAccessorDirective,
-    FormsModule,
-  ],
+  imports: [ReactiveFormsModule, NativeDateValueAccessorDirective, FormsModule],
   template: `
     <input
       #timePicker
