@@ -83,7 +83,7 @@ export class PaymentDocumentsState {
     { patchState }: StateContext<PaymentDocumentsStateModel>,
     { payload }: GetDebtorPayments,
   ) {
-    if (payload.bank_detail_id?.length === 0) {
+    if (!payload.bank_detail_id || payload.bank_detail_id.length === 0) {
       patchState({
         items: [],
         count: 0,
