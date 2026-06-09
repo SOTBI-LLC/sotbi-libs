@@ -10,7 +10,7 @@
     "format:check": "nx format:check",
     "test": "nx run-many -t test",
     "test:coverage": "nx run-many -t test --coverage",
-    "build": "nx run-many -t build --skip-nx-cache",
+    "build": "nx run-many -t build --skip-nx-cache --configuration=production",
     "storybook:ui": "nx run ui:storybook",
     "storybook:ui-ag-grid": "nx run ui-ag-grid:storybook",
     "build-storybook": "nx run-many -t build-storybook"

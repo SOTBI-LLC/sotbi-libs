@@ -64,7 +64,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build all packages
-        run: yarn nx run-many -t build --configuration=production
+        run: yarn buld
 
       - name: Publish packages
         run: yarn nx run-many -t nx-release-publish
