@@ -29,7 +29,7 @@
     },
     "build": {
       "executor": "@nx/angular:package",
-      "dependsOn": ["build-styles"],
+      "dependsOn": ["build-styles", "^build"],
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
         "project": "ui-ag-grid/ng-package.json",
