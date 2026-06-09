@@ -495,14 +495,14 @@ describe('PaymentsFilterComponent', () => {
       expect(BetweenType.CUSTOM).toBe(6);
     });
 
-    it('should expose beetwenType in component', () => {
+    it('should expose betweenType in component', () => {
       fixture.detectChanges();
 
-      const beetwenType = getPrivateProp<typeof BetweenType>(
+      const betweenType = getPrivateProp<typeof BetweenType>(
         component,
         'betweenType',
       );
-      expect(beetwenType).toBe(BetweenType);
+      expect(betweenType).toBe(BetweenType);
     });
   });
 

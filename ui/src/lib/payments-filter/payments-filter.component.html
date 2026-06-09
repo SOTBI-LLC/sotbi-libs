@@ -44,20 +44,20 @@
           )
         "
       >
-        <option [ngValue]="beetwenType.TODAY">Платежи за сегодня</option>
-        <option [ngValue]="beetwenType.CURR_WEEK">
+        <option [ngValue]="betweenType.TODAY">Платежи за сегодня</option>
+        <option [ngValue]="betweenType.CURR_WEEK">
           Платежи за текущую неделю
         </option>
-        <option [ngValue]="beetwenType.LAST_7DAYS">
+        <option [ngValue]="betweenType.LAST_7DAYS">
           Платежи за последние 7 дней
         </option>
-        <option [ngValue]="beetwenType.CURR_MONTH">
+        <option [ngValue]="betweenType.CURR_MONTH">
           Платежи за текущий месяц
         </option>
-        <option [ngValue]="beetwenType.LAST_MONTH">
+        <option [ngValue]="betweenType.LAST_MONTH">
           Платежи за последний месяц
         </option>
-        <option [ngValue]="beetwenType.CUSTOM">Указать диапазон вручную</option>
+        <option [ngValue]="betweenType.CUSTOM">Указать диапазон вручную</option>
       </select>
     </div>
     @if (between() === betweenType.CUSTOM) {
