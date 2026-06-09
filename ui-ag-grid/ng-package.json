@@ -3,5 +3,12 @@
   "dest": "../dist/ui-ag-grid",
   "lib": {
     "entryFile": "src/index.ts"
-  }
+  },
+  "assets": [
+    {
+      "glob": "styles.css",
+      "input": ".",
+      "output": "."
+    }
+  ]
 }

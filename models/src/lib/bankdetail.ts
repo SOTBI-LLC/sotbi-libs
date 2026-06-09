@@ -221,12 +221,28 @@ export enum SortDirection {
   NONE = '',
 }
 
-export interface IPaymentDocumentFilter {
-  start: Date;
-  end: Date;
-  between: number;
-  label_id: number[];
-  bank_detail_id: number[];
+export enum BetweenType {
+  TODAY = 1,
+  CURR_WEEK,
+  LAST_7DAYS,
+  CURR_MONTH,
+  LAST_MONTH,
+  CUSTOM,
+}
+
+export class PaymentsFilter {
+  public start: Date = new Date();
+  public end: Date = new Date();
+  public between: number = BetweenType.TODAY;
+  public label_id: number[] | null = null;
+  public bank_detail_id: number[] | null = null;
+
+  constructor(data: Partial<PaymentsFilter> = {}) {
+    Object.assign(this, data);
+  }
+}
+
+export interface IPaymentDocumentFilter extends PaymentsFilter {
   in: boolean;
   out: boolean;
   sort_in: SortDirection;

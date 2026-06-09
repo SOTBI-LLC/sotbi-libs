@@ -1,3 +1,88 @@
+%flex-center {
+  display: flex;
+  align-items: center;
+}
+
 :host {
   display: block;
+}
+
+.payments-filter-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.2rem;
+  width: 100%;
+}
+
+.payments-filter-field {
+  @extend %flex-center;
+  flex: 1 1 12rem;
+  min-width: min(100%, 10rem);
+
+  ng-select {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+.payments-filter-period {
+  @extend %flex-center;
+  flex: 2 1 20rem;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+  min-width: min(100%, 10rem);
+}
+
+.payments-filter-period-select {
+  @extend %flex-center;
+  flex: 1 1 14rem;
+  gap: 0.5rem;
+  // min-width: min(100%, 10rem);
+  max-width: 14rem;
+
+  .clr-control-label {
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  select.form-control {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+  }
+}
+
+.payments-filter-period-dates {
+  @extend %flex-center;
+  flex: 1 1 18rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  min-width: min(100%, 12rem);
+}
+
+.payments-filter-date {
+  @extend %flex-center;
+  flex: 1 1 9rem;
+  gap: 0.5rem;
+  min-width: min(100%, 9rem);
+
+  .clr-control-label {
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  input[type='date'] {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .payments-filter-field,
+  .payments-filter-period {
+    flex: 1 1 100%;
+  }
 }

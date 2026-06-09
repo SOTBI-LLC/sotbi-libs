@@ -1,4 +1,1 @@
-export {
-  BeetwenType,
-  PaymentsFilterComponent,
-} from './payments-filter.component';
+export { PaymentsFilterComponent } from './payments-filter.component';

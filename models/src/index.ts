@@ -233,17 +233,18 @@ export {
 export {
   ActualAccount,
   BankDetail,
+  BetweenType,
   ExchangeFile,
   IPaymentDocumentFilter,
   Payment,
   PaymentDocument,
   PaymentDocumentHistory,
+  PaymentsFilter,
   PaymentsOnFilterDataModel,
   Remaining,
   SortDirection,
   UUID,
 } from './lib/bankdetail';
-
 // Payment models
 export {
   PaymentAttachment,

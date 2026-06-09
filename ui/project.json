@@ -13,8 +13,24 @@
   },
   "tags": [],
   "targets": {
+    "build-styles": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/styles.css",
+        "{projectRoot}/src/sotbi-component-layer.css",
+        "{projectRoot}/src/**/*.{html,ts}"
+      ],
+      "outputs": ["{projectRoot}/styles.css"],
+      "options": {
+        "command": "npx @tailwindcss/cli -i src/styles.css -o styles.css --minify",
+        "cwd": "{projectRoot}"
+      }
+    },
     "build": {
       "executor": "@nx/angular:package",
+      "syncGenerators": ["@juristr/nx-tailwind-sync:source-directives"],
+      "dependsOn": ["build-styles"],
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
         "project": "ui/ng-package.json",
@@ -36,6 +52,49 @@
     "lint": {
       "executor": "@nx/eslint:lint"
     },
+    "storybook-browser": {
+      "executor": "@angular-devkit/build-angular:application",
+      "options": {
+        "outputPath": "dist/storybook-browser/ui",
+        "index": "ui/.storybook/index.html",
+        "browser": "ui/.storybook/storybook-bootstrap.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "ui/.storybook/tsconfig.json",
+        "styles": ["ui/styles.css"],
+        "scripts": []
+      }
+    },
+    "storybook": {
+      "dependsOn": ["build-styles"],
+      "executor": "@storybook/angular:start-storybook",
+      "options": {
+        "port": 4400,
+        "configDir": "ui/.storybook",
+        "browserTarget": "ui:storybook-browser",
+        "compodoc": false
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "dependsOn": ["build-styles"],
+      "executor": "@storybook/angular:build-storybook",
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "outputDir": "dist/storybook/ui",
+        "configDir": "ui/.storybook",
+        "browserTarget": "ui:storybook-browser",
+        "compodoc": false
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": [
@@ -50,6 +109,27 @@
           "ci": true,
           "codeCoverage": true
         }
+      }
+    },
+    "static-storybook": {
+      "executor": "@nx/web:file-server",
+      "dependsOn": ["build-storybook"],
+      "options": {
+        "buildTarget": "ui:build-storybook",
+        "staticFilePath": "dist/storybook/ui",
+        "spa": true
+      },
+      "configurations": {
+        "ci": {
+          "buildTarget": "ui:build-storybook:ci"
+        }
+      }
+    },
+    "stylelint": {
+      "executor": "nx-stylelint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["ui/src/**/*.scss"]
       }
     }
   }

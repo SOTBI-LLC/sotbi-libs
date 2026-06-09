@@ -1,15 +1,14 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
+import type { FormGroup } from '@angular/forms';
 import type {
   ActualAccount,
   IPaymentDocumentFilter,
   Label,
 } from '@sotbi/models';
-import {
-  BeetwenType,
-  PaymentsFilterComponent,
-} from './payments-filter.component';
+import { BetweenType } from '@sotbi/models';
+import { PaymentsFilterComponent } from './payments-filter.component';
 
 describe('PaymentsFilterComponent', () => {
   let component: PaymentsFilterComponent;
@@ -27,7 +26,6 @@ describe('PaymentsFilterComponent', () => {
     { id: 3, name: 'Счет 40704810...' },
   ];
 
-  // Helper to access protected/private members
   const getPrivateProp = <T>(obj: PaymentsFilterComponent, prop: string): T => {
     return (obj as unknown as Record<string, T>)[prop];
   };
@@ -42,8 +40,13 @@ describe('PaymentsFilterComponent', () => {
     );
   };
 
+  const getFilterForm = (): FormGroup =>
+    getPrivateProp<FormGroup>(component, 'filterForm');
+
+  const getBetween = (): BetweenType =>
+    getPrivateProp<() => BetweenType>(component, 'between')();
+
   beforeEach(async () => {
-    // Override template to avoid complex Clarity/ng-select dependencies
     TestBed.overrideComponent(PaymentsFilterComponent, {
       set: {
         template: `
@@ -74,7 +77,7 @@ describe('PaymentsFilterComponent', () => {
         fixture.detectChanges();
 
         const filter = component.filter();
-        expect(filter.between).toBe(BeetwenType.TODAY);
+        expect(filter.between).toBe(BetweenType.TODAY);
         expect(filter.start).toBeInstanceOf(Date);
         expect(filter.end).toBeInstanceOf(Date);
       });
@@ -83,7 +86,7 @@ describe('PaymentsFilterComponent', () => {
         const customFilter: Partial<IPaymentDocumentFilter> = {
           start: new Date('2024-01-01'),
           end: new Date('2024-01-31'),
-          between: BeetwenType.CURR_MONTH,
+          between: BetweenType.CURR_MONTH,
           label_id: [1, 2],
         };
 
@@ -166,50 +169,52 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      callProtectedMethod(component, 'dateStartChange', newDate);
+      getFilterForm().patchValue({ start: newDate });
+      callProtectedMethod(component, 'onCustomDateChange');
 
       expect(emittedFilters.length).toBe(1);
       expect(emittedFilters[0].start).toEqual(newDate);
     });
   });
 
-  describe('internalFilter signal', () => {
+  describe('filterForm', () => {
     it('should initialize with default values', () => {
       fixture.detectChanges();
 
-      const internalFilter = getPrivateProp<
-        () => Partial<IPaymentDocumentFilter>
-      >(component, 'internalFilter')();
+      const formValue = getFilterForm().value;
 
-      expect(internalFilter.between).toBe(BeetwenType.TODAY);
-      expect(internalFilter.start).toBeInstanceOf(Date);
-      expect(internalFilter.end).toBeInstanceOf(Date);
+      expect(formValue.between).toBe(BetweenType.TODAY);
+      expect(formValue.start).toBeInstanceOf(Date);
+      expect(formValue.end).toBeInstanceOf(Date);
     });
 
     it('should sync with external filter input', () => {
       const customFilter: Partial<IPaymentDocumentFilter> = {
         start: new Date('2024-01-01'),
         end: new Date('2024-01-31'),
-        between: BeetwenType.CURR_MONTH,
+        between: BetweenType.CURR_MONTH,
       };
 
       fixture.componentRef.setInput('filter', customFilter);
       fixture.detectChanges();
 
-      const internalFilter = getPrivateProp<
-        () => Partial<IPaymentDocumentFilter>
-      >(component, 'internalFilter')();
-
-      expect(internalFilter.between).toBe(BeetwenType.CURR_MONTH);
+      expect(getFilterForm().value.between).toBe(BetweenType.CURR_MONTH);
     });
   });
 
-  describe('between signal', () => {
-    it('should initialize with TODAY', () => {
+  describe('custom date range visibility', () => {
+    it('should be false for TODAY', () => {
       fixture.detectChanges();
 
-      const between = getPrivateProp<() => BeetwenType>(component, 'between')();
-      expect(between).toBe(BeetwenType.TODAY);
+      expect(getBetween()).toBe(BetweenType.TODAY);
+    });
+
+    it('should be true when between is CUSTOM', () => {
+      fixture.detectChanges();
+
+      callProtectedMethod(component, 'filterByDateBetween', BetweenType.CUSTOM);
+
+      expect(getBetween()).toBe(BetweenType.CUSTOM);
     });
   });
 
@@ -227,7 +232,7 @@ describe('PaymentsFilterComponent', () => {
       expect(emittedFilters[0].label_id).toEqual([1, 2, 3]);
     });
 
-    it('should emit empty array when no labels selected', () => {
+    it('should clear label_id when no labels selected', () => {
       fixture.detectChanges();
       const emittedFilters: Partial<IPaymentDocumentFilter>[] = [];
 
@@ -273,7 +278,6 @@ describe('PaymentsFilterComponent', () => {
     it('should remove bank_detail_id from filter', () => {
       fixture.detectChanges();
 
-      // First set bank detail
       callProtectedMethod(component, 'onBankDetailIDChanged', mockActuals);
 
       const emittedFilters: Partial<IPaymentDocumentFilter>[] = [];
@@ -281,10 +285,9 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      // Then clear it
       callProtectedMethod(component, 'onBankDetailIDClear');
 
-      expect(emittedFilters[0].bank_detail_id).toBeUndefined();
+      expect(emittedFilters[0].bank_detail_id).toBeNull();
     });
   });
 
@@ -292,7 +295,6 @@ describe('PaymentsFilterComponent', () => {
     it('should remove label_id from filter', () => {
       fixture.detectChanges();
 
-      // First set labels
       callProtectedMethod(component, 'onLabelIDChanged', mockLabels);
 
       const emittedFilters: Partial<IPaymentDocumentFilter>[] = [];
@@ -300,14 +302,13 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      // Then clear it
       callProtectedMethod(component, 'onLabelIDClear');
 
-      expect(emittedFilters[0].label_id).toBeUndefined();
+      expect(emittedFilters[0].label_id).toBeNull();
     });
   });
 
-  describe('dateStartChange', () => {
+  describe('onCustomDateChange', () => {
     it('should update start date in filter', () => {
       fixture.detectChanges();
       const emittedFilters: Partial<IPaymentDocumentFilter>[] = [];
@@ -317,13 +318,12 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      callProtectedMethod(component, 'dateStartChange', newDate);
+      getFilterForm().patchValue({ start: newDate });
+      callProtectedMethod(component, 'onCustomDateChange');
 
       expect(emittedFilters[0].start).toEqual(newDate);
     });
-  });
 
-  describe('dateEndChange', () => {
     it('should update end date in filter', () => {
       fixture.detectChanges();
       const emittedFilters: Partial<IPaymentDocumentFilter>[] = [];
@@ -333,7 +333,8 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      callProtectedMethod(component, 'dateEndChange', newDate);
+      getFilterForm().patchValue({ end: newDate });
+      callProtectedMethod(component, 'onCustomDateChange');
 
       expect(emittedFilters[0].end).toEqual(newDate);
     });
@@ -348,7 +349,7 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      callProtectedMethod(component, 'filterByDateBetween', BeetwenType.TODAY);
+      callProtectedMethod(component, 'filterByDateBetween', BetweenType.TODAY);
 
       const today = new Date();
       expect(emittedFilters[0].start?.toDateString()).toBe(
@@ -368,7 +369,7 @@ describe('PaymentsFilterComponent', () => {
       callProtectedMethod(
         component,
         'filterByDateBetween',
-        BeetwenType.CURR_WEEK,
+        BetweenType.CURR_WEEK,
       );
 
       const today = new Date();
@@ -387,7 +388,7 @@ describe('PaymentsFilterComponent', () => {
       callProtectedMethod(
         component,
         'filterByDateBetween',
-        BeetwenType.LAST_7DAYS,
+        BetweenType.LAST_7DAYS,
       );
 
       const today = new Date();
@@ -411,7 +412,7 @@ describe('PaymentsFilterComponent', () => {
       callProtectedMethod(
         component,
         'filterByDateBetween',
-        BeetwenType.CURR_MONTH,
+        BetweenType.CURR_MONTH,
       );
 
       const today = new Date();
@@ -435,7 +436,7 @@ describe('PaymentsFilterComponent', () => {
       callProtectedMethod(
         component,
         'filterByDateBetween',
-        BeetwenType.LAST_MONTH,
+        BetweenType.LAST_MONTH,
       );
 
       const today = new Date();
@@ -456,7 +457,7 @@ describe('PaymentsFilterComponent', () => {
         emittedFilters.push(filter);
       });
 
-      callProtectedMethod(component, 'filterByDateBetween', BeetwenType.CUSTOM);
+      callProtectedMethod(component, 'filterByDateBetween', BetweenType.CUSTOM);
 
       const today = new Date();
       expect(emittedFilters[0].start?.toDateString()).toBe(
@@ -465,7 +466,7 @@ describe('PaymentsFilterComponent', () => {
       expect(emittedFilters[0].end?.toDateString()).toBe(today.toDateString());
     });
 
-    it('should handle unknown type with default dates', () => {
+    it('should keep default dates for unknown type', () => {
       fixture.detectChanges();
       const emittedFilters: Partial<IPaymentDocumentFilter>[] = [];
 
@@ -475,6 +476,7 @@ describe('PaymentsFilterComponent', () => {
 
       callProtectedMethod(component, 'filterByDateBetween', 999);
 
+      expect(emittedFilters[0].between).toBe(BetweenType.TODAY);
       const today = new Date();
       expect(emittedFilters[0].start?.toDateString()).toBe(
         today.toDateString(),
@@ -483,24 +485,24 @@ describe('PaymentsFilterComponent', () => {
     });
   });
 
-  describe('BeetwenType enum', () => {
+  describe('BetweenType enum', () => {
     it('should have correct enum values', () => {
-      expect(BeetwenType.TODAY).toBe(1);
-      expect(BeetwenType.CURR_WEEK).toBe(2);
-      expect(BeetwenType.LAST_7DAYS).toBe(3);
-      expect(BeetwenType.CURR_MONTH).toBe(4);
-      expect(BeetwenType.LAST_MONTH).toBe(5);
-      expect(BeetwenType.CUSTOM).toBe(6);
+      expect(BetweenType.TODAY).toBe(1);
+      expect(BetweenType.CURR_WEEK).toBe(2);
+      expect(BetweenType.LAST_7DAYS).toBe(3);
+      expect(BetweenType.CURR_MONTH).toBe(4);
+      expect(BetweenType.LAST_MONTH).toBe(5);
+      expect(BetweenType.CUSTOM).toBe(6);
     });
 
-    it('should expose beetwenType in component', () => {
+    it('should expose betweenType in component', () => {
       fixture.detectChanges();
 
-      const beetwenType = getPrivateProp<typeof BeetwenType>(
+      const betweenType = getPrivateProp<typeof BetweenType>(
         component,
-        'beetwenType',
+        'betweenType',
       );
-      expect(beetwenType).toBe(BeetwenType);
+      expect(betweenType).toBe(BetweenType);
     });
   });
 
@@ -523,7 +525,6 @@ describe('PaymentsFilterComponent', () => {
       fixture.componentRef.setInput('filter', null);
       fixture.detectChanges();
 
-      // Component should not throw
       expect(component).toBeTruthy();
     });
 
@@ -548,7 +549,8 @@ describe('PaymentsFilterComponent', () => {
 
       callProtectedMethod(component, 'onLabelIDChanged', [mockLabels[0]]);
       callProtectedMethod(component, 'onBankDetailIDChanged', [mockActuals[0]]);
-      callProtectedMethod(component, 'dateStartChange', new Date('2024-01-01'));
+      getFilterForm().patchValue({ start: new Date('2024-01-01') });
+      callProtectedMethod(component, 'onCustomDateChange');
 
       expect(emittedFilters.length).toBe(3);
       expect(emittedFilters[2].label_id).toEqual([1]);

@@ -36,6 +36,7 @@ The workspace is organized into several key libraries:
 - **Formatting:** `yarn format` (to fix) or `yarn format:check`
 - **Testing:** `yarn test` or `npx nx test <project-name>`
 - **Building:** `npx nx build <project-name>`
+- **Storybook:** `yarn storybook:ui` / `yarn storybook:ui-ag-grid` (ports 4400 / 4401); `yarn build-storybook` for static output under `dist/storybook/`
 - **Affected Tasks:** `npx nx affected -t <target>` (e.g., `test`, `build`, `lint`)
 
 ### CI/CD Pipeline

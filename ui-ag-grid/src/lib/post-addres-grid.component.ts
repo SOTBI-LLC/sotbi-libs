@@ -12,7 +12,7 @@ import type {
   ICellRendererParams,
   RowNode,
 } from 'ag-grid-community';
-import { localeText } from './ag-grid.common';
+import { localeText, settingsCheckboxCellIcon } from './ag-grid.common';
 import { ButtonActionsComponent } from './button-actions.component';
 
 @Component({
@@ -108,13 +108,8 @@ export class PostAddresGridComponent {
         width: 220,
         maxWidth: 220,
         cellEditor: 'agCheckboxCellEditor',
-        cellRenderer: ({ value }: ICellRendererParams) => {
-          let shape = 'circle';
-          if (value) {
-            shape = 'success-standard';
-          }
-          return `<clr-icon shape="${shape}" class="is-highlight"></clr-icon>`;
-        },
+        cellRenderer: ({ value }: ICellRendererParams) =>
+          settingsCheckboxCellIcon(!!value, true),
       },
       {
         headerName: '⋮',

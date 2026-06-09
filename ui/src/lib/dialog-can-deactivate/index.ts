@@ -1,1 +1,6 @@
-export { DialogCanDeactivateComponent } from './dialog-can-deactivate.component';
+export {
+  DialogCanDeactivateActionType,
+  DialogCanDeactivateComponent,
+  DialogCanDeactivateInputDataModel,
+  DialogCanDeactivateResultDataModel,
+} from './dialog-can-deactivate.component';
