@@ -449,6 +449,16 @@
   resolved "https://registry.yarnpkg.com/@angular/language-service/-/language-service-21.2.13.tgz#2ed076b89f79e2a8ccccce07b4ba6b0ba7f4d877"
   integrity sha512-6WDw77DdxaQjze+4EL3ySZx5CCY1jxIymTNsEZvAxQXP5jc6/f+h4bHbFCv4QCyYHGTCLDCZmL+jeT1LngmGng==
 
+"@angular/localize@^21.2.13":
+  version "21.2.16"
+  resolved "https://registry.yarnpkg.com/@angular/localize/-/localize-21.2.16.tgz#fc4f27a906b9a8d72092ff37c47efa09fe5d5b20"
+  integrity sha512-X4dO9Sn914V0DWr03naQDuImiYotHwTGEgaSqetmePOljWpRcZz6MA/OjJEXxWLp8z95WmcpuJqc3277+61Neg==
+  dependencies:
+    "@babel/core" "7.29.0"
+    "@types/babel__core" "7.20.5"
+    tinyglobby "^0.2.12"
+    yargs "^18.0.0"
+
 "@angular/material@^21.2.11":
   version "21.2.11"
   resolved "https://registry.yarnpkg.com/@angular/material/-/material-21.2.11.tgz#b5f85844258c5e4dcb46978f70b8dfae3fc03318"
@@ -5866,7 +5876,7 @@
   dependencies:
     tslib "^2.4.0"
 
-"@types/babel__core@^7.20.5":
+"@types/babel__core@7.20.5", "@types/babel__core@^7.20.5":
   version "7.20.5"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.20.5.tgz#3df15f27ba85319caa07ba08d0721889bb39c017"
   integrity sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==

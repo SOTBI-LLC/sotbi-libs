@@ -57,9 +57,11 @@
         "outputPath": "dist/storybook-browser/ui-ag-grid",
         "index": "ui-ag-grid/.storybook/index.html",
         "browser": "ui-ag-grid/.storybook/storybook-bootstrap.ts",
-        "polyfills": ["zone.js"],
+        "polyfills": ["@angular/localize/init", "zone.js"],
         "tsConfig": "ui-ag-grid/.storybook/tsconfig.json",
         "styles": [
+          "node_modules/ag-grid-community/styles/ag-grid.css",
+          "node_modules/ag-grid-community/styles/ag-theme-balham.css",
           "node_modules/@progress/kendo-theme-default/dist/all.css",
           "ui-ag-grid/styles.css"
         ],

@@ -74,6 +74,7 @@
     "@angular/cli": "^21.2.11",
     "@angular/compiler-cli": "^21.2.13",
     "@angular/language-service": "^21.2.13",
+    "@angular/localize": "^21.2.13",
     "@eslint/js": "^10.0.1",
     "@juristr/nx-tailwind-sync": "^0.0.9",
     "@nx/angular": "^22.7.5",

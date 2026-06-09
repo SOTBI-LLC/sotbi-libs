@@ -51,19 +51,21 @@ export class NativeDateValueAccessorDirective implements ControlValueAccessor {
   }
 
   public writeValue(value: Date | string | null): void {
-    let date: Date | null = null;
-    if (value instanceof Date) {
-      date = value;
-    } else if (typeof value === 'string' && value) {
-      date = new Date(value);
-    }
-    if (date && !isNaN(date.getTime())) {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      this.element.nativeElement.value = `${year}-${month}-${day}`;
-    } else {
-      this.element.nativeElement.value = '';
+    if (value) {
+      let date: Date | null = null;
+      if (value instanceof Date) {
+        date = value;
+      } else if (typeof value === 'string' && value) {
+        date = new Date(value);
+      }
+      if (date && !isNaN(date.getTime())) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        this.element.nativeElement.value = `${year}-${month}-${day}`;
+      } else {
+        this.element.nativeElement.value = '';
+      }
     }
   }
 
