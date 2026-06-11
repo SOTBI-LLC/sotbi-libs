@@ -12,9 +12,6 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: 'input[type=date][nativeDate]',
   standalone: true,
-  host: {
-    class: 'border rounded px-3 py-2',
-  },
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

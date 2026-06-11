@@ -1,7 +1,7 @@
 import { formatDate } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { DD_MM_YYYY, YYYY_MM_DD } from '@sotbi/utils';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { DD_MM_YYYY } from '@sotbi/utils';
 import { AgGridAngular } from 'ag-grid-angular';
 import type { GridOptions, ValueFormatterParams } from 'ag-grid-community';
 
@@ -99,8 +99,12 @@ class DatePickerEditorStoryHost {
         cellEditor: 'datePickerEditor',
         cellEditorParams: () => ({
           readonly: this.readOnly,
-          min: this.minDate,
-          max: this.maxDate,
+          min: this.minDate
+            ? formatDate(this.minDate, YYYY_MM_DD, 'ru-RU')
+            : null,
+          max: this.maxDate
+            ? formatDate(this.maxDate, YYYY_MM_DD, 'ru-RU')
+            : null,
         }),
         valueFormatter: (params: ValueFormatterParams<DateRow, Date | null>) =>
           params.value ? formatDate(params.value, DD_MM_YYYY, 'ru-RU') : '',
@@ -206,10 +210,14 @@ export const ReadOnly: Story = {
 
 export const WithMinMax: Story = {
   args: {
-    minDate: new Date(2024, 0, 1),
-    maxDate: new Date(2024, 11, 31),
+    minDate: new Date(2026, 6, 1),
+    maxDate: new Date(2026, 6, 31),
     rows: [
-      { id: 1, label: 'В пределах 2024 года', date: new Date(2024, 5, 15) },
+      {
+        id: 1,
+        label: 'В пределах июня 2026 года',
+        date: new Date(2026, 6, 15),
+      },
       { id: 2, label: 'Пустая дата', date: null },
     ],
   },

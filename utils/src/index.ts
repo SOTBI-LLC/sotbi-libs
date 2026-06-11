@@ -23,6 +23,7 @@ export {
   getMonthNameFunction,
   HH_MM,
   MM_YYYY,
+  YYYY_MM_DD,
 } from './lib/date-func/format';
 export { MONTH_NAMES, RUS_MONTH } from './lib/date-func/locale';
 export { parseStrToDate } from './lib/date-func/parse';

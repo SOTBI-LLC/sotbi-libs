@@ -3,6 +3,7 @@ import { MONTH_NAMES, RUS_MONTH } from './locale';
 
 export const MM_YYYY = 'MM.yyyy';
 export const DD_MM_YYYY = 'dd.MM.yyyy';
+export const YYYY_MM_DD = 'yyyy-MM-dd';
 export const DD_MM_YY = 'dd.MM.yy';
 export const HH_MM = 'HH:mm';
 export const DD_MM_YYYY_HH_MM = `${DD_MM_YYYY} ${HH_MM}`;

@@ -62,6 +62,21 @@ describe('NativeTimeValueAccessorDirective', () => {
     expect(fixture.componentInstance.timeValue).toBe(90);
   });
 
+  it('should convert input value to minutes on blur', async () => {
+    const fixture = TestBed.createComponent(TestComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const input = fixture.nativeElement.querySelector(
+      'input',
+    ) as HTMLInputElement;
+    input.value = '02:10';
+    input.dispatchEvent(new Event('blur'));
+    await fixture.whenStable();
+
+    expect(fixture.componentInstance.timeValue).toBe(130);
+  });
+
   it('should set null when input is cleared', async () => {
     const fixture = TestBed.createComponent(TestComponent);
     fixture.componentInstance.timeValue = 60;

@@ -12,9 +12,6 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: 'input[type=time][nativeTime]',
   standalone: true,
-  host: {
-    class: 'border rounded px-3 py-2',
-  },
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -34,16 +31,12 @@ export class NativeTimeValueAccessorDirective implements ControlValueAccessor {
 
   @HostListener('change')
   protected handleChange(): void {
-    const value = this.element.nativeElement.value;
-    if (value) {
-      this.onChange(this.parseTimeToMinutes(value));
-    } else {
-      this.onChange(null);
-    }
+    this.commitValue();
   }
 
   @HostListener('blur')
   protected handleBlur(): void {
+    this.commitValue();
     this.onTouched();
   }
 
@@ -71,6 +64,15 @@ export class NativeTimeValueAccessorDirective implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
+  private commitValue(): void {
+    const value = this.element.nativeElement.value;
+    if (value) {
+      this.onChange(this.parseTimeToMinutes(value));
+    } else {
+      this.onChange(null);
+    }
+  }
+
   private parseTimeToMinutes(value: string): number | null {
     const match = /^(\d{1,2}):(\d{2})$/.exec(value);
     if (!match) {
@@ -82,7 +84,6 @@ export class NativeTimeValueAccessorDirective implements ControlValueAccessor {
     if (hours > 23 || mins > 59) {
       return null;
     }
-
     return hours * 60 + mins;
   }
 
