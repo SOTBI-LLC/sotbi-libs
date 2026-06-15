@@ -3,8 +3,8 @@ export class PerformancePeriod {
   public year = 2026;
   public month = 1;
   public is_active = false;
-  public starts_at = new Date();
-  public ends_at = new Date();
+  public starts_at = /* new Date() */ { seconds: 0 };
+  public ends_at = /* new Date() */ { seconds: 0 };
   constructor(init: Partial<PerformancePeriod> = {}) {
     Object.assign(this, init);
   }

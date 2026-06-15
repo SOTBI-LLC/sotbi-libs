@@ -83,7 +83,11 @@ export class UserPerformanceState {
       patchState({ loading: true });
       return this.userPerformanceSrv.getAll(payload).pipe(
         tap((response: { items: UserPerformance[] }) => {
-          patchState({ items: response.items });
+          if (response?.items) {
+            patchState({ items: response.items });
+          } else {
+            patchState({ items: [] });
+          }
         }),
         catchError((err) => {
           console.error(err);

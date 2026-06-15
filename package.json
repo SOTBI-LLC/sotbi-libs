@@ -25,7 +25,7 @@
     "ui-ag-grid",
     "utils"
   ],
-  "peerDependencies": {
+  "dependencies": {
     "@angular/animations": "^21.2.13",
     "@angular/cdk": "^21.2.11",
     "@angular/common": "^21.2.13",
@@ -47,7 +47,9 @@
     "imask": "^7.6.1",
     "javascript-state-machine": "~2.4.0",
     "jwt-decode": "^4.0.0",
-    "ts-node": "^10.9.2"
+    "rxjs": "~7.8.2",
+    "ts-node": "^10.9.2",
+    "zone.js": "^0.16.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^21.2.11",
