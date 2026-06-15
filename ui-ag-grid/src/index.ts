@@ -10,6 +10,7 @@ export {
   numericFormatter,
   percentFormatter,
   setGridState,
+  settingsCheckboxCellIcon,
 } from './lib/ag-grid.common';
 export { ButtonActionsComponent } from './lib/button-actions.component';
 export { ButtonRendererComponent } from './lib/button-renderer.component';

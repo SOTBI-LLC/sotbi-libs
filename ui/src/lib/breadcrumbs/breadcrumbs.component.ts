@@ -23,7 +23,6 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       :host {
         display: block;
       }
-
       .container {
         display: flex;
         flex-direction: row;
@@ -31,9 +30,9 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
         justify-content: space-between;
         align-items: center;
         align-content: stretch;
-        padding-bottom: 4px;
+        padding: 0;
+        margin: 0 0 0 0.25rem;
       }
-
       .item {
         display: block;
         flex-grow: 0;
@@ -42,11 +41,9 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
         align-self: auto;
         order: 0;
       }
-
       .item:nth-last-child(0) > div {
         margin-right: 0 !important;
       }
-
       .breadcrumb {
         color: #666666;
         text-overflow: ellipsis;
@@ -55,17 +52,14 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
         padding: 0;
         display: flex;
       }
-
       .breadcrumb-item:after {
         content: '/';
         padding: 0 10px;
       }
-
       .breadcrumb-item:last-child:after {
         content: none;
         padding-left: 0;
       }
-
       .breadcrumb-item:last-child {
         margin-right: 0;
       }

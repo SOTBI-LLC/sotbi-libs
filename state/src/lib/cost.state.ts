@@ -264,7 +264,7 @@ export class CostRealState {
       .map((el) => {
         return {
           ...el,
-          // date: el.date ? new Date(el.date) : new Date(),
+          date: el.date ? new Date(el.date) : null,
           dirty: false,
           rowId: rowId++ + '',
         };
@@ -325,10 +325,12 @@ export class CostRealState {
     const costs: CostReal[] = [];
     const idxs: Map<number, number> = new Map();
     // для указанного диапазона
+    console.log('addAbsenceItem', state.allItems);
     for (const day of days) {
       const hasAbsence = state.allItems.findIndex(
         ({ date, debtor: dbt }) =>
-          date?.getDate() === day &&
+          date &&
+          new Date(date).getDate() === day &&
           (debtor.id === dbt?.id || debtor.category_id === dbt?.category_id),
       );
       if (hasAbsence > -1) {
@@ -336,8 +338,9 @@ export class CostRealState {
         idxs.set(rowData.id, hasAbsence);
         costs.push({
           ...rowData,
+          date: rowData.date ? new Date(rowData.date) : null,
           minutes_costs: 8 * 60,
-          work_category_id: 0,
+          // work_category_id: 0,
           debtor_id: debtor.id ?? 0,
         });
       } else {

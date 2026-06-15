@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/ui-ag-grid",
-  "version": "0.0.42",
+  "version": "0.0.55",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "public"
@@ -10,21 +10,29 @@
     "url": "https://github.com/SOTBI-LLC/sotbi-libs.git",
     "directory": "ui-ag-grid"
   },
+  "exports": {
+    "./styles.css": "./styles.css"
+  },
   "peerDependencies": {
-    "@sotbi/utils": "0.0.42",
-    "@sotbi/models": "0.0.40",
+    "@sotbi/utils": "0.0.55",
+    "@sotbi/models": "0.0.55",
+    "@sotbi/ui": "0.0.55",
     "jest": "^30.3.0",
     "@angular/common": "^21.2.11",
-    "ag-grid-community": "~34.3.1",
     "@angular/core": "^21.2.11",
-    "ag-grid-angular": "~34.3.1",
     "@angular/forms": "^21.2.11",
-    "@progress/kendo-angular-dateinputs": "~23.4.0",
+    "@angular/router": "^21.2.11",
+    "@angular/platform-browser": "^21.2.13",
+    "@angular/localize": "^21.2.13",
+    "ag-grid-community": "~34.3.1",
+    "ag-grid-angular": "~34.3.1",
     "date-fns": "^4.1.0",
     "angular-imask": "^7.6.1",
-    "@angular/router": "^21.2.11",
     "@ng-select/ng-select": "^21.8.2",
-    "jest-preset-angular": "^16.1.4"
+    "jest-preset-angular": "^16.1.4",
+    "@storybook/angular": "^10.4.2"
   },
-  "sideEffects": false
+  "sideEffects": [
+    "*.css"
+  ]
 }

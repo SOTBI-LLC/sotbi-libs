@@ -1,78 +1,76 @@
+import { formatDate } from '@angular/common';
+import type { ElementRef } from '@angular/core';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
-  computed,
+  inject,
   input,
-  output,
   signal,
+  viewChild,
 } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import type { DateInputFormatPlaceholder } from '@progress/kendo-angular-dateinputs';
-import {
-  DateInputsModule,
-  DateTimePickerCustomMessagesComponent,
-  TimePickerComponent,
-} from '@progress/kendo-angular-dateinputs';
-import { DD_MM_YYYY } from '@sotbi/utils';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NativeDateValueAccessorDirective } from '@sotbi/ui';
+import { YYYY_MM_DD } from '@sotbi/utils';
 import type { ICellEditorAngularComp } from 'ag-grid-angular';
-import type { GridApi, ICellEditorParams } from 'ag-grid-community';
+import type { ICellEditorParams } from 'ag-grid-community';
 import { isSameDay } from 'date-fns';
 
+const parseTimeToMinutes = (value: string): number | null => {
+  const match = /^(\d{1,2}):(\d{2})$/.exec(value);
+  if (!match) {
+    return null;
+  }
+  const hours = Number(match[1]);
+  const mins = Number(match[2]);
+  if (hours > 23 || mins > 59) {
+    return null;
+  }
+  return hours * 60 + mins;
+};
+
+const formatMinutesToTime = (minutes: number): string => {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+};
+
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector
+  selector: 'native-date-picker',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DateInputsModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NativeDateValueAccessorDirective, FormsModule],
   template: `
-    <kendo-datepicker
-      #timePicker
-      class="grid-picker"
+    <input
+      #datePicker
+      class="grid-picker px-2"
       [class.hide]="readonly()"
-      [min]="min"
-      [max]="max"
-      [format]="format"
-      [formatPlaceholder]="{
-        year: 'ГГГГ',
-        month: 'ММ',
-        day: 'ДД',
-      }"
-      [navigation]="false"
-      [value]="value"
-      (valueChange)="dateChanged($event)"
-      [readOnlyInput]="readonly()"
-      [format]="format"
+      type="date"
+      nativeDate
+      [attr.min]="min || null"
+      [attr.max]="max || null"
+      [(ngModel)]="value"
       [disabled]="disabled()"
-      [clearButton]="true"
-    >
-      <kendo-datepicker-messages today="Сегодня" toggle="Показать календарь" />
-    </kendo-datepicker>
+    />
   `,
   styleUrls: ['./date-picker-editor.component.scss'],
 })
 export class DatePickerEditor implements ICellEditorAngularComp {
   protected value: Date | null = null;
   public readonly disabled = input(false);
-  protected min: Date = new Date();
-  protected max: Date = new Date();
+  protected min: string = formatDate(new Date(), YYYY_MM_DD, 'ru-RU');
+  protected max: string = formatDate(new Date(), YYYY_MM_DD, 'ru-RU');
   protected readonly readonly = signal<boolean>(false);
-  protected readonly format = DD_MM_YYYY;
-  public readonly dateChange = output<Date | null>();
-  private api: GridApi | null = null;
 
   public agInit(params: ICellEditorParams<unknown, Date | null>): void {
-    this.min = (params['min'] && new Date(params['min'])) ?? null;
-    this.max = (params['max'] && new Date(params['max'])) ?? null;
+    this.min = params['min'] ?? null;
+    this.max = params['max'] ?? null;
     this.readonly.set(params['readonly']);
-    this.api = params.api;
     if (this.min && this.max && isSameDay(this.min, this.max)) {
-      this.value = this.min;
+      this.value = new Date(this.min);
     } else {
       this.value = (params.value && new Date(params.value)) ?? null;
     }
-  }
-
-  protected dateChanged(value: Date | null) {
-    this.value = value ? new Date(value) : null;
-    this.dateChange.emit(this.value);
-    this.api?.stopEditing();
   }
 
   public getValue(): Date | null {
@@ -93,58 +91,51 @@ export class DatePickerEditor implements ICellEditorAngularComp {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <kendo-timepicker
-      class="grid-picker"
-      format="HH:mm"
-      [value]="display()"
-      [formatPlaceholder]="formatPlaceholder"
-      [cancelButton]="false"
-      [nowButton]="false"
-      [steps]="steps"
-      (valueChange)="onChange($event)"
-    >
-      <kendo-datetimepicker-messages accept="ВЫБРАТЬ" acceptLabel="Выбрать">
-      </kendo-datetimepicker-messages>
-    </kendo-timepicker>
+    <input
+      #timePicker
+      type="time"
+      [attr.min]="min || null"
+      [attr.max]="max || null"
+      step="300"
+      class="grid-picker px-2 border rounded"
+      [(ngModel)]="value"
+    />
   `,
   styleUrls: ['./date-picker-editor.component.scss'],
-  imports: [TimePickerComponent, DateTimePickerCustomMessagesComponent],
+  imports: [FormsModule],
 })
 export class TimePickerEditor implements ICellEditorAngularComp {
-  private readonly value = signal<number>(0);
-  protected readonly display = computed(
-    () =>
-      new Date(0, 0, 0, Math.floor(this.value() / 60), this.value() % 60, 0),
-  );
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly timeInput =
+    viewChild<ElementRef<HTMLInputElement>>('timePicker');
 
-  protected min = 1;
-  protected max = 1439; // 23:59
-  protected steps = { hour: 1, minute: 10 };
-  protected formatPlaceholder: DateInputFormatPlaceholder = {
-    hour: '00',
-    minute: '00',
-    second: '00',
-    year: '2024',
-    month: '00',
-    day: '00',
-    millisecond: '0',
-  };
-  private api: GridApi | null = null;
+  protected value = '00:00';
 
-  public onChange(value: Date): void {
-    console.log(value);
-    this.value.set(value.getHours() * 60 + value.getMinutes());
-  }
+  protected min: string | null = null;
+  protected max: string | null = null;
 
   public agInit(params: ICellEditorParams): void {
-    this.api = params.api;
-    this.min = params['min'] ?? 1;
-    this.max = params['max'] ?? 1439;
-    this.value.set(params.value ?? 0);
+    this.min = params['min'] ?? null;
+    this.max = params['max'] ?? null;
+    this.value = params.value ? formatMinutesToTime(params.value) : '00:00';
+    this.cdr.markForCheck();
   }
 
+  public afterGuiAttached(): void {
+    const input = this.timeInput()?.nativeElement;
+    input?.focus();
+  }
+
+  /**
+   * AG Grid calls getValue() before blur/change on the native time input.
+   * Read the live DOM value instead of waiting for ngModel to sync.
+   */
   public getValue(): number {
-    return this.value();
+    const inputValue = this.timeInput()?.nativeElement.value;
+    if (!inputValue) {
+      return parseTimeToMinutes(this.value) ?? 0;
+    }
+    return parseTimeToMinutes(inputValue) ?? 0;
   }
 
   public isPopup(): boolean {

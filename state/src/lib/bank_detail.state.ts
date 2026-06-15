@@ -43,7 +43,7 @@ export class BankDetailState {
     const state = getState();
     if (state.items.length < 1) {
       const id = fromBase62(payload);
-      if (id !== +(state.current_counterparty_id ??= 0)) {
+      if (id !== +(state.current_counterparty_id ?? 0)) {
         patchState({ loading: true });
         return this.srv.GetAll(id).pipe(
           catchError((err) => {

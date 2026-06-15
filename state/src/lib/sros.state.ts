@@ -51,7 +51,6 @@ export class SrosState implements NgxsOnInit {
     setState,
     patchState,
   }: StateContext<SroStateModel>) {
-    // console.log('SrosState::FetchSros');
     const state = getState();
     if (!state.items.length) {
       patchState({ loading: true });
@@ -82,8 +81,7 @@ export class SrosState implements NgxsOnInit {
   ) {
     patchState({ loading: true });
     const state = getState();
-    let result: Sro;
-    const items = structuredClone(state.items);
+    const items = [...state.items];
     const idx = items.findIndex(({ id }) => payload === id);
     if (!items[idx].full_name) {
       this.sroSrv.get(payload).subscribe((result) => {
@@ -91,8 +89,7 @@ export class SrosState implements NgxsOnInit {
         patchState({ items, selectedSro: result, loading: false });
       });
     } else {
-      result = state.items[idx];
-      patchState({ items, selectedSro: result, loading: false });
+      patchState({ selectedSro: state.items[idx], loading: false });
     }
   }
 
@@ -123,10 +120,11 @@ export class SrosState implements NgxsOnInit {
         const state = getState();
         const mapSros = state.mapSros;
         mapSros.set(id, result.name);
-        const items = state.items;
-        const idx = items.findIndex((el) => el.id === id);
-        items[idx] = result;
-        patchState({ items, mapSros, selectedSro: result });
+        patchState({
+          items: state.items.map((el) => (el.id === id ? result : el)),
+          mapSros,
+          selectedSro: result,
+        });
       }),
       catchError((err) => throwError(() => err)),
     );

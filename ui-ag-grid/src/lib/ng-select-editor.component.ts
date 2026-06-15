@@ -104,10 +104,11 @@ export class ProjectAndDebtorSelectEditor<T> implements ICellEditorAngularComp {
       [bindLabel]="bindName"
       [bindValue]="bindId"
       [(ngModel)]="value"
+      [selectOnTab]="addTag"
       notFoundText="Не найдено"
       appendTo="body"
-      [addTag]="addTag"
-      [ngStyle]="{ width: wide ? 'unset' : '300px' }"
+      [addTag]="addTag && addTagFn"
+      [style.width]="wide ? 'unset' : '300px'"
       (change)="onChange()"
     >
       @if (isUserWithAvatar; as item) {
@@ -126,7 +127,6 @@ export class ProjectAndDebtorSelectEditor<T> implements ICellEditorAngularComp {
   imports: [
     NgSelectComponent,
     FormsModule,
-    NgStyle,
     NgLabelTemplateDirective,
     UserWithAvatarComponent,
   ],
@@ -170,6 +170,15 @@ export class NgSelectEditor<T> implements ICellEditorAngularComp {
   public refresh() {
     return true;
   }
+
+  protected addTagFn = (name: string) => {
+    this.value = name;
+    if (this.api) {
+      this.api.stopEditing(false);
+    }
+    return { [this.bindId]: 0, [this.bindName]: name };
+  };
+
   protected onChange() {
     if (this.api) {
       this.api.stopEditing(false);

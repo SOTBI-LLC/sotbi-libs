@@ -75,6 +75,9 @@ jobs:
       - name: Run ESLint on affected projects
         run: yarn nx affected -t lint --parallel=3 --configuration=ci
 
+      - name: Run Stylelint on affected projects
+        run: yarn nx affected -t stylelint --parallel=3
+
   test:
     name: Test
     runs-on: ubuntu-latest

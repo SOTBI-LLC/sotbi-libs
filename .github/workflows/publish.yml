@@ -60,11 +60,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
+      - name: Install NX
+        run: yarn global add nx
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
       - name: Build all packages
-        run: yarn nx run-many -t build --configuration=production
+        run: yarn nx run-many -t build --skip-nx-cache --configuration=production
 
       - name: Publish packages
         run: yarn nx run-many -t nx-release-publish

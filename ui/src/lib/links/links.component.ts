@@ -8,7 +8,6 @@ import {
   output,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ClarityModule } from '@clr/angular';
 import type { itemMap, ShortLink, SimpleEditModel } from '@sotbi/models';
 import { Link } from '@sotbi/models';
 import { deepEqual } from '@sotbi/utils';
@@ -31,7 +30,7 @@ export const styleClassesForLinks = [
 
 @Component({
   selector: 'app-links-wrap',
-  imports: [FormsModule, ClarityModule, CommonModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './links.component.html',
   styleUrls: ['./links.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
