@@ -2,6 +2,7 @@ import {
   Directive,
   ElementRef,
   HostListener,
+  LOCALE_ID,
   forwardRef,
   inject,
 } from '@angular/core';
@@ -18,6 +19,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
       useExisting: forwardRef(() => NativeDateValueAccessorDirective),
       multi: true,
     },
+    { provide: LOCALE_ID, useValue: 'ru' },
   ],
 })
 export class NativeDateValueAccessorDirective implements ControlValueAccessor {
