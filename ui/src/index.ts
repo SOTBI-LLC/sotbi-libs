@@ -20,6 +20,7 @@ export {
   styleClassesForLinks,
 } from './lib/links/links.component';
 export { NativeDateValueAccessorDirective } from './lib/native-date';
+export { NativeDateTimeValueAccessorDirective } from './lib/native-datetime';
 export { NativeTimeValueAccessorDirective } from './lib/native-time';
 export { PaymentFormComponent } from './lib/payment-form';
 export { PaymentsFilterComponent } from './lib/payments-filter';
