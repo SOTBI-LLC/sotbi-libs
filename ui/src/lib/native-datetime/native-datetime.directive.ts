@@ -1,17 +1,14 @@
-import {
-  Directive,
-  ElementRef,
-  HostListener,
-  forwardRef,
-  inject,
-} from '@angular/core';
+import { Directive, ElementRef, forwardRef, inject } from '@angular/core';
 import type { ControlValueAccessor } from '@angular/forms';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: 'input[type=datetime-local][nativeDateTime]',
-  standalone: true,
+  host: {
+    '(change)': 'handleChange()',
+    '(blur)': 'handleBlur()',
+  },
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -29,12 +26,10 @@ export class NativeDateTimeValueAccessorDirective implements ControlValueAccesso
     // noop
   };
 
-  @HostListener('change')
   protected handleChange(): void {
     this.commitValue();
   }
 
-  @HostListener('blur')
   protected handleBlur(): void {
     this.commitValue();
     this.onTouched();
