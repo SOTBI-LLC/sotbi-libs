@@ -81,10 +81,24 @@ export class NativeDateTimeValueAccessorDirective implements ControlValueAccesso
     this.onChange(null);
   }
 
-  private parseDateTime(value: string): Date {
+  private parseDateTime(value: string): Date | null {
     const [datePart, timePart] = value.split('T');
+    if (!datePart || !timePart) {
+      console.error('Invalid date time value:', value);
+      return null;
+    }
     const [year, month, day] = datePart.split('-').map(Number);
     const [hour, minute] = timePart.split(':').map(Number);
+    if (
+      isNaN(year) ||
+      isNaN(month) ||
+      isNaN(day) ||
+      isNaN(hour) ||
+      isNaN(minute)
+    ) {
+      console.error('Invalid date time value:', value);
+      return null;
+    }
     return new Date(year, month - 1, day, hour, minute);
   }
 
