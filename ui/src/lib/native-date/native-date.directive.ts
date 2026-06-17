@@ -1,25 +1,20 @@
-import {
-  Directive,
-  ElementRef,
-  HostListener,
-  LOCALE_ID,
-  forwardRef,
-  inject,
-} from '@angular/core';
+import { Directive, ElementRef, forwardRef, inject } from '@angular/core';
 import type { ControlValueAccessor } from '@angular/forms';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: 'input[type=date][nativeDate]',
-  standalone: true,
+  host: {
+    '(change)': 'handleChange()',
+    '(blur)': 'handleBlur()',
+  },
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => NativeDateValueAccessorDirective),
       multi: true,
     },
-    { provide: LOCALE_ID, useValue: 'ru' },
   ],
 })
 export class NativeDateValueAccessorDirective implements ControlValueAccessor {
@@ -31,7 +26,6 @@ export class NativeDateValueAccessorDirective implements ControlValueAccessor {
     // noop
   };
 
-  @HostListener('change')
   protected handleChange(): void {
     // Нативный valueAsDate возвращает полночь по UTC. Приводим к часовому
     // поясу пользователя: создаём Date на локальную полночь выбранного дня.
@@ -44,7 +38,6 @@ export class NativeDateValueAccessorDirective implements ControlValueAccessor {
     }
   }
 
-  @HostListener('blur')
   protected handleBlur(): void {
     this.onTouched();
   }
@@ -73,5 +66,8 @@ export class NativeDateValueAccessorDirective implements ControlValueAccessor {
   }
   public registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
+  }
+  public setDisabledState(isDisabled: boolean): void {
+    this.element.nativeElement.disabled = isDisabled;
   }
 }
