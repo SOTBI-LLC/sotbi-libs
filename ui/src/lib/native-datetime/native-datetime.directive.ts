@@ -2,7 +2,6 @@ import {
   Directive,
   ElementRef,
   HostListener,
-  LOCALE_ID,
   forwardRef,
   inject,
 } from '@angular/core';
@@ -19,7 +18,6 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
       useExisting: forwardRef(() => NativeDateTimeValueAccessorDirective),
       multi: true,
     },
-    { provide: LOCALE_ID, useValue: 'ru' },
   ],
 })
 export class NativeDateTimeValueAccessorDirective implements ControlValueAccessor {
@@ -69,6 +67,10 @@ export class NativeDateTimeValueAccessorDirective implements ControlValueAccesso
 
   public registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
+  }
+
+  public setDisabledState(isDisabled: boolean): void {
+    this.element.nativeElement.disabled = isDisabled;
   }
 
   private commitValue(): void {
