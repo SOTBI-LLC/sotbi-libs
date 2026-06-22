@@ -48,7 +48,7 @@ export class LinkCellAgGridFootclothComponent implements ICellRendererAngularCom
           break;
         }
         case 'debtor_name': {
-          this.routerLink = ['/debtors/', data.debtor_id];
+          this.routerLink = ['/bankruptcy', 'debtors', data.debtor_id];
           break;
         }
         case 'initiator_name': {

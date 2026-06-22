@@ -1,25 +1,20 @@
-import {
-  Directive,
-  ElementRef,
-  HostListener,
-  LOCALE_ID,
-  forwardRef,
-  inject,
-} from '@angular/core';
+import { Directive, ElementRef, forwardRef, inject } from '@angular/core';
 import type { ControlValueAccessor } from '@angular/forms';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: 'input[type=datetime-local][nativeDateTime]',
-  standalone: true,
+  host: {
+    '(change)': 'handleChange()',
+    '(blur)': 'handleBlur()',
+  },
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => NativeDateTimeValueAccessorDirective),
       multi: true,
     },
-    { provide: LOCALE_ID, useValue: 'ru' },
   ],
 })
 export class NativeDateTimeValueAccessorDirective implements ControlValueAccessor {
@@ -31,12 +26,10 @@ export class NativeDateTimeValueAccessorDirective implements ControlValueAccesso
     // noop
   };
 
-  @HostListener('change')
   protected handleChange(): void {
     this.commitValue();
   }
 
-  @HostListener('blur')
   protected handleBlur(): void {
     this.commitValue();
     this.onTouched();
@@ -71,6 +64,10 @@ export class NativeDateTimeValueAccessorDirective implements ControlValueAccesso
     this.onTouched = fn;
   }
 
+  public setDisabledState(isDisabled: boolean): void {
+    this.element.nativeElement.disabled = isDisabled;
+  }
+
   private commitValue(): void {
     const value = this.element.nativeElement.value;
     if (value) {
@@ -81,10 +78,24 @@ export class NativeDateTimeValueAccessorDirective implements ControlValueAccesso
     this.onChange(null);
   }
 
-  private parseDateTime(value: string): Date {
+  private parseDateTime(value: string): Date | null {
     const [datePart, timePart] = value.split('T');
+    if (!datePart || !timePart) {
+      console.error('Invalid date time value:', value);
+      return null;
+    }
     const [year, month, day] = datePart.split('-').map(Number);
     const [hour, minute] = timePart.split(':').map(Number);
+    if (
+      isNaN(year) ||
+      isNaN(month) ||
+      isNaN(day) ||
+      isNaN(hour) ||
+      isNaN(minute)
+    ) {
+      console.error('Invalid date time value:', value);
+      return null;
+    }
     return new Date(year, month - 1, day, hour, minute);
   }
 
