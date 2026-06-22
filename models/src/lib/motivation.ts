@@ -3,6 +3,7 @@ export class PerformancePeriod {
   public year = 2026;
   public month = 1;
   public is_active = false;
+  // to do: поправить после исправления бэка
   public starts_at = /* new Date() */ { seconds: 0 };
   public ends_at = /* new Date() */ { seconds: 0 };
   constructor(init: Partial<PerformancePeriod> = {}) {
@@ -15,8 +16,9 @@ export class BaseCriteria {
   public name = '';
   public description = '';
   public max_score = 0;
-  public valid_from = new Date();
-  public valid_to = new Date();
+  // to do: поправить после исправления бэка
+  public valid_from = /* new Date() */ { seconds: 0 };
+  public valid_to = /* new Date() */ { seconds: 0 };
   constructor(init: Partial<BaseCriteria> = {}) {
     Object.assign(this, init);
   }
@@ -30,7 +32,8 @@ export class PerformanceCriteria {
   public is_absolute = false;
   public year = 0;
   public month = 0;
-  public department_id = 0;
+  public department_id = { value: 0 };
+  // to do: нужны ли поля valid_from и valid_to?
   /*  public valid_from = new Date();
   public valid_to = new Date(); */
   constructor(init: Partial<PerformanceCriteria> = {}) {
@@ -66,33 +69,6 @@ export interface UserPercentageRequest {
   year: number;
   month: number;
 }
-
-// новое
-
-/* export interface MotivationEmployee {
-  id: number;
-  fullName: string;
-  email: string;
-  position: string;
-  department: string;
-  avatar?: string;
-  basePercent: number;
-  totalPercent: number;
-  averagePercent: number;
-  color?: 'success' | 'warning' | 'danger';
-}
-
-export interface CriterionWithScore {
-  id: number;
-  criteria_id: number;
-  name: string;
-  description: string;
-  max_score: number;
-  is_absolute: boolean;
-  earned_score: number; // из UserPerformance
-  comment?: string;
-  sign: '+' | '-'; // для отображения
-} */
 
 export interface PerformanceCriteriaRequest {
   year: number;

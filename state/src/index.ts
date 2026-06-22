@@ -612,8 +612,7 @@ export {
 } from './lib/performance-period.state';
 export {
   PerformancePeriodGetActions,
-  PerformancePeriodPutAction,
-  PerformancePeriodAddAction,
+  PerformancePeriodAddOrPutAction,
 } from './lib/performance-period.actions';
 export {
   PerformanceCriteriaState,

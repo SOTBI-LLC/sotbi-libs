@@ -5,9 +5,8 @@ import { PerformancePeriodService } from '@sotbi/data-access';
 import type { PerformancePeriod } from '@sotbi/models';
 import { catchError, finalize, of, tap, throwError } from 'rxjs';
 import {
-  PerformancePeriodAddAction,
   PerformancePeriodGetActions,
-  PerformancePeriodPutAction,
+  PerformancePeriodAddOrPutAction,
 } from './performance-period.actions';
 
 export class PerformancePeriodStateModel {
@@ -36,38 +35,22 @@ export class PerformancePeriodState {
     return state.items;
   }
 
-  // check : добавлен, на бэке нет пока
-  @Action(PerformancePeriodAddAction)
-  public add(
-    { getState, patchState }: StateContext<PerformancePeriodStateModel>,
-    { payload }: PerformancePeriodAddAction,
-  ) {
-    patchState({ loading: true });
-    return this.performancePeriodSrv.add(payload).pipe(
-      tap((item: PerformancePeriod) => {
-        patchState({ items: [...getState().items, item] });
-      }),
-      catchError((err) => {
-        console.error(err);
-        return throwError(() => err);
-      }),
-      finalize(() => {
-        patchState({ loading: false });
-      }),
-    );
-  }
-
-  @Action(PerformancePeriodPutAction)
-  public put(
+  @Action(PerformancePeriodAddOrPutAction)
+  public addOrPut(
     {
       patchState,
       getState,
       setState,
     }: StateContext<PerformancePeriodStateModel>,
-    { payload }: PerformancePeriodPutAction,
+    { payload }: PerformancePeriodAddOrPutAction,
   ) {
     patchState({ loading: true });
-    return this.performancePeriodSrv.update(payload).pipe(
+
+    const { id, ...data } = payload;
+    const request = id
+      ? this.performancePeriodSrv.update(payload)
+      : this.performancePeriodSrv.addItem(data);
+    return request.pipe(
       tap((item: PerformancePeriod) => {
         const state = getState();
         const items = [...state.items];

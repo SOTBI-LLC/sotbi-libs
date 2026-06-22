@@ -29,6 +29,12 @@ export class PerformancePeriodService extends CommonService<PerformancePeriod> {
   public getAll(): Observable<{ items: PerformancePeriod[] }> {
     return this.http.get<{ items: PerformancePeriod[] }>(this.path);
   }
+
+  public addItem(
+    item: Partial<PerformancePeriod>,
+  ): Observable<PerformancePeriod> {
+    return this.http.put<PerformancePeriod>(this.path, item);
+  }
 }
 
 @Injectable({
@@ -118,7 +124,7 @@ export class UserPerformanceService extends CommonService<UserPerformance> {
 @Injectable({
   providedIn: 'root',
 })
-// check: нет стейта
+// to do: нет стейта (проверить, нужен ли)
 export class UserPercentageService extends CommonService<UserPercentage> {
   protected override readonly http: HttpClient;
 

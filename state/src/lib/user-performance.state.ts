@@ -27,7 +27,6 @@ export class UserPerformanceStateModel {
     },
   },
 })
-// check: нужен ли ADD-action ?
 @Injectable()
 export class UserPerformanceState {
   private readonly userPerformanceSrv = inject(UserPerformanceService);
