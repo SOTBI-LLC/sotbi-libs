@@ -73,7 +73,7 @@ export interface UserPercentageRequest {
 export interface PerformanceCriteriaRequest {
   year: number;
   month: number;
-  department_id?: number;
+  department_id?: number; // to do: проверить тип, что не { value: number}
   user_id?: number;
 }
 
