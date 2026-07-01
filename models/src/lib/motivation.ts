@@ -3,8 +3,9 @@ export class PerformancePeriod {
   public year = 2026;
   public month = 1;
   public is_active = false;
-  public starts_at = new Date();
-  public ends_at = new Date();
+  // to do: поправить после исправления бэка
+  public starts_at = /* new Date() */ { seconds: 0 };
+  public ends_at = /* new Date() */ { seconds: 0 };
   constructor(init: Partial<PerformancePeriod> = {}) {
     Object.assign(this, init);
   }
@@ -15,8 +16,9 @@ export class BaseCriteria {
   public name = '';
   public description = '';
   public max_score = 0;
-  public valid_from = new Date();
-  public valid_to = new Date();
+  // to do: поправить после исправления бэка
+  public valid_from = /* new Date() */ { seconds: 0 };
+  public valid_to = /* new Date() */ { seconds: 0 };
   constructor(init: Partial<BaseCriteria> = {}) {
     Object.assign(this, init);
   }
@@ -28,8 +30,12 @@ export class PerformanceCriteria {
   public description = '';
   public max_score = 0;
   public is_absolute = false;
-  public valid_from = new Date();
-  public valid_to = new Date();
+  public year = 0;
+  public month = 0;
+  public department_id = { value: 0 };
+  // to do: нужны ли поля valid_from и valid_to?
+  /*  public valid_from = new Date();
+  public valid_to = new Date(); */
   constructor(init: Partial<PerformanceCriteria> = {}) {
     Object.assign(this, init);
   }
@@ -60,6 +66,18 @@ export class UserPercentage {
 
 export interface UserPercentageRequest {
   user_id: number;
+  year: number;
+  month: number;
+}
+
+export interface PerformanceCriteriaRequest {
+  year: number;
+  month: number;
+  department_id?: number; // to do: проверить тип, что не { value: number}
+  user_id?: number;
+}
+
+export interface SelectedPeriod {
   year: number;
   month: number;
 }

@@ -57,15 +57,15 @@ export class PerformanceCriteriaState {
   }
 
   @Action(PerformanceCriteriaGetActions)
-  public get({
-    patchState,
-    getState,
-  }: StateContext<PerformanceCriteriaStateModel>) {
+  public get(
+    { patchState, getState }: StateContext<PerformanceCriteriaStateModel>,
+    { payload }: PerformanceCriteriaGetActions,
+  ) {
     if (getState().items.length === 0) {
       patchState({ loading: true });
-      return this.performanceCriteriaSrv.GetAll().pipe(
-        tap((items: PerformanceCriteria[]) => {
-          patchState({ items });
+      return this.performanceCriteriaSrv.getAll(payload).pipe(
+        tap((response: { items: PerformanceCriteria[] }) => {
+          patchState({ items: response.items });
         }),
         catchError((err) => {
           console.error(err);

@@ -79,7 +79,7 @@ export class BaseCriteriaState {
   public get({ patchState, getState }: StateContext<BaseCriteriaStateModel>) {
     if (getState().items.length === 0) {
       patchState({ loading: true });
-      return this.baseCriteriaSrv.GetAll().pipe(
+      return this.baseCriteriaSrv.getAll().pipe(
         tap((items: BaseCriteria[]) => {
           patchState({ items });
         }),

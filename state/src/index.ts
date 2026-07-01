@@ -586,3 +586,40 @@ export {
   WorkCategoryState,
   WorkCategoryStateModel,
 } from './lib/work-category.state';
+
+// Motivation
+export {
+  UserPerformanceState,
+  UserPerformanceStateModel,
+} from './lib/user-performance.state';
+export {
+  UserPerformanceGetActions,
+  UserPerformanceUpsertAction,
+  UserPerformanceSelectPeriod,
+} from './lib/user-performance.actions';
+export {
+  BaseCriteriaState,
+  BaseCriteriaStateModel,
+} from './lib/base-criteria.state';
+export {
+  BaseCriteriaAddAction,
+  BaseCriteriaGetActions,
+  BaseCriteriaPutAction,
+} from './lib/base-criteria.actions';
+export {
+  PerformancePeriodState,
+  PerformancePeriodStateModel,
+} from './lib/performance-period.state';
+export {
+  PerformancePeriodGetActions,
+  PerformancePeriodAddOrPutAction,
+} from './lib/performance-period.actions';
+export {
+  PerformanceCriteriaState,
+  PerformanceCriteriaStateModel,
+} from './lib/performance-criteria.state';
+export {
+  PerformanceCriteriaAddAction,
+  PerformanceCriteriaGetActions,
+  PerformanceCriteriaPutAction,
+} from './lib/performance-criteria.actions';
