@@ -15,7 +15,7 @@
   },
   "peerDependencies": {
     "@sotbi/utils": "0.0.55",
-    "@sotbi/models": "0.0.55",
+    "@sotbi/models": "0.0.56",
     "@sotbi/ui": "0.0.55",
     "jest": "^30.3.0",
     "@angular/common": "^21.2.11",
