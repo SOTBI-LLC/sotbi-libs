@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/models",
-  "version": "0.0.56",
+  "version": "0.0.57",
   "type": "module",
   "publishConfig": {
     "registry": "https://npm.bazys.io",

@@ -158,12 +158,12 @@ export class NumericEditor<T> implements ICellEditorAngularComp, AfterViewInit {
   imports: [FormsModule, IMaskDirective],
 })
 export class SimpleNumericEditor implements AfterViewInit {
-  protected value = 0;
+  protected value: number | null = null;
   protected maskForSumm = maskForSumm;
   private readonly input = viewChild('input', { read: ViewContainerRef });
 
   public agInit(params: ICellEditorParams): void {
-    this.value = params.value ?? '';
+    this.value = params.value ?? null;
     if (params['removeValueAfterDot']) {
       this.maskForSumm.scale = 0;
     } else {
@@ -175,7 +175,7 @@ export class SimpleNumericEditor implements AfterViewInit {
     this.value = value;
   }
 
-  public getValue(): number {
+  public getValue(): number | null {
     return this.value;
   }
 
