@@ -3,9 +3,8 @@ export class PerformancePeriod {
   public year = 2026;
   public month = 1;
   public is_active = false;
-  // to do: поправить после исправления бэка
-  public starts_at = /* new Date() */ { seconds: 0 };
-  public ends_at = /* new Date() */ { seconds: 0 };
+  public starts_at = new Date();
+  public ends_at = new Date();
   constructor(init: Partial<PerformancePeriod> = {}) {
     Object.assign(this, init);
   }
@@ -16,9 +15,8 @@ export class BaseCriteria {
   public name = '';
   public description = '';
   public max_score = 0;
-  // to do: поправить после исправления бэка
-  public valid_from = /* new Date() */ { seconds: 0 };
-  public valid_to = /* new Date() */ { seconds: 0 };
+  public valid_from = new Date();
+  public valid_to: Date | null = null;
   constructor(init: Partial<BaseCriteria> = {}) {
     Object.assign(this, init);
   }

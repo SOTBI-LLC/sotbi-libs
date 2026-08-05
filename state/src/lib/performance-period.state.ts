@@ -5,8 +5,8 @@ import { PerformancePeriodService } from '@sotbi/data-access';
 import type { PerformancePeriod } from '@sotbi/models';
 import { catchError, finalize, of, tap, throwError } from 'rxjs';
 import {
-  PerformancePeriodGetActions,
   PerformancePeriodAddOrPutAction,
+  PerformancePeriodGetActions,
 } from './performance-period.actions';
 
 export class PerformancePeriodStateModel {
@@ -26,13 +26,13 @@ export class PerformancePeriodState {
   private readonly performancePeriodSrv = inject(PerformancePeriodService);
 
   @Selector()
-  public static getState(state: PerformancePeriodStateModel) {
-    return state;
+  public static getItems(state: PerformancePeriodStateModel) {
+    return state.items;
   }
 
   @Selector()
-  public static getItems(state: PerformancePeriodStateModel) {
-    return state.items;
+  public static loading(state: PerformancePeriodStateModel) {
+    return state.loading;
   }
 
   @Action(PerformancePeriodAddOrPutAction)
@@ -82,11 +82,17 @@ export class PerformancePeriodState {
     patchState,
     getState,
   }: StateContext<PerformancePeriodStateModel>) {
-    patchState({ loading: true });
-    if (getState().items.length === 0) {
+    if (getState().items?.length === 0) {
+      patchState({ loading: true });
       return this.performancePeriodSrv.getAll().pipe(
-        tap((response: { items: PerformancePeriod[] }) => {
-          patchState({ items: response.items });
+        tap((items) => {
+          items.forEach((item) => {
+            item.starts_at = new Date(item.starts_at);
+            item.ends_at = new Date(item.ends_at);
+            item.starts_at.setHours(0, 0, 0, 0);
+            item.ends_at.setHours(23, 59, 59, 999);
+          });
+          patchState({ items });
         }),
         catchError((err) => {
           console.error(err);

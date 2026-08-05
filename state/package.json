@@ -14,16 +14,16 @@
     "@sotbi/models": "0.0.57",
     "@sotbi/data-access": "0.0.56",
     "@sotbi/utils": "0.0.55",
-    "jest": "^30.3.0",
-    "@angular/core": "^21.2.11",
+    "@angular/common": "^21.2.13",
+    "@angular/core": "^21.2.13",
+    "@angular/forms": "^21.2.13",
     "@ngxs/store": "^21.0.0",
     "rxjs": "7.8.2",
     "date-fns": "^4.1.0",
-    "@fullcalendar/core": "^6.1.20",
-    "@angular/forms": "^21.2.11",
-    "@angular/common": "^21.2.11",
     "javascript-state-machine": "~2.4.0",
-    "jest-preset-angular": "^16.1.4"
+    "@fullcalendar/core": "^6.1.20",
+    "jest": "^30.3.0",
+    "jest-preset-angular": "^17.0.0"
   },
   "sideEffects": false
 }

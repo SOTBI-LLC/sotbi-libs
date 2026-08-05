@@ -63,7 +63,9 @@ export class BaseCriteriaState {
     patchState({ loading: true });
     return this.baseCriteriaSrv.update(payload).pipe(
       tap((item: BaseCriteria) => {
-        patchState({ items: [...getState().items, item] });
+        patchState({
+          items: getState().items.map((el) => (el.id === item.id ? item : el)),
+        });
       }),
       catchError((err) => {
         console.error(err);
