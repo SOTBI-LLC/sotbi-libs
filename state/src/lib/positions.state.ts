@@ -155,12 +155,10 @@ export class PositionState implements NgxsOnInit {
     { getState, patchState }: StateContext<PositionStateModel>,
     { payload }: EditPosition,
   ) {
-    // console.log('PositionState::EditPosition', payload);
     const { position, idx } = payload;
-    const state = getState();
-    position.dirty = true;
-    state.items[idx] = position;
-    return patchState({ items: state.items, saved: false });
+    const items = [...getState().items];
+    items[idx] = { ...position, dirty: true };
+    return patchState({ items, saved: false });
   }
 
   @Action(CancelPosition)
@@ -187,13 +185,16 @@ export class PositionState implements NgxsOnInit {
     const state = getState();
     return this.itemsService.update(position).pipe(
       tap((result: Position) => {
-        result.dirty = false;
-        state.items[idx] = result;
-        const index = state.allItems.findIndex(({ id }) => id === result.id);
-        state.allItems[index] = result;
+        position.dirty = false;
+        const items = [...state.items];
+        items[idx] = result;
+        const allItems = [
+          ...state.allItems.filter((el) => el.id !== result.id),
+          result,
+        ];
         patchState({
-          items: state.items,
-          allItems: state.allItems,
+          items,
+          allItems,
           saved: isAllSaved(state.items),
         });
       }),

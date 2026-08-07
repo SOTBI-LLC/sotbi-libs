@@ -10,5 +10,6 @@ export class Position {
   public staff_type_id = 0;
   public updated_by = 0;
   public updated: User | null = null;
+  public staff_id = 0;
   public dirty = false;
 }
