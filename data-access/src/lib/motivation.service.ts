@@ -26,8 +26,8 @@ export class PerformancePeriodService extends CommonService<PerformancePeriod> {
     this.http = http;
   }
 
-  public getAll(): Observable<{ items: PerformancePeriod[] }> {
-    return this.http.get<{ items: PerformancePeriod[] }>(this.path);
+  public getAll(): Observable<PerformancePeriod[]> {
+    return this.http.get<PerformancePeriod[]>(this.path);
   }
 
   public addItem(

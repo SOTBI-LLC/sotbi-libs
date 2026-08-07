@@ -34,7 +34,7 @@ describe('BaseCriteria store', () => {
   beforeEach(async () => {
     const serviceSpy = {
       add: jest.fn(),
-      GetAll: jest.fn(),
+      getAll: jest.fn(),
       update: jest.fn(),
     } as unknown as jest.Mocked<BaseCriteriaService>;
 
@@ -68,37 +68,38 @@ describe('BaseCriteria store', () => {
     const c1 = createBaseCriterion({ id: 1, name: 'a' });
     const c2 = createBaseCriterion({ id: 2, name: 'b' });
 
-    baseCriteriaService.GetAll.mockReturnValue(of([c1, c2]));
+    baseCriteriaService.getAll.mockReturnValue(of([c1, c2]));
     await store.dispatch(new BaseCriteriaGetActions());
 
-    expect(baseCriteriaService.GetAll).toHaveBeenCalledTimes(1);
+    expect(baseCriteriaService.getAll).toHaveBeenCalledTimes(1);
     expect(store.selectSnapshot(BaseCriteriaState.getItems)).toEqual([c1, c2]);
     expect(store.selectSnapshot(BaseCriteriaState.getLoading)).toBe(false);
   });
 
-  it('should not call GetAll when get is dispatched and items are already cached', async () => {
+  it('should not call getAll when get is dispatched and items are already cached', async () => {
     const c1 = createBaseCriterion();
 
-    baseCriteriaService.GetAll.mockReturnValue(of([c1]));
+    baseCriteriaService.getAll.mockReturnValue(of([c1]));
     await store.dispatch(new BaseCriteriaGetActions());
 
-    baseCriteriaService.GetAll.mockClear();
+    baseCriteriaService.getAll.mockClear();
     await store.dispatch(new BaseCriteriaGetActions());
 
-    expect(baseCriteriaService.GetAll).not.toHaveBeenCalled();
+    expect(baseCriteriaService.getAll).not.toHaveBeenCalled();
     expect(store.selectSnapshot(BaseCriteriaState.getItems)).toEqual([c1]);
     expect(store.selectSnapshot(BaseCriteriaState.getLoading)).toBe(false);
   });
 
-  it('should append the item returned from update after put', async () => {
+  it('should replace the item by id after put', async () => {
     const existing = createBaseCriterion({ id: 1, name: 'before' });
+    const other = createBaseCriterion({ id: 2, name: 'other' });
     const updated = createBaseCriterion({
       id: 1,
       name: 'after',
       description: 'after',
     });
 
-    baseCriteriaService.GetAll.mockReturnValue(of([existing]));
+    baseCriteriaService.getAll.mockReturnValue(of([existing, other]));
     await store.dispatch(new BaseCriteriaGetActions());
 
     baseCriteriaService.update.mockReturnValue(of(updated));
@@ -106,8 +107,8 @@ describe('BaseCriteria store', () => {
 
     expect(baseCriteriaService.update).toHaveBeenCalledWith(updated);
     expect(store.selectSnapshot(BaseCriteriaState.getItems)).toEqual([
-      existing,
       updated,
+      other,
     ]);
     expect(store.selectSnapshot(BaseCriteriaState.getLoading)).toBe(false);
   });

@@ -102,6 +102,7 @@ export class ButtonActionsComponent implements ICellRendererAngularComp {
     this.showDelete = !!this.params.onDelete;
     this.fieldAsIndicatorForSave = this.params.fieldAsIndicatorForSave || null;
     this.requiredFields = this.params.requiredFields || [];
+    this.refresh(params);
   }
 
   protected onSave() {
