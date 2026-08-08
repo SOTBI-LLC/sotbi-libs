@@ -14,16 +14,12 @@ import { PerformanceCriteriaState } from './performance-criteria.state';
 function createCriterion(
   partial: Partial<PerformanceCriteria> = {},
 ): PerformanceCriteria {
-  const validFrom = new Date();
-  const validTo = new Date();
   return new PerformanceCriteria({
     id: 1,
     name: 'item-1',
     description: 'item-1',
     max_score: 10,
     is_absolute: false,
-    valid_from: validFrom,
-    valid_to: validTo,
     ...partial,
   });
 }
@@ -35,7 +31,7 @@ describe('PerformanceCriteria store', () => {
   beforeEach(async () => {
     const serviceSpy = {
       add: jest.fn(),
-      GetAll: jest.fn(),
+      getAll: jest.fn(),
       update: jest.fn(),
     } as unknown as jest.Mocked<PerformanceCriteriaService>;
 
@@ -69,10 +65,12 @@ describe('PerformanceCriteria store', () => {
     const c1 = createCriterion({ id: 1, name: 'a' });
     const c2 = createCriterion({ id: 2, name: 'b' });
 
-    performanceCriteriaService.GetAll.mockReturnValue(of([c1, c2]));
-    await store.dispatch(new PerformanceCriteriaGetActions());
+    performanceCriteriaService.getAll.mockReturnValue(of({ items: [c1, c2] }));
+    await store.dispatch(
+      new PerformanceCriteriaGetActions({ year: 2026, month: 1 }),
+    );
 
-    expect(performanceCriteriaService.GetAll).toHaveBeenCalledTimes(1);
+    expect(performanceCriteriaService.getAll).toHaveBeenCalledTimes(1);
     expect(store.selectSnapshot(PerformanceCriteriaState.getItems)).toEqual([
       c1,
       c2,
@@ -82,16 +80,20 @@ describe('PerformanceCriteria store', () => {
     );
   });
 
-  it('should not call GetAll when get is dispatched and items are already cached', async () => {
+  it('should not call getAll when get is dispatched and items are already cached', async () => {
     const c1 = createCriterion();
 
-    performanceCriteriaService.GetAll.mockReturnValue(of([c1]));
-    await store.dispatch(new PerformanceCriteriaGetActions());
+    performanceCriteriaService.getAll.mockReturnValue(of({ items: [c1] }));
+    await store.dispatch(
+      new PerformanceCriteriaGetActions({ year: 2026, month: 1 }),
+    );
 
-    performanceCriteriaService.GetAll.mockClear();
-    await store.dispatch(new PerformanceCriteriaGetActions());
+    performanceCriteriaService.getAll.mockClear();
+    await store.dispatch(
+      new PerformanceCriteriaGetActions({ year: 2026, month: 1 }),
+    );
 
-    expect(performanceCriteriaService.GetAll).not.toHaveBeenCalled();
+    expect(performanceCriteriaService.getAll).not.toHaveBeenCalled();
     expect(store.selectSnapshot(PerformanceCriteriaState.getItems)).toEqual([
       c1,
     ]);
@@ -108,8 +110,12 @@ describe('PerformanceCriteria store', () => {
       description: 'after',
     });
 
-    performanceCriteriaService.GetAll.mockReturnValue(of([existing]));
-    await store.dispatch(new PerformanceCriteriaGetActions());
+    performanceCriteriaService.getAll.mockReturnValue(
+      of({ items: [existing] }),
+    );
+    await store.dispatch(
+      new PerformanceCriteriaGetActions({ year: 2026, month: 1 }),
+    );
 
     performanceCriteriaService.update.mockReturnValue(of(updated));
     await store.dispatch(new PerformanceCriteriaPutAction(updated));

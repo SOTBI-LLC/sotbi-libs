@@ -2,8 +2,8 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideStore, Store } from '@ngxs/store';
 import { UserPerformance } from '@sotbi/models';
-import { of } from 'rxjs';
 import { UserPerformanceService } from 'data-access/src/lib/motivation.service';
+import { of } from 'rxjs';
 import { UserPerformanceUpsertAction } from './user-performance.actions';
 import type { UserPerformanceStateModel } from './user-performance.state';
 import { UserPerformanceState } from './user-performance.state';
@@ -48,6 +48,10 @@ describe('UserPerformance store', () => {
     const expected: UserPerformanceStateModel = {
       loading: false,
       items: [performance],
+      selectedPeriod: {
+        year: new Date().getFullYear(),
+        month: new Date().getMonth() + 1,
+      },
     };
 
     userPerformanceService.upsert.mockReturnValue(of(performance));

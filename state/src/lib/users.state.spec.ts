@@ -1,6 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Store, provideStore, provideStates } from '@ngxs/store';
+import { Store, provideStates, provideStore } from '@ngxs/store';
 import { UserPositionService, UserService } from '@sotbi/data-access';
 import type {
   HeadDepartment,
@@ -125,6 +125,7 @@ describe('UsersState', () => {
       dirty: false,
       user_group: null,
       updated: null,
+      staff_id: 1,
     },
     updated_at: new Date('2023-01-01'),
     updated_by_id: 1,

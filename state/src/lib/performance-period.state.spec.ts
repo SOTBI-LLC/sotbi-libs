@@ -5,8 +5,8 @@ import { PerformancePeriodService } from '@sotbi/data-access';
 import { PerformancePeriod } from '@sotbi/models';
 import { of } from 'rxjs';
 import {
+  PerformancePeriodAddOrPutAction,
   PerformancePeriodGetActions,
-  PerformancePeriodPutAction,
 } from './performance-period.actions';
 import type { PerformancePeriodStateModel } from './performance-period.state';
 import { PerformancePeriodState } from './performance-period.state';
@@ -33,7 +33,8 @@ describe('PerformancePeriod store', () => {
   beforeEach(async () => {
     const serviceSpy = {
       update: jest.fn(),
-      GetAll: jest.fn(),
+      addItem: jest.fn(),
+      getAll: jest.fn(),
     } as unknown as jest.Mocked<PerformancePeriodService>;
 
     await TestBed.configureTestingModule({
@@ -54,20 +55,17 @@ describe('PerformancePeriod store', () => {
     const p1 = createPeriod({ year: 2026, month: 1 });
     const p2 = createPeriod({ year: 2026, month: 2 });
 
-    performancePeriodService.GetAll.mockReturnValue(of([p1, p2]));
+    performancePeriodService.getAll.mockReturnValue(of([p1, p2]));
     await store.dispatch(new PerformancePeriodGetActions());
 
-    expect(performancePeriodService.GetAll).toHaveBeenCalledTimes(1);
-    const actual = store.selectSnapshot(PerformancePeriodState.getState);
-    expect(actual).toEqual({
-      loading: false,
-      items: [p1, p2],
-    } satisfies PerformancePeriodStateModel);
+    expect(performancePeriodService.getAll).toHaveBeenCalledTimes(1);
+    const actual = store.selectSnapshot(PerformancePeriodState.getItems);
+    expect(actual).toEqual([p1, p2]);
 
-    // should not call GetAll again if items are already cached
+    // should not call getAll again if items are already cached
     await store.dispatch(new PerformancePeriodGetActions());
     await store.dispatch(new PerformancePeriodGetActions());
-    expect(performancePeriodService.GetAll).toHaveBeenCalledTimes(1);
+    expect(performancePeriodService.getAll).toHaveBeenCalledTimes(1);
   });
 
   it('should append a new period after put when year/month is not in state', async () => {
@@ -78,11 +76,14 @@ describe('PerformancePeriod store', () => {
       items: [performancePeriod],
     };
 
-    performancePeriodService.update.mockReturnValue(of(performancePeriod));
-    await store.dispatch(new PerformancePeriodPutAction(performancePeriod));
+    // id defaults to 0, so addOrPut uses addItem rather than update
+    performancePeriodService.addItem.mockReturnValue(of(performancePeriod));
+    await store.dispatch(
+      new PerformancePeriodAddOrPutAction(performancePeriod),
+    );
 
-    const actual = store.selectSnapshot(PerformancePeriodState.getState);
-    expect(actual).toEqual(expected);
+    const actual = store.selectSnapshot(PerformancePeriodState.getItems);
+    expect(actual).toEqual(expected.items);
   });
 
   it('should replace a period after put when year and month already exist', async () => {
@@ -103,16 +104,14 @@ describe('PerformancePeriod store', () => {
       ends_at: endDate,
     });
 
-    performancePeriodService.GetAll.mockReturnValue(of([existing]));
+    performancePeriodService.getAll.mockReturnValue(of([existing]));
     await store.dispatch(new PerformancePeriodGetActions());
 
-    performancePeriodService.update.mockReturnValue(of(updated));
-    await store.dispatch(new PerformancePeriodPutAction(updated));
+    // id defaults to 0, so addOrPut uses addItem rather than update
+    performancePeriodService.addItem.mockReturnValue(of(updated));
+    await store.dispatch(new PerformancePeriodAddOrPutAction(updated));
 
-    const actual = store.selectSnapshot(PerformancePeriodState.getState);
-    expect(actual).toEqual({
-      loading: false,
-      items: [updated],
-    } satisfies PerformancePeriodStateModel);
+    const actual = store.selectSnapshot(PerformancePeriodState.getItems);
+    expect(actual).toEqual([updated]);
   });
 });
