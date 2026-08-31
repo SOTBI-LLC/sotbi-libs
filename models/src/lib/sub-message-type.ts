@@ -151,7 +151,9 @@ export const ResultsReviewApplicationsChallengingTransactions =
   1n <<
   BigInt(SubMessageTypes.ResultsReviewApplicationsChallengingTransactions);
 
-/** sub_message_type_id=44 + sub_message_type_id=45 */
+/** sub_message_type_id=44="Сведения о кредитной организации, в которой открыт специальный банковский счет должника"
+ *
+ * + sub_message_type_id=45="Результаты рассмотрения/пересмотра заявлений об оспаривании сделок" */
 export const InformationCreditInstitutionOrResultsReviewApplicationsChallengingTransactions =
   InformationCreditInstitution |
   ResultsReviewApplicationsChallengingTransactions;
