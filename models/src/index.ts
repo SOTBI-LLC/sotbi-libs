@@ -278,6 +278,7 @@ export {
 export {
   BasisForChallengingTransaction,
   ChallengingTransaction,
+  ClaimInclusion,
   CreditOrganisation,
   CreditorMeetingType,
   CreditorType,

@@ -280,6 +280,12 @@ export interface Message {
      *  message_type_id = 19
      */
     creditors_claim_received: CreditorClaimReceived[];
+    /** Новый формат заявки «Сообщение о включении заявленных требований в реестр требований кредиторов» (message_type_id = 19)
+     *
+     * Все поля требования кредитора лежат в этом массиве, старые поля на уровне payload не заполняются.
+     *
+     * Пустой массив => старый формат (поля на уровне payload) */
+    creditors_claim_inclusion?: ClaimInclusion[];
     /** поле на фронте, для выделения иных лиц(type=2) из creditors /* <- Уведомление о получении требований кредитора ->
      *
      * message_type_id = 16 +  sub_message_type_id = 11
@@ -359,6 +365,41 @@ export interface CreditOrganisation {
   inn: string;
   ogrn: string;
   bik: string;
+}
+
+/** Требование кредитора в новом формате заявки
+ *
+ * MessageTypes.ClaimInclusionNotice (message_type_id = 19) = «Сообщение о включении заявленных требований в реестр требований кредиторов»
+ *
+ * Новый формат: все поля лежат в массиве payload.creditors_claim_inclusion, старые поля на уровне payload не заполняются */
+export interface ClaimInclusion {
+  id?: number;
+  /** Дата включения в реестр */
+  receiving_at?: Date | string;
+  /** Сумма заявленных требований, руб. */
+  amount_stated_claims?: number;
+  /** Основной долг */
+  amount?: number;
+  /** Финансовые санкции */
+  amount_financial_sanctions?: number;
+  /** Кредитор: 0=ЮЛ/1=ИП/2=ФЛ/3=иностранная компания */
+  type?: CreditorType;
+  /** 'ИНН/ОГРНИП/СНИЛС' || 'ИНН/ОГРН' || 'ИНН/ОГРНИП' || 'ИНН/СНИЛС' || Идентифицирующий номер */
+  tax_id?: string;
+  /** ФИО/Наименование компании */
+  name?: string;
+  /** Страна */
+  country?: string;
+  /** Тип идентифицирующего номера */
+  tax_type?: string;
+  /** Основание возникновения требования */
+  claim_grounds?: string;
+  /** Задолженность по заработной плате и/или выходному пособию */
+  delay_salary?: boolean;
+  /** Очередность удовлетворения */
+  order_of_satisfaction?: TypeOrderOfSatisfaction;
+  /** Обеспечение залогом */
+  providing_collateral?: ProvidingCollateral;
 }
 
 export enum CreditorType {

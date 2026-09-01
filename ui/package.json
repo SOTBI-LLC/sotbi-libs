@@ -14,7 +14,7 @@
     "./styles.css": "./styles.css"
   },
   "peerDependencies": {
-    "@sotbi/models": "0.0.60",
+    "@sotbi/models": "0.0.61",
     "@sotbi/utils": "0.0.60",
     "@angular/core": "^21.2.13",
     "@angular/forms": "^21.2.13",
