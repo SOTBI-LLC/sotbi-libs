@@ -45,11 +45,14 @@ export { MessageEfrsbAttachmentService } from './lib/message-attachment.service'
 export { MessageTypeService } from './lib/message-type.service';
 export { MessageService } from './lib/message.service';
 export {
-  BaseCriteriaService,
-  PerformanceCriteriaService,
-  PerformancePeriodService,
-  UserPercentageService,
+  MotivationApiService,
 } from './lib/motivation.service';
+export {
+  createMotivationCommand,
+  createMotivationCommandKey,
+  MotivationCommand,
+  MotivationInFlightGuard,
+} from './lib/motivation-command';
 export { NOTIFICATION, NotificationService } from './lib/notification.service';
 export { PaymentAttachmentService } from './lib/payment-attachment.service';
 export { PaymentRequestService } from './lib/payment-request.service';
@@ -83,4 +86,3 @@ export { UserService } from './lib/user.service';
 export { UsergroupService } from './lib/usergroup.service';
 export { WeekService } from './lib/week.service';
 export { WorkCategoryService } from './lib/work-category.service';
-export { UserPerformanceService } from './lib/motivation.service';
