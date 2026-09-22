@@ -26,10 +26,16 @@ export interface SotbiClaims extends JwtPayload {
   role: number;
   staff: number;
 }
+
+export function rawUserIdentity({ jti }: Pick<SotbiClaims, 'jti'>): string {
+  return jti ?? '';
+}
+
 export class AuthStateModel {
   public token: string | null = null;
   public refreshToken: string | null = null;
   public user: User = { ...emptyUser };
+  public effectiveUserId = '';
   public home = '/';
   public loading = false;
   public access: Set<string> = new Set();
@@ -39,6 +45,7 @@ export class AuthStateModel {
   name: 'auth',
   defaults: {
     user: { ...emptyUser },
+    effectiveUserId: '',
     token: null,
     refreshToken: null,
     home: '/',
@@ -109,6 +116,7 @@ export class AuthState implements NgxsOnInit {
   public static getUserState(state: AuthStateModel): AuthStateModel {
     return {
       user: state.user,
+      effectiveUserId: state.effectiveUserId,
       access: state.access,
       home: state.home,
     } as AuthStateModel;
@@ -117,6 +125,11 @@ export class AuthState implements NgxsOnInit {
   @Selector()
   public static getUserID(state: AuthStateModel): number {
     return state.user.id ?? 0;
+  }
+
+  @Selector()
+  public static getEffectiveUserID(state: AuthStateModel): string {
+    return state.effectiveUserId;
   }
 
   @Selector()
@@ -192,7 +205,7 @@ export class AuthState implements NgxsOnInit {
       const { exp } = jwtDecode<JwtPayload>(refreshToken);
       const { jti, iss, role, aud, settings, staff } = jwtDecode<SotbiClaims>(
         token ?? '',
-      ) ?? { jti: 0, iss: '', role: 1, aud: ['/'], settings: 0, staff: 0 };
+      ) ?? { jti: '', iss: '', role: 1, aud: ['/'], settings: 0, staff: 0 };
       if (isBefore(new Date(+(exp ?? 0) * 1000), new Date())) {
         return dispatch(new Logout());
       }
@@ -201,6 +214,7 @@ export class AuthState implements NgxsOnInit {
         ...state,
         token,
         refreshToken,
+        effectiveUserId: rawUserIdentity({ jti }),
         home: aud?.[0] ?? '/',
         access: new Set(decodedAccess.aud),
         user: {
@@ -254,6 +268,7 @@ export class AuthState implements NgxsOnInit {
         const { jti, iss, role, settings, staff } =
           jwtDecode<SotbiClaims>(token);
         patchState({
+          effectiveUserId: rawUserIdentity({ jti }),
           user: {
             ...emptyUser,
             ...{
@@ -297,6 +312,7 @@ export class AuthState implements NgxsOnInit {
             ...state,
             token,
             refreshToken: refresh_token,
+            effectiveUserId: rawUserIdentity({ jti }),
             user: {
               ...emptyUser,
               ...{
@@ -330,7 +346,12 @@ export class AuthState implements NgxsOnInit {
       tap(({ token, refresh_token }) => {
         localStorage.setItem(this.sessionStorageKey, token);
         localStorage.setItem(this.refreshStorageKey, (refresh_token ??= ''));
-        patchState({ token, refreshToken: refresh_token });
+        const claims = jwtDecode<SotbiClaims>(token);
+        patchState({
+          token,
+          refreshToken: refresh_token,
+          effectiveUserId: rawUserIdentity(claims),
+        });
       }),
     );
   }
@@ -355,6 +376,7 @@ export class AuthState implements NgxsOnInit {
           setState({
             ...state,
             token,
+            effectiveUserId: rawUserIdentity({ jti }),
             user: {
               ...emptyUser,
               ...{
@@ -385,7 +407,13 @@ export class AuthState implements NgxsOnInit {
     localStorage.removeItem(this.sessionAccessKey);
     patchState({ loading: true });
     return this.itemsService.logout().pipe(
-      tap(() => patchState({ token: '', user: this.defaultUser })),
+      tap(() =>
+        patchState({
+          token: '',
+          effectiveUserId: '',
+          user: this.defaultUser,
+        }),
+      ),
       catchError((err) => {
         return throwError(() => err);
       }),

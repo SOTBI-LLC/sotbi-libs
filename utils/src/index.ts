@@ -9,6 +9,11 @@ export {
 } from './lib/account-validation';
 export { generateAvatarSvgUrl } from './lib/avatars/generate';
 export { fromBase62, toBase62 } from './lib/base62';
+export {
+  formatCoefficientExact,
+  formatCoefficientPercent,
+  formatDateOnly,
+} from './lib/coefficient-format';
 export { Level, maskForSumm } from './lib/consts';
 export { getDateDifference } from './lib/date-func/difference';
 export {
