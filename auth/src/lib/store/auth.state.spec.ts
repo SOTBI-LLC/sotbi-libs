@@ -1,6 +1,5 @@
 import { emptyUser, type User } from '@sotbi/models';
-import type { AuthStateModel } from './auth.state';
-import { AuthState } from './auth.state';
+import { AuthState, AuthStateModel, rawUserIdentity } from './auth.state';
 
 describe('AuthState - Static Functions and Utilities', () => {
   describe('Static Utility Functions', () => {
@@ -95,6 +94,14 @@ describe('AuthState - Static Functions and Utilities', () => {
       expect(AuthState.getCurrentUser(state)).toEqual(user);
     });
 
+    it('preserves an external jti beyond the JavaScript safe integer range', () => {
+      const jti = '90071992547409931234';
+      const state = { ...new AuthStateModel(), effectiveUserId: jti };
+
+      expect(rawUserIdentity({ jti })).toBe(jti);
+      expect(AuthState.getEffectiveUserID(state)).toBe(jti);
+    });
+
     it('should have static selectors for access control', () => {
       const accessSet = new Set(['/admin', '/costs']);
       const state = { access: accessSet } as AuthStateModel;
@@ -142,6 +149,7 @@ describe('AuthState - Static Functions and Utilities', () => {
             staff_type: 1,
           },
         },
+        effectiveUserId: '123',
         token: 'test_token',
         refreshToken: 'refresh_token',
         home: '/dashboard',
@@ -160,6 +168,7 @@ describe('AuthState - Static Functions and Utilities', () => {
     it('should validate default state structure', () => {
       const defaultState: AuthStateModel = {
         user: { ...emptyUser },
+        effectiveUserId: '',
         token: '',
         refreshToken: '',
         home: '/',

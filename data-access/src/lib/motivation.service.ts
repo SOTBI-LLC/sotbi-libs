@@ -4,6 +4,7 @@ import type {
   AdjustmentWrapper,
   BaseCriteriaList,
   BaseCriteriaWrapper,
+  CapHistory,
   CloseOperationWrapper,
   CoefficientCapWrapper,
   CreateBaseCriteriaRequest,
@@ -94,6 +95,10 @@ export class MotivationApiService {
     return this.http.get<CoefficientCapWrapper>(
       `${this.basePath}/coefficient-cap`,
     );
+  }
+
+  public listCoefficientCapHistory(): Observable<CapHistory> {
+    return this.http.get<CapHistory>(`${this.basePath}/coefficient-cap/history`);
   }
 
   public setCoefficientCap(

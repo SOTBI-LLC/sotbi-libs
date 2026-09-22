@@ -98,6 +98,7 @@ describe('MotivationServerState', () => {
   beforeEach(async () => {
     const apiSpy = {
       listPeriods: jest.fn(),
+      listCoefficientCapHistory: jest.fn(),
       getPeriod: jest.fn(),
       getPerformanceSheet: jest.fn(),
       searchPerformanceSheets: jest.fn(),
@@ -118,6 +119,40 @@ describe('MotivationServerState', () => {
   });
 
   describe('effective-user scoping', () => {
+    it('cancels cap history from the previous effective user', () => {
+      state.setEffectiveUser(USER_A);
+      const history = deferred({
+        baseline: { coefficientCap: { tenThousandths: 12550 }, recordedAt: '2026-09-22T09:00:00Z' },
+        earlierHistoryUnavailable: true as const,
+        entries: [],
+      });
+      api.listCoefficientCapHistory.mockReturnValueOnce(history.source);
+      state.loadCapHistory();
+
+      state.setEffectiveUser(USER_B);
+      history.flush();
+
+      expect(state.capHistory().data).toBeNull();
+      expect(state.capHistory().loading).toBe(false);
+    });
+
+    it('clears registered drafts and polling when loginAs or logout changes the identity', () => {
+      state.setEffectiveUser(USER_A);
+      const clearDraft = jest.fn();
+      const stopPolling = jest.fn();
+      const unregisterDraft = state.registerSessionReset(clearDraft);
+      state.registerSessionReset(stopPolling);
+
+      state.setEffectiveUser(USER_B);
+      expect(clearDraft).toHaveBeenCalledTimes(1);
+      expect(stopPolling).toHaveBeenCalledTimes(1);
+
+      unregisterDraft();
+      state.setEffectiveUser(null);
+      expect(clearDraft).toHaveBeenCalledTimes(1);
+      expect(stopPolling).toHaveBeenCalledTimes(2);
+    });
+
     it('drops pending responses of the previous user and clears caches', () => {
       state.setEffectiveUser(USER_A);
 
@@ -201,6 +236,9 @@ describe('MotivationServerState', () => {
       const summaries = deferred({ items: [makeSummary(SHEET_A)] });
       api.searchPerformanceSheets.mockReturnValueOnce(summaries.source);
       state.loadSheetSummaries(PERIOD_ID);
+      expect(api.searchPerformanceSheets).toHaveBeenCalledWith({
+        periodId: PERIOD_ID,
+      });
       summaries.flush();
 
       const committed: PerformanceSheet = makeSheet(SHEET_A, 12550);

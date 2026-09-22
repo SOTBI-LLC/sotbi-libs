@@ -74,6 +74,45 @@ describe('MotivationApiService', () => {
       );
     });
 
+    it('reads the complete cap audit from the published history route', () => {
+      const history = {
+        baseline: { coefficientCap: { tenThousandths: 12550 }, recordedAt: '2026-09-22T09:00:00Z' },
+        earlierHistoryUnavailable: true,
+        entries: [{
+          id: OPERATION_ID,
+          actorUserId: USER_ID,
+          recordedAt: '2026-09-22T10:00:00Z',
+          previousCap: { tenThousandths: 12550 },
+          newCap: { tenThousandths: 15000 },
+          comment: 'review',
+        }],
+      };
+      httpClient.get.mockReturnValue(of(history));
+
+      service.listCoefficientCapHistory().subscribe((result) => {
+        expect(result).toEqual(history);
+        expect(result.entries[0].actorUserId).toBe('9007199254740993');
+      });
+
+      expect(httpClient.get).toHaveBeenCalledWith('/api/motivation/coefficient-cap/history');
+    });
+
+    it('keeps optional cap audit text and idempotency identity in one command', () => {
+      httpClient.put.mockReturnValue(of({ coefficientCap: { tenThousandths: 15000 } }));
+      const command = createMotivationCommand({
+        tenThousandths: 15000,
+        comment: 'review',
+      });
+
+      service.setCoefficientCap(command).subscribe();
+
+      expect(httpClient.put).toHaveBeenCalledWith(
+        '/api/motivation/coefficient-cap',
+        { tenThousandths: 15000, comment: 'review' },
+        { headers: { 'Idempotency-Key': command.key } },
+      );
+    });
+
     it('searches sheets read-only: no Idempotency-Key is sent', () => {
       httpClient.post.mockReturnValue(of({ items: [] }));
 

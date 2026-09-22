@@ -1,6 +1,7 @@
 import { DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { MotivationApiService } from '@sotbi/data-access';
 import type {
+  CapHistory,
   PerformanceSheet,
   Period,
   PeriodSummaryList,
@@ -43,8 +44,12 @@ export class MotivationServerState {
   private dataGeneration = 0;
   private sheetGenerations = new Map<Uuid, number>();
   private subscriptions = new Map<string, Subscription>();
+  private sessionResetHandlers = new Set<() => void>();
 
   private readonly periodsResource = signal<ServerResource<PeriodSummaryList>>(
+    idleResource(),
+  );
+  private readonly capHistoryResource = signal<ServerResource<CapHistory>>(
     idleResource(),
   );
   private readonly periodResources = signal<
@@ -58,6 +63,7 @@ export class MotivationServerState {
   >({});
 
   public readonly periods = this.periodsResource.asReadonly();
+  public readonly capHistory = this.capHistoryResource.asReadonly();
   public readonly periodMap = this.periodResources.asReadonly();
   public readonly sheetSummaryMap = this.sheetSummaryResources.asReadonly();
   public readonly sheetMap = this.sheetResources.asReadonly();
@@ -81,6 +87,15 @@ export class MotivationServerState {
   }
 
   /**
+   * Registers memory-only feature state (for example an editor draft or a
+   * visibility poller) for the same effective-user lifecycle as server data.
+   */
+  public registerSessionReset(reset: () => void): () => void {
+    this.sessionResetHandlers.add(reset);
+    return () => this.sessionResetHandlers.delete(reset);
+  }
+
+  /**
    * Re-scopes the facade. A real change cancels all in-flight loads and clears
    * every cached view so responses of the previous user never leak into the
    * new session.
@@ -94,9 +109,13 @@ export class MotivationServerState {
     this.dataGeneration++;
     this.sheetGenerations.clear();
     this.periodsResource.set(idleResource<PeriodSummaryList>());
+    this.capHistoryResource.set(idleResource<CapHistory>());
     this.periodResources.set({});
     this.sheetSummaryResources.set({});
     this.sheetResources.set({});
+    for (const reset of this.sessionResetHandlers) {
+      reset();
+    }
   }
 
   public loadPeriods(): void {
@@ -116,6 +135,30 @@ export class MotivationServerState {
         },
       }),
     );
+  }
+
+  public loadCapHistory(): void {
+    const generation = this.dataGeneration;
+    this.capHistoryResource.set({ data: null, loading: true, error: null });
+    this.restart('capHistory', () =>
+      this.api.listCoefficientCapHistory().subscribe({
+        next: (data) => {
+          if (generation === this.dataGeneration) {
+            this.capHistoryResource.set({ data, loading: false, error: null });
+          }
+        },
+        error: (error: unknown) => {
+          if (generation === this.dataGeneration) {
+            this.capHistoryResource.set({ data: null, loading: false, error });
+          }
+        },
+      }),
+    );
+  }
+
+  public invalidateCapHistory(): void {
+    this.cancel('capHistory');
+    this.capHistoryResource.set(idleResource<CapHistory>());
   }
 
   public loadPeriod(periodId: Uuid): void {

@@ -202,6 +202,48 @@ describe('AuthInterceptor', () => {
       });
     });
 
+    it('replays a mutation after 401 with the same body and idempotency key', (done) => {
+      const body = {
+        userId: '90071992547409931234',
+        scores: [{ criterionId: 'criterion-1', value: 4 }],
+      };
+      const idempotencyKey = '018f0f5c-95f0-7c6a-a634-8f50ee293a68';
+      const request = new HttpRequest('POST', '/api/motivation/sheets/1/save', body, {
+        headers: new HttpHeaders({ 'Idempotency-Key': idempotencyKey }),
+      });
+      const errorResponse = new HttpErrorResponse({ status: 401 });
+      const handledRequests: HttpRequest<unknown>[] = [];
+
+      localStorage.setItem('refreshUser', mockRefreshToken);
+      store.selectSnapshot.mockImplementation((selector: unknown) => {
+        if (selector === AuthState.getToken) return mockToken;
+        if (selector === AuthState.getRefreshToken) return mockRefreshToken;
+        return null;
+      });
+      store.dispatch.mockImplementation(() => {
+        tokenSignal.set(mockNewToken);
+        return of(undefined);
+      });
+      httpHandler.handle.mockImplementation((handledRequest) => {
+        handledRequests.push(handledRequest);
+        return handledRequests.length === 1
+          ? throwError(() => errorResponse)
+          : of(new HttpResponse({ status: 200 }));
+      });
+
+      interceptor.intercept(request, httpHandler).subscribe({
+        next: () => {
+          const replayed = handledRequests[1];
+
+          expect(replayed.body).toEqual(body);
+          expect(replayed.headers.get('Idempotency-Key')).toBe(idempotencyKey);
+          expect(replayed.headers.get('Authorization')).toBe(`Bearer ${mockNewToken}`);
+          done();
+        },
+        error: done.fail,
+      });
+    });
+
     it('should handle 403 error by showing snackbar and navigating back', () => {
       const request = new HttpRequest('GET', '/api/test');
       const errorResponse = new HttpErrorResponse({

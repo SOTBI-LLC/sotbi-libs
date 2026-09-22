@@ -8,6 +8,7 @@ describe('AuthService - Static Functions and Business Logic', () => {
       ...emptyUser,
       ...{ id: 123, user: 'testuser', role: 2, settings: 32, staff_type: 1 },
     },
+    effectiveUserId: '123',
     token: 'test_token',
     refreshToken: 'refresh_token',
     home: '/dashboard',

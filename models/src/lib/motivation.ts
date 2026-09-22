@@ -82,6 +82,30 @@ export interface CoefficientCapWrapper {
 export interface SetCoefficientCapRequest {
   /** Unsigned, minimum 1. */
   tenThousandths: number;
+  /** Optional audit text; omission and empty string are equivalent. */
+  comment?: string;
+}
+
+/** Durable audit coverage starts at this baseline; earlier changes are unavailable. */
+export interface CapHistoryBaseline {
+  coefficientCap: Coefficient;
+  recordedAt: TimestampString;
+}
+
+export interface CapHistoryEntry {
+  id: Uuid;
+  actorUserId: DecimalInt64;
+  recordedAt: TimestampString;
+  previousCap: Coefficient;
+  newCap: Coefficient;
+  comment: string;
+}
+
+export interface CapHistory {
+  baseline: CapHistoryBaseline;
+  earlierHistoryUnavailable: true;
+  /** Accepted saves in reverse committed order. */
+  entries: CapHistoryEntry[];
 }
 
 // --- Periods ---
