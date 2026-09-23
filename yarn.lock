@@ -2735,7 +2735,12 @@
     "@eslint/core" "^1.2.1"
     levn "^0.4.1"
 
-"@fullcalendar/core@^7.1.0":
+"@full-ui/headless-calendar@7.1.0":
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/@full-ui/headless-calendar/-/headless-calendar-7.1.0.tgz#8efd95c2f2650d5444c7d203e8fc3c3b8dd50e3e"
+  integrity sha512-T54tSUik/ia9Jj4xduFHv1p98eVBgLnE33Q6qhpg+WWkqKCLBCbtVyMcTPPIOP5jjTV2MbtjrRvRt1RLSryGHA==
+
+"@fullcalendar/core@7.1.0":
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/@fullcalendar/core/-/core-7.1.0.tgz#72af83347d9191997248e72e8b5569f39b4984ab"
   integrity sha512-a+ABP7zQpPWpwPT8EsOdShpeOVrJyx/XYStqERd8ibld/FLi/dzpd95r7w3RIdFqFm9iUv0gdGvBshSlI/dbPw==
@@ -9841,6 +9846,15 @@ fsevents@^2.3.3, fsevents@~2.3.2, fsevents@~2.3.3:
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.3.tgz#cac6407785d03675a2a5e1a5305c697b347d90d6"
   integrity sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==
 
+fullcalendar@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/fullcalendar/-/fullcalendar-7.1.0.tgz#f8b37d697e7c2b2de725e24fd8f3abef0e31fb47"
+  integrity sha512-Pvr/fLrwuwfIjRygNKHJdHFJ8QGWjkAf6FFaMAi7Iv/fFftZQXV49smJE8KTgSVW/GxrqjN5t5Zw2OBTRKcnzA==
+  dependencies:
+    "@full-ui/headless-calendar" "7.1.0"
+    "@fullcalendar/core" "7.1.0"
+    preact "^10.29.8"
+
 function-bind@1.1.2, function-bind@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/function-bind/-/function-bind-1.1.2.tgz#2c02d864d97f3ea6c8830c464cbd11ab6eab7a1c"
@@ -13601,6 +13615,11 @@ powershell-utils@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/powershell-utils/-/powershell-utils-0.1.0.tgz#5a42c9a824fb4f2f251ccb41aaae73314f5d6ac2"
   integrity sha512-dM0jVuXJPsDN6DvRpea484tCUaMiXWjuCn++HGTqUWzGDjv5tZkEZldAJ/UMlqRYGFrD/etByo4/xOuC/snX2A==
+
+preact@^10.29.8:
+  version "10.29.8"
+  resolved "https://registry.yarnpkg.com/preact/-/preact-10.29.8.tgz#fc85b82dc2474e245b1430b51781d417361f5fc3"
+  integrity sha512-ej2aVZ+vZ8WO7tvlQWRM9N63A0KzF9q4mWJfDUHgYaIofWY9hu74QdnQrjoPMmZi2/nZ5gN0bJCQF49xQqx09Q==
 
 prelude-ls@^1.2.1:
   version "1.2.1"

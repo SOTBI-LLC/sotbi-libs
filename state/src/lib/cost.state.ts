@@ -1,5 +1,4 @@
 import { inject, Injectable } from '@angular/core';
-import type { EventInput, EventSourceInput } from '@fullcalendar/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { CostRealService } from '@sotbi/data-access';
@@ -7,6 +6,7 @@ import type { CostRealFilter, Interval } from '@sotbi/models';
 import { calcSumHours, CostReal } from '@sotbi/models';
 import { canSave, formatEventDuraton, isAllSaved } from '@sotbi/utils';
 import { isAfter, isBefore, isSameDay, isSameSecond } from 'date-fns';
+import type { EventInput, EventSourceInput } from 'fullcalendar';
 import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
@@ -79,7 +79,7 @@ const mergeEvent = (old: EventInput, cost: CostReal): EventInput => {
     }
     res.title = old.title;
     // res.rendering = 'background';
-    res.backgroundColor = '#a6adb4';
+    res['backgroundColor'] = '#a6adb4';
   }
   return res;
 };
