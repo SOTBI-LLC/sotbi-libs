@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/ui",
-  "version": "0.0.62",
+  "version": "0.0.65",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "public"
@@ -14,15 +14,15 @@
     "./styles.css": "./styles.css"
   },
   "peerDependencies": {
-    "@sotbi/models": "0.0.62",
-    "@sotbi/utils": "0.0.62",
-    "@angular/core": "^21.2.13",
-    "@angular/forms": "^21.2.13",
-    "@angular/animations": "^21.2.13",
-    "@angular/common": "^21.2.13",
-    "@angular/platform-browser": "^21.2.13",
-    "@angular/material": "^21.2.11",
-    "@ng-select/ng-select": "^21.8.2",
+    "@sotbi/models": "0.0.65",
+    "@sotbi/utils": "0.0.65",
+    "@angular/core": "^22.1.7",
+    "@angular/forms": "^22.1.7",
+    "@angular/animations": "^22.1.7",
+    "@angular/common": "^22.1.7",
+    "@angular/platform-browser": "^22.1.7",
+    "@angular/material": "^22.1.7",
+    "@ng-select/ng-select": "^24.1.2",
     "@storybook/angular": "^10.4.1",
     "jest": "^30.3.0",
     "jest-preset-angular": "^17.0.0",
