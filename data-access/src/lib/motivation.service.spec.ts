@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import type {
   CreateBaseCriteriaRequest,
+  CreateCriterionRequest,
   PerformanceSheetWrapper,
   SavePerformanceSheetRequest,
 } from '@sotbi/models';
@@ -282,6 +283,106 @@ describe('MotivationApiService', () => {
         expect(criteria[1].score).toBe(0);
         expect(criteria[0].score === criteria[1].score).toBe(false);
       });
+    });
+  });
+
+  describe('special criteria catalog (BH-1851)', () => {
+    const criterionWrapper = {
+      criterion: {
+        id: CRITERION_ID,
+        positionId: '9007199254740993',
+        positionName: 'Старший пилот',
+        name: 'Касса',
+        description: '',
+        maxScore: 60,
+        validFrom: '2026-01-01',
+        validTo: null,
+      },
+    };
+
+    it('creates a special with an exact decimal-string positionId', () => {
+      httpClient.post.mockReturnValue(of(criterionWrapper));
+      const payload: CreateCriterionRequest = {
+        positionId: '9007199254740993',
+        name: 'Касса',
+        maxScore: 60,
+        validFrom: '2026-01-01',
+      };
+      const command = createMotivationCommand(payload);
+
+      service.createCriterion(command).subscribe();
+
+      const [url, body, options] = httpClient.post.mock.calls[0];
+      expect(url).toBe('/api/motivation/criteria');
+      expect(body).toEqual(payload);
+      expect((body as CreateCriterionRequest).positionId).toBe(
+        '9007199254740993',
+      );
+      expect(
+        (options as { headers: Record<string, string> }).headers[
+          'Idempotency-Key'
+        ],
+      ).toBe(command.key);
+    });
+
+    it('patches only text/validTo with the merge-patch content type', () => {
+      httpClient.patch.mockReturnValue(of(criterionWrapper));
+      const command = createMotivationCommand<{ validTo: null }>({
+        validTo: null,
+      });
+
+      service.updateCriterion(CRITERION_ID, command).subscribe();
+
+      const [url, body, options] = httpClient.patch.mock.calls[0];
+      expect(url).toBe(`/api/motivation/criteria/${CRITERION_ID}`);
+      expect(body).toEqual({ validTo: null });
+      expect(
+        (options as { headers: Record<string, string> }).headers[
+          'Content-Type'
+        ],
+      ).toBe('application/merge-patch+json');
+    });
+
+    it('lists specials with combined exact filters', () => {
+      httpClient.get.mockReturnValue(of({ items: [criterionWrapper.criterion] }));
+
+      service
+        .listCriteria({ positionId: '200', activeOn: '2026-09-01' })
+        .subscribe();
+
+      const [url, options] = httpClient.get.mock.calls[0];
+      expect(url).toBe('/api/motivation/criteria');
+      const params = (options as { params: { toString(): string } }).params;
+      expect(params.toString()).toBe('positionId=200&activeOn=2026-09-01');
+    });
+
+    it('reads the admin-only position choices without an idempotency key', () => {
+      httpClient.get.mockReturnValue(of({ positions: [{ id: '200', name: 'Кассир' }] }));
+
+      service.listMotivationPositions().subscribe();
+
+      const [url] = httpClient.get.mock.calls[0];
+      expect(url).toBe('/api/motivation/positions');
+    });
+
+    it('keeps the idempotency key and body identical when a create is retried', () => {
+      httpClient.post.mockReturnValue(of(criterionWrapper));
+      const payload: CreateCriterionRequest = {
+        positionId: '200',
+        name: 'Касса',
+        maxScore: 60,
+        validFrom: '2026-01-01',
+      };
+
+      const command = createMotivationCommand(payload);
+      service.createCriterion(command).subscribe();
+      service.createCriterion(command).subscribe();
+
+      const [, firstBody, firstOptions] = httpClient.post.mock.calls[0];
+      const [, secondBody, secondOptions] = httpClient.post.mock.calls[1];
+      expect(firstBody).toEqual(secondBody);
+      expect(firstOptions).toEqual(secondOptions);
+      expect(httpClient.post).toHaveBeenCalledTimes(2);
     });
   });
 

@@ -8,6 +8,9 @@ import type {
   CloseOperationWrapper,
   CoefficientCapWrapper,
   CreateBaseCriteriaRequest,
+  CreateCriterionRequest,
+  CriterionList,
+  CriterionWrapper,
   DateOnlyString,
   IncludeUserRequest,
   OpenPeriodRequest,
@@ -15,6 +18,7 @@ import type {
   PerformanceSheetWrapper,
   PeriodSummaryList,
   PeriodWrapper,
+  PositionChoiceList,
   ReopenPeriodRequest,
   SavePerformanceSheetRequest,
   SetAdjustmentRequest,
@@ -24,6 +28,7 @@ import type {
   SheetSearchRequest,
   SheetSummaryList,
   UpdateBaseCriteriaRequest,
+  UpdateCriterionRequest,
   Uuid,
 } from '@sotbi/models';
 import type { Observable } from 'rxjs';
@@ -87,6 +92,66 @@ export class MotivationApiService {
         },
       },
     );
+  }
+
+  // --- special criteria (one Criterion per position) ---
+
+  public listCriteria(filters?: {
+    positionId?: string;
+    activeOn?: DateOnlyString;
+  }): Observable<CriterionList> {
+    let params = new HttpParams();
+    if (filters?.positionId) {
+      params = params.set('positionId', filters.positionId);
+    }
+
+    if (filters?.activeOn) {
+      params = params.set('activeOn', filters.activeOn);
+    }
+
+    return this.http.get<CriterionList>(`${this.basePath}/criteria`, {
+      params: params.keys().length > 0 ? params : undefined,
+    });
+  }
+
+  public getCriterion(criterionId: Uuid): Observable<CriterionWrapper> {
+    return this.http.get<CriterionWrapper>(
+      `${this.basePath}/criteria/${criterionId}`,
+    );
+  }
+
+  public createCriterion(
+    command: MotivationCommand<CreateCriterionRequest>,
+  ): Observable<CriterionWrapper> {
+    return this.http.post<CriterionWrapper>(
+      `${this.basePath}/criteria`,
+      command.body,
+      this.idempotencyHeaders(command),
+    );
+  }
+
+  public updateCriterion(
+    criterionId: Uuid,
+    command: MotivationCommand<UpdateCriterionRequest>,
+  ): Observable<CriterionWrapper> {
+    return this.http.patch<CriterionWrapper>(
+      `${this.basePath}/criteria/${criterionId}`,
+      command.body,
+      {
+        headers: {
+          'Idempotency-Key': command.key,
+          'Content-Type': 'application/merge-patch+json',
+        },
+      },
+    );
+  }
+
+  /**
+   * Admin-only position choices for special creation. Never called for
+   * read-only catalog views.
+   */
+  public listMotivationPositions(): Observable<PositionChoiceList> {
+    return this.http.get<PositionChoiceList>(`${this.basePath}/positions`);
   }
 
   // --- coefficient cap ---

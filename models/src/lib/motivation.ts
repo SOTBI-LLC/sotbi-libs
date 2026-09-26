@@ -64,13 +64,79 @@ export interface CreateBaseCriteriaRequest {
 /**
  * Merge-PATCH payload: only present properties update, `validTo: null`
  * clears the validity end. An empty object is rejected by the server.
+ *
+ * Structural fields (maxScore, validFrom, positionId, type) are immutable
+ * after creation and are rejected with HTTP 400 when present — they have no
+ * representation in this patch type by design.
  */
 export interface UpdateBaseCriteriaRequest {
   name?: string;
   description?: string;
-  maxScore?: number;
-  validFrom?: DateOnlyString;
   validTo?: DateOnlyString | null;
+}
+
+// --- Special criteria (one Criterion per position, BH-1851) ---
+
+export type CriterionType = 'base' | 'special';
+
+export interface Criterion {
+  id: Uuid;
+  /** Exact immutable external position identifier as a decimal string. */
+  positionId: DecimalInt64;
+  /**
+   * Current display label resolved by the gateway; `null` when the position
+   * is deleted or unresolvable. Never used as an authority to add a line.
+   */
+  positionName: string | null;
+  name: string;
+  description: string;
+  /** Signed int32, minimum 1. */
+  maxScore: number;
+  validFrom: DateOnlyString;
+  validTo: DateOnlyString | null;
+}
+
+export interface CriterionWrapper {
+  criterion: Criterion;
+}
+
+export interface CriterionList {
+  items: Criterion[];
+}
+
+export interface CreateCriterionRequest {
+  /** Required exact positive decimal string, e.g. `"200"`. */
+  positionId: DecimalInt64;
+  name: string;
+  description?: string;
+  maxScore: number;
+  validFrom: DateOnlyString;
+  validTo?: DateOnlyString | null;
+}
+
+/**
+ * Merge-PATCH payload for an existing special: structural fields
+ * (positionId, maxScore, validFrom, type) are immutable and rejected with
+ * HTTP 400 when present.
+ */
+export interface UpdateCriterionRequest {
+  name?: string;
+  description?: string;
+  validTo?: DateOnlyString | null;
+}
+
+/**
+ * Admin-only position choice for special creation. `id` is an exact decimal
+ * string so identifiers above 2^53 stay precise; selecting a choice does not
+ * bypass Motivation's position verification at creation.
+ */
+export interface PositionChoice {
+  id: DecimalInt64;
+  name: string;
+}
+
+export interface PositionChoiceList {
+  positions: PositionChoice[];
 }
 
 // --- Coefficient cap ---
@@ -110,10 +176,18 @@ export interface CapHistory {
 
 // --- Periods ---
 
-/** Frozen criterion of one period, ordered by name then identifier. */
+/**
+ * Frozen criterion of one period, ordered by name then identifier. `type` is
+ * `base` or `special`: a base line carries `baseCriteriaId` and no position;
+ * a special line carries `criterionId` and its frozen `positionId`.
+ */
 export interface PeriodCriterion {
   id: Uuid;
-  baseCriteriaId: Uuid;
+  type: CriterionType;
+  baseCriteriaId: Uuid | null;
+  criterionId: Uuid | null;
+  /** Frozen external position identifier for special lines only. */
+  positionId: DecimalInt64 | null;
   name: string;
   description: string;
   /** Signed int32, minimum 1. */
@@ -176,10 +250,21 @@ export interface ScoreChange {
   comment: string;
 }
 
-/** `score: null` means not assessed; `0` is a recorded zero. */
+/**
+ * One scoring line of a sheet. `type` is `base` or `special`; a base line
+ * carries `baseCriteriaId` and `positionId: null`, a special line carries
+ * `criterionId` and its frozen `positionId`. Type and provenance are server
+ * facts — they are never accepted as write input.
+ *
+ * `score: null` means not assessed; `0` is a recorded zero.
+ */
 export interface SheetCriterion {
   id: Uuid;
   periodCriterionId: Uuid;
+  type: CriterionType;
+  baseCriteriaId: Uuid | null;
+  criterionId: Uuid | null;
+  positionId: DecimalInt64 | null;
   name: string;
   description: string;
   maxScore: number;
