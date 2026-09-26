@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/auth",
-  "version": "0.0.65",
+  "version": "0.1.0",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "restricted"
@@ -11,8 +11,8 @@
     "directory": "auth"
   },
   "peerDependencies": {
-    "@sotbi/data-access": "0.0.65",
-    "@sotbi/models": "0.0.65",
+    "@sotbi/data-access": "0.1.0",
+    "@sotbi/models": "0.1.0",
     "@angular/common": "^22.1.7",
     "@angular/core": "^22.1.7",
     "@angular/router": "^22.1.7",
