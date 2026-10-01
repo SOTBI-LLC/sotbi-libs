@@ -1,0 +1,44 @@
+<div>
+  <h3 mat-dialog-title class="modal-title">
+    {{ inputData.title }}
+  </h3>
+  @if (hideModal) {
+    <h3 mat-dialog-title class="modal-title">Изменений нет</h3>
+  } @else {
+    <div class="modal-body modal-box" mat-dialog-content>
+      <table class="table overflow">
+        <thead class="flex vh-75">
+          <tr class="grid">
+            <th class="left">Информация</th>
+            @for (key of keys; track key) {
+              <th class="left">
+                {{ key }}
+              </th>
+            }
+          </tr>
+          <tr class="grid">
+            <th class="left">Было</th>
+            @for (value of values; track value) {
+              <th class="left">
+                {{ value || '-' }}
+              </th>
+            }
+          </tr>
+          <tr class="grid">
+            <th class="left">Стало</th>
+            @for (value of valuesNew; track value) {
+              <th class="left">
+                {{ value || '-' }}
+              </th>
+            }
+          </tr>
+        </thead>
+      </table>
+    </div>
+  }
+  <div class="modal-footer">
+    <button mat-button class="btn btn-link btn-red btn-sm" type="button" [mat-dialog-close]="true">
+      Закрыть
+    </button>
+  </div>
+</div>

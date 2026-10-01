@@ -1,0 +1,192 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <h3 mat-dialog-title class="modal-title">{{ caption }}</h3>
+  </div>
+  <div class="modal-body" mat-dialog-content>
+    @for (alert of alerts(); track alert) {
+      <clr-alert clrAlertType="alert-warning" (clrAlertClosedChange)="onCloseAlert(alert)">
+        <div clr-alert-item class="alert-item">
+          <span class="alert-text"> {{ alert }} </span>
+        </div>
+      </clr-alert>
+    }
+    @if (!isEdit) {
+      <div class="preview-mode p-4">
+        <div class="group-ctrl">
+          <div class="group-ctrl__label-wrap">
+            <label class="clr-control-label">Дата, с:</label>
+          </div>
+          <div class="group-ctrl__input-text-wrap">
+            <div class="group-ctrl__preview">
+              <p class="group-ctrl__preview-text">
+                {{ data()?.start_date | date: 'dd.MM.yyyy' }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="group-ctrl">
+          <div class="group-ctrl__label-wrap">
+            <label class="clr-control-label">по:</label>
+          </div>
+          <div class="group-ctrl__input-text-wrap">
+            <div class="group-ctrl__preview">
+              <p class="group-ctrl__preview-text">
+                {{ data()?.end_date | date: 'dd.MM.yyyy' }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="group-ctrl">
+          <div class="group-ctrl__label-wrap">
+            <label class="clr-control-label">Начальный баланс</label>
+          </div>
+          <div class="group-ctrl__input-text-wrap">
+            <div class="group-ctrl__preview">
+              <p class="group-ctrl__preview-text">
+                {{ data()?.initial_balance || 0 | currency: 'RUB' : '' }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="group-ctrl">
+          <div class="group-ctrl__label-wrap">
+            <label class="clr-control-label">Приход</label>
+          </div>
+          <div class="group-ctrl__input-text-wrap">
+            <div class="group-ctrl__preview">
+              <p class="group-ctrl__preview-text">
+                {{ data()?.income || 0 | currency: 'RUB' : '' }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="group-ctrl">
+          <div class="group-ctrl__label-wrap">
+            <label class="clr-control-label">Расход</label>
+          </div>
+          <div class="group-ctrl__input-text-wrap">
+            <div class="group-ctrl__preview">
+              <p class="group-ctrl__preview-text">
+                {{ data()?.write_off || 0 | currency: 'RUB' : '' }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="group-ctrl">
+          <div class="group-ctrl__label-wrap">
+            <label class="clr-control-label">Конечный баланс</label>
+          </div>
+          <div class="group-ctrl__input-text-wrap">
+            <div class="group-ctrl__preview">
+              <p class="group-ctrl__preview-text">
+                {{ data()?.final_balance || 0 | currency: 'RUB' : '' }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="group-ctrl">
+          <div class="group-ctrl__label-wrap">
+            <label class="clr-control-label">Файл</label>
+          </div>
+          <div class="group-ctrl__input-text-wrap">
+            <div class="group-ctrl__preview">
+              <p class="group-ctrl__preview-text">
+                <a [href]="statementLink">{{ data()?.file }}</a>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="group-ctrl">
+          <div class="group-ctrl__label-wrap">
+            <label class="clr-control-label">Загрузил</label>
+          </div>
+          <div class="group-ctrl__input-text-wrap">
+            <div class="group-ctrl__preview">
+              <p class="group-ctrl__preview-text">
+                {{ data()?.creator?.user }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="group-ctrl">
+          <div class="group-ctrl__label-wrap">
+            <label class="clr-control-label">Когда</label>
+          </div>
+          <div class="group-ctrl__input-text-wrap">
+            <div class="group-ctrl__preview">
+              <p class="group-ctrl__preview-text">
+                {{ data()?.created_at | date: 'dd.MM.yyyy' }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <form class="edit-mode" [formGroup]="fg">
+        <div class="group-ctrl">
+          <div class="group-ctrl__label-wrap">
+            <label class="clr-control-label group-ctrl__label--required">Дата, с:</label>
+          </div>
+          <div class="group-ctrl__value-wrap">
+            <div class="clr-input-wrapper">
+              <input type="date" nativeDate formControlName="startDate" />
+              <clr-icon class="clr-validate-icon" shape="exclamation-circle"></clr-icon>
+            </div>
+          </div>
+        </div>
+        <div class="group-ctrl">
+          <div class="group-ctrl__label-wrap">
+            <label class="clr-control-label group-ctrl__label--required">по:</label>
+          </div>
+          <div class="group-ctrl__value-wrap">
+            <div class="clr-input-wrapper">
+              <input type="date" nativeDate formControlName="endDate" />
+              <clr-icon class="clr-validate-icon" shape="exclamation-circle"></clr-icon>
+            </div>
+          </div>
+        </div>
+        <div class="group-ctrl">
+          <label class="clr-control-label required" for="file">PDF выписка</label>
+          <ngx-file-drop (onFileDrop)="dropped($event)" class="w-100" [multiple]="false">
+            <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+              @if (!fg.controls['file']?.value?.name) {
+                <div class="btn-upload">
+                  <clr-icon shape="upload-cloud" class="icon-upload"></clr-icon>
+                  Перетащите файлы или
+                </div>
+              }
+              <button
+                class="btn btn-link link-upload btn-upload"
+                type="button"
+                (click)="openFileSelector()"
+              >
+                @if (fg.controls['file']?.value?.name) {
+                  <clr-icon shape="upload-cloud" class="icon-upload"></clr-icon>
+                }
+                {{ fg.controls['file']?.value?.name || 'Загрузите...' }}
+              </button>
+            </ng-template>
+          </ngx-file-drop>
+        </div>
+      </form>
+    }
+  </div>
+  <div class="modal-footer btn-sm" mat-dialog-actions>
+    @if (isEdit) {
+      <button type="button" class="btn btn-primary" (click)="onUpload(fg)" [disabled]="!fg.valid">
+        Загрузить
+      </button>
+    }
+    <button
+      mat-dialog-close
+      cdkFocusInitial
+      aria-label="Close"
+      cdl
+      class="btn btn-link btn-red btn-without-border"
+      (click)="onCancel()"
+      type="button"
+    >
+      Закрыть
+    </button>
+  </div>
+</div>

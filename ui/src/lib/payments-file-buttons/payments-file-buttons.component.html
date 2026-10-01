@@ -1,0 +1,31 @@
+<div class="btn-group">
+  <button
+    class="btn btn-sm btn-icon"
+    title="Скачать файл"
+    aria-label="Скачать файл"
+    [clrLoading]="uploadState()"
+    [disabled]="uploadState() === loadingState.LOADING"
+    (click)="download()"
+  >
+    <clr-icon shape="download-cloud"></clr-icon>
+  </button>
+  <button
+    class="btn btn-sm btn-icon"
+    title="Загрузить файл"
+    aria-label="Загрузить файл"
+    [clrLoading]="uploadState()"
+    [disabled]="uploadState() === loadingState.LOADING"
+    (click)="file.click()"
+  >
+    <clr-icon shape="upload-cloud"></clr-icon>
+  </button>
+  <input
+    type="file"
+    name="file"
+    id="file"
+    multiple
+    #file
+    style="display: none"
+    (change)="upload(file)"
+  />
+</div>
