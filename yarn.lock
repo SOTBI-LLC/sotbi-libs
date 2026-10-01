@@ -2181,6 +2181,13 @@
     fast-wrap-ansi "^0.2.0"
     sisteransi "^1.0.5"
 
+"@clr/angular@^18.3.0":
+  version "18.3.0"
+  resolved "https://registry.yarnpkg.com/@clr/angular/-/angular-18.3.0.tgz#66ff744487bb6f50741e7f369454fb8d26b18a76"
+  integrity sha512-bAQA4YMMTOSNDk1F2t7ijzIWV5Lp543x6xrOjxP+kby+LoDgK9pE71taYBR17jCteIt1/QrXGAjrbuk23qg+Iw==
+  dependencies:
+    tslib "^2.3.0"
+
 "@cspotcode/source-map-support@^0.8.0":
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/@cspotcode/source-map-support/-/source-map-support-0.8.1.tgz#00629c35a688e05a88b1cda684fb9d5e73f000a1"
@@ -12648,6 +12655,13 @@ ng-packagr@^22.2.0:
     sass "^1.103.1"
     sass-embedded "^1.103.1"
     tinyglobby "^0.2.12"
+
+ngx-file-drop@^16.0.0:
+  version "16.0.0"
+  resolved "https://registry.yarnpkg.com/ngx-file-drop/-/ngx-file-drop-16.0.0.tgz#3f6cb74b5bfee0d7bcd76635c7120d36fa64ff62"
+  integrity sha512-33RPoZBAiMkV110Rzu3iOrzGcG5M20S4sAiwLzNylfJobu9qVw5XR83FhUelSeqJRoaDxXBRKAozYCSnUf2CNw==
+  dependencies:
+    tslib "^2.3.0"
 
 no-case@^3.0.4:
   version "3.0.4"
