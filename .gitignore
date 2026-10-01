@@ -62,4 +62,7 @@ dist/storybook-browser
 
 # Stylelint cache
 .stylelintcache
-pkg
+.codex/config.toml
+.mimosa
+.zcode
+.agents

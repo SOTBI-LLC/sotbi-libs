@@ -90,7 +90,7 @@
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^30.5.2",
     "jest-junit": "^17.0.0",
-    "jest-preset-angular": "^17.0.0",
+    "jest-preset-angular": "17.0.1",
     "jsonc-eslint-parser": "^3.3.0",
     "knip": "^6.38.0",
     "ng-packagr": "^22.2.0",
