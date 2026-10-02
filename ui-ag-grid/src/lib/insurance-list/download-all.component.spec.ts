@@ -17,19 +17,20 @@ describe('DownloadAllComponent', () => {
   });
 
   it('downloads all files of the initialised row through the supplied callback', async () => {
-    const downloaded: number[] = [];
+    const downloaded: string[] = [];
+    const requestedIds: number[] = [];
     (window.URL as unknown as { createObjectURL: () => string }).createObjectURL = () =>
       'blob:insurance';
     jest
       .spyOn(HTMLAnchorElement.prototype, 'click')
       .mockImplementation(function (this: HTMLAnchorElement) {
-        downloaded.push(Number(this.download));
+        downloaded.push(this.href);
       });
     const fixture = TestBed.createComponent(DownloadAllComponent);
     fixture.componentInstance.agInit({
       data: { id: 123 },
       downloadAll: (id: number) => {
-        downloaded.push(id);
+        requestedIds.push(id);
         return of(new Blob(['policies']));
       },
     } as unknown as DownloadAllParams);
@@ -40,7 +41,8 @@ describe('DownloadAllComponent', () => {
     link.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     await fixture.whenStable();
 
-    expect(downloaded).toContain(123);
+    expect(downloaded).toEqual(['blob:insurance']);
+    expect(requestedIds).toEqual([123]);
   });
 
   it('does nothing user-visible before the click', async () => {

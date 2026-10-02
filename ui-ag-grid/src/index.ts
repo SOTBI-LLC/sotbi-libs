@@ -76,6 +76,7 @@ export {
 export { TextareaEditor } from './lib/textarea-editor.component';
 export {
   TradingCodeFilterComponent,
+  TradingCodeFilterModel,
   TradingCodeFilterParams,
 } from './lib/trading-code-filter';
 export { TooltipComponent } from './lib/tooltip-component.component';

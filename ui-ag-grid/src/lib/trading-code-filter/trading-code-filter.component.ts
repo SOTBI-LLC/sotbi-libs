@@ -12,7 +12,7 @@ export interface TradingCodeFilterParams extends IFilterParams {
   searchTradingCodes: (term: string) => Observable<SimpleEditModel[]>;
 }
 
-interface TradingCodeFilterModel {
+export interface TradingCodeFilterModel {
   values: string[];
   filterType: AgGridFilterType;
 }

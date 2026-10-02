@@ -43,7 +43,6 @@ export class DownloadAllComponent implements ICellRendererAngularComp {
       .subscribe((data: Blob) => {
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(data);
-        link.download = String(id);
         link.click();
         link.remove();
       });
