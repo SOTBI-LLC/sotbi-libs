@@ -1,9 +1,10 @@
 import { formatDate } from '@angular/common';
-import { ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import type { OnInit} from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { AttachmentHistory } from '@sotbi/models';
-import { Observable } from 'rxjs';
+import type { AttachmentHistory } from '@sotbi/models';
+import type { Observable } from 'rxjs';
 import { DD_MM_YYYY, DD_MM_YYYY_HH_MM_SS } from '@sotbi/utils';
 
 export interface DialogHistoryDataModel {
@@ -57,17 +58,17 @@ export class DialogHistoryComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly changeDetector = inject(ChangeDetectorRef);
 
-  inputData = inject<DialogHistoryDataModel>(MAT_DIALOG_DATA);
-  dialogRef = inject<MatDialogRef<DialogHistoryComponent>>(MatDialogRef);
+  public inputData = inject<DialogHistoryDataModel>(MAT_DIALOG_DATA);
+  public dialogRef = inject<MatDialogRef<DialogHistoryComponent>>(MatDialogRef);
 
-  keysOld!: string[];
-  valuesOld!: string[];
-  keys!: string[];
+  public keysOld!: string[];
+  public valuesOld!: string[];
+  public keys!: string[];
   // to do: добавить типизацию, мб переписать
-  values!: unknown[];
-  valuesNew!: unknown[];
-  hideModal!: boolean;
-  creatorId!: number;
+  public values!: unknown[];
+  public valuesNew!: unknown[];
+  public hideModal!: boolean;
+  public creatorId!: number;
 
   public ngOnInit(): void {
     this.hideModal = true;

@@ -4,16 +4,12 @@ import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import type { Remaining } from '@sotbi/models';
-import type { FileSystemFileEntry, NgxFileDropEntry } from 'ngx-file-drop';
 import { Subject } from 'rxjs';
-import { RemainingDialogComponent, RemainingDialogData } from './remaining-dialog.component';
+import type { RemainingDialogData } from './remaining-dialog.component';
+import { RemainingDialogComponent } from './remaining-dialog.component';
 
 @Component({ template: '' })
 class DialogHost {}
-
-class MatDialogRefStub {
-  close = jest.fn();
-}
 
 /** Устойчивое ожидание результата через UI без обращения к приватным методам компонента. */
 async function waitFor(assertion: () => void, timeoutMs = 5000): Promise<void> {
@@ -33,9 +29,15 @@ async function waitFor(assertion: () => void, timeoutMs = 5000): Promise<void> {
 
 describe('RemainingDialogComponent', () => {
   const resizeObserverStub = class {
-    observe(): void {}
-    unobserve(): void {}
-    disconnect(): void {}
+    public observe(): void {
+      /* заглушка для jsdom */
+    }
+    public unobserve(): void {
+      /* заглушка для jsdom */
+    }
+    public disconnect(): void {
+      /* заглушка для jsdom */
+    }
   };
 
   beforeEach(() => {
@@ -107,7 +109,7 @@ describe('RemainingDialogComponent', () => {
   });
 
   it('displays a loader error and keeps the dialog open', async () => {
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
     const fixture = TestBed.createComponent(DialogHost);
     const result = new Subject<Remaining>();
     const closed: unknown[] = [];
@@ -224,7 +226,7 @@ describe('RemainingDialogComponent', () => {
 
   it('uses the consumer-supplied statement link instead of the default one', async () => {
     const fixture = TestBed.createComponent(DialogHost);
-    const dialog = TestBed.inject(MatDialog).open(RemainingDialogComponent, {
+    TestBed.inject(MatDialog).open(RemainingDialogComponent, {
       data: {
         row: { id: 7, file: 'statement.pdf' } as Remaining,
         caption: 'Подробнее',
@@ -257,14 +259,6 @@ describe('RemainingDialogComponent', () => {
     const container = document.querySelector('mat-dialog-container')!;
     const input = container.querySelector('input[type="file"]') as HTMLInputElement;
     const pdf = new File(['PDF'], 'dropped.pdf', { type: 'application/pdf' });
-    const fileEntry = {
-      isFile: true,
-      isDirectory: false,
-      file: (callback: (file: File) => void) => callback(pdf),
-      name: pdf.name,
-    } as unknown as FileSystemFileEntry;
-    const entry = { fileEntry, relativePath: pdf.name } as NgxFileDropEntry;
-
     const dropZone = container.querySelector('ngx-file-drop') as HTMLElement;
     expect(dropZone).toBeTruthy();
     Object.defineProperty(input, 'files', { configurable: true, value: [pdf] });

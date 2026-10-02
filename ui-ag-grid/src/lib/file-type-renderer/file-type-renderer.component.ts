@@ -1,10 +1,11 @@
 import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { checkXlsFileType, downloadAttachment, DownloadFileDescriptor } from '../file-download';
+import type { DownloadFileDescriptor } from '../file-download';
+import { checkXlsFileType, downloadAttachment } from '../file-download';
 import type { Remaining } from '@sotbi/models';
-import { ICellRendererAngularComp } from 'ag-grid-angular';
-import { ICellRendererParams } from 'ag-grid-community';
-import { Observable } from 'rxjs';
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
+import type { ICellRendererParams } from 'ag-grid-community';
+import type { Observable } from 'rxjs';
 
 export interface FileTypeRendererParams extends ICellRendererParams<Remaining, string> {
   downloadFile: (attachment: DownloadFileDescriptor) => Observable<BlobPart>;

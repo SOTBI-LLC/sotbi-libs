@@ -1,10 +1,11 @@
 import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import { SimpleEditModel, TradingCode } from '@sotbi/models';
+import type { SimpleEditModel, TradingCode } from '@sotbi/models';
 import { AgGridFilterType } from '../ag-grid.common';
-import { IFilterParams } from 'ag-grid-community';
-import { concat, Observable, of, Subject } from 'rxjs';
+import type { IFilterParams } from 'ag-grid-community';
+import type { Observable} from 'rxjs';
+import { concat, of, Subject } from 'rxjs';
 import { catchError, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 export interface TradingCodeFilterParams extends IFilterParams {
@@ -25,7 +26,7 @@ interface TradingCodeFilterModel {
         [clearable]="true"
         name="tc"
         id="tc"
-        [items]="value$ | async"
+        [items]="(value$ | async) || []"
         bindLabel="name"
         bindValue="id"
         notFoundText="Не найдено"

@@ -6,9 +6,10 @@ import { NgSelectComponent } from '@ng-select/ng-select';
 import type { IFilterParams } from 'ag-grid-community';
 import { of, throwError } from 'rxjs';
 import { AgGridFilterType } from '../ag-grid.common';
+import type {
+  TradingCodeFilterParams} from './trading-code-filter.component';
 import {
-  TradingCodeFilterComponent,
-  TradingCodeFilterParams,
+  TradingCodeFilterComponent
 } from './trading-code-filter.component';
 
 /** Устойчивое ожидание результата через UI без обращения к приватным методам компонента. */
@@ -41,7 +42,7 @@ describe('TradingCodeFilterComponent', () => {
     fixture = filterFixture;
     const component = filterFixture.componentInstance;
     component.agInit({
-      filterChangedCallback: () => {},
+      filterChangedCallback: () => undefined,
       ...params,
     } as IFilterParams as TradingCodeFilterParams);
     filterFixture.detectChanges();
@@ -114,7 +115,7 @@ describe('TradingCodeFilterComponent', () => {
   });
 
   it('shows no options and stays available when the search fails', async () => {
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
     const searchTradingCodes = jest.fn(() => throwError(() => new Error('boom')));
     createFilter({ searchTradingCodes });
 

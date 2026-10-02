@@ -1,15 +1,19 @@
-import { Component, OnInit, input, output } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
+import type { OnInit} from '@angular/core';
+import { Component, input, output } from '@angular/core';
+import type { FormArray, FormGroup } from '@angular/forms';
 import { ButtonRendererComponent } from '../button-renderer.component';
 import { IMaskEdit } from '../imask-edit.component';
 import { localeText } from '../ag-grid.common';
 import { AgGridAngular } from 'ag-grid-angular';
-import { CellClassParams, ColDef, ColGroupDef, GridOptions } from 'ag-grid-community';
-import { CheckNumEditor, CheckNumEditorParams } from '../check-num/check-num.component';
-import { DropFileComponent, DropFileParams } from '../drop-file/drop-file.component';
-import { RealEstateForm } from '../real-estate-form';
+import type { CellClassParams, ColDef, ColGroupDef, GridOptions } from 'ag-grid-community';
+import type { CheckNumEditorParams } from '../check-num/check-num.component';
+import { CheckNumEditor } from '../check-num/check-num.component';
+import type { DropFileParams } from '../drop-file/drop-file.component';
+import { DropFileComponent } from '../drop-file/drop-file.component';
+import type { RealEstateForm } from '../real-estate-form';
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector -- селектор сохранён для совместимости
   selector: 'real-estate-list',
   template: `
     <ag-grid-angular

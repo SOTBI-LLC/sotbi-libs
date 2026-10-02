@@ -15,14 +15,14 @@ export class PaymentsFileButtonsComponent {
   public readonly uploadState = input<ClrLoadingState>(ClrLoadingState.DEFAULT);
   protected readonly loadingState = ClrLoadingState;
 
-  upload(input: HTMLInputElement): void {
+  public upload(input: HTMLInputElement): void {
     const files = Array.from(input.files ?? []);
     if (files.length === 0) return;
     this.filesSelected.emit(files);
     input.value = '';
   }
 
-  download(): void {
+  public download(): void {
     this.exportRequested.emit();
   }
 }

@@ -2,9 +2,10 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import type { SimpleEditModel } from '@sotbi/models';
 import { of, throwError } from 'rxjs';
+import type {
+  TradingCodeEditorParams} from './select-search-trading-code-editor.component';
 import {
-  SelectSearchTradingCodeEditor,
-  TradingCodeEditorParams,
+  SelectSearchTradingCodeEditor
 } from './select-search-trading-code-editor.component';
 
 /** Устойчивое ожидание результата через UI без обращения к приватным методам компонента. */

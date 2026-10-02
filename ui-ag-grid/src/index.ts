@@ -44,6 +44,13 @@ export {
   ProjectAndDebtorSelectEditor,
 } from './lib/ng-select-editor.component';
 export {
+  DownloadAllComponent,
+  DownloadAllParams,
+  InsuranceLinkBuilder,
+  InsuranceListComponent,
+  sortComparator,
+} from './lib/insurance-list';
+export {
   NumericEditor,
   SimpleNumericEditor,
 } from './lib/numeric-editor.component';

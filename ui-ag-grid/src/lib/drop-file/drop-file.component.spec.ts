@@ -2,7 +2,8 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { EMPTY, of } from 'rxjs';
-import { DropFileComponent, DropFileParams } from './drop-file.component';
+import type { DropFileParams } from './drop-file.component';
+import { DropFileComponent } from './drop-file.component';
 
 describe('DropFileComponent', () => {
   beforeEach(() => {

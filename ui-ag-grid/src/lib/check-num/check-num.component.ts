@@ -1,9 +1,11 @@
-import { AfterViewInit, Component, DestroyRef, inject, viewChild } from '@angular/core';
+import type { AfterViewInit} from '@angular/core';
+import { Component, DestroyRef, inject, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { ICellEditorAngularComp } from 'ag-grid-angular';
-import { ICellEditorParams } from 'ag-grid-community';
-import { EMPTY, Observable } from 'rxjs';
+import type { ICellEditorAngularComp } from 'ag-grid-angular';
+import type { ICellEditorParams } from 'ag-grid-community';
+import type { Observable } from 'rxjs';
+import { EMPTY } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 export interface CheckNumEditorParams extends ICellEditorParams {
@@ -11,6 +13,7 @@ export interface CheckNumEditorParams extends ICellEditorParams {
 }
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector -- селектор сохранён для совместимости
   selector: 'app-check-num-editor-cell',
   template: `
     <input

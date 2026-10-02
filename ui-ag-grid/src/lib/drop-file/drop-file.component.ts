@@ -1,12 +1,13 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ClrIcon, ClrLoadingButtonModule, ClrLoadingModule, ClrLoadingState } from '@clr/angular';
-import { ICellEditorAngularComp } from 'ag-grid-angular';
-import { GridApi, ICellEditorParams } from 'ag-grid-community';
-import { Observable } from 'rxjs';
-import { downloadAttachment, DownloadFileDescriptor } from '../file-download';
+import type { ICellEditorAngularComp } from 'ag-grid-angular';
+import type { GridApi, ICellEditorParams } from 'ag-grid-community';
+import type { Observable } from 'rxjs';
+import type { DownloadFileDescriptor } from '../file-download';
+import { downloadAttachment } from '../file-download';
 
-export interface IDropFileResult extends DownloadFileDescriptor {}
+export type IDropFileResult = DownloadFileDescriptor;
 
 export interface DropFileParams extends ICellEditorParams<IDropFileResult> {
   uploadFiles: (files: FileList) => Observable<IDropFileResult[]>;

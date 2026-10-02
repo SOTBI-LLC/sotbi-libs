@@ -2,7 +2,8 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
-import { CheckNumEditor, CheckNumEditorParams } from './check-num.component';
+import type { CheckNumEditorParams } from './check-num.component';
+import { CheckNumEditor } from './check-num.component';
 
 /** Устойчивое ожидание результата через UI без обращения к приватным методам компонента. */
 async function waitFor(assertion: () => void, timeoutMs = 5000): Promise<void> {
@@ -57,7 +58,7 @@ describe('CheckNumEditor', () => {
 
   it('returns the number without surrounding spaces when the lookup fails', async () => {
     const lookupNumber = jest.fn(() => throwError(() => new Error('not found')));
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
     const component = createEditor({
       value: '',
       lookupNumber,

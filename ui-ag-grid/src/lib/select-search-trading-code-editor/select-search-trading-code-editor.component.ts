@@ -1,11 +1,13 @@
 import { AsyncPipe } from '@angular/common';
-import { AfterViewInit, Component, viewChild, ViewContainerRef } from '@angular/core';
+import type { AfterViewInit} from '@angular/core';
+import { Component, viewChild, ViewContainerRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import { PaymentDocument, SimpleEditModel } from '@sotbi/models';
-import { ICellEditorAngularComp } from 'ag-grid-angular';
-import { GridApi, ICellEditorParams } from 'ag-grid-community';
-import { concat, Observable, of, Subject } from 'rxjs';
+import type { PaymentDocument, SimpleEditModel } from '@sotbi/models';
+import type { ICellEditorAngularComp } from 'ag-grid-angular';
+import type { GridApi, ICellEditorParams } from 'ag-grid-community';
+import type { Observable} from 'rxjs';
+import { concat, of, Subject } from 'rxjs';
 import { catchError, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 export interface TradingCodeEditorParams extends ICellEditorParams<PaymentDocument, number> {
@@ -13,13 +15,14 @@ export interface TradingCodeEditorParams extends ICellEditorParams<PaymentDocume
 }
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector -- селектор сохранён для совместимости
   selector: 'select-cell',
   template: `
     <div class="select">
       <ng-select
         #select
         name="select"
-        [items]="value$ | async"
+        [items]="(value$ | async) || []"
         [multiple]="false"
         [searchable]="true"
         notFoundText="Не найдено"

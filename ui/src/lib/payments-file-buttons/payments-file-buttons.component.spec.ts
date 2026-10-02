@@ -11,8 +11,8 @@ import { PaymentsFileButtonsComponent } from './payments-file-buttons.component'
     '<pauments-file-buttons (filesSelected)="selected.push($event)" (exportRequested)="exports.push(true)" />',
 })
 class Host {
-  readonly selected: File[][] = [];
-  readonly exports: boolean[] = [];
+  public readonly selected: File[][] = [];
+  public readonly exports: boolean[] = [];
 }
 
 const setInputFiles = (input: HTMLInputElement, files: File[]): void => {

@@ -32,7 +32,8 @@
     "@ng-select/ng-select": "^24.1.2",
     "jest": "^30.3.0",
     "jest-preset-angular": "^17.0.0",
-    "@storybook/angular": "^10.4.2"
+    "@storybook/angular": "^10.4.2",
+    "rxjs": "~7.8.2"
   },
   "sideEffects": [
     "*.css"

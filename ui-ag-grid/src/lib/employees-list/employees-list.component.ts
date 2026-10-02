@@ -23,7 +23,7 @@ import type {
   SideBarDef,
   ValueFormatterParams,
 } from 'ag-grid-community';
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 import { localeText } from '../ag-grid.common';
 import { ButtonActionsComponent } from '../button-actions.component';
 import { DatePickerEditor } from '../date-picker-editor.component';

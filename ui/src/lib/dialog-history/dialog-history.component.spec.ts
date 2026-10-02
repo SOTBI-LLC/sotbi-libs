@@ -5,7 +5,8 @@ import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import type { AttachmentHistory } from '@sotbi/models';
 import { EMPTY, Subject } from 'rxjs';
-import { DialogHistoryComponent, DialogHistoryDataModel } from './dialog-history.component';
+import type { DialogHistoryDataModel } from './dialog-history.component';
+import { DialogHistoryComponent } from './dialog-history.component';
 
 @Component({ template: '' })
 class DialogHost {}

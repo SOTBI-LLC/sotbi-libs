@@ -1,7 +1,8 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { EMPTY, of } from 'rxjs';
-import { FileTypeRendererComponent, FileTypeRendererParams } from './file-type-renderer.component';
+import type { FileTypeRendererParams } from './file-type-renderer.component';
+import { FileTypeRendererComponent } from './file-type-renderer.component';
 
 describe('FileTypeRendererComponent', () => {
   beforeEach(() => {

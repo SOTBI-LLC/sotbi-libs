@@ -1,8 +1,10 @@
 import { CurrencyPipe, DatePipe, formatDate } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import type { OnInit} from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import type {
+  FormGroup} from '@angular/forms';
 import {
-  FormGroup,
   FormsModule,
   ReactiveFormsModule,
   UntypedFormBuilder,
@@ -16,10 +18,11 @@ import {
   ClrLoadingState,
   ClrModalModule,
 } from '@clr/angular';
-import { Remaining } from '@sotbi/models';
+import type { Remaining } from '@sotbi/models';
 import { NativeDateValueAccessorDirective } from '../native-date/native-date.directive';
-import { FileSystemFileEntry, NgxFileDropEntry, NgxFileDropModule } from 'ngx-file-drop';
-import { Observable, Subscription } from 'rxjs';
+import type { FileSystemFileEntry, NgxFileDropEntry} from 'ngx-file-drop';
+import { NgxFileDropModule } from 'ngx-file-drop';
+import type { Observable, Subscription } from 'rxjs';
 
 export type RemainingDialogData = {
   row: Remaining;
@@ -77,11 +80,11 @@ export class RemainingDialogComponent implements OnInit {
     }
   }
 
-  onCancel() {
+  public onCancel(): void {
     this.dialogRef.close();
   }
 
-  onUpload(fg: FormGroup): Subscription | undefined {
+  public onUpload(fg: FormGroup): Subscription | undefined {
     if (!this.dialogData.isEdit) return;
     const formData = new FormData();
     formData.append('account', fg.controls['account'].value);
@@ -103,11 +106,11 @@ export class RemainingDialogComponent implements OnInit {
       });
   }
 
-  onCloseAlert(alert: string) {
+  public onCloseAlert(alert: string): void {
     this.alerts.update((alerts) => alerts.filter((el) => el !== alert));
   }
 
-  dropped(files: NgxFileDropEntry[]) {
+  public dropped(files: NgxFileDropEntry[]): void {
     for (const droppedFile of files) {
       if (droppedFile.fileEntry.isFile) {
         const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
