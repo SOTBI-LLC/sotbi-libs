@@ -24,6 +24,11 @@ export {
 } from './lib/date-picker-editor.component';
 export { EmployeesListComponent } from './lib/employees-list';
 export {
+  DropFileComponent,
+  DropFileParams,
+  IDropFileResult,
+} from './lib/drop-file';
+export {
   checkXlsFileType,
   downloadAttachment,
   DownloadFileDescriptor,
