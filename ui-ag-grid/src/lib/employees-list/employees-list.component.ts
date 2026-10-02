@@ -1,5 +1,12 @@
 import { formatDate } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  input,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import type { FormArray } from '@angular/forms';
 import type { Employee, itemMapPair, UserShort } from '@sotbi/models';
 import { ContourType, ContourTypeArr, PositionTypeArr } from '@sotbi/models';
@@ -16,9 +23,11 @@ import type {
   SideBarDef,
   ValueFormatterParams,
 } from 'ag-grid-community';
+import { Observable } from 'rxjs';
 import { localeText } from '../ag-grid.common';
 import { ButtonActionsComponent } from '../button-actions.component';
 import { DatePickerEditor } from '../date-picker-editor.component';
+import { NgSelectEditor } from '../ng-select-editor.component';
 import { RightSideBarAgGridComponent } from '../right-side-bar.component';
 import { UserWithAvatarComponent } from '../user-with-avatar.component';
 
@@ -31,14 +40,23 @@ import { UserWithAvatarComponent } from '../user-with-avatar.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmployeesListComponent {
+  private readonly destroyRef = inject(DestroyRef);
   public readonly employeesList = input.required<FormArray>();
   public readonly isEdit = input<boolean>(false);
   public readonly users = input<UserShort[]>([]);
   public readonly usersMap = input<itemMapPair<string>>(new Map());
+  /**
+   * Необязательная функция получения полного ФИО по идентификатору пользователя.
+   * Без неё выбор пользователя сохраняет переданное `user_name`.
+   */
+  public readonly lookupUserName = input<((id: number) => Observable<string>) | undefined>(
+    undefined,
+  );
 
   protected readonly gridOptions: GridOptions = {
     defaultColDef: {
       editable: () => this.isEdit(),
+      onCellValueChanged: (params) => this.onCellValueChanged(params),
       resizable: true,
       sortable: false,
       filter: false,
@@ -94,26 +112,41 @@ export class EmployeesListComponent {
         const worker: Employee = data;
         return worker.contour_type === ContourType.External && this.isEdit();
       },
-      onCellValueChanged: (params) => this.onCellValueChanged(params),
     },
     {
       headerName: 'Пользователь',
       field: 'user_id',
-      cellEditor: 'agRichSelectCellEditor',
+      cellEditor: NgSelectEditor,
       cellEditorParams: () => {
         return {
           values: this.users(),
-          formatValue: (v: UserShort) => v.user,
-          allowTyping: true,
-          filterList: true,
+          bindName: 'user',
         };
       },
-      onCellValueChanged: (params) => this.onCellValueChanged(params),
+      valueSetter: ({ data, newValue, api, node }) => {
+        const dataModel: Employee = data;
+        const form = this.employeesList()?.at(Number(node?.id));
+        // rich-select передаёт объект UserShort, ng-select редактор — числовой id
+        const userId =
+          typeof newValue === 'object' && newValue !== null ? newValue.id : newValue;
+        dataModel.user_id = userId;
+        const lookupUserName = this.lookupUserName();
+        if (lookupUserName && userId) {
+          lookupUserName(userId)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((name) => {
+              dataModel.user_name = name;
+              form?.patchValue({ user_name: name });
+              api?.refreshCells({ columns: ['user_name'], force: true });
+            });
+        }
+        return true;
+      },
       cellRenderer: 'userWithAvatarComponent',
       cellRendererParams: ({ data }: ICellRendererParams<Employee>) => {
         return {
-          user: this.usersMap()?.get(data?.id ?? 0)?.[0] ?? '',
-          avatar: this.usersMap()?.get(data?.id ?? 0)?.[1] ?? '',
+          user: this.usersMap()?.get(data?.user_id ?? 0)?.[0] ?? '',
+          avatar: this.usersMap()?.get(data?.user_id ?? 0)?.[1] ?? '',
         };
       },
       editable: ({ data }) => {
@@ -124,7 +157,6 @@ export class EmployeesListComponent {
     {
       headerName: 'Должность',
       field: 'position',
-      onCellValueChanged: (params) => this.onCellValueChanged(params),
     },
     {
       headerName: 'Дата трудоустройства',
@@ -139,7 +171,6 @@ export class EmployeesListComponent {
         }
         return '';
       },
-      onCellValueChanged: (params) => this.onCellValueChanged(params),
     },
     {
       headerName: 'Дата увольнения',
@@ -158,7 +189,6 @@ export class EmployeesListComponent {
         const worker: Employee = data;
         return !worker.is_work_now && this.isEdit();
       },
-      onCellValueChanged: (params) => this.onCellValueChanged(params),
     },
     {
       headerName: 'Работает сейчас',
@@ -192,7 +222,6 @@ export class EmployeesListComponent {
       cellEditorParams: {
         values: PositionTypeArr,
       } as ISelectCellEditorParams,
-      onCellValueChanged: (params) => this.onCellValueChanged(params),
     },
     {
       headerName: 'Контур',
@@ -228,7 +257,7 @@ export class EmployeesListComponent {
       cellRendererParams: () => {
         return {
           onDelete: (row: RowNode<Employee>) => {
-            if (row.rowIndex) {
+            if (row.rowIndex != null) {
               this.employeesList()?.removeAt(row.rowIndex);
             }
           },
@@ -241,22 +270,10 @@ export class EmployeesListComponent {
     api.hideOverlay();
   }
 
-  // addNewEmployee(): void {
-  //   this.employeesList()?.push(makeWorker(null));
-  //   this.gridApi.updateGridOptions({ rowData: this.employeesList()?.value ?? [] });
-  //   setTimeout(() => {
-  //     this.gridApi.sizeColumnsToFit();
-  //   }, 1);
-  // }
-
-  private onCellValueChanged({
-    node,
-    colDef,
-    newValue,
-  }: NewValueParams<Employee>): void {
+  private onCellValueChanged({ node, colDef, newValue }: NewValueParams<Employee>): void {
     const fg = this.employeesList()?.at(Number(node?.id));
-    if (colDef?.field && fg?.get(colDef?.field)) {
-      fg.patchValue({ ...fg.value, [colDef.field]: newValue });
+    if (colDef?.field && fg?.get(colDef.field)) {
+      fg.patchValue({ ...node!.data, [colDef.field]: newValue });
       fg.markAsDirty();
       fg.updateValueAndValidity();
     }

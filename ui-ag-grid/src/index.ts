@@ -48,6 +48,8 @@ export {
   SimpleNumericEditor,
 } from './lib/numeric-editor.component';
 export { PostAddresGridComponent } from './lib/post-addres-grid.component';
+export { RealEstateForm } from './lib/real-estate-form';
+export { RealEstateListComponent } from './lib/real-estate-list';
 export { RequestStatusComponent } from './lib/request-status.component';
 export { RightSideBarAgGridComponent } from './lib/right-side-bar.component';
 export {
