@@ -1,3 +1,4 @@
+export { AttachmentsPipe } from './lib/attachments/attachments.pipe';
 export { BreadcrumbsComponent } from './lib/breadcrumbs/breadcrumbs.component';
 export {
   CollapsibleBlockComponent,
@@ -32,6 +33,7 @@ export {
   LinksComponent,
   styleClassesForLinks,
 } from './lib/links/links.component';
+export { RangeDateComponent } from './lib/range-date/range-date.component';
 export { NativeDateValueAccessorDirective } from './lib/native-date';
 export { NativeDateTimeValueAccessorDirective } from './lib/native-datetime';
 export { NativeTimeValueAccessorDirective } from './lib/native-time';
@@ -44,6 +46,10 @@ export {
   RemainingDialogComponent,
   RemainingDialogData,
 } from './lib/remaining-dialog';
+export { SelectedProjectsComponent } from './lib/selected-projects/selected-projects.component';
 export { PaymentsFilterComponent } from './lib/payments-filter';
+export { ProjectDebtorTreeComponent } from './lib/project-debtor-tree/project-debtor-tree.component';
+export { ProgressBarComponent } from './lib/progress-bar/progress-bar.component';
+export { SimpleEditComponent } from './lib/simple-edit/simple-edit.component';
 export { ShortLinksComponent } from './lib/short-links/short-links.component';
 export { TimeEditComponent } from './lib/time-edit';

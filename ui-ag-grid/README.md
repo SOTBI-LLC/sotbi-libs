@@ -131,3 +131,34 @@ import { InsuranceListComponent, InsuranceLinkBuilder } from '@sotbi/ui-ag-grid'
 `/bankruptcy/debtors/<id>/common` и `/catalogs/insurance-companies/<id>`;
 необязательные `debtorLink` / `insuranceCompanyLink` (`(id) => route commands`)
 заменяют их.
+
+## Таблица простого редактирования (SimpleEdit2GridComponent)
+
+Обёртка ag-grid для списков `{ id, name, kind }`. Селектор:
+`simple-edit2-grid`.
+
+### Inputs
+
+- `items: SimpleEdit2Model[]` — строки таблицы.
+- `caption` (по умолчанию «Тип»), `captionForName` («Наименование») —
+  заголовки колонок.
+- `allowedToDelete` — добавляет кнопку удаления в строке.
+- `heightNumber` — отступ высоты `calc(100vh - Npx)`; по умолчанию 150.
+- `hiddenColumn` — скрывает колонку «Тип» (по умолчанию показана).
+- `hiddenStatusColumn` — скрывает колонку «Показывать» (по умолчанию
+  скрыта).
+- `floatingEditable` — при включении редактирование только при
+  установленном `disabled`.
+- `doubleClickEdit` — редактирование по двойному клику вместо одиночного.
+- `disabled: number` — признак режима «только просмотр» при
+  `floatingEditable`.
+
+### Outputs и публичные методы
+
+- `action: SimpleEdit2Model` — сохранение строки (кнопка в колонке
+  действий).
+- `delete: number` — удаление сохранённой строки; несохранённая строка
+  заменяется пустой локально.
+- `selectedId: number` — идентификатор выбранной строки.
+- `changeRowData(array)` — подмена данных грида без пересоздания.
+- `setFirstRowSelected()` — выбор первой строки.

@@ -1,0 +1,81 @@
+<filter-block
+  title="Период"
+  [showClear]="false"
+  [selectedText]="selectedPeriod"
+  [heightAuto]="analytics()"
+>
+  <div class="search-wrapper padding">
+    @if (!analytics()) {
+      <div>
+        @for (item of periodsTypeArr; track item) {
+          <a
+            href="javascript:void(0)"
+            (click)="filterByDate(item.id)"
+            class="label label-light-blue clickable"
+          >
+            {{ item.name }}
+          </a>
+        }
+      </div>
+    }
+    @if (analytics()) {
+      <div>
+        @for (item of PeriodsTypeAnalyticsArr; track item) {
+          <a
+            href="javascript:void(0)"
+            (click)="filterByDate(item.id, true)"
+            class="label label-light-blue clickable"
+          >
+            {{ item.name }}
+          </a>
+        }
+      </div>
+    }
+  </div>
+  <div
+    class="clr-row"
+    style="justify-content: space-between; max-width: 23rem"
+    [style.width]="analytics() ? '32%' : '100%'"
+  >
+    <div class="picker-container">
+      <div class="clr-control-container clr-col narrow ml-4" style="margin-bottom: 0.2rem">
+        <div class="clr-input-wrapper group-row">
+          <input
+            id="start"
+            nativeDate
+            #startInput
+            type="date"
+            [(ngModel)]="start"
+            class="width border px-2"
+            (change)="dateChange()"
+          />
+          <clr-icon class="clr-validate-icon" shape="exclamation-circle"></clr-icon>
+        </div>
+      </div>
+      <span class="ml-2 font-size">по</span>
+      <div class="clr-control-container clr-col narrow">
+        <div class="clr-input-wrapper group-row">
+          <input
+            id="end"
+            nativeDate
+            #endInput
+            type="date"
+            [(ngModel)]="end"
+            class="width border px-2"
+            (change)="dateChange()"
+          />
+          <clr-icon class="clr-validate-icon" shape="exclamation-circle"></clr-icon>
+        </div>
+      </div>
+    </div>
+    @if (showButton()) {
+      <button
+        class="btn btn-sm btn-primary margin-btn"
+        (click)="getData()"
+        [clrLoading]="loading()"
+      >
+        получить данные
+      </button>
+    }
+  </div>
+</filter-block>

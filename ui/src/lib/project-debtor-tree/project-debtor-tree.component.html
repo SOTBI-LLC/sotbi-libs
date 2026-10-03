@@ -1,0 +1,32 @@
+<filter-block
+  title="Проекты и должники"
+  selectedText="{{ selectedItems() }}/{{ all() }}"
+  (clear)="clearSelected()"
+>
+  <filter-search
+    class="wide"
+    (check)="toggleSelectAll($event)"
+    (searchEvent)="onKeyUp($event)"
+    [checked]="checked()"
+  />
+  @for (project of projects; track project.id) {
+    <clr-tree class="tree list">
+      <clr-tree-node
+        [clrSelected]="toClrState(project.selected)"
+        (clrSelectedChange)="project.selected = fromClrState($event)"
+        [clrExpanded]="true"
+        (change)="onChange()"
+      >
+        {{ project.name }}
+        @for (debtor of project.debtors; track debtor.id) {
+          <clr-tree-node
+            [clrSelected]="toClrState(debtor.selected)"
+            (clrSelectedChange)="debtor.selected = fromClrState($event)"
+          >
+            <span class="subtree" title="{{ debtor.name }}">{{ debtor.name }}</span>
+          </clr-tree-node>
+        }
+      </clr-tree-node>
+    </clr-tree>
+  }
+</filter-block>

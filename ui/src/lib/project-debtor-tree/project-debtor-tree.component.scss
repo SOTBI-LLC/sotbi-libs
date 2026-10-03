@@ -1,0 +1,25 @@
+.tree {
+  overflow: hidden;
+  .subtree {
+    white-space: pre;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  @media (max-width: 1440px) {
+    width: 8rem;
+  }
+}
+::ng-deep .clr-tree-node {
+  .clr-tree-node-content-container:focus {
+    outline: none;
+  }
+  .clr-treenode-children {
+    overflow-y: hidden !important;
+  }
+  .clr-treenode-content {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

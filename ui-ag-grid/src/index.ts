@@ -48,6 +48,7 @@ export {
   NgSelectEditor,
   ProjectAndDebtorSelectEditor,
 } from './lib/ng-select-editor.component';
+export { SimpleEdit2GridComponent } from './lib/simple-edit2-grid/simple-edit2-grid.component';
 export {
   DownloadAllComponent,
   DownloadAllParams,

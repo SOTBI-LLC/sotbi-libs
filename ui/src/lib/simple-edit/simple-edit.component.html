@@ -1,0 +1,69 @@
+<table class="table catalogs-table">
+  <thead>
+    <tr>
+      <th>Название</th>
+      <th>&nbsp;</th>
+      @if (allowedToDelete()) {
+        <th>&nbsp;</th>
+      }
+    </tr>
+  </thead>
+  <tbody>
+    @for (item of items(); track item.id) {
+      <tr>
+        <td class="left" height="46">
+          @if (editable !== item.id) {
+            <span>{{ item.name }}</span>
+          }
+          @if (editable === item.id) {
+            <clr-input-container>
+              <input clrInput type="text" [(ngModel)]="item.name" style="min-width: 50rem" />
+            </clr-input-container>
+          }
+        </td>
+        <td height="46">
+          <button class="simple-edit__btn-action">
+            @if (editable !== item.id) {
+              <clr-icon
+                [class.is-solid]="editable === item.id"
+                (click)="editable = item.id"
+                shape="pencil"
+              >
+              </clr-icon>
+            }
+            @if (editable === item.id) {
+              <clr-icon (click)="save(item)" shape="floppy"></clr-icon>
+            }
+          </button>
+        </td>
+        @if (allowedToDelete()) {
+          <td height="46">
+            <button
+              type="button"
+              title="Delete"
+              class="simple-edit__btn-action"
+              (click)="del(item.id)"
+            >
+              <clr-icon shape="trash"></clr-icon>
+            </button>
+          </td>
+        }
+      </tr>
+    }
+    <tr>
+      <td height="46">
+        <clr-input-container class="input-container-style">
+          <input [(ngModel)]="newName" class="wide" clrInput style="min-width: 50rem" type="text" />
+        </clr-input-container>
+      </td>
+      <td height="46">
+        <button class="simple-edit__btn-action" title="Create" type="button">
+          <clr-icon (click)="create()" shape="floppy"></clr-icon>
+        </button>
+      </td>
+      @if (allowedToDelete()) {
+        <td>&nbsp;</td>
+      }
+    </tr>
+  </tbody>
+</table>
