@@ -22,13 +22,13 @@ import { RangeDateComponent } from './range-date.component';
   `,
 })
 class HostComponent {
-  start = new Date(2026, 9, 1);
-  end: Date | null = new Date(2026, 9, 31);
-  readonly analytics = signal(false);
-  readonly showButton = signal(true);
-  readonly selected = signal<Interval | null>(null);
-  readonly pickerSelected = signal<Interval | null>(null);
-  readonly confirmed = signal(false);
+  public start = new Date(2026, 9, 1);
+  public end: Date | null = new Date(2026, 9, 31);
+  public readonly analytics = signal(false);
+  public readonly showButton = signal(true);
+  public readonly selected = signal<Interval | null>(null);
+  public readonly pickerSelected = signal<Interval | null>(null);
+  public readonly confirmed = signal(false);
 }
 
 describe('RangeDate', () => {

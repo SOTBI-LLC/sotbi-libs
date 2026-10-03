@@ -17,13 +17,13 @@ import { SimpleEditComponent } from './simple-edit.component';
   `,
 })
 class HostComponent {
-  readonly items = signal<SimpleEditModel[]>([
+  public readonly items = signal<SimpleEditModel[]>([
     { id: 1, name: 'Первый' },
     { id: 2, name: 'Второй' },
   ]);
-  readonly allowedToDelete = signal(false);
-  readonly actioned = signal<SimpleEditModel | null>(null);
-  readonly deleted = signal<number | null>(null);
+  public readonly allowedToDelete = signal(false);
+  public readonly actioned = signal<SimpleEditModel | null>(null);
+  public readonly deleted = signal<number | null>(null);
 }
 
 describe('SimpleEdit', () => {
@@ -156,7 +156,7 @@ describe('SimpleEdit', () => {
 
   it('deletes an item through delete with its id when allowedToDelete', async () => {
     await createHost((h) => h.allowedToDelete.set(true));
-    // eslint-disable-next-line no-console
+     
 
     const row = rows()[1];
     const deleteButton = row.querySelector(

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { Project } from '@sotbi/models';
+import type { Project } from '@sotbi/models';
 
 import { FilterBlockComponent } from '../filter-block';
 import { ClarityModule } from '@clr/angular';
@@ -64,7 +64,7 @@ export class SelectedProjectsComponent {
   public readonly projects = input<Partial<Project>[]>([]);
   public readonly selectFav = output<void>();
 
-  selectFavorites(): void {
+  public selectFavorites(): void {
     // TODO: The 'emit' function requires a mandatory void argument
     this.selectFav.emit();
   }

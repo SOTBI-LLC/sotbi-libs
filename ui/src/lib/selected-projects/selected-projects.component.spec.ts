@@ -24,12 +24,12 @@ const project = (name: string, debtors: string[]): Partial<Project> =>
   `,
 })
 class HostComponent {
-  readonly all = signal('2');
-  readonly projects = signal<Partial<Project>[]>([
+  public readonly all = signal('2');
+  public readonly projects = signal<Partial<Project>[]>([
     project('Проект А', ['Должник 1', 'Должник 2']),
     project('Проект Б', []),
   ]);
-  readonly favRequested = signal(false);
+  public readonly favRequested = signal(false);
 }
 
 describe('SelectedProjects', () => {

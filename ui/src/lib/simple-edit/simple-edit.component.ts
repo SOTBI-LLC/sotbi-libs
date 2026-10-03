@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ClarityModule } from '@clr/angular';
-import { SimpleEditModel } from '@sotbi/models';
+import type { SimpleEditModel } from '@sotbi/models';
 
 @Component({
   selector: 'simple-edit',
@@ -26,29 +26,29 @@ import { SimpleEditModel } from '@sotbi/models';
 })
 export class SimpleEditComponent {
   public readonly items = input<SimpleEditModel[] | undefined>(undefined);
-  editable = -1;
-  newName = '';
+  public editable = -1;
+  public newName = '';
 
   public readonly allowedToDelete = input(false);
 
   public readonly action = output<SimpleEditModel>();
   public readonly delete = output<number>();
 
-  create() {
+  public create(): void {
     if (this.newName !== '') {
       this.action.emit({ id: 0, name: this.newName });
       this.newName = '';
     }
   }
 
-  save(item: SimpleEditModel) {
+  public save(item: SimpleEditModel): void {
     if (item.name) {
       this.action.emit(item);
       this.editable = -1;
     }
   }
 
-  del(id: number) {
+  public del(id: number): void {
     this.delete.emit(id);
   }
 }

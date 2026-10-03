@@ -12,8 +12,8 @@ import { ProgressBarComponent } from './progress-bar.component';
   `,
 })
 class HostComponent {
-  readonly progress = signal<Progress>({ value: 50, status: [1, 1, 0] });
-  readonly showProgress = signal(true);
+  public readonly progress = signal<Progress>({ value: 50, status: [1, 1, 0] });
+  public readonly showProgress = signal(true);
 }
 
 describe('ProgressBar', () => {

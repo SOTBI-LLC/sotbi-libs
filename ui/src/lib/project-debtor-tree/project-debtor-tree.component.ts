@@ -1,9 +1,10 @@
+import type {
+  OnInit} from '@angular/core';
 import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
   Input,
-  OnInit,
   inject,
   input,
   output,
@@ -11,7 +12,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ClrSelectedState, ClrTreeViewModule } from '@clr/angular';
-import { Debtor, Project } from '@sotbi/models';
+import type { Debtor, Project } from '@sotbi/models';
 import { FilterBlockComponent } from '../filter-block';
 import { FilterComponent } from '../filter-search';
 import { Subject } from 'rxjs';
@@ -39,7 +40,7 @@ export class ProjectDebtorTreeComponent implements OnInit {
   private _projects: Project[] = [];
   private result: Partial<Project>[] = [];
 
-  @Input() set projects(projects: Project[]) {
+  @Input() public set projects(projects: Project[]) {
     this.allProjects = projects;
     this._projects = projects;
     // для выставления уже выбранных после триггера SetSubordinatesFilter, который триггерит getProjects в SubordinatesCostsState
@@ -47,7 +48,7 @@ export class ProjectDebtorTreeComponent implements OnInit {
       this.markSelected(this.result, this._projects);
     }
   }
-  get projects(): Project[] {
+  public get projects(): Project[] {
     return this._projects;
   }
 
@@ -142,18 +143,17 @@ export class ProjectDebtorTreeComponent implements OnInit {
     this.selectedItems.set(count);
   }
 
-  protected toClrState(value: Project['selected']): boolean | ClrSelectedState {
-    return value === 'indeterminate' ? ClrSelectedState.INDETERMINATE : !!value;
+  protected toClrState(value: Project['selected'] | Debtor['selected']): ClrSelectedState {
+    if (value === 'indeterminate') {
+      return ClrSelectedState.INDETERMINATE;
+    }
+    return value === true ? ClrSelectedState.SELECTED : ClrSelectedState.UNSELECTED;
   }
 
-  protected fromClrState(value: boolean | ClrSelectedState): Project['selected'] {
-    if (typeof value === 'boolean') {
-      return value;
-    }
-    if (value === ClrSelectedState.SELECTED) {
-      return true;
-    }
-    return value === ClrSelectedState.INDETERMINATE ? 'indeterminate' : false;
+  protected fromClrState(value: ClrSelectedState | null): boolean | 'indeterminate' {
+    return value === ClrSelectedState.INDETERMINATE
+      ? 'indeterminate'
+      : value === ClrSelectedState.SELECTED;
   }
 
   protected toggleSelectAll(checked: boolean): void {

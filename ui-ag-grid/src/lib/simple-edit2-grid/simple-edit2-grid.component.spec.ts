@@ -38,14 +38,14 @@ async function waitFor(assertion: () => void, timeoutMs = 5000): Promise<void> {
   `,
 })
 class HostComponent {
-  items: SimpleEdit2Model[] = [
+  public items: SimpleEdit2Model[] = [
     { id: 1, name: 'Первый', kind: true },
     { id: 2, name: 'Второй', kind: false },
   ];
-  readonly allowedToDelete = signal(false);
-  readonly actioned = signal<SimpleEdit2Model | null>(null);
-  readonly deleted = signal<number | null>(null);
-  readonly selectedIdValue = signal<number | null>(null);
+  public readonly allowedToDelete = signal(false);
+  public readonly actioned = signal<SimpleEdit2Model | null>(null);
+  public readonly deleted = signal<number | null>(null);
+  public readonly selectedIdValue = signal<number | null>(null);
 }
 
 describe('SimpleEdit2Grid', () => {

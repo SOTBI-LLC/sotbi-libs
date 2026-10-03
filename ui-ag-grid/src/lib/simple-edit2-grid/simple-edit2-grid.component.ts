@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, Input, input, output, viewChild } from '@angular/core';
-import { emptySimpleEdit, SimpleEdit2Model } from '@sotbi/models';
+import type { SimpleEdit2Model } from '@sotbi/models';
+import { emptySimpleEdit } from '@sotbi/models';
 import { AgGridAngular } from 'ag-grid-angular';
-import { AgGridEvent, ColDef, GridOptions, RowNode, RowSelectionOptions } from 'ag-grid-community';
+import type { AgGridEvent, ColDef, GridOptions, RowNode, RowSelectionOptions } from 'ag-grid-community';
 
 import { ButtonActionsComponent } from '../button-actions.component';
 import { localeText } from '../ag-grid.common';
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector -- селектор сохранён для совместимости
   selector: 'simple-edit2-grid',
   template: `
     <ag-grid-angular
@@ -40,16 +42,16 @@ export class SimpleEdit2GridComponent {
 
   private _disabled = 0;
 
-  get disabled() {
+  public get disabled() {
     return this._disabled;
   }
 
   @Input()
-  set disabled(disabled: number) {
+  public set disabled(disabled: number) {
     this._disabled = disabled;
   }
 
-  get gridOptions(): GridOptions<SimpleEdit2Model> {
+  public get gridOptions(): GridOptions<SimpleEdit2Model> {
     return {
       rowSelection: {
         mode: 'singleRow',
@@ -156,11 +158,11 @@ export class SimpleEdit2GridComponent {
     ] as ColDef<SimpleEdit2Model>[];
   }
 
-  onSaveClick(row: RowNode) {
+  public onSaveClick(row: RowNode) {
     const item = row.data as SimpleEdit2Model;
     this.action.emit(item);
   }
-  onDeleteClick(row: RowNode) {
+  public onDeleteClick(row: RowNode) {
     const item = row.data as SimpleEdit2Model;
     if (item.id) {
       this.delete.emit(item.id);
@@ -170,18 +172,18 @@ export class SimpleEdit2GridComponent {
     }
   }
 
-  onRowSelectionChanged({ api }: AgGridEvent) {
+  public onRowSelectionChanged({ api }: AgGridEvent) {
     const selectedRow = api.getSelectedRows()[0];
     if (selectedRow) {
       this.selectedId.emit(selectedRow.id);
     }
   }
 
-  changeRowData(array: SimpleEdit2Model[]) {
+  public changeRowData(array: SimpleEdit2Model[]) {
     this.agGrid()?.api.setGridOption('rowData', array);
   }
 
-  setFirstRowSelected() {
+  public setFirstRowSelected() {
     this.agGrid()?.api?.getRowNode('0')?.setSelected(true);
   }
 }

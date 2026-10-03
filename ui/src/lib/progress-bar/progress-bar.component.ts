@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { Progress } from '@sotbi/models';
+import type { Progress } from '@sotbi/models';
 
 @Component({
   selector: 'progress-bar',

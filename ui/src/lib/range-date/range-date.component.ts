@@ -1,7 +1,8 @@
-import { Component, Input, LOCALE_ID, OnInit, input, output } from '@angular/core';
+import type { OnInit} from '@angular/core';
+import { Component, Input, LOCALE_ID, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ClrIcon, ClrLoadingButtonModule, ClrLoadingModule } from '@clr/angular';
-import { Interval } from '@sotbi/models';
+import type { Interval } from '@sotbi/models';
 import { FilterBlockComponent } from '../filter-block';
 import { NativeDateValueAccessorDirective } from '../native-date';
 import { DD_MM_YYYY, MM_YYYY } from '@sotbi/utils';
@@ -109,7 +110,7 @@ export class RangeDateComponent implements OnInit {
   @Input() public start = new Date();
   @Input() public end = new Date();
 
-  get selectedPeriod(): string {
+  protected get selectedPeriod(): string {
     return (
       (this.end &&
         'Выбрано: ' + ruRangeFormatter.formatRange(this.start, this.end)) ||

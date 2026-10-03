@@ -59,8 +59,8 @@ describe('AttachmentsPipe', () => {
       `,
     })
     class HostComponent {
-      items: AttachmentLike[] = [{ type: 'egrn' }];
-      noop(): void {
+      public items: AttachmentLike[] = [{ type: 'egrn' }];
+      public noop(): void {
         /* event only: triggers a change detection cycle */
       }
     }

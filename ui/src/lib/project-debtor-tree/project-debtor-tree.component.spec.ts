@@ -27,14 +27,14 @@ const project = (name: string, debtors: string[], id = name.length): Project =>
   `,
 })
 class HostComponent {
-  readonly all = signal(4);
-  readonly checkedItems = signal<Project[]>([]);
-  projects: Project[] = [
+  public readonly all = signal(4);
+  public readonly checkedItems = signal<Project[]>([]);
+  public projects: Project[] = [
     project('Стройка', ['ООО Рога', 'ООО Копыта'], 1),
     project('Ремонт', ['ИП Иванов'], 2),
   ];
-  readonly selected = signal<Partial<Project>[] | null>(null);
-  noop(): void {
+  public readonly selected = signal<Partial<Project>[] | null>(null);
+  public noop(): void {
     /* event only: triggers a change detection cycle */
   }
 }

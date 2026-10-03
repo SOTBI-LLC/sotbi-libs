@@ -1,5 +1,6 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { EgrnAttachment, IAttachment } from '@sotbi/models';
+import type { PipeTransform } from '@angular/core';
+import { Pipe } from '@angular/core';
+import type { EgrnAttachment, IAttachment } from '@sotbi/models';
 
 @Pipe({
   name: 'attachments',
@@ -7,7 +8,7 @@ import { EgrnAttachment, IAttachment } from '@sotbi/models';
   standalone: true,
 })
 export class AttachmentsPipe implements PipeTransform {
-  transform(
+  public transform(
     items: (Partial<IAttachment> | Partial<EgrnAttachment>)[],
     filter: string,
   ): (Partial<IAttachment> | Partial<EgrnAttachment>)[] {
