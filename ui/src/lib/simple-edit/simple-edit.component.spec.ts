@@ -1,5 +1,6 @@
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { Component, signal } from '@angular/core';
 import type { SimpleEditModel } from '@sotbi/models';
 
@@ -33,6 +34,7 @@ describe('SimpleEdit', () => {
   const createHost = async (setup: (host: HostComponent) => void = () => undefined): Promise<void> => {
     await TestBed.configureTestingModule({
       imports: [HostComponent],
+      providers: [provideZonelessChangeDetection()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HostComponent);

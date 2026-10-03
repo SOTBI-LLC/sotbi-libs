@@ -20,7 +20,7 @@ enum PeriodsTypeAnalytics {
   THREE_MONTHS,
   CURR_YEAR,
   THREE_YEARS,
-  ALL_HUSTORY,
+  ALL_HISTORY,
 }
 
 const PeriodsTypeArr = [
@@ -64,7 +64,7 @@ const PeriodsTypeAnalyticsArr = [
     name: '3 года',
   },
   {
-    id: PeriodsTypeAnalytics.ALL_HUSTORY,
+    id: PeriodsTypeAnalytics.ALL_HISTORY,
     name: 'За всю историю',
   },
 ];
@@ -97,7 +97,7 @@ const ruRangeFormatter = ruDateFormatter as RangeFormatter;
 })
 export class RangeDateComponent implements OnInit {
   protected readonly periodsTypeArr = PeriodsTypeArr;
-  protected readonly PeriodsTypeAnalyticsArr = PeriodsTypeAnalyticsArr;
+  protected readonly periodsTypeAnalyticsArr = PeriodsTypeAnalyticsArr;
   protected readonly MM_YYYY = MM_YYYY;
   protected readonly DD_MM_YYYY = DD_MM_YYYY;
 
@@ -186,7 +186,7 @@ export class RangeDateComponent implements OnInit {
           this.end = new Date();
           this.end.setDate(1);
           break;
-        case PeriodsTypeAnalytics.ALL_HUSTORY:
+        case PeriodsTypeAnalytics.ALL_HISTORY:
           this.start = new Date();
           this.start.setFullYear(2012, 0, 1);
           this.end = new Date();

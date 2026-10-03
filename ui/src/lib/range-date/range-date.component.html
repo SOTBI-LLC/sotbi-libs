@@ -20,7 +20,7 @@
     }
     @if (analytics()) {
       <div>
-        @for (item of PeriodsTypeAnalyticsArr; track item) {
+        @for (item of periodsTypeAnalyticsArr; track item) {
           <a
             href="javascript:void(0)"
             (click)="filterByDate(item.id, true)"

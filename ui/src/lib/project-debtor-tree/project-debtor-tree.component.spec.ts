@@ -1,6 +1,7 @@
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 import { Component, signal } from '@angular/core';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import type { Project } from '@sotbi/models';
 
@@ -46,7 +47,7 @@ describe('ProjectDebtorTree', () => {
   const createHost = async (setup: (host: HostComponent) => void = () => undefined): Promise<void> => {
     await TestBed.configureTestingModule({
       imports: [HostComponent],
-      providers: [provideNoopAnimations()],
+      providers: [provideZonelessChangeDetection(), provideNoopAnimations()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HostComponent);

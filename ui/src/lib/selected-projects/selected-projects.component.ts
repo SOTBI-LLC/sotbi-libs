@@ -36,11 +36,6 @@ import { ClarityModule } from '@clr/angular';
           <div>Добавьте проекты в "Избранное" с помощью кнопки "Выбрать"</div>
         </div>
       }
-      <ng-template #helper>
-        <div class="helper">
-          <div>Добавьте проекты в "Избранное" с помощью кнопки "Выбрать"</div>
-        </div>
-      </ng-template>
     </filter-block>
   `,
   styles: [

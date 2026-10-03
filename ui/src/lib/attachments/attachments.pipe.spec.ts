@@ -1,5 +1,6 @@
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { Component } from '@angular/core';
 import type { IAttachment } from '@sotbi/models';
 
@@ -70,6 +71,7 @@ describe('AttachmentsPipe', () => {
     beforeEach(async () => {
       await TestBed.configureTestingModule({
         imports: [HostComponent],
+        providers: [provideZonelessChangeDetection()],
       }).compileComponents();
 
       fixture = TestBed.createComponent(HostComponent);
