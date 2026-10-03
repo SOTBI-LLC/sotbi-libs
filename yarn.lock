@@ -2188,6 +2188,11 @@
   dependencies:
     tslib "^2.3.0"
 
+"@clr/ui@^18.3.0":
+  version "18.3.0"
+  resolved "https://registry.yarnpkg.com/@clr/ui/-/ui-18.3.0.tgz#5f45de019fb31760dc3a1022541d9f6458f1aad5"
+  integrity sha512-GVrSl/M16104wkaSzKdzRsGm3zuv0dB2GYZfiAXwH/pKTIhdwBbIFqUmFlI4wQ43HLVRwCcht9MXbipLvyErVA==
+
 "@cspotcode/source-map-support@^0.8.0":
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/@cspotcode/source-map-support/-/source-map-support-0.8.1.tgz#00629c35a688e05a88b1cda684fb9d5e73f000a1"

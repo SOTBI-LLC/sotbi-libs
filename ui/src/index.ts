@@ -14,7 +14,19 @@ export * from './lib/filter-block';
 export { FilterBlockComponent } from './lib/filter-block';
 export { FilterComponent } from './lib/filter-search';
 export { FooterComponent } from './lib/footer';
+export {
+  HeaderComponent,
+  type HeaderBrand,
+  type HeaderLink,
+  type HeaderUser,
+} from './lib/header';
 export { LeftNavComponent } from './lib/left-nav/left-nav.component';
+export {
+  countWithChildren,
+  filterItems,
+  LeftNavBarComponent,
+  type LeftNavBarItem,
+} from './lib/left-nav-bar';
 export {
   getLinks,
   LinksComponent,

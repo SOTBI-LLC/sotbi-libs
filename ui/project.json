@@ -60,7 +60,7 @@
         "browser": "ui/.storybook/storybook-bootstrap.ts",
         "polyfills": ["zone.js"],
         "tsConfig": "ui/.storybook/tsconfig.json",
-        "styles": ["ui/styles.css"],
+        "styles": ["@clr/ui/clr-ui.min.css", "ui/styles.css"],
         "scripts": []
       }
     },

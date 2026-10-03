@@ -83,6 +83,140 @@ const dataView = {
 
 ## Clarity CSS
 
-Компоненты на Clarity (`PaymentsFileButtons`, `RemainingDialog`) требуют
-подключённых стилей Clarity в приложении-потребителе (стандартное подключение
-`@clr/angular`).
+Компоненты на Clarity (`PaymentsFileButtons`, `RemainingDialog`, `Header`,
+`LeftNavBar`) требуют подключённых стилей Clarity в приложении-потребителе
+(стандартное подключение `@clr/angular` и `@clr/ui/clr-ui.min.css`), плюс
+`@sotbi/ui/styles.css`.
+
+## HeaderComponent
+
+Шапка приложения. Селектор: `sotbi-header`. Компонент работает только от
+переданных данных: без AuthService, NGXS и ресурсов приложений. Логотип
+передаёт потребитель.
+
+```ts
+import {
+  HeaderComponent,
+  HeaderBrand,
+  HeaderUser,
+  HeaderLink,
+} from '@sotbi/ui';
+```
+
+```html
+<sotbi-header
+  [loggedIn]="loggedIn()"
+  [brand]="brand"
+  [user]="user()"
+  [items]="items()"
+  [accountItems]="accountItems()"
+  [online]="online()"
+  [showSearch]="showSearch()"
+  [phrase]="phrase()"
+  (searchEvent)="onSearch($event)"
+  (logoutRequested)="onLogout()"
+/>
+```
+
+### Inputs и outputs
+
+- `loggedIn: boolean = false` — видимость шапки; при `false` содержимое
+  не отображается.
+- `brand: HeaderBrand` — обязательный; `{ title, logoUrl, homeLink }`,
+  задаётся потребителем (в timetable это Our Zoo и `/assets/images/our_zoo.svg`).
+- `user: HeaderUser | null = null` — `{ name, avatarUrl? }`; безопасно при
+  отсутствии данных.
+- `items: HeaderLink[] = []` — уже разрешённые основные ссылки в нужном
+  порядке (`{ label, routerLink }`); компонент не фильтрует и не дополняет
+  меню.
+- `accountItems: HeaderLink[] = []` — уже разрешённые ссылки пользовательского
+  меню; «Выход» добавляется компонентом.
+- `online: boolean = false`, `showSearch: boolean = false`, `phrase: string = ''`
+  — прежние параметры поиска; поле появляется по `showSearch` и получает
+  значение `phrase`.
+- `searchEvent: string` — отправка формы выдаёт строку немедленно; при
+  `online=true` последняя введённая строка выдаётся через 500 мс после ввода.
+- `logoutRequested: void` — выбор «Выход»; завершение сессии и переходы
+  остаются за потребителем.
+
+### Стили и иконки
+
+- Требуются стили Clarity (`@clr/ui/clr-ui.min.css`) и `@sotbi/ui/styles.css`.
+- Ширина поля поиска задаётся локальным правилом `.focus-item` компонента
+  (медиазапросы по ширине экрана).
+- Иконка `angle` в триггере меню должна быть зарегистрирована потребителем:
+
+```ts
+import { ClarityIcons, angleIcon } from '@clr/angular/icon';
+
+ClarityIcons.addIcons(angleIcon);
+```
+
+## LeftNavBarComponent
+
+Боковая навигация на `clr-vertical-nav`. Селектор: `left-nav-bar`.
+
+```ts
+import {
+  LeftNavBarComponent,
+  LeftNavBarItem,
+  filterItems,
+  countWithChildren,
+} from '@sotbi/ui';
+```
+
+```html
+<left-nav-bar [items]="items" [colabsible]="true" />
+```
+
+### Inputs
+
+- `items: LeftNavBarItem[]` — обязательный; меню приложения с уже применённой
+  фильтрацией прав (компонент не проверяет доступ сам).
+- `colabsible: boolean = true` — возможность свернуть панель (историческое
+  написание сохранено).
+
+### LeftNavBarItem
+
+```ts
+interface LeftNavBarItem {
+  label: string;
+  icon?: string;
+  routerLink?: string;
+  access?: string;
+  expanded?: boolean;
+  children?: LeftNavBarItem[];
+}
+```
+
+- Панель отображается только при количестве конечных пунктов больше одного.
+- Активная конечная ссылка определяется точным совпадением маршрута;
+  при отсутствии `routerLink` используется `/`.
+- Группа раскрывается по `expanded` и кнопкой пользователя.
+
+### Чистые функции дерева меню
+
+- `countWithChildren(items)` — рекурсивно считает конечные пункты; группа
+  с пустыми `children` считается конечным пунктом.
+- `filterItems(items, checkAccess)` — возвращает отфильтрованное дерево,
+  не изменяя исходное. Проверяется непустой `access`, иначе непустой
+  `routerLink`; для пункта без обоих значений predicate не вызывается.
+  Запрещённый родитель исключается вместе с поддеревом, группы без
+  оставшихся дочерних пунктов — тоже.
+
+```ts
+items = filterItems(config, (key) => this.access.has(key));
+```
+
+### Стили и иконки
+
+- Высоту навигации задаёт контейнер приложения; в timetable это
+  `.content-container .clr-vertical-nav { height: 100% }`. Скопируйте
+  эквивалентное правило в стили потребителя.
+- Имена иконок из `icon` должны быть зарегистрированы приложением:
+
+```ts
+import { ClarityIcons, userIcon } from '@clr/angular/icon';
+
+ClarityIcons.addIcons(userIcon);
+```

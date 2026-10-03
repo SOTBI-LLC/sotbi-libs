@@ -1,0 +1,44 @@
+@if (countWithChildren(items()) > 1) {
+  <clr-vertical-nav
+    [clrVerticalNavCollapsible]="colabsible()"
+    [clr-nav-level]="2"
+    class="nav-trigger--bottom"
+  >
+    @for (item of items(); track item.routerLink) {
+      @if (item.children && item.children.length > 0) {
+        <clr-vertical-nav-group
+          routerLinkActive="active"
+          [clrVerticalNavGroupExpanded]="item.expanded ?? false"
+        >
+          <clr-icon clrVerticalNavIcon [shape]="item.icon ?? ''"></clr-icon>
+          {{ item.label }}
+          <clr-vertical-nav-group-children>
+            @for (child of item.children; track child.routerLink) {
+              <a
+                clrVerticalNavLink
+                [routerLink]="child.routerLink ?? '/'"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                @if (child.icon) {
+                  <clr-icon clrVerticalNavIcon [shape]="child.icon"></clr-icon>
+                }
+                {{ child.label }}
+              </a>
+            }
+          </clr-vertical-nav-group-children>
+        </clr-vertical-nav-group>
+      } @else {
+        <a
+          clrVerticalNavLink
+          [routerLink]="item.routerLink ?? '/'"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <clr-icon clrVerticalNavIcon [shape]="item.icon ?? ''"></clr-icon>
+          {{ item.label }}
+        </a>
+      }
+    }
+  </clr-vertical-nav>
+}

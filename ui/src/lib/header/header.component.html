@@ -1,0 +1,59 @@
+@if (loggedIn()) {
+  <clr-header>
+    <div class="branding">
+      <a [routerLink]="brand().homeLink" class="nav-link">
+        <img class="logo" [src]="brand().logoUrl" title="logo" alt="" width="40" height="40" /><span
+          class="title"
+          >{{ brand().title }}</span
+        >
+      </a>
+    </div>
+    <div class="header-nav" [clr-nav-level]="1">
+      @for (item of items(); track item.routerLink) {
+        <a [routerLink]="item.routerLink" routerLinkActive="active" class="nav-link nav-text">{{
+          item.label
+        }}</a>
+      }
+    </div>
+    @if (showSearch()) {
+      <form #searchForm="ngForm" class="search" (ngSubmit)="submitSearch(searchinput.value)">
+        <label for="searchinput">
+          <input
+            class="focus-item"
+            id="searchinput"
+            name="searchinput"
+            [value]="phrase()"
+            #searchinput
+            type="text"
+            placeholder="Поиск"
+            (keyup)="onKeyUp(searchinput.value)"
+          />
+        </label>
+      </form>
+    }
+    <div class="header-actions">
+      <clr-dropdown class="w-45r pl-8px">
+        <button
+          class="nav-icon w-100"
+          style="height: 100%"
+          clrDropdownTrigger
+          aria-label="toggle settings menu"
+        >
+          <img title="avatar" [src]="user()?.avatarUrl" [alt]="user()?.name" class="avatar" />
+          <clr-icon shape="angle" direction="down"></clr-icon>
+        </button>
+        <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
+          <!-- Заголовок меню Clarity, не связанный с полем формы -->
+          <!-- eslint-disable-next-line @angular-eslint/template/label-has-associated-control -->
+          <label class="dropdown-header" aria-hidden="true">{{ user()?.name }}</label>
+          @for (item of accountItems(); track item.routerLink) {
+            <a [routerLink]="item.routerLink" clrDropdownItem>{{ item.label }}</a>
+          }
+          <button type="button" title="logout" clrDropdownItem (click)="logoutRequested.emit()">
+            Выход
+          </button>
+        </clr-dropdown-menu>
+      </clr-dropdown>
+    </div>
+  </clr-header>
+}
