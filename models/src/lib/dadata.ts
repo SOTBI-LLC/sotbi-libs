@@ -1,9 +1,16 @@
 export interface Dadata {
   data?: {
     kpp?: string;
+    address?: {
+      /** Пример: 125364, г Москва, р-н Северное Тушино, ул Свободы, д 61 к 1 */
+      unrestricted_value?: string;
+      /** Пример: "г Москва, ул Свободы, д 61 к 1" */
+      value?: string;
+    };
     name?: {
+      /** like "СОВРЕМЕННЫЕ ТЕХНОЛОГИИ БИЗНЕСА" */
       full?: string; // like 'ИНКРАУД'
-      /** like 'ООО 'ИНКРАУД'
+      /** like "ЗАО \"СОТБИ\""
        *
        * используем в MessageTypes.CreditorClaimReceived(message_type_id=10)="Уведомление о получении требований кредитора",
        *
