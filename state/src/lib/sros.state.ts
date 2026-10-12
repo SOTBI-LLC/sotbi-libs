@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
-import { SroService } from '@sotbi/data-access';
+import { SroService, NOTIFICATION } from '@sotbi/data-access';
 import type { itemMap, Sro } from '@sotbi/models';
 import { forMap } from '@sotbi/utils';
 import { of, throwError } from 'rxjs';
@@ -27,6 +27,7 @@ export class SroStateModel {
 @Injectable()
 export class SrosState implements NgxsOnInit {
   private readonly sroSrv = inject(SroService);
+  private readonly notification = inject(NOTIFICATION, { optional: true });
 
   @Selector()
   public static getSros(state: SroStateModel) {
@@ -83,14 +84,37 @@ export class SrosState implements NgxsOnInit {
     const state = getState();
     const items = [...state.items];
     const idx = items.findIndex(({ id }) => payload === id);
-    if (!items[idx].full_name) {
-      this.sroSrv.get(payload).subscribe((result) => {
-        items[idx] = result;
-        patchState({ items, selectedSro: result, loading: false });
+    // idx === -1 — совпадения нет: items[-1] дал бы undefined и падение на .full_name
+    const cached = idx === -1 ? undefined : items[idx];
+
+    // записи нет в кэше или в ней нет деталей — грузим с бэкенда
+    if (!cached?.full_name) {
+      this.sroSrv.get(payload).subscribe({
+        next: (result) => {
+          // пустой ответ (null/undefined) не записываем, чтобы не подменить выбранное значение
+          if (!result) {
+            patchState({ loading: false });
+            return;
+          }
+          // idx === -1 — записи в кэше нет: не добавляем её в список, только выбираем
+          if (idx === -1) {
+            patchState({ selectedSro: result, loading: false });
+            return;
+          }
+          items[idx] = result;
+          patchState({ items, selectedSro: result, loading: false });
+        },
+        error: (err) => {
+          this.notification?.showError(
+            err?.error || 'Произошла ошибка при запросе',
+          );
+          patchState({ loading: false });
+        },
       });
-    } else {
-      patchState({ selectedSro: state.items[idx], loading: false });
+      return;
     }
+
+    patchState({ selectedSro: cached, loading: false });
   }
 
   @Action(AddSro)
