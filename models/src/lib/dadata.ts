@@ -7,9 +7,14 @@ export interface Dadata {
       /** Пример: "г Москва, ул Свободы, д 61 к 1" */
       value?: string;
     };
+    /** примеры с 7733153829  */
     name?: {
       /** like "СОВРЕМЕННЫЕ ТЕХНОЛОГИИ БИЗНЕСА" */
-      full?: string; // like 'ИНКРАУД'
+      full?: string;
+      /** like ЗАКРЫТОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО "СОВРЕМЕННЫЕ ТЕХНОЛОГИИ БИЗНЕСА" */
+      full_with_opf?: string;
+      /** like СОТБИ */
+      short?: string;
       /** like "ЗАО \"СОТБИ\""
        *
        * используем в MessageTypes.CreditorClaimReceived(message_type_id=10)="Уведомление о получении требований кредитора",
