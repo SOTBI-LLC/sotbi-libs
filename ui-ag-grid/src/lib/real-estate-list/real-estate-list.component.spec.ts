@@ -40,6 +40,20 @@ describe('RealEstateListComponent', () => {
   const getGrid = (fixture: ReturnType<typeof createComponent>): AgGridAngular =>
     fixture.debugElement.query(By.directive(AgGridAngular)).componentInstance;
 
+  it('shows a row added to the existing form array without resetting the input', async () => {
+    const form = new FormArray<FormGroup<RealEstateForm>>([]);
+    const fixture = createComponent(form);
+    await fixture.whenStable();
+    expect(getGrid(fixture).api.getDisplayedRowCount()).toBe(0);
+
+    form.push(createRow(null));
+    await fixture.whenStable();
+
+    expect(getGrid(fixture).api.getDisplayedRowCount()).toBe(1);
+    expect(fixture.nativeElement.querySelector('[col-id="cadastral_no"].ag-cell').textContent)
+      .toContain('12:34:567890:1');
+  });
+
   it('checks an entered request number using the input and highlights an existing number', async () => {
     const form = new FormArray([createRow(1)]);
     const fixture = createComponent(form);

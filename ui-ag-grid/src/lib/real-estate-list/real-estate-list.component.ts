@@ -1,5 +1,7 @@
-import type { OnInit} from '@angular/core';
+import type { OnInit } from '@angular/core';
 import { Component, input, output } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { of, startWith, switchMap } from 'rxjs';
 import type { FormArray, FormGroup } from '@angular/forms';
 import { ButtonRendererComponent } from '../button-renderer.component';
 import { IMaskEdit } from '../imask-edit.component';
@@ -21,7 +23,7 @@ import type { RealEstateForm } from '../real-estate-form';
       id="myGrid"
       class="ag-theme-balham real-estate-list"
       [gridOptions]="gridOptions"
-      [rowData]="realEstate()?.value"
+      [rowData]="rowData()"
       [columnDefs]="columnDefs"
     />
   `,
@@ -43,6 +45,12 @@ import type { RealEstateForm } from '../real-estate-form';
 export class RealEstateListComponent implements OnInit {
   public readonly delete = output<{ idx: number; id: number }>();
   public readonly realEstate = input<FormArray<FormGroup<RealEstateForm>> | null>(null);
+  protected readonly rowData = toSignal(
+    toObservable(this.realEstate).pipe(
+      switchMap((form) => form ? form.valueChanges.pipe(startWith(form.value)) : of([])),
+    ),
+    { initialValue: [] },
+  );
   public readonly showFile = input<boolean>(false);
   public readonly edit = input<boolean>(false);
   public readonly uploadFiles = input.required<DropFileParams['uploadFiles']>();

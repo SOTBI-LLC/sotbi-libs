@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/ui-ag-grid",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "public"
