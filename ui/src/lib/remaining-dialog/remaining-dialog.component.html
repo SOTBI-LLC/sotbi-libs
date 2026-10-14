@@ -1,12 +1,15 @@
 <!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
 <!-- подписи блока предпросмотра — статические, не связаны с контролами формы -->
-<div class="modal-content">
-  <div class="modal-header">
-    <h3 mat-dialog-title class="modal-title">{{ caption }}</h3>
+<sotbi-side-panel>
+  <div panelTitle class="modal-header">
+    <h3 class="modal-title">{{ caption }}</h3>
   </div>
-  <div class="modal-body" mat-dialog-content>
+  <div class="modal-body" panelBody>
     @for (alert of alerts(); track alert) {
-      <clr-alert clrAlertType="alert-warning" (clrAlertClosedChange)="onCloseAlert(alert)">
+      <clr-alert
+        clrAlertType="alert-warning"
+        (clrAlertClosedChange)="onCloseAlert(alert)"
+      >
         <div clr-alert-item class="alert-item">
           <span class="alert-text"> {{ alert }} </span>
         </div>
@@ -127,30 +130,49 @@
       <form class="edit-mode" [formGroup]="fg">
         <div class="group-ctrl">
           <div class="group-ctrl__label-wrap">
-            <label class="clr-control-label group-ctrl__label--required">Дата, с:</label>
+            <label class="clr-control-label group-ctrl__label--required"
+              >Дата, с:</label
+            >
           </div>
           <div class="group-ctrl__value-wrap">
             <div class="clr-input-wrapper">
               <input type="date" nativeDate formControlName="startDate" />
-              <clr-icon class="clr-validate-icon" shape="exclamation-circle"></clr-icon>
+              <clr-icon
+                class="clr-validate-icon"
+                shape="exclamation-circle"
+              ></clr-icon>
             </div>
           </div>
         </div>
         <div class="group-ctrl">
           <div class="group-ctrl__label-wrap">
-            <label class="clr-control-label group-ctrl__label--required">по:</label>
+            <label class="clr-control-label group-ctrl__label--required"
+              >по:</label
+            >
           </div>
           <div class="group-ctrl__value-wrap">
             <div class="clr-input-wrapper">
               <input type="date" nativeDate formControlName="endDate" />
-              <clr-icon class="clr-validate-icon" shape="exclamation-circle"></clr-icon>
+              <clr-icon
+                class="clr-validate-icon"
+                shape="exclamation-circle"
+              ></clr-icon>
             </div>
           </div>
         </div>
         <div class="group-ctrl">
-          <label class="clr-control-label required" for="file">PDF выписка</label>
-          <ngx-file-drop (onFileDrop)="dropped($event)" class="w-100" [multiple]="false">
-            <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+          <label class="clr-control-label required" for="file"
+            >PDF выписка</label
+          >
+          <ngx-file-drop
+            (onFileDrop)="dropped($event)"
+            class="w-100"
+            [multiple]="false"
+          >
+            <ng-template
+              ngx-file-drop-content-tmp
+              let-openFileSelector="openFileSelector"
+            >
               @if (!fg.controls['file']?.value?.name) {
                 <div class="btn-upload">
                   <clr-icon shape="upload-cloud" class="icon-upload"></clr-icon>
@@ -173,14 +195,18 @@
       </form>
     }
   </div>
-  <div class="modal-footer btn-sm" mat-dialog-actions>
+  <div class="modal-footer btn-sm" panelActions>
     @if (isEdit) {
-      <button type="button" class="btn btn-primary" (click)="onUpload(fg)" [disabled]="!fg.valid">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onUpload(fg)"
+        [disabled]="!fg.valid || uploadBtnState() === loadingState"
+      >
         Загрузить
       </button>
     }
     <button
-      mat-dialog-close
       cdkFocusInitial
       aria-label="Close"
       cdl
@@ -191,4 +217,4 @@
       Закрыть
     </button>
   </div>
-</div>
+</sotbi-side-panel>

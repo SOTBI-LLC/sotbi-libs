@@ -1,9 +1,25 @@
-import type { Meta, StoryObj } from '@storybook/angular';
+import {
+  applicationConfig,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { SIDE_PANEL_DATA } from '../side-panel/side-panel-config';
+import { SidePanelRef } from '../side-panel/side-panel-ref';
 import { DialogCanDeactivateComponent } from './dialog-can-deactivate.component';
 import { expect } from 'storybook/test';
 
 const meta: Meta<DialogCanDeactivateComponent> = {
   component: DialogCanDeactivateComponent,
+  decorators: [
+    applicationConfig({
+      providers: [
+        provideAnimations(),
+        { provide: SIDE_PANEL_DATA, useValue: { canBeSaved: true } },
+        { provide: SidePanelRef, useFactory: () => new SidePanelRef() },
+      ],
+    }),
+  ],
   title: 'DialogCanDeactivateComponent',
 };
 export default meta;
@@ -16,7 +32,9 @@ export const Primary: Story = {
 
 export const Heading: Story = {
   args: {},
-  play: async ({ canvas }) => {
-    await expect(canvas.getByText(/dialog-can-deactivate/gi)).toBeTruthy();
+  play: async () => {
+    await expect(document.body.textContent).toContain(
+      'Продолжить редактирование',
+    );
   },
 };

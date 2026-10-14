@@ -1,8 +1,15 @@
 import { formatDate } from '@angular/common';
-import type { OnInit} from '@angular/core';
-import { ChangeDetectorRef, Component, DestroyRef, inject } from '@angular/core';
+import type { OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { SIDE_PANEL_DATA } from '../side-panel/side-panel-config';
+import { SidePanelRef } from '../side-panel/side-panel-ref';
+import { SidePanelFrameComponent } from '../side-panel/side-panel-frame';
 import type { AttachmentHistory } from '@sotbi/models';
 import type { Observable } from 'rxjs';
 import { DD_MM_YYYY, DD_MM_YYYY_HH_MM_SS } from '@sotbi/utils';
@@ -17,7 +24,7 @@ export interface DialogHistoryDataModel {
 
 @Component({
   selector: 'app-dialog-history',
-  imports: [MatDialogModule],
+  imports: [SidePanelFrameComponent],
   templateUrl: './dialog-history.component.html',
   styles: [
     `
@@ -58,8 +65,8 @@ export class DialogHistoryComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly changeDetector = inject(ChangeDetectorRef);
 
-  public inputData = inject<DialogHistoryDataModel>(MAT_DIALOG_DATA);
-  public dialogRef = inject<MatDialogRef<DialogHistoryComponent>>(MatDialogRef);
+  public inputData = inject<DialogHistoryDataModel>(SIDE_PANEL_DATA);
+  public dialogRef = inject<SidePanelRef<DialogHistoryComponent>>(SidePanelRef);
 
   public keysOld!: string[];
   public valuesOld!: string[];
@@ -91,7 +98,10 @@ export class DialogHistoryComponent implements OnInit {
               if (res[i][key] === 'update' || res[i][key] === 'insert') {
                 return differ;
               }
-              if (typeof res[i][key] === 'object' && typeof res[i + 1][key] === 'object') {
+              if (
+                typeof res[i][key] === 'object' &&
+                typeof res[i + 1][key] === 'object'
+              ) {
                 return differ;
               }
               return {
@@ -107,7 +117,10 @@ export class DialogHistoryComponent implements OnInit {
               if (res[i][key] === 'update' || res[i][key] === 'insert') {
                 return differ;
               }
-              if (typeof res[i][key] === 'object' && typeof res[i + 1][key] === 'object') {
+              if (
+                typeof res[i][key] === 'object' &&
+                typeof res[i + 1][key] === 'object'
+              ) {
                 return differ;
               }
               return {
@@ -152,15 +165,23 @@ export class DialogHistoryComponent implements OnInit {
                 if (
                   typeof item === 'string' &&
                   item.match(/\d{4}-\d{2}-\d{2}T/gi) &&
-                  formatDate(dateUpdate!, DD_MM_YYYY_HH_MM_SS, 'ru-RU').substr(0, 10) ===
+                  formatDate(dateUpdate!, DD_MM_YYYY_HH_MM_SS, 'ru-RU').substr(
+                    0,
+                    10,
+                  ) ===
                     formatDate(item, DD_MM_YYYY_HH_MM_SS, 'ru-RU').substr(0, 10)
                 ) {
-                  return formatDate(item, DD_MM_YYYY_HH_MM_SS, 'ru-RU').substr(10);
+                  return formatDate(item, DD_MM_YYYY_HH_MM_SS, 'ru-RU').substr(
+                    10,
+                  );
                 }
                 if (
                   typeof item === 'string' &&
                   item.match(/\d{4}-\d{2}-\d{2}T/gi) &&
-                  formatDate(dateUpdate!, DD_MM_YYYY_HH_MM_SS, 'ru-RU').substr(0, 10) !==
+                  formatDate(dateUpdate!, DD_MM_YYYY_HH_MM_SS, 'ru-RU').substr(
+                    0,
+                    10,
+                  ) !==
                     formatDate(item, DD_MM_YYYY_HH_MM_SS, 'ru-RU').substr(0, 10)
                 ) {
                   return formatDate(item, DD_MM_YYYY_HH_MM_SS, 'ru-RU');
@@ -180,7 +201,9 @@ export class DialogHistoryComponent implements OnInit {
                 if (typeof item === 'object') {
                   /*      const item = new Object();
                 item.name = ''; */
-                  const tradingCode = Object.values(item as Record<string, unknown>)[1];
+                  const tradingCode = Object.values(
+                    item as Record<string, unknown>,
+                  )[1];
                   return tradingCode;
                 }
                 if (
@@ -188,7 +211,9 @@ export class DialogHistoryComponent implements OnInit {
                   item.match(/\d{4}-\d{2}-\d{2}T/gi) &&
                   !item.match(/00:00:00/gi)
                 ) {
-                  return formatDate(item, DD_MM_YYYY_HH_MM_SS, 'ru-RU').substr(10);
+                  return formatDate(item, DD_MM_YYYY_HH_MM_SS, 'ru-RU').substr(
+                    10,
+                  );
                 }
                 if (typeof item === 'string' && item.match(/00:00:00/gi)) {
                   return formatDate(item, DD_MM_YYYY_HH_MM_SS, 'ru-RU');

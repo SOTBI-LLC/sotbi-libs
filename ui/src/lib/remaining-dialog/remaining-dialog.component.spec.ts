@@ -2,7 +2,8 @@ import { registerLocaleData } from '@angular/common';
 import ru from '@angular/common/locales/ru';
 import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { MatDialog } from '@angular/material/dialog';
+import { SidePanelService } from '../side-panel/side-panel.service';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import type { Remaining } from '@sotbi/models';
 import { Subject } from 'rxjs';
 import type { RemainingDialogData } from './remaining-dialog.component';
@@ -42,13 +43,17 @@ describe('RemainingDialogComponent', () => {
 
   beforeEach(() => {
     registerLocaleData(ru);
-    (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver = resizeObserverStub;
-    TestBed.configureTestingModule({ providers: [provideZonelessChangeDetection()] });
+    (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver =
+      resizeObserverStub;
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection(), provideNoopAnimations()],
+    });
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
-    delete (globalThis as unknown as { ResizeObserver?: unknown }).ResizeObserver;
+    delete (globalThis as unknown as { ResizeObserver?: unknown })
+      .ResizeObserver;
   });
 
   it('uploads the selected PDF and dates through the supplied loader and closes with its result', async () => {
@@ -56,32 +61,43 @@ describe('RemainingDialogComponent', () => {
     const result = new Subject<Remaining>();
     const submitted: FormData[] = [];
     const closed: unknown[] = [];
-    const dialog = TestBed.inject(MatDialog).open(RemainingDialogComponent, {
-      data: {
-        row: {
-          account: '40702810900000000001',
-          start_date: new Date(2026, 0, 1),
-          end_date: new Date(2026, 0, 31),
-        } as Remaining,
-        caption: 'Загрузить PDF файл',
-        isEdit: true,
-        uploadStatement: (data: FormData) => {
-          submitted.push(data);
-          return result;
-        },
-      } satisfies RemainingDialogData,
-    });
+    const dialog = TestBed.inject(SidePanelService).open(
+      RemainingDialogComponent,
+      {
+        data: {
+          row: {
+            account: '40702810900000000001',
+            start_date: new Date(2026, 0, 1),
+            end_date: new Date(2026, 0, 31),
+          } as Remaining,
+          caption: 'Загрузить PDF файл',
+          isEdit: true,
+          uploadStatement: (data: FormData) => {
+            submitted.push(data);
+            return result;
+          },
+        } satisfies RemainingDialogData,
+      },
+    );
     dialog.afterClosed().subscribe((value) => closed.push(value));
     await fixture.whenStable();
-    const container = document.querySelector('mat-dialog-container')!;
-    const start = container.querySelector('[formControlName="startDate"]') as HTMLInputElement;
-    const end = container.querySelector('[formControlName="endDate"]') as HTMLInputElement;
+    const container = document.querySelector('sotbi-side-panel')!;
+    const start = container.querySelector(
+      '[formControlName="startDate"]',
+    ) as HTMLInputElement;
+    const end = container.querySelector(
+      '[formControlName="endDate"]',
+    ) as HTMLInputElement;
     start.value = '2026-02-01';
     start.dispatchEvent(new Event('change', { bubbles: true }));
     end.value = '2026-02-28';
     end.dispatchEvent(new Event('change', { bubbles: true }));
-    const file = new File(['PDF'], 'statement.pdf', { type: 'application/pdf' });
-    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    const file = new File(['PDF'], 'statement.pdf', {
+      type: 'application/pdf',
+    });
+    const input = container.querySelector(
+      'input[type="file"]',
+    ) as HTMLInputElement;
     Object.defineProperty(input, 'files', {
       configurable: true,
       value: [file],
@@ -90,7 +106,9 @@ describe('RemainingDialogComponent', () => {
     await fixture.whenStable();
     await waitFor(() =>
       expect(
-        (container.querySelector('.btn-primary') as HTMLButtonElement).hasAttribute('disabled'),
+        (
+          container.querySelector('.btn-primary') as HTMLButtonElement
+        ).hasAttribute('disabled'),
       ).toBe(false),
     );
 
@@ -113,22 +131,27 @@ describe('RemainingDialogComponent', () => {
     const fixture = TestBed.createComponent(DialogHost);
     const result = new Subject<Remaining>();
     const closed: unknown[] = [];
-    const dialog = TestBed.inject(MatDialog).open(RemainingDialogComponent, {
-      data: {
-        row: {
-          account: '40702810900000000001',
-          start_date: new Date(2026, 0, 1),
-          end_date: new Date(2026, 0, 31),
-        } as Remaining,
-        caption: 'Загрузить PDF файл',
-        isEdit: true,
-        uploadStatement: () => result,
-      } satisfies RemainingDialogData,
-    });
+    const dialog = TestBed.inject(SidePanelService).open(
+      RemainingDialogComponent,
+      {
+        data: {
+          row: {
+            account: '40702810900000000001',
+            start_date: new Date(2026, 0, 1),
+            end_date: new Date(2026, 0, 31),
+          } as Remaining,
+          caption: 'Загрузить PDF файл',
+          isEdit: true,
+          uploadStatement: () => result,
+        } satisfies RemainingDialogData,
+      },
+    );
     dialog.afterClosed().subscribe((value) => closed.push(value));
     await fixture.whenStable();
-    const container = document.querySelector('mat-dialog-container')!;
-    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    const container = document.querySelector('sotbi-side-panel')!;
+    const input = container.querySelector(
+      'input[type="file"]',
+    ) as HTMLInputElement;
     Object.defineProperty(input, 'files', {
       configurable: true,
       value: [new File(['PDF'], 'statement.pdf', { type: 'application/pdf' })],
@@ -136,41 +159,48 @@ describe('RemainingDialogComponent', () => {
     input.dispatchEvent(new Event('change', { bubbles: true }));
     await waitFor(() =>
       expect(
-        (container.querySelector('.btn-primary') as HTMLButtonElement).hasAttribute('disabled'),
+        (
+          container.querySelector('.btn-primary') as HTMLButtonElement
+        ).hasAttribute('disabled'),
       ).toBe(false),
     );
     (container.querySelector('.btn-primary') as HTMLButtonElement).click();
     result.error({ error: 'Выписка не распознана' });
     await fixture.whenStable();
 
-    expect((container.querySelector('.alert-text') as HTMLElement).textContent).toContain(
-      'Выписка не распознана',
-    );
+    expect(
+      (container.querySelector('.alert-text') as HTMLElement).textContent,
+    ).toContain('Выписка не распознана');
     expect(closed).toEqual([]);
-    expect(document.querySelector('mat-dialog-container')).toBe(container);
+    expect(document.querySelector('sotbi-side-panel')).toBe(container);
   });
 
   it('closes without an upload result on cancel in edit mode', async () => {
     const fixture = TestBed.createComponent(DialogHost);
     const closed: unknown[] = [];
     const uploadStatement = jest.fn();
-    const dialog = TestBed.inject(MatDialog).open(RemainingDialogComponent, {
-      data: {
-        row: {
-          account: '40702810900000000001',
-          start_date: new Date(2026, 0, 1),
-          end_date: new Date(2026, 0, 31),
-        } as Remaining,
-        caption: 'Загрузить PDF файл',
-        isEdit: true,
-        uploadStatement,
-      } satisfies RemainingDialogData,
-    });
+    const dialog = TestBed.inject(SidePanelService).open(
+      RemainingDialogComponent,
+      {
+        data: {
+          row: {
+            account: '40702810900000000001',
+            start_date: new Date(2026, 0, 1),
+            end_date: new Date(2026, 0, 31),
+          } as Remaining,
+          caption: 'Загрузить PDF файл',
+          isEdit: true,
+          uploadStatement,
+        } satisfies RemainingDialogData,
+      },
+    );
     dialog.afterClosed().subscribe((value) => closed.push(value));
     await fixture.whenStable();
-    const container = document.querySelector('mat-dialog-container')!;
+    const container = document.querySelector('sotbi-side-panel')!;
 
-    (container.querySelector('button[aria-label="Close"]') as HTMLButtonElement).click();
+    (
+      container.querySelector('button[aria-label="Close"]') as HTMLButtonElement
+    ).click();
     await fixture.whenStable();
     await waitFor(() => expect(closed).toEqual([undefined]));
     expect(uploadStatement).not.toHaveBeenCalled();
@@ -179,27 +209,30 @@ describe('RemainingDialogComponent', () => {
   it('previews the supplied statement without a loader, using the default link', async () => {
     const fixture = TestBed.createComponent(DialogHost);
     const closed: unknown[] = [];
-    const dialog = TestBed.inject(MatDialog).open(RemainingDialogComponent, {
-      data: {
-        row: {
-          id: 42,
-          start_date: new Date(2026, 0, 1),
-          end_date: new Date(2026, 0, 31),
-          initial_balance: 1000,
-          income: 200,
-          write_off: 50,
-          final_balance: 1150,
-          file: 'statement.pdf',
-          creator: { user: 'Иван Петров' } as Remaining['creator'],
-          created_at: new Date(2026, 1, 2),
-        } as Remaining,
-        caption: 'Подробнее',
-        isEdit: false,
-      } satisfies RemainingDialogData,
-    });
+    const dialog = TestBed.inject(SidePanelService).open(
+      RemainingDialogComponent,
+      {
+        data: {
+          row: {
+            id: 42,
+            start_date: new Date(2026, 0, 1),
+            end_date: new Date(2026, 0, 31),
+            initial_balance: 1000,
+            income: 200,
+            write_off: 50,
+            final_balance: 1150,
+            file: 'statement.pdf',
+            creator: { user: 'Иван Петров' } as Remaining['creator'],
+            created_at: new Date(2026, 1, 2),
+          } as Remaining,
+          caption: 'Подробнее',
+          isEdit: false,
+        } satisfies RemainingDialogData,
+      },
+    );
     dialog.afterClosed().subscribe((value) => closed.push(value));
     await fixture.whenStable();
-    const container = document.querySelector('mat-dialog-container')!;
+    const container = document.querySelector('sotbi-side-panel')!;
     const values = Array.from(
       container.querySelectorAll('.group-ctrl__preview-text'),
       (element) => element.textContent!.trim().replace(/\s/g, ' '),
@@ -215,18 +248,20 @@ describe('RemainingDialogComponent', () => {
       'Иван Петров',
       '02.02.2026',
     ]);
-    expect((container.querySelector('a') as HTMLAnchorElement).getAttribute('href')).toBe(
-      '/download/payment/42',
-    );
+    expect(
+      (container.querySelector('a') as HTMLAnchorElement).getAttribute('href'),
+    ).toBe('/download/payment/42');
     expect(container.querySelector('ngx-file-drop')).toBeNull();
-    (container.querySelector('button[aria-label="Close"]') as HTMLButtonElement).click();
+    (
+      container.querySelector('button[aria-label="Close"]') as HTMLButtonElement
+    ).click();
     await fixture.whenStable();
     await waitFor(() => expect(closed).toEqual([undefined]));
   });
 
   it('uses the consumer-supplied statement link instead of the default one', async () => {
     const fixture = TestBed.createComponent(DialogHost);
-    TestBed.inject(MatDialog).open(RemainingDialogComponent, {
+    TestBed.inject(SidePanelService).open(RemainingDialogComponent, {
       data: {
         row: { id: 7, file: 'statement.pdf' } as Remaining,
         caption: 'Подробнее',
@@ -235,15 +270,15 @@ describe('RemainingDialogComponent', () => {
       } satisfies RemainingDialogData,
     });
     await fixture.whenStable();
-    const container = document.querySelector('mat-dialog-container')!;
-    expect((container.querySelector('a') as HTMLAnchorElement).getAttribute('href')).toBe(
-      '/custom/statement/7',
-    );
+    const container = document.querySelector('sotbi-side-panel')!;
+    expect(
+      (container.querySelector('a') as HTMLAnchorElement).getAttribute('href'),
+    ).toBe('/custom/statement/7');
   });
 
   it('sets the file control from a pdf drop entry', async () => {
     const fixture = TestBed.createComponent(DialogHost);
-    TestBed.inject(MatDialog).open(RemainingDialogComponent, {
+    TestBed.inject(SidePanelService).open(RemainingDialogComponent, {
       data: {
         row: {
           account: '40702810900000000001',
@@ -256,8 +291,10 @@ describe('RemainingDialogComponent', () => {
       } satisfies RemainingDialogData,
     });
     await fixture.whenStable();
-    const container = document.querySelector('mat-dialog-container')!;
-    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    const container = document.querySelector('sotbi-side-panel')!;
+    const input = container.querySelector(
+      'input[type="file"]',
+    ) as HTMLInputElement;
     const pdf = new File(['PDF'], 'dropped.pdf', { type: 'application/pdf' });
     const dropZone = container.querySelector('ngx-file-drop') as HTMLElement;
     expect(dropZone).toBeTruthy();

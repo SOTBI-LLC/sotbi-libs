@@ -28,4 +28,19 @@ if (typeof globalThis.structuredClone === 'undefined') {
   };
 }
 
+// jsdom has no layout engine; Clarity still observes its modal body.
+if (typeof globalThis.ResizeObserver === 'undefined') {
+  globalThis.ResizeObserver = class implements ResizeObserver {
+    public observe(): void {
+      /* jsdom has no layout to observe. */
+    }
+    public unobserve(): void {
+      /* No layout observer was registered. */
+    }
+    public disconnect(): void {
+      /* No layout observer was registered. */
+    }
+  };
+}
+
 setupZonelessTestEnv();

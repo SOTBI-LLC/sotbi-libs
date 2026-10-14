@@ -10,7 +10,10 @@ export {
   DialogCanDeactivateInputDataModel,
   DialogCanDeactivateResultDataModel,
 } from './lib/dialog-can-deactivate';
-export { DialogHistoryComponent, DialogHistoryDataModel } from './lib/dialog-history';
+export {
+  DialogHistoryComponent,
+  DialogHistoryDataModel,
+} from './lib/dialog-history';
 export * from './lib/filter-block';
 export { FilterBlockComponent } from './lib/filter-block';
 export { FilterComponent } from './lib/filter-search';
@@ -53,3 +56,16 @@ export { ProgressBarComponent } from './lib/progress-bar/progress-bar.component'
 export { SimpleEditComponent } from './lib/simple-edit/simple-edit.component';
 export { ShortLinksComponent } from './lib/short-links/short-links.component';
 export { TimeEditComponent } from './lib/time-edit';
+
+export { SidePanelService } from './lib/side-panel/side-panel.service';
+export { SidePanelFrameComponent } from './lib/side-panel/side-panel-frame';
+export {
+  SidePanelRef,
+  type SidePanelOutcome,
+  type SidePanelState,
+} from './lib/side-panel/side-panel-ref';
+export {
+  SIDE_PANEL_DATA,
+  SidePanelConfig,
+  type SidePanelSize,
+} from './lib/side-panel/side-panel-config';

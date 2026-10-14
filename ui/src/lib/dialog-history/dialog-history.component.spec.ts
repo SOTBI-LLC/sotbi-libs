@@ -2,7 +2,8 @@ import { registerLocaleData } from '@angular/common';
 import ru from '@angular/common/locales/ru';
 import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { MatDialog } from '@angular/material/dialog';
+import { SidePanelService } from '../side-panel/side-panel.service';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import type { AttachmentHistory } from '@sotbi/models';
 import { EMPTY, Subject } from 'rxjs';
 import type { DialogHistoryDataModel } from './dialog-history.component';
@@ -13,7 +14,9 @@ class DialogHost {}
 
 const openHistoryDialog = (data: DialogHistoryDataModel) => {
   const fixture = TestBed.createComponent(DialogHost);
-  const dialog = TestBed.inject(MatDialog).open(DialogHistoryComponent, { data });
+  const dialog = TestBed.inject(SidePanelService).open(DialogHistoryComponent, {
+    data,
+  });
   return { fixture, dialog };
 };
 
@@ -21,7 +24,7 @@ describe('DialogHistoryComponent', () => {
   beforeEach(() => {
     registerLocaleData(ru);
     TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()],
+      providers: [provideZonelessChangeDetection(), provideNoopAnimations()],
     });
   });
 
@@ -32,7 +35,7 @@ describe('DialogHistoryComponent', () => {
       loadHistory: () => EMPTY,
     });
     await fixture.whenStable();
-    expect(document.querySelector('mat-dialog-container')!.textContent).toContain(
+    expect(document.querySelector('sotbi-side-panel')!.textContent).toContain(
       'Изменений нет',
     );
   });
@@ -48,7 +51,12 @@ describe('DialogHistoryComponent', () => {
     await fixture.whenStable();
 
     history.next([
-      { revision: 1, adNum: 'ЧЕК-1', comment: 'старый', updated_at: new Date('2026-01-01') },
+      {
+        revision: 1,
+        adNum: 'ЧЕК-1',
+        comment: 'старый',
+        updated_at: new Date('2026-01-01'),
+      },
       {
         revision: 2,
         adNum: 'ЧЕК-2',
@@ -59,7 +67,7 @@ describe('DialogHistoryComponent', () => {
     ] as AttachmentHistory[]);
     await fixture.whenStable();
 
-    const container = document.querySelector('mat-dialog-container')!;
+    const container = document.querySelector('sotbi-side-panel')!;
     expect(container.textContent).toContain('История изменений');
     expect(container.textContent).toContain('№ объявления');
     expect(container.textContent).toContain('Комментарий');
@@ -84,7 +92,7 @@ describe('DialogHistoryComponent', () => {
     ] as unknown as AttachmentHistory[]);
     await fixture.whenStable();
 
-    const container = document.querySelector('mat-dialog-container')!;
+    const container = document.querySelector('sotbi-side-panel')!;
     expect(container.textContent).toContain('mysteryKey');
     expect(container.textContent).toContain('after');
   });
@@ -104,7 +112,7 @@ describe('DialogHistoryComponent', () => {
     ] as AttachmentHistory[]);
     await fixture.whenStable();
 
-    const container = document.querySelector('mat-dialog-container')!;
+    const container = document.querySelector('sotbi-side-panel')!;
     expect(container.textContent).toContain('adNum');
     expect(container.textContent).toContain('ЧЕК-2');
   });

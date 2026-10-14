@@ -1,10 +1,7 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
-    ],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "production": [
       "default",
       "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
@@ -32,17 +29,13 @@
           "watchDepsName": "watch-deps"
         }
       },
-      "exclude": [
-        "ui-ag-grid/**"
-      ]
+      "exclude": ["ui-ag-grid/**"]
     },
     {
       "plugin": "nx-stylelint/plugin",
       "options": {
         "targetName": "stylelint",
-        "extensions": [
-          "scss"
-        ]
+        "extensions": ["scss"]
       }
     },
     {
@@ -59,15 +52,10 @@
   ],
   "targetDefaults": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "test": {
-      "inputs": [
-        "default",
-        "^production"
-      ],
+      "inputs": ["default", "^production"],
       "cache": true
     },
     "build-storybook": {

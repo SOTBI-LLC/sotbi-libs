@@ -1,16 +1,17 @@
 import { CurrencyPipe, DatePipe, formatDate } from '@angular/common';
-import type { OnInit} from '@angular/core';
+import type { OnInit } from '@angular/core';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import type {
-  FormGroup} from '@angular/forms';
+import type { FormGroup } from '@angular/forms';
 import {
   FormsModule,
   ReactiveFormsModule,
   UntypedFormBuilder,
   Validators,
 } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { SIDE_PANEL_DATA } from '../side-panel/side-panel-config';
+import { SidePanelRef } from '../side-panel/side-panel-ref';
+import { SidePanelFrameComponent } from '../side-panel/side-panel-frame';
 import {
   ClrAlertModule,
   ClrCommonFormsModule,
@@ -20,7 +21,7 @@ import {
 } from '@clr/angular';
 import type { Remaining } from '@sotbi/models';
 import { NativeDateValueAccessorDirective } from '../native-date/native-date.directive';
-import type { FileSystemFileEntry, NgxFileDropEntry} from 'ngx-file-drop';
+import type { FileSystemFileEntry, NgxFileDropEntry } from 'ngx-file-drop';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import type { Observable, Subscription } from 'rxjs';
 
@@ -30,7 +31,10 @@ export type RemainingDialogData = {
   /** Ссылка на файл выписки; по умолчанию — /download/payment/<id>. */
   statementUrl?: string;
 } & (
-  | { isEdit: true; uploadStatement: (data: FormData) => Observable<Remaining | string> }
+  | {
+      isEdit: true;
+      uploadStatement: (data: FormData) => Observable<Remaining | string>;
+    }
   | { isEdit: false }
 );
 
@@ -38,6 +42,7 @@ export type RemainingDialogData = {
   templateUrl: './remaining-dialog.component.html',
   imports: [
     ClrModalModule,
+    SidePanelFrameComponent,
     ClrAlertModule,
     ClrCommonFormsModule,
     FormsModule,
@@ -50,12 +55,16 @@ export type RemainingDialogData = {
   ],
 })
 export class RemainingDialogComponent implements OnInit {
-  private readonly dialogData = inject<RemainingDialogData>(MAT_DIALOG_DATA);
-  private readonly dialogRef = inject<MatDialogRef<RemainingDialogComponent>>(MatDialogRef);
+  private readonly dialogData = inject<RemainingDialogData>(SIDE_PANEL_DATA);
+  private readonly dialogRef =
+    inject<SidePanelRef<RemainingDialogComponent>>(SidePanelRef);
   private readonly formBuilder = inject(UntypedFormBuilder);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly uploadBtnState = signal<ClrLoadingState>(ClrLoadingState.DEFAULT);
+  protected readonly loadingState = ClrLoadingState.LOADING;
+  protected readonly uploadBtnState = signal<ClrLoadingState>(
+    ClrLoadingState.DEFAULT,
+  );
   protected fg!: FormGroup;
   protected readonly data = signal<Remaining>({} as Remaining);
   protected isEdit = false;
@@ -64,6 +73,10 @@ export class RemainingDialogComponent implements OnInit {
   protected statementLink = '';
 
   public ngOnInit(): void {
+    this.dialogRef.setState({
+      dirty: () => !!this.fg?.dirty,
+      blocked: () => this.uploadBtnState() === ClrLoadingState.LOADING,
+    });
     this.caption = this.dialogData.caption;
     this.isEdit = this.dialogData.isEdit;
     if (this.isEdit) {
@@ -76,27 +89,39 @@ export class RemainingDialogComponent implements OnInit {
     } else {
       this.data.set(this.dialogData.row);
       this.statementLink =
-        this.dialogData.statementUrl ?? `/download/payment/${this.dialogData.row.id}`;
+        this.dialogData.statementUrl ??
+        `/download/payment/${this.dialogData.row.id}`;
     }
   }
 
   public onCancel(): void {
-    this.dialogRef.close();
+    void this.dialogRef.requestClose();
   }
 
   public onUpload(fg: FormGroup): Subscription | undefined {
-    if (!this.dialogData.isEdit) return;
+    if (!this.dialogData.isEdit || !fg.valid || this.dialogRef.blocked) return;
+    this.uploadBtnState.set(ClrLoadingState.LOADING);
     const formData = new FormData();
     formData.append('account', fg.controls['account'].value);
-    formData.append('start_date', formatDate(fg.controls['startDate'].value, 'yyyy-MM-dd', 'ru-Ru'));
-    formData.append('end_date', formatDate(fg.controls['endDate'].value, 'yyyy-MM-dd', 'ru-Ru'));
-    formData.append('files', fg.controls['file'].value, fg.controls['file'].value.name);
+    formData.append(
+      'start_date',
+      formatDate(fg.controls['startDate'].value, 'yyyy-MM-dd', 'ru-Ru'),
+    );
+    formData.append(
+      'end_date',
+      formatDate(fg.controls['endDate'].value, 'yyyy-MM-dd', 'ru-Ru'),
+    );
+    formData.append(
+      'files',
+      fg.controls['file'].value,
+      fg.controls['file'].value.name,
+    );
     return this.dialogData
       .uploadStatement(formData)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
-          this.dialogRef.close(res);
+          this.dialogRef.complete(res);
         },
         error: (err) => {
           console.error(err);
@@ -117,6 +142,7 @@ export class RemainingDialogComponent implements OnInit {
         fileEntry.file((file: File) => {
           if (file.type === 'application/pdf') {
             this.fg.controls['file'].setValue(file);
+            this.fg.controls['file'].markAsDirty();
           }
         });
       }

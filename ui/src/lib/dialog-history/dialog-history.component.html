@@ -1,11 +1,11 @@
-<div>
-  <h3 mat-dialog-title class="modal-title">
+<sotbi-side-panel>
+  <h3 panelTitle class="modal-title">
     {{ inputData.title }}
   </h3>
   @if (hideModal) {
-    <h3 mat-dialog-title class="modal-title">Изменений нет</h3>
+    <h3 class="modal-title">Изменений нет</h3>
   } @else {
-    <div class="modal-body modal-box" mat-dialog-content>
+    <div class="modal-body modal-box">
       <table class="table overflow">
         <thead class="flex vh-75">
           <tr class="grid">
@@ -36,9 +36,13 @@
       </table>
     </div>
   }
-  <div class="modal-footer">
-    <button mat-button class="btn btn-link btn-red btn-sm" type="button" [mat-dialog-close]="true">
+  <div panelActions class="modal-footer">
+    <button
+      class="btn btn-link btn-red btn-sm"
+      type="button"
+      (click)="dialogRef.requestClose()"
+    >
       Закрыть
     </button>
   </div>
-</div>
+</sotbi-side-panel>

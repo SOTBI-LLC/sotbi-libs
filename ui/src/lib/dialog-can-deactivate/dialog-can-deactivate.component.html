@@ -1,47 +1,32 @@
-<div mat-dialog-content>
-  <p>Есть несохраненные изменения.</p>
-</div>
-<div class="dialog-actions" mat-dialog-actions>
-  <div class="action-buttons">
-    <button
-      (click)="save()"
-      [disabled]="!inputData.canBeSaved"
-      class="btn btn-primary action-buttons__item action-buttons__save-btn"
-    >
-      <span class="action-buttons__check-icon-wrap">✓</span>
-      Сохранить
-    </button>
-    <button
-      type="button"
-      (click)="cancelSave()"
-      class="btn btn-outline action-buttons__item"
-    >
-      Не сохранять
-    </button>
-    <button
-      type="button"
-      (click)="close()"
-      class="btn btn-outline action-buttons__item"
-    >
-      Продолжить редактирование
-    </button>
+<sotbi-side-panel presentation="modal">
+  <h3 panelTitle>Есть несохранённые изменения</h3>
+  <div panelBody>
+    <p>Есть несохраненные изменения.</p>
   </div>
-</div>
-<button
-  (click)="close()"
-  class="dialog-can-deactivate__btn-close"
-  title="Продолжить редактирование"
-  type="button"
-  aria-label="Продолжить редактирование"
->
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 20 20"
-    fill="currentColor"
-    aria-hidden="true"
-  >
-    <path
-      d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 0 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 0 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"
-    />
-  </svg>
-</button>
+  <div class="dialog-actions" panelActions>
+    <div class="action-buttons">
+      <button
+        (click)="save()"
+        [disabled]="!inputData.canBeSaved"
+        class="btn btn-primary action-buttons__item action-buttons__save-btn"
+      >
+        <span class="action-buttons__check-icon-wrap">✓</span>
+        Сохранить
+      </button>
+      <button
+        type="button"
+        (click)="cancelSave()"
+        class="btn btn-outline action-buttons__item"
+      >
+        Не сохранять
+      </button>
+      <button
+        type="button"
+        (click)="close()"
+        class="btn btn-outline action-buttons__item"
+      >
+        Продолжить редактирование
+      </button>
+    </div>
+  </div>
+</sotbi-side-panel>
