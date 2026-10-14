@@ -19,7 +19,9 @@ import { restorePanelFocus } from './side-panel-focus';
 /** Shared declarative shell, also used by dynamically opened panel content. */
 @Component({
   selector: 'sotbi-side-panel',
-  host: { '(keyup.escape)': 'onEscape($event)' },
+  host: {
+    '(keydown.escape)': 'onEscape($event)',
+  },
   encapsulation: ViewEncapsulation.None,
   imports: [ClrSidePanelModule, ClrModalModule, NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -132,10 +134,15 @@ export class SidePanelFrameComponent {
   public readonly cancelled = output<void>();
   protected readonly opened = signal(true);
   protected readonly confirmationOpen = signal(false);
+  private suppressEscapeKeyup = false;
+  private readonly escapeKeyup = (event: KeyboardEvent): void => {
+    if (event.key === 'Escape') this.onEscapeKeyup(event);
+  };
   private answerConfirmation?: (discard: boolean) => void;
 
   constructor() {
     const document = inject(DOCUMENT);
+    document.addEventListener('keyup', this.escapeKeyup, true);
     const initiator = document.activeElement as HTMLElement | null;
     if (!this.supplied) {
       this.interaction.setState({
@@ -155,6 +162,7 @@ export class SidePanelFrameComponent {
       if (outcome.kind === 'cancelled') this.cancelled.emit();
     });
     inject(DestroyRef).onDestroy(() => {
+      document.removeEventListener('keyup', this.escapeKeyup, true);
       this.answer(false);
       if (!this.supplied)
         queueMicrotask(() => restorePanelFocus(document, initiator));
@@ -171,7 +179,15 @@ export class SidePanelFrameComponent {
     // Clarity's side panel bypasses ModalStackService. Keep its Escape local,
     // so the same event does not dismiss the discard modal just opened here.
     event.stopPropagation();
+    this.suppressEscapeKeyup = true;
     this.requestClose();
+  }
+
+  protected onEscapeKeyup(event: Event): void {
+    if (!this.suppressEscapeKeyup) return;
+    this.suppressEscapeKeyup = false;
+    // Do not let the release of the opening Escape dismiss its confirmation.
+    event.stopPropagation();
   }
 
   public requestClose(): void {

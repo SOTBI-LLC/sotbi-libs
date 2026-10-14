@@ -196,6 +196,16 @@
     }
   </div>
   <div class="modal-footer btn-sm" panelActions>
+    <button
+      cdkFocusInitial
+      aria-label="Close"
+      cdl
+      class="btn btn-outline"
+      (click)="onCancel()"
+      type="button"
+    >
+      Закрыть
+    </button>
     @if (isEdit) {
       <button
         type="button"
@@ -206,15 +216,6 @@
         Загрузить
       </button>
     }
-    <button
-      cdkFocusInitial
-      aria-label="Close"
-      cdl
-      class="btn btn-link btn-red btn-without-border"
-      (click)="onCancel()"
-      type="button"
-    >
-      Закрыть
-    </button>
+
   </div>
 </sotbi-side-panel>

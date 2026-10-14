@@ -28,35 +28,16 @@ export interface DialogHistoryDataModel {
   templateUrl: './dialog-history.component.html',
   styles: [
     `
-      .fix-height-width {
-        height: 309px;
-        width: 100%;
-      }
       .modal-box {
-        min-height: 770px;
-        overflow: hidden;
-        .overflow {
-          display: block;
-          overflow: auto;
-          .vh-75 {
-            height: 75vh;
-          }
-        }
-        .flex {
-          display: flex;
-          .grid {
-            display: grid;
-            min-width: fit-content;
-            width: 34%;
-          }
-        }
+        overflow: auto;
       }
-
-      tr th:last-child {
-        display: none !important;
+      .history-table {
+        width: 100%;
+        table-layout: fixed;
       }
-      .table th.left:first-child {
-        padding: 0.4583333333rem 0.5rem;
+      .history-table th,
+      .history-table td {
+        overflow-wrap: anywhere;
       }
     `,
   ],

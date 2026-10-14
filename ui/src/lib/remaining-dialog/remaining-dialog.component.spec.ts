@@ -126,7 +126,11 @@ describe('RemainingDialogComponent', () => {
     await waitFor(() => expect(closed).toEqual([uploaded]));
   });
 
-  it('displays a loader error and keeps the dialog open', async () => {
+  it.each([
+    { failure: { error: 'Выписка не распознана' }, message: 'Выписка не распознана' },
+    { failure: new Error('Нет соединения'), message: 'Нет соединения' },
+    { failure: { error: null }, message: 'Не удалось загрузить выписку' },
+  ])('displays a loader error and keeps the dialog open: $message', async ({ failure, message }) => {
     jest.spyOn(console, 'error').mockImplementation(() => undefined);
     const fixture = TestBed.createComponent(DialogHost);
     const result = new Subject<Remaining>();
@@ -165,12 +169,12 @@ describe('RemainingDialogComponent', () => {
       ).toBe(false),
     );
     (container.querySelector('.btn-primary') as HTMLButtonElement).click();
-    result.error({ error: 'Выписка не распознана' });
+    result.error(failure);
     await fixture.whenStable();
 
     expect(
       (container.querySelector('.alert-text') as HTMLElement).textContent,
-    ).toContain('Выписка не распознана');
+    ).toContain(message);
     expect(closed).toEqual([]);
     expect(document.querySelector('sotbi-side-panel')).toBe(container);
   });

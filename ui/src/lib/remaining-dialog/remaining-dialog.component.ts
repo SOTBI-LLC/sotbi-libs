@@ -125,7 +125,8 @@ export class RemainingDialogComponent implements OnInit {
         },
         error: (err) => {
           console.error(err);
-          this.alerts.update((alerts) => [...alerts, err.error]);
+          this.alerts.update((alerts) => [...alerts, err.error?.Message ||
+            (typeof err.error === 'string' && err.error) || err.message || 'Не удалось загрузить выписку']);
           this.uploadBtnState.set(ClrLoadingState.ERROR);
         },
       });

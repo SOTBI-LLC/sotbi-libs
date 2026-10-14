@@ -6,39 +6,31 @@
     <h3 class="modal-title">Изменений нет</h3>
   } @else {
     <div class="modal-body modal-box">
-      <table class="table overflow">
-        <thead class="flex vh-75">
-          <tr class="grid">
+      <table class="table table-compact history-table">
+        <thead>
+          <tr>
             <th class="left">Информация</th>
-            @for (key of keys; track key) {
-              <th class="left">
-                {{ key }}
-              </th>
-            }
-          </tr>
-          <tr class="grid">
             <th class="left">Было</th>
-            @for (value of values; track value) {
-              <th class="left">
-                {{ value || '-' }}
-              </th>
-            }
-          </tr>
-          <tr class="grid">
             <th class="left">Стало</th>
-            @for (value of valuesNew; track value) {
-              <th class="left">
-                {{ value || '-' }}
-              </th>
-            }
           </tr>
         </thead>
+        <tbody>
+          @for (key of keys; track $index) {
+            @if (!$last) {
+              <tr>
+                <td class="left">{{ key }}</td>
+                <td class="left">{{ values[$index] || '-' }}</td>
+                <td class="left">{{ valuesNew[$index] || '-' }}</td>
+              </tr>
+            }
+          }
+        </tbody>
       </table>
     </div>
   }
   <div panelActions class="modal-footer">
     <button
-      class="btn btn-link btn-red btn-sm"
+      class="btn btn-primary btn-sm"
       type="button"
       (click)="dialogRef.requestClose()"
     >

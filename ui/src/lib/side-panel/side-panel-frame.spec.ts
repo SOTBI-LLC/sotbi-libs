@@ -45,6 +45,21 @@ describe('Side panel interaction', () => {
     expect(document.activeElement).toBe(fallback);
     fallback.remove();
   });
+  it('keeps the panel open when a nested control consumes Escape', async () => {
+    const fixture = TestBed.createComponent(DraftForm);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const input = document.querySelector<HTMLInputElement>('input')!;
+    input.addEventListener('keydown', (event) => event.preventDefault());
+    input.dispatchEvent(new KeyboardEvent('keydown', {
+      key: 'Escape', bubbles: true, cancelable: true,
+    }));
+    input.dispatchEvent(new KeyboardEvent('keyup', { key: 'Escape', bubbles: true }));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(document.body.textContent).not.toContain('Закрыть без сохранения?');
+    expect(fixture.componentInstance.cancelled).toBe(false);
+  });
   it.each(['cross', 'cancel', 'escape'])(
     'protects an invalid draft on %s and keeps it after declining',
     async (entry) => {
@@ -67,7 +82,7 @@ describe('Side panel interaction', () => {
           .click();
       else
         document.querySelector<HTMLInputElement>('input')!.dispatchEvent(
-          new KeyboardEvent('keyup', {
+          new KeyboardEvent('keydown', {
             key: 'Escape',
             code: 'Escape',
             keyCode: 27,
@@ -76,6 +91,13 @@ describe('Side panel interaction', () => {
         );
       fixture.detectChanges();
       await fixture.whenStable();
+      if (entry === 'escape') {
+        document.activeElement?.dispatchEvent(
+          new KeyboardEvent('keyup', { key: 'Escape', bubbles: true }),
+        );
+        fixture.detectChanges();
+        await fixture.whenStable();
+      }
       expect(document.body.textContent).toContain('Закрыть без сохранения?');
       const stay = Array.from(
         document.querySelectorAll<HTMLButtonElement>('button'),

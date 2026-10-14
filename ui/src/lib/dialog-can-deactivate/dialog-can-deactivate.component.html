@@ -6,12 +6,11 @@
   <div class="dialog-actions" panelActions>
     <div class="action-buttons">
       <button
-        (click)="save()"
-        [disabled]="!inputData.canBeSaved"
-        class="btn btn-primary action-buttons__item action-buttons__save-btn"
+        type="button"
+        (click)="close()"
+        class="btn btn-outline action-buttons__item"
       >
-        <span class="action-buttons__check-icon-wrap">✓</span>
-        Сохранить
+        Продолжить редактирование
       </button>
       <button
         type="button"
@@ -21,11 +20,12 @@
         Не сохранять
       </button>
       <button
-        type="button"
-        (click)="close()"
-        class="btn btn-outline action-buttons__item"
+        (click)="save()"
+        [disabled]="!inputData.canBeSaved"
+        class="btn btn-primary action-buttons__item action-buttons__save-btn"
       >
-        Продолжить редактирование
+        <span class="action-buttons__check-icon-wrap">✓</span>
+        Сохранить
       </button>
     </div>
   </div>
