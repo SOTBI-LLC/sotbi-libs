@@ -6498,9 +6498,6 @@ ag-charts-enterprise@12.3.1:
   version "12.3.1"
   resolved "https://registry.yarnpkg.com/ag-charts-enterprise/-/ag-charts-enterprise-12.3.1.tgz#b2d516a3f9a656ff3f29e87fa798ea5522d7e0a4"
   integrity sha512-2sQIwLfksRTcI4JVRjgQkyGq6z68UVTO/I91HKmtpukrQLsW/o0TzzHmgTtVJOXd9yO9gx2KWa2DMg0+FKdXEQ==
-  dependencies:
-    ag-charts-community "12.3.1"
-    ag-charts-core "12.3.1"
 
 ag-charts-locale@12.3.1:
   version "12.3.1"
@@ -6524,8 +6521,6 @@ ag-grid-community@34.3.1, ag-grid-community@^34.3.1:
   version "34.3.1"
   resolved "https://registry.yarnpkg.com/ag-grid-community/-/ag-grid-community-34.3.1.tgz#29c7a914812224e8c03f5177e9888dbf789af2cf"
   integrity sha512-PwlrPudsFOzGumphi2y9ihWeaUlIwKhOra/MXu2LjeV2U8DgLLcYS8CartE5Hszhn1poJHawwI9HWrxlKliwdw==
-  dependencies:
-    ag-charts-types "12.3.1"
 
 ag-grid-enterprise@^34.3.1:
   version "34.3.1"
@@ -8198,9 +8193,9 @@ ejs@^3.1.7:
     jake "^10.8.5"
 
 electron-to-chromium@^1.5.439:
-  version "1.5.454"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.454.tgz#7f6f6cd1c855e1f7fb55fc17798e92e6ea08cb04"
-  integrity sha512-NqD5GhkXnxJpDQVCmmpc546qjH6kei2VI9m45CTF+sQU7bcS7YeVt7ba0cnjueMH1AXGRu/driZUP9iYVSv7vg==
+  version "1.5.456"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.456.tgz#cfa8b3b4c44450b8a28df4a7bc8be377cae1b691"
+  integrity sha512-8hboqI6xesozteFb8aa7OGknvxUtTeRJLz0FoePysUEh/oWbddykIGdgpEJRbPRg/nIMfBf2DFos+H2MtvJl2A==
 
 emittery@^0.13.1:
   version "0.13.1"
