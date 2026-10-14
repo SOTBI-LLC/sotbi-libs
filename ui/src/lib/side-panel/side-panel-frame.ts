@@ -4,6 +4,7 @@ import {
   Component,
   computed,
   DestroyRef,
+  ElementRef,
   inject,
   input,
   output,
@@ -20,7 +21,8 @@ import { restorePanelFocus } from './side-panel-focus';
 @Component({
   selector: 'sotbi-side-panel',
   host: {
-    '(keydown.escape)': 'onEscape($event)',
+    '(document:keydown.escape)': 'onEscape($event)',
+    '(mousedown)': 'preserveBackdropFocus($event)',
   },
   encapsulation: ViewEncapsulation.None,
   imports: [ClrSidePanelModule, ClrModalModule, NgTemplateOutlet],
@@ -120,6 +122,8 @@ import { restorePanelFocus } from './side-panel-focus';
   ],
 })
 export class SidePanelFrameComponent {
+  private readonly document = inject(DOCUMENT);
+  private readonly hostElement = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly supplied = inject(SidePanelRef, { optional: true });
   private readonly config = inject(SIDE_PANEL_CONFIG, { optional: true });
   public readonly interaction = this.supplied ?? new SidePanelRef();
@@ -141,7 +145,7 @@ export class SidePanelFrameComponent {
   private answerConfirmation?: (discard: boolean) => void;
 
   constructor() {
-    const document = inject(DOCUMENT);
+    const document = this.document;
     document.addEventListener('keyup', this.escapeKeyup, true);
     const initiator = document.activeElement as HTMLElement | null;
     if (!this.supplied) {
@@ -169,15 +173,25 @@ export class SidePanelFrameComponent {
     });
   }
 
+  protected preserveBackdropFocus(event: MouseEvent): void {
+    const target = event.target as HTMLElement | null;
+    if (target?.classList.contains('modal-backdrop')) event.preventDefault();
+  }
+
   protected onEscape(event: Event): void {
+    const panels = this.document.querySelectorAll('sotbi-side-panel');
     if (
       this.presentation() !== 'panel' ||
+      panels.item(panels.length - 1) !== this.hostElement.nativeElement ||
       this.confirmationOpen() ||
-      event.defaultPrevented
+      event.defaultPrevented ||
+      // CDK modal popovers, such as Clarity's datepicker, own the first Escape.
+      this.document.querySelector('.cdk-overlay-container [role="dialog"][aria-modal="true"]')
     )
       return;
     // Clarity's side panel bypasses ModalStackService. Keep its Escape local,
     // so the same event does not dismiss the discard modal just opened here.
+    event.preventDefault();
     event.stopPropagation();
     this.suppressEscapeKeyup = true;
     this.requestClose();

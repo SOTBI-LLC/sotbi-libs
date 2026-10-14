@@ -45,6 +45,60 @@ describe('Side panel interaction', () => {
     expect(document.activeElement).toBe(fallback);
     fallback.remove();
   });
+  it('consumes the browser default Escape action when closing the panel', async () => {
+    const fixture = TestBed.createComponent(DraftForm);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const event = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+    document.querySelector<HTMLInputElement>('input')!.dispatchEvent(event);
+    expect(event.defaultPrevented).toBe(true);
+    fixture.destroy();
+  });
+  it('yields Escape to a modal popover rendered in the CDK overlay', async () => {
+    const fixture = TestBed.createComponent(DraftForm);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const overlay = document.createElement('div');
+    overlay.className = 'cdk-overlay-container';
+    overlay.innerHTML = '<div role="dialog" aria-modal="true">Calendar</div>';
+    document.body.appendChild(overlay);
+    const event = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+    try {
+      document.querySelector<HTMLInputElement>('input')!.dispatchEvent(event);
+      fixture.detectChanges();
+      await fixture.whenStable();
+      expect(event.defaultPrevented).toBe(false);
+      expect(document.body.textContent).not.toContain('Закрыть без сохранения?');
+      expect(fixture.componentInstance.cancelled).toBe(false);
+    } finally {
+      overlay.remove();
+      fixture.destroy();
+    }
+  });
+  it('protects the draft on Escape even after backdrop moves focus outside the panel', async () => {
+    const fixture = TestBed.createComponent(DraftForm);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    document.querySelector<HTMLElement>('.modal-backdrop')!.click();
+    document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(document.body.textContent).toContain('Закрыть без сохранения?');
+    expect(fixture.componentInstance.cancelled).toBe(false);
+    fixture.destroy();
+  });
+  it('preserves keyboard focus when pressing the static backdrop', async () => {
+    const fixture = TestBed.createComponent(DraftForm);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const input = document.querySelector<HTMLInputElement>('input')!;
+    input.focus();
+    const press = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+    document.querySelector<HTMLElement>('.modal-backdrop')!.dispatchEvent(press);
+    expect(press.defaultPrevented).toBe(true);
+    expect(document.activeElement).toBe(input);
+    fixture.destroy();
+  });
   it('keeps the panel open when a nested control consumes Escape', async () => {
     const fixture = TestBed.createComponent(DraftForm);
     fixture.detectChanges();
