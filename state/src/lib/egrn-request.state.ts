@@ -5,7 +5,7 @@ import { Action, Selector, State } from '@ngxs/store';
 import { EgrnRequestService, RealEstateService } from '@sotbi/data-access';
 import { EgrnAttachmentType, EgrnRequest } from '@sotbi/models';
 import { removeID } from '@sotbi/utils';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
   AddDirtyEgrnRequest,
@@ -68,7 +68,7 @@ export class EgrnRequestState {
     const state = getState();
     if (!state.items.length || payload.refresh) {
       patchState({ loading: true });
-      this.itemsService.getall(new HttpParams(), payload.view).pipe(
+      return this.itemsService.getall(new HttpParams(), payload.view).pipe(
         tap(({ requests, count }) => {
           setState({
             ...state,
@@ -81,6 +81,7 @@ export class EgrnRequestState {
         finalize(() => patchState({ loading: false })),
       );
     }
+    return of(getState().items);
   }
 
   @Action(GetEgrnRequest)
@@ -160,21 +161,22 @@ export class EgrnRequestState {
 
   @Action(UpdateEgrnRequest)
   public updateItem(
-    { getState, setState, patchState }: StateContext<EgrnRequestStateModel>,
+    { getState, patchState }: StateContext<EgrnRequestStateModel>,
     { payload }: UpdateEgrnRequest,
   ) {
     // console.log('EgrnState::UpdateItem', payload);
     patchState({ loading: true });
-    const state = getState();
-    // delete payload.request_type;
     return this.itemsService.update(payload).pipe(
       tap((selected) => {
-        const idx = state.items.findIndex(({ id }) => id === selected.id);
-        state.items[idx] = selected;
-        setState({
-          ...state,
-          items: state.items,
-          selected,
+        const state = getState();
+        patchState({
+          items: state.items.map((item) =>
+            item.id === selected.id ? selected : item,
+          ),
+          selected:
+            !state.selected || state.selected.id === selected.id
+              ? selected
+              : state.selected,
         });
       }),
       catchError((err) => throwError(() => err)),
@@ -217,12 +219,13 @@ export class EgrnRequestState {
         if (state.selected) {
           const item = structuredClone(state.selected);
           item.real_estates =
-            item.real_estates.filter((el) => el.id === id) ?? [];
-          const ind = state.items.findIndex((el) => el.id === item.id);
-          state.items[ind] = item;
+            item.real_estates.filter((el) => el.id !== id) ?? [];
+          const items = state.items.map((entry) =>
+            entry.id === item.id ? item : entry,
+          );
           setState({
             ...state,
-            items: state.items,
+            items,
             selected: item,
           });
         }

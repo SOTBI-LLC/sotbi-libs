@@ -470,9 +470,9 @@ export class CostRealState {
         const allItems = [...state.allItems];
         const date = result.date ? new Date(result.date) : new Date();
         result = { ...result, date, dirty: false, rowId: idx + '' };
-        items[idx] = result;
+        if (idx >= 0 && idx < items.length) { items[idx] = result; }
         const index = state.allItems.findIndex(({ id }) => id === result.id);
-        allItems[index] = result;
+        if (index >= 0) { allItems[index] = result; } else { allItems.push(result); }
         return setState({
           ...state,
           items,

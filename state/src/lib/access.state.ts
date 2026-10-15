@@ -106,14 +106,21 @@ export class AccessState {
     { getState, patchState, setState }: StateContext<AccessStateModel>,
     { payload }: UpdateAccess,
   ) {
-    const state = getState();
     patchState({ loading: true });
     return this.itemsService.update(payload).pipe(
       tap((selected) => {
-        const items = [...state.items];
-        const idx = items.findIndex(({ id }) => id === selected.id);
-        items[idx] = selected;
-        setState({ ...state, items, selected });
+        const state = getState();
+        const items = state.items.map((item) =>
+          item.id === selected.id ? selected : item,
+        );
+        setState({
+          ...state,
+          items,
+          selected:
+            !state.selected || state.selected.id === selected.id
+              ? selected
+              : state.selected,
+        });
       }),
       catchError((err) => {
         console.error(err);
@@ -134,9 +141,7 @@ export class AccessState {
     return this.itemsService.delete(payload).pipe(
       tap(() => {
         const state = getState();
-        const items = [...state.items];
-        const idx = items.findIndex(({ id }) => id === payload);
-        items.splice(idx, 1);
+        const items = state.items.filter(({ id }) => id !== payload);
         setState({
           ...state,
           items,

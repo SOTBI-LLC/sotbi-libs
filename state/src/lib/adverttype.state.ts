@@ -93,8 +93,8 @@ export class AdvertTypesState implements NgxsOnInit {
       .create(payload, SimpleEdit2ServiceNames.ADVERT)
       .pipe(
         tap((selected) => {
-          const mapFItems = { ...state.mapFItems };
-          const mapTItems = { ...state.mapTItems };
+          const mapFItems = new Map(state.mapFItems);
+          const mapTItems = new Map(state.mapTItems);
           if (selected.kind) {
             mapTItems.set(selected.id, selected.name);
           } else {
@@ -131,13 +131,13 @@ export class AdvertTypesState implements NgxsOnInit {
     { getState, patchState }: StateContext<SimpleEdit2StateModel>,
     { payload }: EditAdvertType,
   ) {
-    const state = getState();
     return this.itemsService
       .save(payload.id, payload, SimpleEdit2ServiceNames.ADVERT)
       .pipe(
         tap((selected) => {
-          const mapFItems = { ...state.mapFItems };
-          const mapTItems = { ...state.mapTItems };
+          const state = getState();
+          const mapFItems = new Map(state.mapFItems);
+          const mapTItems = new Map(state.mapTItems);
           if (selected.kind) {
             mapTItems.set(selected.id, selected.name);
           } else {
@@ -146,7 +146,15 @@ export class AdvertTypesState implements NgxsOnInit {
           const items = state.items.map((el) =>
             el.id === selected.id ? selected : el,
           );
-          patchState({ items, mapTItems, mapFItems, selected });
+          patchState({
+            items,
+            mapTItems,
+            mapFItems,
+            selected:
+              !state.selected || state.selected.id === selected.id
+                ? selected
+                : state.selected,
+          });
         }),
         catchError((err) => {
           console.error(err);
@@ -165,8 +173,8 @@ export class AdvertTypesState implements NgxsOnInit {
       .delete(payload, SimpleEdit2ServiceNames.ADVERT)
       .pipe(
         tap(() => {
-          const mapFItems = { ...state.mapFItems };
-          const mapTItems = { ...state.mapTItems };
+          const mapFItems = new Map(state.mapFItems);
+          const mapTItems = new Map(state.mapTItems);
           mapFItems.delete(payload);
           mapTItems.delete(payload);
           patchState({

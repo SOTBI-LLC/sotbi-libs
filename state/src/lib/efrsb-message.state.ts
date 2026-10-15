@@ -139,15 +139,18 @@ export class EfrsbMessageState {
     { payload }: UpdateEfrsbMessage,
   ) {
     patchState({ loading: true });
-    const state = getState();
     return this.itemsService.update(payload).pipe(
       tap((selected) => {
+        const state = getState();
         setState({
           ...state,
           items: state.items.map((el) =>
             el.id === selected.id ? selected : el,
           ),
-          selected: selected,
+          selected:
+            !state.selected || state.selected.id === selected.id
+              ? selected
+              : state.selected,
         });
       }),
       catchError((err) => throwError(() => err)),

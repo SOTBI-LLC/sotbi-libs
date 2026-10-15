@@ -102,8 +102,8 @@ export class ProcedureState implements NgxsOnInit {
       .create(payload, SimpleEdit2ServiceNames.PROCEDURE)
       .pipe(
         tap((result) => {
-          const mapFItems = { ...state.mapFItems };
-          const mapTItems = { ...state.mapTItems };
+          const mapFItems = new Map(state.mapFItems);
+          const mapTItems = new Map(state.mapTItems);
           if (result.kind) {
             mapTItems.set(result.id, result.name);
           } else {
@@ -131,14 +131,14 @@ export class ProcedureState implements NgxsOnInit {
     { getState, setState }: StateContext<SimpleEdit2StateModel>,
     { payload }: EditProcedure,
   ) {
-    const state = getState();
     const { id } = payload;
     return this.itemsService
       .save(id, payload, SimpleEdit2ServiceNames.PROCEDURE)
       .pipe(
         tap((selected) => {
-          const mapFItems = { ...state.mapFItems };
-          const mapTItems = { ...state.mapTItems };
+          const state = getState();
+          const mapFItems = new Map(state.mapFItems);
+          const mapTItems = new Map(state.mapTItems);
           if (selected.kind) {
             mapTItems.set(selected.id, selected.name);
           } else {
@@ -147,7 +147,16 @@ export class ProcedureState implements NgxsOnInit {
           const items = state.items.map((el) =>
             el.id === selected.id ? selected : el,
           );
-          setState({ ...state, items, mapTItems, mapFItems, selected });
+          setState({
+            ...state,
+            items,
+            mapTItems,
+            mapFItems,
+            selected:
+              !state.selected || state.selected.id === selected.id
+                ? selected
+                : state.selected,
+          });
         }),
         catchError((error) => {
           console.error(error);
@@ -166,8 +175,8 @@ export class ProcedureState implements NgxsOnInit {
       .delete(payload, SimpleEdit2ServiceNames.PROCEDURE)
       .pipe(
         tap(() => {
-          const mapFItems = { ...state.mapFItems };
-          const mapTItems = { ...state.mapTItems };
+          const mapFItems = new Map(state.mapFItems);
+          const mapTItems = new Map(state.mapTItems);
           mapFItems.delete(payload);
           mapTItems.delete(payload);
           setState({

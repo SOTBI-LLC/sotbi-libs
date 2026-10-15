@@ -82,11 +82,14 @@ export class DepositsState implements NgxsOnInit {
     const state = getState();
     const items = [...state.items];
     const idx = items.findIndex(({ id }) => payload === id);
-    if (!items[idx].name) {
+    if (idx < 0 || !items[idx].name) {
       return this.DepositSrv.get(payload).pipe(
         tap((selected) => {
-          items[idx] = selected;
-          setState({ ...state, items, selected });
+          const current = getState();
+          const items = current.items.map((item) =>
+            item.id === selected.id ? selected : item,
+          );
+          setState({ ...getState(), items, selected });
         }),
         catchError((err) => {
           console.error(err.message);
@@ -106,7 +109,7 @@ export class DepositsState implements NgxsOnInit {
     return this.DepositSrv.create(payload).pipe(
       tap((selected) => {
         const state = getState();
-        const map = { ...state.map };
+        const map = new Map(state.map);
         map.set(selected.id, selected.name);
         setState({
           ...state,
@@ -132,10 +135,18 @@ export class DepositsState implements NgxsOnInit {
       return this.DepositSrv.save(id, rest).pipe(
         tap((selected: Deposit) => {
           const state = getState();
-          const map = { ...state.map };
+          const map = new Map(state.map);
           map.set(id, selected.name);
           const items = state.items.map((el) => (el.id === id ? selected : el));
-          setState({ ...state, items, map, selected });
+          setState({
+            ...state,
+            items,
+            map,
+            selected:
+              !state.selected || state.selected.id === selected.id
+                ? selected
+                : state.selected,
+          });
         }),
         catchError((err) => {
           console.error(err.message);
@@ -154,7 +165,7 @@ export class DepositsState implements NgxsOnInit {
     return this.DepositSrv.delete(payload).pipe(
       tap(() => {
         const state = getState();
-        const map = { ...state.map };
+        const map = new Map(state.map);
         map.delete(payload);
         setState({
           ...state,

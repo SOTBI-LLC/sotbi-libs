@@ -151,13 +151,19 @@ export class TransitionState {
     { getState, patchState }: StateContext<TransitionStateModel>,
     { payload }: UpdateTransition,
   ) {
-    const state = getState();
     return this.itemsService.update(payload).pipe(
       tap((selected) => {
-        const items = state.items;
-        const idx = items.findIndex(({ id }) => id === selected.id);
-        items[idx] = selected;
-        patchState({ items, selected });
+        const state = getState();
+        const items = state.items.map((item) =>
+          item.id === selected.id ? selected : item,
+        );
+        patchState({
+          items,
+          selected:
+            !state.selected || state.selected.id === selected.id
+              ? selected
+              : state.selected,
+        });
       }),
       catchError((err) => {
         throw 'error updating item. Details: ' + err.message;
@@ -174,9 +180,7 @@ export class TransitionState {
     return this.itemsService.delete(payload).pipe(
       tap(() => {
         const state = getState();
-        const items = state.items;
-        const idx = items.findIndex(({ id }) => id === payload);
-        items.splice(idx, 1);
+        const items = state.items.filter(({ id }) => id !== payload);
         setState({
           ...state,
           items,

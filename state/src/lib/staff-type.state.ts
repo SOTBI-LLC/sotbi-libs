@@ -92,7 +92,10 @@ export class StaffTypeState implements NgxsOnInit {
         }
         patchState({
           items: [...items, item, Object.assign({}, emptySimpleEdit2)],
-          selected: item,
+          selected:
+            !state.selected || state.selected.id === item.id
+              ? item
+              : state.selected,
           mapTItems: state.mapTItems,
           mapFItems: state.mapFItems,
         });
@@ -110,18 +113,24 @@ export class StaffTypeState implements NgxsOnInit {
     return this.staffTypeService.update(payload).pipe(
       tap((item) => {
         const state = getState();
-        const idx = state.items.findIndex(({ id }) => id === payload.id);
-        state.items[idx] = item;
+        const items = state.items.map((entry) =>
+          entry.id === item.id ? item : entry,
+        );
+        const mapTItems = new Map(state.mapTItems);
+        const mapFItems = new Map(state.mapFItems);
         if (item.kind) {
-          state.mapTItems.set(item.id, item.name);
+          mapTItems.set(item.id, item.name);
         } else {
-          state.mapFItems.set(item.id, item.name);
+          mapFItems.set(item.id, item.name);
         }
         patchState({
-          items: state.items,
-          selected: item,
-          mapTItems: state.mapTItems,
-          mapFItems: state.mapFItems,
+          items,
+          selected:
+            !state.selected || state.selected.id === item.id
+              ? item
+              : state.selected,
+          mapTItems,
+          mapFItems,
         });
       }),
       catchError((err) => throwError(err)),

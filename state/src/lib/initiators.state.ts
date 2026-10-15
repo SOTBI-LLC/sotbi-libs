@@ -115,10 +115,10 @@ export class InitiatorsState {
     { getState, setState }: StateContext<InitiatorsStateModel>,
     { payload }: EditInitiator,
   ) {
-    const state = getState();
     const { id } = payload;
     return this.initiatorSrv.update(payload).pipe(
       tap((selected) => {
+        const state = getState();
         const items = state.items.map((el) => (el.id === id ? selected : el));
         setState({ ...state, items, selected });
       }),

@@ -136,28 +136,22 @@ export class PaymentAttachmentState {
 
   @Action(UpdatePaymentAttachment)
   public updateItem(
-    {
-      getState,
-      setState,
-      patchState,
-    }: StateContext<PaymentAttachmentStateModel>,
+    { getState, patchState }: StateContext<PaymentAttachmentStateModel>,
     { payload }: UpdatePaymentAttachment,
   ) {
-    // console.log('PaymentAttachmentState::UpdateItem', payload);
     patchState({ loading: true });
-    const state = getState();
-    const items = [...state.items];
     return this.itemsService.update(payload).pipe(
       tap((selected) => {
-        const idx = items.findIndex(({ id }) => id === selected.id);
-        if (idx >= 0) {
-          items[idx] = selected;
-          setState({
-            ...state,
-            items,
-            selected,
-          });
-        }
+        const state = getState();
+        patchState({
+          items: state.items.map((item) =>
+            item.id === selected.id ? selected : item,
+          ),
+          selected:
+            !state.selected || state.selected.id === selected.id
+              ? selected
+              : state.selected,
+        });
       }),
       catchError((err) => throwError(() => err)),
       finalize(() => patchState({ loading: false })),

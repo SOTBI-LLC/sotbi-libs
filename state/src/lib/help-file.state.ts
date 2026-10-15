@@ -90,11 +90,16 @@ export class HelpFileState {
       tap((result) => {
         const state = getState();
         result.dirty = false;
-        state.items[idx] = result;
+        const items = [...state.items];
+        if (idx >= 0 && idx < items.length) {
+          items[idx] = result;
+        } else {
+          items.push(result);
+        }
         setState({
           ...state,
-          items: [...state.items],
-          count: state.count++,
+          items,
+          count: state.count + 1,
         });
       }),
       catchError((err) => {
@@ -111,8 +116,8 @@ export class HelpFileState {
   }: StateContext<HelpFileStateModel>) {
     const state = getState();
     const item = Object.assign({}, this.rowData);
-    state.count++;
-    return patchState({ items: [...state.items, item], count: state.count });
+    const count = state.count + 1;
+    return patchState({ items: [...state.items, item], count });
   }
 
   @Action(UpdateHelpFile)
@@ -122,17 +127,17 @@ export class HelpFileState {
   ) {
     // console.log('HelpFileStateModel::UpdateItem', payload);
     patchState({ loading: true });
-    const state = getState();
     return this.itemsService.update(payload).pipe(
       tap((selected) => {
+        const state = getState();
         selected.dirty = false;
-        const idx = state.items.findIndex(({ id }) => id === selected.id);
-        state.items[idx] = selected;
+        const items = state.items.map((item) =>
+          item.id === selected.id ? selected : item,
+        );
         setState({
           ...state,
-          items: state.items,
+          items,
         });
-        patchState({ items: state.items });
       }),
       catchError((err) => {
         return throwError(err);
@@ -148,8 +153,10 @@ export class HelpFileState {
   ) {
     const state = getState();
     if (payload > 0) {
-      state.items[payload - 1].dirty = true;
-      return patchState({ items: state.items });
+      const items = state.items.map((item, index) =>
+        index === payload - 1 ? { ...item, dirty: true } : item,
+      );
+      return patchState({ items });
     }
   }
 

@@ -89,10 +89,13 @@ export class LabelsState implements NgxsOnInit {
     const state = getState();
     const items = [...state.items];
     const idx = items.findIndex(({ id }) => payload === id);
-    if (!items[idx].name) {
+    if (idx < 0 || !items[idx].name) {
       return this.service.get(payload).pipe(
         tap((selected: Label) => {
-          items[idx] = selected;
+          const current = getState();
+          const items = current.items.map((item) =>
+            item.id === selected.id ? selected : item,
+          );
           patchState({ items, selected });
         }),
         catchError((err) => throwError(() => err)),
@@ -127,12 +130,19 @@ export class LabelsState implements NgxsOnInit {
     return this.service.update(id, payload).pipe(
       tap((selected: Label) => {
         const state = getState();
-        const map = state.map;
+        const map = new Map(state.map);
         map.set(id, selected.name);
-        const items = state.items;
-        const idx = items.findIndex((el) => el.id === id);
-        items[idx] = selected;
-        patchState({ items, map, selected });
+        const items = state.items.map((item) =>
+          item.id === selected.id ? selected : item,
+        );
+        patchState({
+          items,
+          map,
+          selected:
+            !state.selected || state.selected.id === selected.id
+              ? selected
+              : state.selected,
+        });
       }),
       catchError((err) => throwError(() => err)),
     );

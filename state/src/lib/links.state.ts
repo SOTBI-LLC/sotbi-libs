@@ -111,10 +111,10 @@ export class LinkState implements NgxsOnInit {
     return this.linkService.save$(payload, SimpleEditServiceNames.LINK).pipe(
       tap((result: SimpleEditModel) => {
         const state = getState();
-        const items = state.items;
-        const idx = items.findIndex((el) => el.id === result.id);
-        items[idx] = result;
-        const mapItems = state.mapItems;
+        const items = state.items.map((item) =>
+          item.id === result.id ? result : item,
+        );
+        const mapItems = new Map(state.mapItems);
         mapItems.set(result.id, result.name);
         patchState({ items, mapItems });
       }),

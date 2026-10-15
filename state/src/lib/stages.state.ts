@@ -114,11 +114,11 @@ export class StageState implements NgxsOnInit {
     return this.itemsService.save$(payload, SimpleEditServiceNames.STAGE).pipe(
       tap((result: SimpleEditModel) => {
         const state = getState();
-        const mapItems = state.mapItems;
+        const mapItems = new Map(state.mapItems);
         mapItems.set(result.id, result.name);
-        const items = state.items;
-        const idx = items.findIndex((el) => el.id === result.id);
-        items[idx] = result;
+        const items = state.items.map((item) =>
+          item.id === result.id ? result : item,
+        );
         patchState({ items, mapItems });
       }),
       catchError((err) => {

@@ -1,3 +1,4 @@
+import { assignDraftIds, mergeSavedRows } from './state-row-updates';
 import { inject, Injectable } from '@angular/core';
 import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
@@ -148,28 +149,36 @@ export class BidStateState implements NgxsOnInit {
 
   @Action(AddBidState)
   public createItem(
-    { getState, patchState, setState }: StateContext<BidStateStateModel>,
+    { getState, patchState }: StateContext<BidStateStateModel>,
     { payload }: AddBidState,
   ) {
-    patchState({ loading: true });
     const { item, idx } = payload;
-    return this.itemsService.create(item).pipe(
+    const initial = getState();
+    const drafts = assignDraftIds(initial.items);
+    const submitted = drafts[idx];
+    patchState({ items: drafts, loading: true });
+    return this.itemsService.create({ ...item, id: 0 }).pipe(
       tap((result) => {
-        result.dirty = false;
-        const state = getState();
-        state.items[idx] = result;
-        setState({
-          ...state,
-          items: [...state.items],
-          allItems: [...state.allItems, result],
-          selected: result,
-          count: state.count++,
-          saved: isAllSaved(state.items),
+        const current = getState();
+        const merged = mergeSavedRows({
+          items: current.items,
+          allItems: current.allItems,
+          pending: submitted ? [submitted] : [],
+          results: [result],
+        });
+        const selected =
+          current.selected === initial.selected ||
+          current.selected?.id === submitted?.id
+            ? (merged.items.find((entry) => entry.id === result.id) ?? result)
+            : current.selected;
+        patchState({
+          ...merged,
+          count: current.count + 1,
+          saved: isAllSaved(merged.items),
+          selected,
         });
       }),
-      catchError((err) => {
-        return throwError(err);
-      }),
+      catchError((err) => throwError(() => err)),
       finalize(() => patchState({ loading: false })),
     );
   }
@@ -182,12 +191,12 @@ export class BidStateState implements NgxsOnInit {
     // console.log('BidStateState::AddEmptyBidState');
     const state = getState();
     const item = Object.assign({}, this.rowData);
-    state.count++;
-    item.order = state.count;
+    const count = state.count + 1;
+    item.order = count;
     return patchState({
       items: [...state.items, item],
       selected: item,
-      count: state.count,
+      count,
     });
   }
 
@@ -202,10 +211,13 @@ export class BidStateState implements NgxsOnInit {
     const updatedItem: BidState = {
       ...state.items[idx],
       ...item,
+      id: state.items[idx]?.id ?? item.id ?? 0,
       dirty: true,
     };
-    state.items[idx] = updatedItem;
-    return patchState({ items: state.items, saved: false });
+    const items = state.items.map((entry, index) =>
+      index === idx ? updatedItem : entry,
+    );
+    return patchState({ items, saved: false });
   }
 
   @Action(CancelBidState)
@@ -218,10 +230,13 @@ export class BidStateState implements NgxsOnInit {
     const idx = state.items[payload].id;
     if (idx > 0) {
       const index = state.allItems.findIndex(({ id }) => id === idx);
-      state.items[payload] = Object.assign({}, state.allItems[index]);
-      state.items[payload].dirty = false;
+      const items = state.items.map((item, row) =>
+        row === payload
+          ? { ...(state.allItems[index] ?? this.rowData), dirty: false }
+          : item,
+      );
       // console.log(idx, index, state.items[payload], state.allItems[index]);
-      return patchState({ items: state.items, saved: isAllSaved(state.items) });
+      return patchState({ items, saved: isAllSaved(items) });
     } else {
       return dispatch(new EmptyBidState(payload));
     }
@@ -233,8 +248,7 @@ export class BidStateState implements NgxsOnInit {
     { payload }: EmptyBidState,
   ) {
     // console.log('BidStateState::EmptyBidState', payload);
-    const items = getState().items;
-    items.splice(payload, 1);
+    const items = getState().items.filter((_, index) => index !== payload);
     return patchState({ items, saved: isAllSaved(items), selected: null });
   }
 
@@ -245,22 +259,29 @@ export class BidStateState implements NgxsOnInit {
   ) {
     // console.log('BidStateState::UpdateBidState', payload);
     patchState({ loading: true });
-    const state = getState();
     return this.itemsService.update(payload).pipe(
       tap((selected) => {
-        selected.dirty = false;
-        const idx = state.items.findIndex(({ id }) => id === selected.id);
-        const items = [...state.items];
-        items[idx] = selected;
+        const state = getState();
+        selected = { ...selected, dirty: false };
+        const items = state.items.map((item) =>
+          item.id === selected.id ? selected : item,
+        );
         const index = state.allItems.findIndex(({ id }) => id === selected.id);
         const allItems = [...state.allItems];
-        allItems[index] = selected;
+        if (index >= 0) {
+          allItems[index] = selected;
+        } else {
+          allItems.push(selected);
+        }
         setState({
           ...state,
           items,
-          selected,
+          selected:
+            !state.selected || state.selected.id === selected.id
+              ? selected
+              : state.selected,
           allItems,
-          saved: isAllSaved(state.items),
+          saved: isAllSaved(items),
         });
       }),
       catchError((err) => {
@@ -275,60 +296,46 @@ export class BidStateState implements NgxsOnInit {
     getState,
     patchState,
   }: StateContext<BidStateStateModel>) {
-    // console.log('BidStateState::SaveAllBidState');
-    patchState({ loading: true });
-    const state = getState();
-    let idx = 0;
-    const states: BidState[] = [];
-    const idxs: Map<number, number> = new Map(); // храним соотвествие index в ag-grid и id в бд
-    const fields = new Set(BidStateRequiredFields);
-    for (const item of state.items) {
-      if (item.dirty) {
-        // для всех не сохраненных
-        let filledFields = 0;
-        for (const key in item) {
-          const value = item[key as keyof BidState];
-          if (
-            Object.prototype.hasOwnProperty.call(item, key) &&
-            fields.has(key) &&
-            !!value
-          ) {
-            filledFields++; // считаем количество заполненных полей
-          }
-        }
-        // если все обязательные поля заполнены
-        if (filledFields === fields.size) {
-          states.push(item); // заполняем массив для отправки на сервре для сохранения
-          idxs.set(idx, item.id); // запоминаем какому индексу в ag-grid соответствует id в таблице
-          item.dirty = false;
-        }
-      }
-      idx++;
-    }
-    return this.itemsService.batchUpdate(states).pipe(
-      tap((items) => {
-        let i = 0;
-        for (const [key, value] of idxs) {
-          state.items[key] = items[i];
-          if (value > 0) {
-            // если ранее был сохранен, то обновляем
-            const index = state.allItems.findIndex(({ id }) => id === value);
-            state.allItems[index] = items[i];
-          } else {
-            // иначе добавляем
-            state.allItems.push(items[i]);
-          }
-          i++;
-        }
-        state.items.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-        return patchState({
-          items: state.items,
-          allItems: state.allItems,
-          loading: false,
-          saved: true,
-        });
-      }),
+    const initial = getState();
+    const items = assignDraftIds(initial.items);
+    const selectedIndex = initial.items.findIndex(
+      (item) => item === initial.selected,
     );
+    patchState({
+      items,
+      loading: true,
+      ...(selectedIndex >= 0 ? { selected: items[selectedIndex] } : {}),
+    });
+    const pending = items.filter(
+      (item) =>
+        item.dirty &&
+        BidStateRequiredFields.every(
+          (field) => !!item[field as keyof BidState],
+        ),
+    );
+    return this.itemsService
+      .batchUpdate(
+        pending.map((item) => ({ ...item, id: item.id < 0 ? 0 : item.id })),
+      )
+      .pipe(
+        tap((results) => {
+          const current = getState();
+          const { items, allItems } = mergeSavedRows({
+            items: current.items,
+            allItems: current.allItems,
+            pending,
+            results,
+          });
+          const selectedIndex = current.items.findIndex(
+            (item) => item.id === current.selected?.id,
+          );
+          const selected =
+            selectedIndex >= 0 ? items[selectedIndex] : current.selected;
+          items.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+          patchState({ items, allItems, saved: isAllSaved(items), selected });
+        }),
+        finalize(() => patchState({ loading: false })),
+      );
   }
 
   @Action(DeleteBidState)

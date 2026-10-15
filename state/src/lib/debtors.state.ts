@@ -370,18 +370,19 @@ export class DebtorsState {
     { payload }: UpdateDebtorItem,
   ) {
     patchState({ loading: true });
-    const state = getState();
-    const debtors = [...state.debtors];
     return this.debtorSrv.update(payload).pipe(
       tap((selected) => {
-        const idx = debtors.findIndex((el) => el.id === selected.id);
+        const state = getState();
         const debtor = DebtorsState.debtorConvertFunction(selected);
-        if (idx && debtor) {
-          debtors[idx] = debtor;
-        }
+        const debtors = state.debtors.map((item) =>
+          item.id === selected.id && debtor ? debtor : item,
+        );
         setState({
           ...state,
-          selected,
+          selected:
+            !state.selected || state.selected.id === selected.id
+              ? selected
+              : state.selected,
           debtors,
         });
       }),
@@ -401,7 +402,7 @@ export class DebtorsState {
       tap(() => {
         patchState({
           debtors: state.debtors.filter(({ id }) => id !== payload),
-          count: state.count--,
+          count: Math.max(0, state.count - 1),
           selected: null,
           loading: false,
         });
@@ -424,7 +425,7 @@ export class DebtorsState {
       tap(() => {
         setState({
           ...state,
-          count: state.count++,
+          count: state.count + 1,
         });
       }),
       catchError((error) => {
@@ -439,21 +440,23 @@ export class DebtorsState {
 
   @Action(UpdateDebtorPolicy)
   public updatePolicy(
-    { getState, patchState, dispatch }: StateContext<DebtorStateModel>,
+    { getState, patchState }: StateContext<DebtorStateModel>,
     { payload }: UpdateDebtorPolicy,
   ) {
-    patchState({ loading: true });
     const state = getState();
-    const selected = state.selected;
-    if (selected?.insurance_policies) {
-      const idx = selected.insurance_policies.findIndex(
-        (el) => el.id === payload.id,
-      );
-      selected.insurance_policies[idx] = payload as InsurancePolicy;
-      patchState({ selected, loading: false });
-    } else {
-      dispatch(new AddDebtorPolicy(payload));
+    if (!state.selected) {
+      return patchState({ loading: false });
     }
+    const policies = state.selected.insurance_policies ?? [];
+    const selected = {
+      ...state.selected,
+      insurance_policies: policies.some((policy) => policy.id === payload.id)
+        ? policies.map((policy) =>
+            policy.id === payload.id ? (payload as InsurancePolicy) : policy,
+          )
+        : [...policies, payload as InsurancePolicy],
+    };
+    return patchState({ selected, loading: false });
   }
 
   @Action(AddDebtorPolicy)
@@ -479,12 +482,9 @@ export class DebtorsState {
     const state = getState();
     if (state.selected) {
       const selected = structuredClone(state.selected);
-      const idx = selected.insurance_policies?.findIndex(
-        (el) => el.id === payload,
+      selected.insurance_policies = (selected.insurance_policies ?? []).filter(
+        (policy) => policy.id !== payload,
       );
-      if (idx) {
-        selected.insurance_policies?.splice(idx, 1);
-      }
       patchState({ selected, loading: false });
     }
   }

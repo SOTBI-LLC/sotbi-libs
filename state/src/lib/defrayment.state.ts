@@ -112,7 +112,7 @@ export class DefraymentState {
           ...state,
           items: [result, ...state.items],
           selected: result,
-          count: state.count++,
+          count: state.count + 1,
         });
       }),
       catchError((err) => {
@@ -129,15 +129,19 @@ export class DefraymentState {
   ) {
     // console.log('DefraymentState::UpdateItem', payload);
     patchState({ loading: true });
-    const state = getState();
     return this.itemsService.update(payload).pipe(
       tap((selected) => {
-        const idx = state.items.findIndex(({ id }) => id === selected.id);
-        state.items[idx] = selected;
+        const state = getState();
+        const items = state.items.map((item) =>
+          item.id === selected.id ? selected : item,
+        );
         setState({
           ...state,
-          items: state.items,
-          selected,
+          items,
+          selected:
+            !state.selected || state.selected.id === selected.id
+              ? selected
+              : state.selected,
         });
       }),
       catchError((err) => {

@@ -117,17 +117,21 @@ export class EfrsbSubMessageTypeState {
     { payload }: UpdateSubMessageType,
   ) {
     // console.log('EfrsbSubMessageTypeState::UpdateItem', payload);
-    const state = getState();
     return this.itemsService.update(payload).pipe(
       tap((selected) => {
-        const idx = state.items.findIndex(({ id }) => id === selected.id);
-        state.items[idx] = selected;
-        const maps = state.maps;
+        const state = getState();
+        const items = state.items.map((item) =>
+          item.id === selected.id ? selected : item,
+        );
+        const maps = new Map(state.maps);
         maps.set(selected.id, selected.name);
         setState({
           ...state,
-          items: state.items,
-          selected,
+          items,
+          selected:
+            !state.selected || state.selected.id === selected.id
+              ? selected
+              : state.selected,
           maps,
         });
       }),

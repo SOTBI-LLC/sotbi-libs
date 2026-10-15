@@ -4,7 +4,7 @@ import { Action, Selector, State } from '@ngxs/store';
 import { InsuranceCompanyService } from '@sotbi/data-access';
 import { InsuranceCompany } from '@sotbi/models';
 import { getDiff } from '@sotbi/utils';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import {
   AddCompany,
@@ -104,9 +104,11 @@ export class InsuranceCompanyState {
       const idx = state.items.findIndex(({ id }) => id === payload);
       if (idx >= 0) {
         patchState({ selected: state.items[idx], loading: false });
+        return of(state.items[idx]);
       } else {
-        this.itemsService.get(payload).pipe(
+        return this.itemsService.get(payload).pipe(
           tap((item) => {
+            const state = getState();
             setState({
               ...state,
               selected: item,
@@ -118,6 +120,7 @@ export class InsuranceCompanyState {
       }
     } else {
       patchState({ selected: this.empty, loading: false });
+      return of(this.empty);
     }
   }
 
@@ -132,13 +135,13 @@ export class InsuranceCompanyState {
   ) {
     // console.log('InsuranceCompanyState::AddItem', payload);
     patchState({ loading: true });
-    this.itemsService.create(payload).pipe(
+    return this.itemsService.create(payload).pipe(
       tap((result) => {
         const state = getState();
         setState({
           ...state,
           items: [...state.items, result],
-          count: state.count++,
+          count: state.count + 1,
           selected: result,
         });
       }),
@@ -149,38 +152,38 @@ export class InsuranceCompanyState {
 
   @Action(UpdateCompany)
   public updateItem(
-    {
-      getState,
-      setState,
-      patchState,
-    }: StateContext<InsuranceCompanyStateModel>,
+    { getState, patchState }: StateContext<InsuranceCompanyStateModel>,
     { payload }: UpdateCompany,
   ) {
-    // console.log('InsuranceCompanyState::UpdateItem', payload);
-    patchState({ loading: true });
     const state = getState();
-    if (state.selected) {
-      const { changed, update } = getDiff<InsuranceCompany>(
-        state.selected,
-        payload,
-      );
-      if (changed && update) {
-        update.id = payload.id;
-        this.itemsService.update(update).pipe(
-          tap((selected) => {
-            const idx = state.items.findIndex(({ id }) => id === selected.id);
-            state.items[idx] = selected;
-            setState({
-              ...state,
-              selected,
-              items: state.items,
-            });
-          }),
-          catchError((err) => throwError(err)),
-          finalize(() => patchState({ loading: false })),
-        );
-      }
+    if (!state.selected) {
+      return of(null);
     }
+    const { changed, update } = getDiff<InsuranceCompany>(
+      state.selected,
+      payload,
+    );
+    if (!changed || !update) {
+      return of(state.selected);
+    }
+    update.id = payload.id;
+    patchState({ loading: true });
+    return this.itemsService.update(update).pipe(
+      tap((selected) => {
+        const current = getState();
+        patchState({
+          items: current.items.map((item) =>
+            item.id === selected.id ? selected : item,
+          ),
+          selected:
+            !current.selected || current.selected.id === selected.id
+              ? selected
+              : current.selected,
+        });
+      }),
+      catchError((err) => throwError(() => err)),
+      finalize(() => patchState({ loading: false })),
+    );
   }
 
   @Action(UpdateInsurancePolicy)
@@ -188,27 +191,24 @@ export class InsuranceCompanyState {
     {
       getState,
       patchState,
-      dispatch,
     }: StateContext<InsuranceCompanyStateModel>,
     { payload }: UpdateInsurancePolicy,
   ) {
     // console.log('InsuranceCompanyState::UpdatePolicy', payload);
-    patchState({ loading: true });
     const state = getState();
-    if (state.selected) {
-      const selected = structuredClone(state.selected);
-      if (selected.insurance_policies?.length > 0) {
-        const idx = selected.insurance_policies.findIndex(
-          (el) => el.id === payload.id,
-        );
-        if (idx >= 0) {
-          selected.insurance_policies[idx] = payload;
-        }
-      } else {
-        dispatch(new AddInsurancePolicy(payload));
-      }
-      patchState({ selected, loading: false });
+    if (!state.selected) {
+      return patchState({ loading: false });
     }
+    const policies = state.selected.insurance_policies ?? [];
+    const selected = {
+      ...state.selected,
+      insurance_policies: policies.some((policy) => policy.id === payload.id)
+        ? policies.map((policy) =>
+            policy.id === payload.id ? payload : policy,
+          )
+        : [...policies, payload],
+    };
+    return patchState({ selected, loading: false });
   }
 
   @Action(DeleteInsurancePolicy)
@@ -221,10 +221,9 @@ export class InsuranceCompanyState {
     const state = getState();
     if (state.selected) {
       const selected = structuredClone(state.selected);
-      const idx = selected.insurance_policies.findIndex(
-        (el) => el.id === payload,
+      selected.insurance_policies = (selected.insurance_policies ?? []).filter(
+        (policy) => policy.id !== payload,
       );
-      selected.insurance_policies.splice(idx, 1);
       patchState({ selected, loading: false });
     }
   }

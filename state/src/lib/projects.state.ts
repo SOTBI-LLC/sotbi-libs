@@ -193,9 +193,9 @@ export class ProjectsState implements NgxsOnInit {
     { payload }: EditProject,
   ) {
     const { id } = payload;
-    const state = getState();
     return this.prjSrv.save(id, payload).pipe(
       tap((selected: Project) => {
+        const state = getState();
         const items = [
           ...state.items.map((el) => (el.id === selected.id ? selected : el)),
         ];

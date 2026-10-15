@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
 import { BankruptcyService } from '@sotbi/data-access';
-import type { InsurancePolicy, itemMap, PostAddress } from '@sotbi/models';
+import type { itemMap, PostAddress } from '@sotbi/models';
 import { Bankruptcy } from '@sotbi/models';
 import { bankruptcyManagerFormatter, getDiff } from '@sotbi/utils';
 import { of, throwError } from 'rxjs';
@@ -147,7 +147,7 @@ export class BankruptcyState implements NgxsOnInit {
           ...state,
           items: [...state.items, result],
           selected: result,
-          count: state.count++,
+          count: state.count + 1,
         });
       }),
       catchError((err) => {
@@ -216,7 +216,7 @@ export class BankruptcyState implements NgxsOnInit {
           ...state,
           items: state.items.filter((el) => el.id !== payload),
           selected: null,
-          count: state.count--,
+          count: Math.max(0, state.count - 1),
         });
       }),
       catchError((err) => {
@@ -228,24 +228,22 @@ export class BankruptcyState implements NgxsOnInit {
 
   @Action(UpdateBankruptcyPolicy)
   public updatePolicy(
-    { getState, patchState, dispatch }: StateContext<BankruptcyStateModel>,
+    { getState, patchState }: StateContext<BankruptcyStateModel>,
     { payload }: UpdateBankruptcyPolicy,
   ) {
-    patchState({ loading: true });
     const state = getState();
     if (!state.selected) {
-      patchState({ loading: false });
-      return;
+      return patchState({ loading: false });
     }
-    const selected = structuredClone(state.selected);
-    if (state.selected.insurance_policies.length > 0) {
-      const idx = selected.insurance_policies.findIndex(
-        ({ id }: InsurancePolicy) => id === payload.id,
-      );
-      selected.insurance_policies[idx] = payload;
-    } else {
-      return dispatch(new AddBankruptcyPolicy(payload));
-    }
+    const policies = state.selected.insurance_policies ?? [];
+    const selected = {
+      ...state.selected,
+      insurance_policies: policies.some((policy) => policy.id === payload.id)
+        ? policies.map((policy) =>
+            policy.id === payload.id ? payload : policy,
+          )
+        : [...policies, payload],
+    };
     return patchState({ selected, loading: false });
   }
 
@@ -277,10 +275,9 @@ export class BankruptcyState implements NgxsOnInit {
       return;
     }
     const selected = structuredClone(state.selected);
-    const idx = selected.insurance_policies.findIndex(
-      ({ id }: InsurancePolicy) => id === payload,
+    selected.insurance_policies = (selected.insurance_policies ?? []).filter(
+      (policy) => policy.id !== payload,
     );
-    selected.insurance_policies.splice(idx, 1);
     patchState({ selected, loading: false });
   }
 }

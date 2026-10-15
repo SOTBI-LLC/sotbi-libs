@@ -1,3 +1,4 @@
+import { assignDraftIds, mergeSavedRows } from './state-row-updates';
 import { Injectable, inject } from '@angular/core';
 import type { NgxsOnInit, StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
@@ -114,28 +115,38 @@ export class PositionState implements NgxsOnInit {
 
   @Action(AddPosition)
   public createItem(
-    { getState, patchState, setState }: StateContext<PositionStateModel>,
+    { getState, patchState }: StateContext<PositionStateModel>,
     { payload }: AddPosition,
   ) {
-    console.log('PositionState::AddPosition', payload);
-    patchState({ loading: true });
     const { position, idx } = payload;
-    return this.itemsService.create(position).pipe(
-      tap((result) => {
-        result.dirty = false;
-        const state = getState();
-        state.items[idx] = result;
-        setState({
-          ...state,
-          items: [...state.items /* Object.assign({}, this.rowData) */],
-          allItems: [...state.allItems, result],
-          count: state.count++,
-          saved: isAllSaved(state.items),
-        });
-      }),
-      catchError((err) => throwError(err)),
-      finalize(() => patchState({ loading: false })),
-    );
+    const initial = getState();
+    const drafts = assignDraftIds(initial.items);
+    const submitted = drafts[idx];
+    patchState({ items: drafts, loading: true });
+    return this.itemsService
+      .create({
+        ...position,
+        id: position.id && position.id > 0 ? position.id : 0,
+      })
+      .pipe(
+        tap((result) => {
+          const current = getState();
+          const merged = mergeSavedRows({
+            items: current.items,
+            allItems: current.allItems,
+            pending: submitted ? [submitted] : [],
+            results: [result],
+          });
+
+          patchState({
+            ...merged,
+            count: current.count + 1,
+            saved: isAllSaved(merged.items),
+          });
+        }),
+        catchError((err) => throwError(() => err)),
+        finalize(() => patchState({ loading: false })),
+      );
   }
 
   @Action(AddEmptyPosition)
@@ -157,7 +168,11 @@ export class PositionState implements NgxsOnInit {
   ) {
     const { position, idx } = payload;
     const items = [...getState().items];
-    items[idx] = { ...position, dirty: true };
+    items[idx] = {
+      ...position,
+      id: items[idx]?.id ?? position.id,
+      dirty: true,
+    };
     return patchState({ items, saved: false });
   }
 
@@ -170,9 +185,12 @@ export class PositionState implements NgxsOnInit {
     const state = getState();
     const idx = state.items[payload].id;
     const index = state.allItems.findIndex(({ id }) => id === idx);
-    state.items[payload] = Object.assign({}, state.allItems[index]);
-    state.items[payload].dirty = false;
-    return patchState({ items: state.items, saved: isAllSaved(state.items) });
+    const items = state.items.map((item, row) =>
+      row === payload
+        ? { ...(state.allItems[index] ?? this.rowData), dirty: false }
+        : item,
+    );
+    return patchState({ items, saved: isAllSaved(items) });
   }
 
   @Action(UpdatePosition)
@@ -181,21 +199,21 @@ export class PositionState implements NgxsOnInit {
     { payload }: UpdatePosition,
   ) {
     // console.log('PositionState::UpdatePosition', payload);
-    const { idx, position } = payload;
-    const state = getState();
+    const { position } = payload;
+    const submitted = getState().items.find((item) => item.id === position.id);
     return this.itemsService.update(position).pipe(
       tap((result: Position) => {
-        position.dirty = false;
-        const items = [...state.items];
-        items[idx] = result;
-        const allItems = [
-          ...state.allItems.filter((el) => el.id !== result.id),
-          result,
-        ];
+        const state = getState();
+        const { items, allItems } = mergeSavedRows({
+          items: state.items,
+          allItems: state.allItems,
+          pending: submitted ? [submitted] : [],
+          results: [result],
+        });
         patchState({
           items,
           allItems,
-          saved: isAllSaved(state.items),
+          saved: isAllSaved(items),
         });
       }),
       catchError((err) => {
@@ -209,58 +227,35 @@ export class PositionState implements NgxsOnInit {
     getState,
     patchState,
   }: StateContext<PositionStateModel>) {
-    console.log('PositionState::SaveAllPositions');
-    patchState({ loading: true });
-    const state = getState();
-    let idx = 0;
-    const workcategory: Position[] = [];
-    const idxs: Map<number, number> = new Map(); // храним соотвествие index в ag-grid и id в бд
-    const fields = new Set(PositionsRequiredFields);
-    for (const item of state.items) {
-      if (item.dirty) {
-        // для всех не сохраненных
-        let filledFields = 0;
-        for (const key in item) {
-          if (
-            Object.prototype.hasOwnProperty.call(item, key) &&
-            fields.has(key) &&
-            !!item[key as keyof Position]
-          ) {
-            filledFields++; // считаем количество заполненных полей
-          }
-        }
-        // если все обязательные поля заполнены
-        if (filledFields === fields.size) {
-          workcategory.push(item); // заполняем массив для отправки на сервре для сохранения
-          idxs.set(idx, item.id); // запоминаем какому индексу в ag-grid соответствует id в таблице
-          item.dirty = false;
-        }
-      }
-      idx++;
-    }
-    return this.itemsService.batchUpdate(workcategory).pipe(
-      tap((items) => {
-        let i = 0;
-        for (const [key, value] of idxs) {
-          state.items[key] = items[i];
-          if (value > 0) {
-            // если ранее был сохранен, то обновляем
-            const index = state.allItems.findIndex(({ id }) => id === value);
-            state.allItems[index] = items[i];
-          } else {
-            // иначе добавляем
-            state.allItems.push(items[i]);
-          }
-          i++;
-        }
-        return patchState({
-          items: state.items,
-          allItems: state.allItems,
-          loading: false,
-          saved: true,
-        });
-      }),
+    const initial = getState();
+    const items = assignDraftIds(initial.items);
+
+    patchState({ items, loading: true });
+    const pending = items.filter(
+      (item) =>
+        item.dirty &&
+        PositionsRequiredFields.every(
+          (field) => !!item[field as keyof Position],
+        ),
     );
+    return this.itemsService
+      .batchUpdate(
+        pending.map((item) => ({ ...item, id: item.id < 0 ? 0 : item.id })),
+      )
+      .pipe(
+        tap((results) => {
+          const current = getState();
+          const { items, allItems } = mergeSavedRows({
+            items: current.items,
+            allItems: current.allItems,
+            pending,
+            results,
+          });
+
+          patchState({ items, allItems, saved: isAllSaved(items) });
+        }),
+        finalize(() => patchState({ loading: false })),
+      );
   }
 
   @Action(DeletePosition)

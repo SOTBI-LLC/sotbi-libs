@@ -143,7 +143,7 @@ export class CounterpartyState {
           ...state,
           items: [result, ...state.items],
           selected: result,
-          count: state.count++,
+          count: state.count + 1,
         });
       }),
       catchError((err) => {
@@ -162,12 +162,16 @@ export class CounterpartyState {
     return this.itemsSvc.update(payload).pipe(
       tap((selected: Counterparty) => {
         const state = getState();
-        const items = state.items;
-        const idx = items.findIndex((el) => el.id === selected.id);
-        if (idx || idx === 0) {
-          items[idx] = selected;
-        }
-        patchState({ selected, items });
+        const items = state.items.map((item) =>
+          item.id === selected.id ? selected : item,
+        );
+        patchState({
+          selected:
+            !state.selected || state.selected.id === selected.id
+              ? selected
+              : state.selected,
+          items,
+        });
       }),
       catchError((err) => {
         return throwError(() => err);

@@ -100,7 +100,7 @@ export class PersonsState {
     this.itemsService.save$(payload, SimpleEditServiceNames.PERSON).pipe(
       tap({
         next: (result) => {
-          const mapItems = state.mapItems;
+          const mapItems = new Map(state.mapItems);
           mapItems.set(result.id, result.name);
           const items = [...state.items];
           const idx = items.findIndex((el) => el.id === result.id);
@@ -119,22 +119,24 @@ export class PersonsState {
     { getState, patchState }: StateContext<SimpleEditStateModel>,
     { payload }: DeletePerson,
   ) {
-    const state = getState();
-    this.itemsService.delete(payload, SimpleEditServiceNames.PERSON).pipe(
-      tap({
-        next: () => {
-          const mapItems = state.mapItems;
-          mapItems.delete(payload);
-          patchState({
-            items: state.items.filter(({ id }) => id !== payload),
-            mapItems,
-          });
-        },
-      }),
-      catchError((error) => {
-        console.error(error);
-        return throwError(() => error);
-      }),
-    );
+    return this.itemsService
+      .delete(payload, SimpleEditServiceNames.PERSON)
+      .pipe(
+        tap({
+          next: () => {
+            const state = getState();
+            const mapItems = new Map(state.mapItems);
+            mapItems.delete(payload);
+            patchState({
+              items: state.items.filter(({ id }) => id !== payload),
+              mapItems,
+            });
+          },
+        }),
+        catchError((error) => {
+          console.error(error);
+          return throwError(() => error);
+        }),
+      );
   }
 }

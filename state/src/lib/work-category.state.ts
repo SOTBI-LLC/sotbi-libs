@@ -1,3 +1,4 @@
+import { assignDraftIds, mergeSavedRows } from './state-row-updates';
 import { Injectable, inject } from '@angular/core';
 import type { StateContext } from '@ngxs/store';
 import { Action, Selector, State } from '@ngxs/store';
@@ -129,28 +130,43 @@ export class WorkCategoryState {
 
   @Action(AddWorkCategory)
   public createItem(
-    { getState, patchState, setState }: StateContext<WorkCategoryStateModel>,
+    { getState, patchState }: StateContext<WorkCategoryStateModel>,
     { payload }: AddWorkCategory,
   ) {
-    patchState({ loading: true });
     const { workcategory, idx } = payload;
-    return this.itemsService.create(workcategory).pipe(
-      tap((result) => {
-        result.dirty = false;
-        const state = getState();
-        state.items[idx] = result;
-        setState({
-          ...state,
-          items: [...state.items, Object.assign({}, this.rowData)],
-          allItems: [...state.allItems, result],
-          selected: result,
-          count: state.count++,
-          saved: isAllSaved(state.items),
-        });
-      }),
-      catchError((err) => throwError(() => err)),
-      finalize(() => patchState({ loading: false })),
-    );
+    const initial = getState();
+    const drafts = assignDraftIds(initial.items);
+    const submitted = drafts[idx];
+    patchState({ items: drafts, loading: true });
+    return this.itemsService
+      .create({
+        ...workcategory,
+        id: workcategory.id && workcategory.id > 0 ? workcategory.id : 0,
+      })
+      .pipe(
+        tap((result) => {
+          const current = getState();
+          const merged = mergeSavedRows({
+            items: current.items,
+            allItems: current.allItems,
+            pending: submitted ? [submitted] : [],
+            results: [result],
+          });
+          const selected =
+            current.selected === initial.selected ||
+            current.selected?.id === submitted?.id
+              ? (merged.items.find((entry) => entry.id === result.id) ?? result)
+              : current.selected;
+          patchState({
+            ...merged,
+            count: current.count + 1,
+            saved: isAllSaved(merged.items),
+            selected,
+          });
+        }),
+        catchError((err) => throwError(() => err)),
+        finalize(() => patchState({ loading: false })),
+      );
   }
 
   @Action(AddEmptyWorkCategory)
@@ -174,7 +190,11 @@ export class WorkCategoryState {
     const { workcategory, idx } = payload;
     const state = getState();
     const items = [...state.items];
-    items[idx] = { ...workcategory, dirty: true };
+    items[idx] = {
+      ...workcategory,
+      id: items[idx]?.id ?? workcategory.id,
+      dirty: true,
+    };
     return setState({ ...state, items, saved: false });
   }
 
@@ -188,9 +208,12 @@ export class WorkCategoryState {
     const idx = state.items[payload].id;
     if (idx > 0) {
       const index = state.allItems.findIndex(({ id }) => id === idx);
-      state.items[payload] = Object.assign({}, state.allItems[index]);
-      state.items[payload].dirty = false;
-      return patchState({ items: state.items, saved: isAllSaved(state.items) });
+      const items = state.items.map((item, row) =>
+        row === payload
+          ? { ...(state.allItems[index] ?? this.rowData), dirty: false }
+          : item,
+      );
+      return patchState({ items, saved: isAllSaved(items) });
     } else {
       return dispatch(new EmptyWorkCategory(payload));
     }
@@ -202,8 +225,9 @@ export class WorkCategoryState {
     { payload }: EmptyWorkCategory,
   ) {
     // console.log('WorkCategoryState::EmptyWorkCategory', payload);
-    const items = getState().items;
-    items[payload] = Object.assign({}, this.rowData);
+    const items = getState().items.map((item, index) =>
+      index === payload ? { ...this.rowData } : item,
+    );
     return patchState({ items, saved: isAllSaved(items) });
   }
 
@@ -213,9 +237,9 @@ export class WorkCategoryState {
     { payload }: UpdateWorkCategory,
   ) {
     // console.log('WorkCategoryState::UpdateWorkCategory', payload);
-    const state = getState();
     return this.itemsService.update(payload).pipe(
       tap((selected) => {
+        const state = getState();
         const items = state.items.map((el) =>
           el.id === selected.id ? selected : el,
         );
@@ -230,59 +254,46 @@ export class WorkCategoryState {
     getState,
     patchState,
   }: StateContext<WorkCategoryStateModel>) {
-    // console.log('WorkCategoryState::SaveAllWorkCategory');
-    patchState({ loading: true });
-    const items: WorkCategory[] = getState().items;
-    const allItems: WorkCategory[] = getState().allItems;
-    let idx = 0;
-    const workcategory: WorkCategory[] = [];
-    const idxs: Map<number, number> = new Map(); // храним соотвествие index в ag-grid и id в бд
-    const fields = new Set(WorkCategoryRequiredFields);
-    for (const item of items) {
-      if (item.dirty) {
-        // для всех не сохраненных
-        let filledFields = 0;
-        for (const key in item) {
-          if (
-            Object.prototype.hasOwnProperty.call(item, key) &&
-            fields.has(key) &&
-            !!item[key as keyof WorkCategory]
-          ) {
-            filledFields++; // считаем количество заполненных полей
-          }
-        }
-        // если все обязательные поля заполнены
-        if (filledFields === fields.size) {
-          workcategory.push(item); // заполняем массив для отправки на сервре для сохранения
-          idxs.set(idx, item.id); // запоминаем какому индексу в ag-grid соответствует id в таблице
-          item.dirty = false;
-        }
-      }
-      idx++;
-    }
-    return this.itemsService.batchUpdate(workcategory).pipe(
-      tap((items) => {
-        let i = 0;
-        for (const [key, value] of idxs) {
-          items[key] = items[i];
-          if (value > 0) {
-            // если ранее был сохранен, то обновляем
-            const index = allItems.findIndex(({ id }) => id === value);
-            allItems[index] = items[i];
-          } else {
-            // иначе добавляем
-            allItems.push(items[i]);
-          }
-          i++;
-        }
-        return patchState({
-          items,
-          allItems,
-          loading: false,
-          saved: true,
-        });
-      }),
+    const initial = getState();
+    const items = assignDraftIds(initial.items);
+    const selectedIndex = initial.items.findIndex(
+      (item) => item === initial.selected,
     );
+    patchState({
+      items,
+      loading: true,
+      ...(selectedIndex >= 0 ? { selected: items[selectedIndex] } : {}),
+    });
+    const pending = items.filter(
+      (item) =>
+        item.dirty &&
+        WorkCategoryRequiredFields.every(
+          (field) => !!item[field as keyof WorkCategory],
+        ),
+    );
+    return this.itemsService
+      .batchUpdate(
+        pending.map((item) => ({ ...item, id: item.id < 0 ? 0 : item.id })),
+      )
+      .pipe(
+        tap((results) => {
+          const current = getState();
+          const { items, allItems } = mergeSavedRows({
+            items: current.items,
+            allItems: current.allItems,
+            pending,
+            results,
+          });
+          const selectedIndex = current.items.findIndex(
+            (item) => item.id === current.selected?.id,
+          );
+          const selected =
+            selectedIndex >= 0 ? items[selectedIndex] : current.selected;
+
+          patchState({ items, allItems, saved: isAllSaved(items), selected });
+        }),
+        finalize(() => patchState({ loading: false })),
+      );
   }
 
   @Action(DeleteWorkCategory)

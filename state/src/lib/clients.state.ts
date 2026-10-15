@@ -94,15 +94,15 @@ export class ClientsState {
     { getState, patchState }: StateContext<SimpleEditStateModel>,
     { payload }: EditClient,
   ) {
-    const state = getState();
     return this.itemsService.save$(payload, SimpleEditServiceNames.CLIENT).pipe(
       tap(
         (result) => {
-          const mapItems = state.mapItems;
+          const state = getState();
+          const mapItems = new Map(state.mapItems);
           mapItems.set(result.id, result.name);
-          const items = state.items;
-          const idx = items.findIndex((el) => el.id === result.id);
-          items[idx] = result;
+          const items = state.items.map((item) =>
+            item.id === result.id ? result : item,
+          );
           patchState({ items, mapItems });
         },
         catchError((err) => {
