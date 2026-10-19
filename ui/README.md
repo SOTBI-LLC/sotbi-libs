@@ -26,7 +26,7 @@ import { PaumentsFileButtonsComponent } from '@sotbi/ui';
 />
 ```
 
-- `uploadState: ClrLoadingState` — состояние кнопок; при `LOADING` они disabled.
+- `uploadState: number (LoadingButtonState)` — состояние кнопок; при `LOADING` они disabled.
 - `filesSelected: File[]` — выбранные файлы (повторный выбор тех же файлов
   выдаёт новое событие).
 - `exportRequested: void` — нажатие «Скачать». Загрузка и создание задачи

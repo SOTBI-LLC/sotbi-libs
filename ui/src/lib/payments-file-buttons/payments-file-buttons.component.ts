@@ -1,11 +1,14 @@
-import { LoadingButtonComponent } from '../loading-button/loading-button.component';
+import {
+  LoadingButtonState,
+  LoadingButtonComponent,
+} from '../loading-button/loading-button.component';
 import {
   ChangeDetectionStrategy,
   Component,
   input,
   output,
 } from '@angular/core';
-import { ClrIcon, ClrLoadingState } from '@clr/angular';
+import { ClrIcon } from '@clr/angular';
 
 @Component({
   selector: 'pauments-file-buttons',
@@ -18,8 +21,8 @@ export class PaymentsFileButtonsComponent {
   public readonly filesSelected = output<File[]>();
   public readonly exportRequested = output<void>();
 
-  public readonly uploadState = input<ClrLoadingState>(ClrLoadingState.DEFAULT);
-  protected readonly loadingState = ClrLoadingState;
+  public readonly uploadState = input<number>(LoadingButtonState.DEFAULT);
+  protected readonly loadingState = LoadingButtonState;
 
   public upload(input: HTMLInputElement): void {
     const files = Array.from(input.files ?? []);

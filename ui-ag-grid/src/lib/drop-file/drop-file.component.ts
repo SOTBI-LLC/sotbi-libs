@@ -1,7 +1,7 @@
-import { LoadingButtonComponent } from '@sotbi/ui';
+import { LoadingButtonState, LoadingButtonComponent } from '@sotbi/ui';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ClrIcon, ClrLoadingState } from '@clr/angular';
+import { ClrIcon } from '@clr/angular';
 import type { ICellEditorAngularComp } from 'ag-grid-angular';
 import type { GridApi, ICellEditorParams } from 'ag-grid-community';
 import type { Observable } from 'rxjs';
@@ -51,8 +51,8 @@ export class DropFileComponent implements ICellEditorAngularComp {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly value = signal<IDropFileResult>({});
-  protected readonly uploadBtnState = signal<ClrLoadingState>(
-    ClrLoadingState.DEFAULT,
+  protected readonly uploadBtnState = signal<LoadingButtonState>(
+    LoadingButtonState.DEFAULT,
   );
   private api!: GridApi;
   private uploadFiles!: DropFileParams['uploadFiles'];
@@ -76,7 +76,7 @@ export class DropFileComponent implements ICellEditorAngularComp {
 
   protected upload(input: HTMLInputElement): void {
     if (input.files && input.files.length > 0) {
-      this.uploadBtnState.set(ClrLoadingState.LOADING);
+      this.uploadBtnState.set(LoadingButtonState.LOADING);
       try {
         this.uploadFiles(input.files)
           .pipe(takeUntilDestroyed(this.destroyRef))
@@ -86,12 +86,12 @@ export class DropFileComponent implements ICellEditorAngularComp {
               original_file_name: msg[0].original_file_name,
               file: msg[0].file,
             }));
-            this.uploadBtnState.set(ClrLoadingState.SUCCESS);
+            this.uploadBtnState.set(LoadingButtonState.SUCCESS);
             this.api.stopEditing(false);
           });
       } catch (error) {
         console.error(error);
-        this.uploadBtnState.set(ClrLoadingState.ERROR);
+        this.uploadBtnState.set(LoadingButtonState.ERROR);
       }
     }
   }

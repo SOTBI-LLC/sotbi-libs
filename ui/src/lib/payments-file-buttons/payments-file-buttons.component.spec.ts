@@ -1,7 +1,8 @@
+import { LoadingButtonState } from '../loading-button/loading-button.component';
 import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ClrLoadingState } from '@clr/angular';
+
 import { PaymentsFileButtonsComponent } from './payments-file-buttons.component';
 
 @Component({
@@ -32,9 +33,13 @@ describe('PaymentsFileButtonsComponent', () => {
   it('reports the selected files to the parent', async () => {
     const fixture = TestBed.createComponent(Host);
     await fixture.whenStable();
-    const files = [new File(['first'], 'first.txt'), new File(['second'], 'second.txt')];
+    const files = [
+      new File(['first'], 'first.txt'),
+      new File(['second'], 'second.txt'),
+    ];
 
-    const input: HTMLInputElement = fixture.nativeElement.querySelector('input[type="file"]');
+    const input: HTMLInputElement =
+      fixture.nativeElement.querySelector('input[type="file"]');
     setInputFiles(input, files);
     input.dispatchEvent(new Event('change', { bubbles: true }));
     await fixture.whenStable();
@@ -48,7 +53,8 @@ describe('PaymentsFileButtonsComponent', () => {
     const fixture = TestBed.createComponent(Host);
     await fixture.whenStable();
     const files = [new File(['same'], 'same.txt')];
-    const input: HTMLInputElement = fixture.nativeElement.querySelector('input[type="file"]');
+    const input: HTMLInputElement =
+      fixture.nativeElement.querySelector('input[type="file"]');
 
     setInputFiles(input, files);
     input.dispatchEvent(new Event('change', { bubbles: true }));
@@ -65,7 +71,9 @@ describe('PaymentsFileButtonsComponent', () => {
     const fixture = TestBed.createComponent(Host);
     await fixture.whenStable();
 
-    fixture.nativeElement.querySelector('button[aria-label="Скачать файл"]').click();
+    fixture.nativeElement
+      .querySelector('button[aria-label="Скачать файл"]')
+      .click();
     await fixture.whenStable();
 
     expect(fixture.componentInstance.exports).toEqual([true]);
@@ -73,7 +81,7 @@ describe('PaymentsFileButtonsComponent', () => {
 
   it('displays the supplied upload state and enables buttons after it finishes', async () => {
     const fixture = TestBed.createComponent(PaymentsFileButtonsComponent);
-    fixture.componentRef.setInput('uploadState', ClrLoadingState.LOADING);
+    fixture.componentRef.setInput('uploadState', LoadingButtonState.LOADING);
     await fixture.whenStable();
 
     const buttons: HTMLButtonElement[] = Array.from(
@@ -82,7 +90,7 @@ describe('PaymentsFileButtonsComponent', () => {
     expect(buttons.every((button) => button.disabled)).toBe(true);
     expect(fixture.nativeElement.querySelector('.spinner')).toBeTruthy();
 
-    fixture.componentRef.setInput('uploadState', ClrLoadingState.DEFAULT);
+    fixture.componentRef.setInput('uploadState', LoadingButtonState.DEFAULT);
     await fixture.whenStable();
     expect(buttons.every((button) => !button.disabled)).toBe(true);
     expect(fixture.nativeElement.querySelector('.spinner')).toBeNull();

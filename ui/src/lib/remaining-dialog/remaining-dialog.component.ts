@@ -1,3 +1,4 @@
+import { LoadingButtonState } from '../loading-button/loading-button.component';
 import { CurrencyPipe, DatePipe, formatDate } from '@angular/common';
 import type { OnInit } from '@angular/core';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
@@ -12,12 +13,7 @@ import {
 import { SIDE_PANEL_DATA } from '../side-panel/side-panel-config';
 import { SidePanelRef } from '../side-panel/side-panel-ref';
 import { SidePanelFrameComponent } from '../side-panel/side-panel-frame';
-import {
-  ClrCommonFormsModule,
-  ClrIcon,
-  ClrLoadingState,
-  ClrModalModule,
-} from '@clr/angular';
+import { ClrCommonFormsModule, ClrIcon, ClrModalModule } from '@clr/angular';
 import { ClarityIcons, timesIcon } from '@clr/angular/icon';
 import type { Remaining } from '@sotbi/models';
 import { NativeDateValueAccessorDirective } from '../native-date/native-date.directive';
@@ -63,9 +59,9 @@ export class RemainingDialogComponent implements OnInit {
   private readonly formBuilder = inject(UntypedFormBuilder);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly loadingState = ClrLoadingState.LOADING;
-  protected readonly uploadBtnState = signal<ClrLoadingState>(
-    ClrLoadingState.DEFAULT,
+  protected readonly loadingState = LoadingButtonState.LOADING;
+  protected readonly uploadBtnState = signal<LoadingButtonState>(
+    LoadingButtonState.DEFAULT,
   );
   protected fg!: FormGroup;
   protected readonly data = signal<Remaining>({} as Remaining);
@@ -77,7 +73,7 @@ export class RemainingDialogComponent implements OnInit {
   public ngOnInit(): void {
     this.dialogRef.setState({
       dirty: () => !!this.fg?.dirty,
-      blocked: () => this.uploadBtnState() === ClrLoadingState.LOADING,
+      blocked: () => this.uploadBtnState() === LoadingButtonState.LOADING,
     });
     this.caption = this.dialogData.caption;
     this.isEdit = this.dialogData.isEdit;
@@ -102,7 +98,7 @@ export class RemainingDialogComponent implements OnInit {
 
   public onUpload(fg: FormGroup): Subscription | undefined {
     if (!this.dialogData.isEdit || !fg.valid || this.dialogRef.blocked) return;
-    this.uploadBtnState.set(ClrLoadingState.LOADING);
+    this.uploadBtnState.set(LoadingButtonState.LOADING);
     const formData = new FormData();
     formData.append('account', fg.controls['account'].value);
     formData.append(
@@ -134,7 +130,7 @@ export class RemainingDialogComponent implements OnInit {
               err.message ||
               'Не удалось загрузить выписку',
           ]);
-          this.uploadBtnState.set(ClrLoadingState.ERROR);
+          this.uploadBtnState.set(LoadingButtonState.ERROR);
         },
       });
   }
