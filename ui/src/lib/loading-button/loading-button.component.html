@@ -1,0 +1,14 @@
+<span [class.loading-spinner-enter]="state() === 1">
+  @if (state() === 1) {
+    <span class="spinner spinner-inline loading-spinner"></span>
+  }
+  @if (state() === 2) {
+    <span class="spinner spinner-inline spinner-check loading-success"></span>
+  }
+  <span
+    class="clr-loading-btn-content"
+    [class.loading-content-enter]="hasTransitioned()"
+    [hidden]="state() !== 0"
+    ><ng-content
+  /></span>
+</span>

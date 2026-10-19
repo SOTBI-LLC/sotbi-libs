@@ -13,17 +13,20 @@ import { SIDE_PANEL_DATA } from '../side-panel/side-panel-config';
 import { SidePanelRef } from '../side-panel/side-panel-ref';
 import { SidePanelFrameComponent } from '../side-panel/side-panel-frame';
 import {
-  ClrAlertModule,
   ClrCommonFormsModule,
   ClrIcon,
   ClrLoadingState,
   ClrModalModule,
 } from '@clr/angular';
+import { ClarityIcons, timesIcon } from '@clr/angular/icon';
 import type { Remaining } from '@sotbi/models';
 import { NativeDateValueAccessorDirective } from '../native-date/native-date.directive';
 import type { FileSystemFileEntry, NgxFileDropEntry } from 'ngx-file-drop';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import type { Observable, Subscription } from 'rxjs';
+
+// Раньше эта иконка регистрировалась конструктором ClrAlertModule.
+ClarityIcons.addIcons(timesIcon);
 
 export type RemainingDialogData = {
   row: Remaining;
@@ -43,7 +46,6 @@ export type RemainingDialogData = {
   imports: [
     ClrModalModule,
     SidePanelFrameComponent,
-    ClrAlertModule,
     ClrCommonFormsModule,
     FormsModule,
     ReactiveFormsModule,
@@ -125,8 +127,13 @@ export class RemainingDialogComponent implements OnInit {
         },
         error: (err) => {
           console.error(err);
-          this.alerts.update((alerts) => [...alerts, err.error?.Message ||
-            (typeof err.error === 'string' && err.error) || err.message || 'Не удалось загрузить выписку']);
+          this.alerts.update((alerts) => [
+            ...alerts,
+            err.error?.Message ||
+              (typeof err.error === 'string' && err.error) ||
+              err.message ||
+              'Не удалось загрузить выписку',
+          ]);
           this.uploadBtnState.set(ClrLoadingState.ERROR);
         },
       });

@@ -1,7 +1,7 @@
 <section class="custom-progress-bar">
-  @if (showProgress() && progress()) {
+  @if (showProgress() && progress(); as currentProgress) {
     <ul class="custom-progress-bar__list">
-      @for (state of progress()?.status; track $index) {
+      @for (state of currentProgress.status; track $index) {
         <li
           class="custom-progress-bar__item"
           [class.custom-progress-bar__item--success]="state > 0"
@@ -10,17 +10,26 @@
       }
       <p
         class="custom-progress-bar__list-progress-value"
-        [class.custom-progress-bar__list-progress-value--less50]="progress()?.value < 50"
-        [class.custom-progress-bar__list-progress-value--great50]="progress()?.value >= 50"
-        [class.custom-progress-bar__list-progress-value--100]="progress()?.value === 100"
+        [class.custom-progress-bar__list-progress-value--less50]="
+          currentProgress.value < 50
+        "
+        [class.custom-progress-bar__list-progress-value--great50]="
+          currentProgress.value >= 50
+        "
+        [class.custom-progress-bar__list-progress-value--100]="
+          currentProgress.value === 100
+        "
       >
-        {{ progress()?.value }}%
+        {{ currentProgress.value }}%
       </p>
     </ul>
   } @else {
     <div
       class="progress flash labeled"
-      [class]="{ danger: progress()?.value < 50, success: progress()?.value === 100 }"
+      [class]="{
+        danger: !!progress() && progress()!.value < 50,
+        success: progress()?.value === 100,
+      }"
     >
       <progress [value]="progress()?.value" max="100"></progress>
       <span>{{ progress()?.value }}%</span>

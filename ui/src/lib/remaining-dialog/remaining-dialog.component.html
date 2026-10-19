@@ -6,14 +6,21 @@
   </div>
   <div class="modal-body" panelBody>
     @for (alert of alerts(); track alert) {
-      <clr-alert
-        clrAlertType="alert-warning"
-        (clrAlertClosedChange)="onCloseAlert(alert)"
-      >
-        <div clr-alert-item class="alert-item">
-          <span class="alert-text"> {{ alert }} </span>
+      <div class="alert alert-info" #nativeAlert>
+        <div class="alert-items">
+          <div class="alert-item">
+            <span class="alert-text"> {{ alert }} </span>
+          </div>
         </div>
-      </clr-alert>
+        <button
+          type="button"
+          class="close"
+          aria-label="Close alert"
+          (click)="nativeAlert.style.display = 'none'; onCloseAlert(alert)"
+        >
+          <cds-icon shape="times"></cds-icon>
+        </button>
+      </div>
     }
     @if (!isEdit) {
       <div class="preview-mode p-4">
@@ -216,6 +223,5 @@
         Загрузить
       </button>
     }
-
   </div>
 </sotbi-side-panel>

@@ -69,3 +69,8 @@ export {
   SidePanelConfig,
   type SidePanelSize,
 } from './lib/side-panel/side-panel-config';
+
+export {
+  LoadingButtonComponent,
+  LoadingButtonState,
+} from './lib/loading-button/loading-button.component';
