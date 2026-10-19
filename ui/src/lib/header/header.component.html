@@ -2,21 +2,32 @@
   <clr-header>
     <div class="branding">
       <a [routerLink]="brand().homeLink" class="nav-link">
-        <img class="logo" [src]="brand().logoUrl" title="logo" alt="" width="40" height="40" /><span
-          class="title"
-          >{{ brand().title }}</span
-        >
+        <img
+          class="logo"
+          [src]="brand().logoUrl"
+          title="logo"
+          alt=""
+          width="40"
+          height="40"
+        /><span class="title">{{ brand().title }}</span>
       </a>
     </div>
     <div class="header-nav" [clr-nav-level]="1">
       @for (item of items(); track item.routerLink) {
-        <a [routerLink]="item.routerLink" routerLinkActive="active" class="nav-link nav-text">{{
-          item.label
-        }}</a>
+        <a
+          [routerLink]="item.routerLink"
+          routerLinkActive="active"
+          class="nav-link nav-text"
+          >{{ item.label }}</a
+        >
       }
     </div>
     @if (showSearch()) {
-      <form #searchForm="ngForm" class="search" (ngSubmit)="submitSearch(searchinput.value)">
+      <form
+        #searchForm="ngForm"
+        class="search"
+        (ngSubmit)="submitSearch(searchinput.value)"
+      >
         <label for="searchinput">
           <input
             class="focus-item"
@@ -32,28 +43,89 @@
       </form>
     }
     <div class="header-actions">
-      <clr-dropdown class="w-45r pl-8px">
+      <div
+        class="dropdown w-45r pl-8px"
+        [class.open]="dropdownTrigger0.isOpen()"
+      >
         <button
-          class="nav-icon w-100"
+          class="dropdown-toggle nav-icon w-100"
           style="height: 100%"
-          clrDropdownTrigger
+          #dropdownTrigger0="cdkMenuTriggerFor"
+          [cdkMenuTriggerFor]="dropdownMenu0"
+          [cdkMenuPosition]="[
+            {
+              originX: 'end',
+              originY: 'bottom',
+              overlayX: 'end',
+              overlayY: 'top',
+              offsetY: 2,
+            },
+            {
+              originX: 'start',
+              originY: 'bottom',
+              overlayX: 'start',
+              overlayY: 'top',
+              offsetY: 2,
+            },
+            {
+              originX: 'end',
+              originY: 'top',
+              overlayX: 'end',
+              overlayY: 'bottom',
+              offsetY: -2,
+            },
+            {
+              originX: 'start',
+              originY: 'top',
+              overlayX: 'start',
+              overlayY: 'bottom',
+              offsetY: -2,
+            },
+          ]"
           aria-label="toggle settings menu"
         >
-          <img title="avatar" [src]="user()?.avatarUrl" [alt]="user()?.name" class="avatar" />
+          <img
+            title="avatar"
+            [src]="user()?.avatarUrl"
+            [alt]="user()?.name"
+            class="avatar"
+          />
           <clr-icon shape="angle" direction="down"></clr-icon>
         </button>
-        <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
-          <!-- Заголовок меню Clarity, не связанный с полем формы -->
-          <!-- eslint-disable-next-line @angular-eslint/template/label-has-associated-control -->
-          <label class="dropdown-header" aria-hidden="true">{{ user()?.name }}</label>
-          @for (item of accountItems(); track item.routerLink) {
-            <a [routerLink]="item.routerLink" clrDropdownItem>{{ item.label }}</a>
-          }
-          <button type="button" title="logout" clrDropdownItem (click)="logoutRequested.emit()">
-            Выход
-          </button>
-        </clr-dropdown-menu>
-      </clr-dropdown>
+        <ng-template #dropdownMenu0
+          ><div class="dropdown open">
+            <div
+              cdkMenu
+              class="dropdown-menu"
+              style="position: static; display: block; margin: 0"
+            >
+              <!-- Заголовок меню Clarity, не связанный с полем формы -->
+              <!-- eslint-disable-next-line @angular-eslint/template/label-has-associated-control -->
+              <label class="dropdown-header" aria-hidden="true">{{
+                user()?.name
+              }}</label>
+              @for (item of accountItems(); track item.routerLink) {
+                <a
+                  [routerLink]="item.routerLink"
+                  cdkMenuItem
+                  libAccountMenuLinkSpace
+                  class="dropdown-item"
+                  >{{ item.label }}</a
+                >
+              }
+              <button
+                type="button"
+                title="logout"
+                cdkMenuItem
+                class="dropdown-item"
+                (cdkMenuItemTriggered)="logoutRequested.emit()"
+              >
+                Выход
+              </button>
+            </div>
+          </div></ng-template
+        >
+      </div>
     </div>
   </clr-header>
 }

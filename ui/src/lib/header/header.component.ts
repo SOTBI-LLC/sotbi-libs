@@ -1,7 +1,11 @@
+import { CdkMenuModule } from '@angular/cdk/menu';
 import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  Directive,
+  ElementRef,
+  Renderer2,
   inject,
   input,
   output,
@@ -10,7 +14,7 @@ import type { OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { ClarityModule, ClrNavigationModule } from '@clr/angular';
+import { ClrIcon, ClrNavigationModule } from '@clr/angular';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
@@ -30,9 +34,46 @@ export interface HeaderLink {
   routerLink: string;
 }
 
+// CDK closes links on Space before a bubbling Angular key listener can run.
+// Synthesize the native click in capture phase so RouterLink handles it once.
+@Directive({ selector: '[libAccountMenuLinkSpace]' })
+class AccountMenuLinkSpaceDirective {
+  constructor() {
+    const element =
+      inject<ElementRef<HTMLAnchorElement>>(ElementRef).nativeElement;
+    const unlisten = inject(Renderer2).listen(
+      element,
+      'keydown',
+      (event: KeyboardEvent) => {
+        if (
+          event.key !== ' ' ||
+          event.altKey ||
+          event.ctrlKey ||
+          event.metaKey ||
+          event.shiftKey
+        )
+          return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        element.click();
+      },
+      { capture: true },
+    );
+    inject(DestroyRef).onDestroy(unlisten);
+  }
+}
+
 @Component({
   selector: 'sotbi-header',
-  imports: [ClarityModule, ClrNavigationModule, RouterLink, RouterLinkActive, FormsModule],
+  imports: [
+    AccountMenuLinkSpaceDirective,
+    CdkMenuModule,
+    ClrIcon,
+    ClrNavigationModule,
+    RouterLink,
+    RouterLinkActive,
+    FormsModule,
+  ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

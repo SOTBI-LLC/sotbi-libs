@@ -82,7 +82,9 @@ class HeaderHostComponent {
 }
 
 const menuLinkElements = (): HTMLAnchorElement[] =>
-  Array.from(document.querySelectorAll('clr-dropdown-menu a')) as HTMLAnchorElement[];
+  Array.from(
+    document.querySelectorAll('[role="menu"] a'),
+  ) as HTMLAnchorElement[];
 
 describe('HeaderComponent', () => {
   let fixture: ComponentFixture<HeaderHostComponent>;
@@ -115,7 +117,10 @@ describe('HeaderComponent', () => {
 
   it('creates', async () => {
     await createHost();
-    expect(fixture.debugElement.query(By.directive(HeaderComponent)).componentInstance).toBeTruthy();
+    expect(
+      fixture.debugElement.query(By.directive(HeaderComponent))
+        .componentInstance,
+    ).toBeTruthy();
   });
 
   it('renders the passed brand, user, avatar and links in order', async () => {
@@ -127,7 +132,9 @@ describe('HeaderComponent', () => {
     const logo = el.querySelector('.branding img')!;
     expect(logo.getAttribute('src')).toBe('logo.svg');
 
-    const navLinks = Array.from(el.querySelectorAll('.header-nav a')) as HTMLAnchorElement[];
+    const navLinks = Array.from(
+      el.querySelectorAll('.header-nav a'),
+    ) as HTMLAnchorElement[];
     expect(navLinks.map((link) => link.textContent!.trim())).toEqual([
       'Трудозатраты',
       'Справочники',
@@ -155,11 +162,40 @@ describe('HeaderComponent', () => {
     const menuItems = [
       ...menuLinkElements(),
       ...(Array.from(
-        document.querySelectorAll('clr-dropdown-menu button'),
+        document.querySelectorAll('[role="menu"] button'),
       ) as HTMLButtonElement[]),
     ];
-    expect(menuItems.map((item) => item.textContent!.trim())).toEqual(['Админка', 'Выход']);
+    expect(menuItems.map((item) => item.textContent!.trim())).toEqual([
+      'Админка',
+      'Выход',
+    ]);
     expect(menuLinkElements()[0]!.getAttribute('href')).toBe('/admin');
+  });
+
+  it('navigates once with Space on an account menu link and closes the menu', async () => {
+    await createHost();
+    const router = TestBed.inject(Router);
+    const navigate = jest.spyOn(router, 'navigateByUrl');
+    const trigger = fixture.nativeElement.querySelector(
+      'button[aria-label="toggle settings menu"]',
+    ) as HTMLButtonElement;
+    trigger.click();
+    await fixture.whenStable();
+    const link = menuLinkElements()[0]!;
+    link.focus();
+    link.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: ' ',
+        code: 'Space',
+        keyCode: 32,
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
+    await fixture.whenStable();
+    expect(navigate).toHaveBeenCalledTimes(1);
+    expect(router.url).toBe('/admin');
+    expect(document.querySelector('[role="menu"]')).toBeNull();
   });
 
   it('renders the user name in the menu header', async () => {
@@ -192,7 +228,7 @@ describe('HeaderComponent', () => {
     await fixture.whenStable();
 
     const logoutButton = Array.from(
-      document.querySelectorAll('clr-dropdown-menu button[title="logout"]'),
+      document.querySelectorAll('[role="menu"] button[title="logout"]'),
     ) as HTMLButtonElement[];
     expect(logoutButton.length).toBe(1);
     logoutButton[0]!.click();
@@ -220,7 +256,6 @@ describe('HeaderComponent', () => {
 describe('HeaderComponent search', () => {
   let fixture: ComponentFixture<HeaderHostComponent>;
   let host: HeaderHostComponent;
-
 
   const searchInputElement = (): HTMLInputElement =>
     fixture.nativeElement.querySelector('#searchinput');
