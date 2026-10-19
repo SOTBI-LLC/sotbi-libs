@@ -1,7 +1,8 @@
-import type { OnInit} from '@angular/core';
+import { LoadingButtonComponent } from '../loading-button/loading-button.component';
+import type { OnInit } from '@angular/core';
 import { Component, Input, LOCALE_ID, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ClrIcon, ClrLoadingButtonModule, ClrLoadingModule } from '@clr/angular';
+import { ClrIcon } from '@clr/angular';
 import type { Interval } from '@sotbi/models';
 import { FilterBlockComponent } from '../filter-block';
 import { NativeDateValueAccessorDirective } from '../native-date';
@@ -86,11 +87,10 @@ const ruRangeFormatter = ruDateFormatter as RangeFormatter;
   templateUrl: './range-date.component.html',
   styleUrls: ['./range-date.component.scss'],
   imports: [
+    LoadingButtonComponent,
     FilterBlockComponent,
     FormsModule,
     ClrIcon,
-    ClrLoadingButtonModule,
-    ClrLoadingModule,
     NativeDateValueAccessorDirective,
   ],
   providers: [{ provide: LOCALE_ID, useValue: 'ru' }],
@@ -142,7 +142,9 @@ export class RangeDateComponent implements OnInit {
         case PeriodsType.CURR_WEEK:
           this.start = new Date();
           this.start.setDate(
-            this.start.getDate() - this.start.getDay() + (this.start.getDay() === 0 ? -6 : 1),
+            this.start.getDate() -
+              this.start.getDay() +
+              (this.start.getDay() === 0 ? -6 : 1),
           );
           this.end = new Date();
           break;

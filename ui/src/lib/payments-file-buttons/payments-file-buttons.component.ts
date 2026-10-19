@@ -1,9 +1,15 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { ClarityModule, ClrLoadingState } from '@clr/angular';
+import { LoadingButtonComponent } from '../loading-button/loading-button.component';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+} from '@angular/core';
+import { ClrIcon, ClrLoadingState } from '@clr/angular';
 
 @Component({
   selector: 'pauments-file-buttons',
-  imports: [ClarityModule],
+  imports: [LoadingButtonComponent, ClrIcon],
   templateUrl: './payments-file-buttons.component.html',
   styleUrl: './payments-file-buttons.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

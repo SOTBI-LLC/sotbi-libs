@@ -1,6 +1,7 @@
+import { LoadingButtonComponent } from '@sotbi/ui';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ClrIcon, ClrLoadingButtonModule, ClrLoadingModule, ClrLoadingState } from '@clr/angular';
+import { ClrIcon, ClrLoadingState } from '@clr/angular';
 import type { ICellEditorAngularComp } from 'ag-grid-angular';
 import type { GridApi, ICellEditorParams } from 'ag-grid-community';
 import type { Observable } from 'rxjs';
@@ -24,7 +25,7 @@ export interface DropFileParams extends ICellEditorParams<IDropFileResult> {
       ></clr-icon>
       <button
         [style.cursor]="value()?.original_file_name ? '' : 'default'"
-        [clrLoading]="uploadBtnState()"
+        [sotbiLoading]="uploadBtnState()"
         (click)="download(value())"
         class="btn btn-link link-upload btn-upload"
         style="text-overflow: ellipsis;
@@ -44,13 +45,15 @@ export interface DropFileParams extends ICellEditorParams<IDropFileResult> {
     </div>
   `,
   styles: [],
-  imports: [ClrIcon, ClrLoadingButtonModule, ClrLoadingModule],
+  imports: [LoadingButtonComponent, ClrIcon],
 })
 export class DropFileComponent implements ICellEditorAngularComp {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly value = signal<IDropFileResult>({});
-  protected readonly uploadBtnState = signal<ClrLoadingState>(ClrLoadingState.DEFAULT);
+  protected readonly uploadBtnState = signal<ClrLoadingState>(
+    ClrLoadingState.DEFAULT,
+  );
   private api!: GridApi;
   private uploadFiles!: DropFileParams['uploadFiles'];
   private downloadFile!: DropFileParams['downloadFile'];
