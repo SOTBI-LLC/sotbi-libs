@@ -16,12 +16,12 @@
   "peerDependencies": {
     "@sotbi/models": "0.2.0",
     "@sotbi/utils": "0.2.0",
-    "@angular/core": "^22.1.7",
-    "@angular/forms": "^22.1.7",
-    "@angular/animations": "^22.1.7",
-    "@angular/common": "^22.1.7",
-    "@angular/platform-browser": "^22.1.7",
-    "@angular/router": "^22.1.7",
+    "@angular/core": "^22.2.3",
+    "@angular/forms": "^22.2.3",
+    "@angular/animations": "^22.2.3",
+    "@angular/common": "^22.2.3",
+    "@angular/platform-browser": "^22.2.3",
+    "@angular/router": "^22.2.3",
     "@clr/angular": "^18.3.0",
     "ngx-file-drop": "^16.0.0",
     "rxjs": "~7.8.2",
@@ -30,8 +30,8 @@
     "jest": "^30.3.0",
     "jest-preset-angular": "^17.0.0",
     "storybook": "^10.4.1",
-    "@angular/cdk": "^22.1.7",
-    "@angular/aria": "^22.1.7"
+    "@angular/cdk": "^22.2.3",
+    "@angular/aria": "^22.2.3"
   },
   "sideEffects": [
     "*.css"
