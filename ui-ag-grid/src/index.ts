@@ -74,6 +74,10 @@ export {
   AggregationStatusBarComponent,
   SumHourStatusBarComponent,
 } from './lib/status-bar.component';
+export {
+  MoneySumStatusBarComponent,
+  MoneySumStatusPanelParams,
+} from './lib/money-sum-status-bar.component';
 export { TextareaEditor } from './lib/textarea-editor.component';
 export {
   TradingCodeFilterComponent,
