@@ -81,7 +81,9 @@ describe('RemainingDialogComponent', () => {
     );
     dialog.afterClosed().subscribe((value) => closed.push(value));
     await fixture.whenStable();
-    const container = document.querySelector('sotbi-side-panel')!;
+    const container = document.querySelector(
+      '.sotbi-modal-pane .modal-dialog',
+    )!;
     const start = container.querySelector(
       '[formControlName="startDate"]',
     ) as HTMLInputElement;
@@ -127,57 +129,69 @@ describe('RemainingDialogComponent', () => {
   });
 
   it.each([
-    { failure: { error: 'Выписка не распознана' }, message: 'Выписка не распознана' },
+    {
+      failure: { error: 'Выписка не распознана' },
+      message: 'Выписка не распознана',
+    },
     { failure: new Error('Нет соединения'), message: 'Нет соединения' },
     { failure: { error: null }, message: 'Не удалось загрузить выписку' },
-  ])('displays a loader error and keeps the dialog open: $message', async ({ failure, message }) => {
-    jest.spyOn(console, 'error').mockImplementation(() => undefined);
-    const fixture = TestBed.createComponent(DialogHost);
-    const result = new Subject<Remaining>();
-    const closed: unknown[] = [];
-    const dialog = TestBed.inject(SidePanelService).open(
-      RemainingDialogComponent,
-      {
-        data: {
-          row: {
-            account: '40702810900000000001',
-            start_date: new Date(2026, 0, 1),
-            end_date: new Date(2026, 0, 31),
-          } as Remaining,
-          caption: 'Загрузить PDF файл',
-          isEdit: true,
-          uploadStatement: () => result,
-        } satisfies RemainingDialogData,
-      },
-    );
-    dialog.afterClosed().subscribe((value) => closed.push(value));
-    await fixture.whenStable();
-    const container = document.querySelector('sotbi-side-panel')!;
-    const input = container.querySelector(
-      'input[type="file"]',
-    ) as HTMLInputElement;
-    Object.defineProperty(input, 'files', {
-      configurable: true,
-      value: [new File(['PDF'], 'statement.pdf', { type: 'application/pdf' })],
-    });
-    input.dispatchEvent(new Event('change', { bubbles: true }));
-    await waitFor(() =>
-      expect(
-        (
-          container.querySelector('.btn-primary') as HTMLButtonElement
-        ).hasAttribute('disabled'),
-      ).toBe(false),
-    );
-    (container.querySelector('.btn-primary') as HTMLButtonElement).click();
-    result.error(failure);
-    await fixture.whenStable();
+  ])(
+    'displays a loader error and keeps the dialog open: $message',
+    async ({ failure, message }) => {
+      jest.spyOn(console, 'error').mockImplementation(() => undefined);
+      const fixture = TestBed.createComponent(DialogHost);
+      const result = new Subject<Remaining>();
+      const closed: unknown[] = [];
+      const dialog = TestBed.inject(SidePanelService).open(
+        RemainingDialogComponent,
+        {
+          data: {
+            row: {
+              account: '40702810900000000001',
+              start_date: new Date(2026, 0, 1),
+              end_date: new Date(2026, 0, 31),
+            } as Remaining,
+            caption: 'Загрузить PDF файл',
+            isEdit: true,
+            uploadStatement: () => result,
+          } satisfies RemainingDialogData,
+        },
+      );
+      dialog.afterClosed().subscribe((value) => closed.push(value));
+      await fixture.whenStable();
+      const container = document.querySelector(
+        '.sotbi-modal-pane .modal-dialog',
+      )!;
+      const input = container.querySelector(
+        'input[type="file"]',
+      ) as HTMLInputElement;
+      Object.defineProperty(input, 'files', {
+        configurable: true,
+        value: [
+          new File(['PDF'], 'statement.pdf', { type: 'application/pdf' }),
+        ],
+      });
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+      await waitFor(() =>
+        expect(
+          (
+            container.querySelector('.btn-primary') as HTMLButtonElement
+          ).hasAttribute('disabled'),
+        ).toBe(false),
+      );
+      (container.querySelector('.btn-primary') as HTMLButtonElement).click();
+      result.error(failure);
+      await fixture.whenStable();
 
-    expect(
-      (container.querySelector('.alert-text') as HTMLElement).textContent,
-    ).toContain(message);
-    expect(closed).toEqual([]);
-    expect(document.querySelector('sotbi-side-panel')).toBe(container);
-  });
+      expect(
+        (container.querySelector('.alert-text') as HTMLElement).textContent,
+      ).toContain(message);
+      expect(closed).toEqual([]);
+      expect(document.querySelector('.sotbi-modal-pane .modal-dialog')).toBe(
+        container,
+      );
+    },
+  );
 
   it('closes without an upload result on cancel in edit mode', async () => {
     const fixture = TestBed.createComponent(DialogHost);
@@ -200,7 +214,9 @@ describe('RemainingDialogComponent', () => {
     );
     dialog.afterClosed().subscribe((value) => closed.push(value));
     await fixture.whenStable();
-    const container = document.querySelector('sotbi-side-panel')!;
+    const container = document.querySelector(
+      '.sotbi-modal-pane .modal-dialog',
+    )!;
 
     (
       container.querySelector('button[aria-label="Close"]') as HTMLButtonElement
@@ -236,7 +252,9 @@ describe('RemainingDialogComponent', () => {
     );
     dialog.afterClosed().subscribe((value) => closed.push(value));
     await fixture.whenStable();
-    const container = document.querySelector('sotbi-side-panel')!;
+    const container = document.querySelector(
+      '.sotbi-modal-pane .modal-dialog',
+    )!;
     const values = Array.from(
       container.querySelectorAll('.group-ctrl__preview-text'),
       (element) => element.textContent!.trim().replace(/\s/g, ' '),
@@ -274,7 +292,9 @@ describe('RemainingDialogComponent', () => {
       } satisfies RemainingDialogData,
     });
     await fixture.whenStable();
-    const container = document.querySelector('sotbi-side-panel')!;
+    const container = document.querySelector(
+      '.sotbi-modal-pane .modal-dialog',
+    )!;
     expect(
       (container.querySelector('a') as HTMLAnchorElement).getAttribute('href'),
     ).toBe('/custom/statement/7');
@@ -295,7 +315,9 @@ describe('RemainingDialogComponent', () => {
       } satisfies RemainingDialogData,
     });
     await fixture.whenStable();
-    const container = document.querySelector('sotbi-side-panel')!;
+    const container = document.querySelector(
+      '.sotbi-modal-pane .modal-dialog',
+    )!;
     const input = container.querySelector(
       'input[type="file"]',
     ) as HTMLInputElement;

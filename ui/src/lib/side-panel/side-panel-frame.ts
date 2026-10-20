@@ -4,7 +4,6 @@ import {
   Component,
   computed,
   DestroyRef,
-  ElementRef,
   inject,
   input,
   output,
@@ -12,7 +11,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ClrModalModule, ClrSidePanelModule } from '@clr/angular';
+import { NativeModalComponent } from '../native-modal/native-modal.component';
 import { SIDE_PANEL_CONFIG, type SidePanelSize } from './side-panel-config';
 import { SidePanelRef } from './side-panel-ref';
 import { restorePanelFocus } from './side-panel-focus';
@@ -20,12 +19,8 @@ import { restorePanelFocus } from './side-panel-focus';
 /** Shared declarative shell, also used by dynamically opened panel content. */
 @Component({
   selector: 'sotbi-side-panel',
-  host: {
-    '(document:keydown.escape)': 'onEscape($event)',
-    '(mousedown)': 'preserveBackdropFocus($event)',
-  },
   encapsulation: ViewEncapsulation.None,
-  imports: [ClrSidePanelModule, ClrModalModule, NgTemplateOutlet],
+  imports: [NativeModalComponent, NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ng-template #title><ng-content select="[panelTitle]" /></ng-template>
@@ -34,14 +29,14 @@ import { restorePanelFocus } from './side-panel-focus';
     /></ng-template>
     <ng-template #actions><ng-content select="[panelActions]" /></ng-template>
     @if (presentation() === 'modal') {
-      <clr-modal
+      <sotbi-modal
         class="sotbi-panel"
-        [clrModalOpen]="opened()"
-        [clrModalStaticBackdrop]="true"
-        [clrModalPreventClose]="true"
-        [clrModalClosable]="!blockedState()"
-        clrModalCloseButtonAriaLabel="Закрыть"
-        (clrModalAlternateClose)="requestClose()"
+        [open]="opened()"
+        [staticBackdrop]="true"
+        [preventClose]="true"
+        [closable]="!blockedState()"
+        closeButtonLabel="Закрыть"
+        (alternateClose)="requestClose()"
       >
         <div class="modal-title">
           <ng-container *ngTemplateOutlet="title" />
@@ -52,35 +47,36 @@ import { restorePanelFocus } from './side-panel-focus';
         <div class="modal-footer">
           <ng-container *ngTemplateOutlet="actions" />
         </div>
-      </clr-modal>
+      </sotbi-modal>
     } @else {
-      <clr-side-panel
+      <sotbi-modal
+        presentation="panel"
         class="sotbi-panel"
-        [clrSidePanelOpen]="opened()"
-        [clrSidePanelSize]="size()"
-        [clrSidePanelStaticBackdrop]="true"
-        [clrSidePanelPreventClose]="true"
-        [clrSidePanelClosable]="!blockedState()"
-        clrSidePanelCloseButtonAriaLabel="Закрыть"
-        (clrSidePanelAlternateClose)="requestClose()"
+        [open]="opened()"
+        [size]="size()"
+        [staticBackdrop]="true"
+        [preventClose]="true"
+        [closable]="!blockedState()"
+        closeButtonLabel="Закрыть"
+        (alternateClose)="requestClose()"
       >
-        <div class="side-panel-title">
+        <div class="modal-title">
           <ng-container *ngTemplateOutlet="title" />
         </div>
-        <div class="side-panel-body" [attr.aria-busy]="blockedState()">
+        <div class="modal-body" [attr.aria-busy]="blockedState()">
           <ng-container *ngTemplateOutlet="body" />
         </div>
-        <div class="side-panel-footer">
+        <div class="modal-footer">
           <ng-container *ngTemplateOutlet="actions" />
         </div>
-      </clr-side-panel>
+      </sotbi-modal>
     }
-    <clr-modal
-      [clrModalOpen]="confirmationOpen()"
-      [clrModalStaticBackdrop]="true"
-      [clrModalPreventClose]="true"
-      (clrModalAlternateClose)="answer(false)"
-      clrModalCloseButtonAriaLabel="Продолжить редактирование"
+    <sotbi-modal
+      [open]="confirmationOpen()"
+      [staticBackdrop]="true"
+      [preventClose]="true"
+      (alternateClose)="answer(false)"
+      closeButtonLabel="Продолжить редактирование"
     >
       <h3 class="modal-title">Закрыть без сохранения?</h3>
       <div class="modal-body">Несохранённые изменения будут потеряны.</div>
@@ -92,7 +88,7 @@ import { restorePanelFocus } from './side-panel-focus';
           Не сохранять
         </button>
       </div>
-    </clr-modal>
+    </sotbi-modal>
   `,
   styles: [
     `
@@ -106,11 +102,24 @@ import { restorePanelFocus } from './side-panel-focus';
         min-height: 0;
         overflow: auto;
       }
+      .sotbi-panel .modal-body .modal-body {
+        margin: 0;
+        padding: 0;
+      }
       .sotbi-panel .side-panel-footer {
         display: contents;
       }
       .sotbi-panel .modal-footer {
         flex-wrap: wrap;
+      }
+      .sotbi-panel .modal-footer > div[panelActions] {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 0.3rem;
+      }
+      .sotbi-panel .modal-footer > div[panelActions] > .btn {
+        margin: 0;
       }
       @media (max-width: 767px) {
         .sotbi-panel.side-panel .modal-dialog {
@@ -123,7 +132,6 @@ import { restorePanelFocus } from './side-panel-focus';
 })
 export class SidePanelFrameComponent {
   private readonly document = inject(DOCUMENT);
-  private readonly hostElement = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly supplied = inject(SidePanelRef, { optional: true });
   private readonly config = inject(SIDE_PANEL_CONFIG, { optional: true });
   public readonly interaction = this.supplied ?? new SidePanelRef();
@@ -138,15 +146,10 @@ export class SidePanelFrameComponent {
   public readonly cancelled = output<void>();
   protected readonly opened = signal(true);
   protected readonly confirmationOpen = signal(false);
-  private suppressEscapeKeyup = false;
-  private readonly escapeKeyup = (event: KeyboardEvent): void => {
-    if (event.key === 'Escape') this.onEscapeKeyup(event);
-  };
   private answerConfirmation?: (discard: boolean) => void;
 
   constructor() {
     const document = this.document;
-    document.addEventListener('keyup', this.escapeKeyup, true);
     const initiator = document.activeElement as HTMLElement | null;
     if (!this.supplied) {
       this.interaction.setState({
@@ -166,42 +169,10 @@ export class SidePanelFrameComponent {
       if (outcome.kind === 'cancelled') this.cancelled.emit();
     });
     inject(DestroyRef).onDestroy(() => {
-      document.removeEventListener('keyup', this.escapeKeyup, true);
       this.answer(false);
       if (!this.supplied)
         queueMicrotask(() => restorePanelFocus(document, initiator));
     });
-  }
-
-  protected preserveBackdropFocus(event: MouseEvent): void {
-    const target = event.target as HTMLElement | null;
-    if (target?.classList.contains('modal-backdrop')) event.preventDefault();
-  }
-
-  protected onEscape(event: Event): void {
-    const panels = this.document.querySelectorAll('sotbi-side-panel');
-    if (
-      this.presentation() !== 'panel' ||
-      panels.item(panels.length - 1) !== this.hostElement.nativeElement ||
-      this.confirmationOpen() ||
-      event.defaultPrevented ||
-      // CDK modal popovers, such as Clarity's datepicker, own the first Escape.
-      this.document.querySelector('.cdk-overlay-container [role="dialog"][aria-modal="true"]')
-    )
-      return;
-    // Clarity's side panel bypasses ModalStackService. Keep its Escape local,
-    // so the same event does not dismiss the discard modal just opened here.
-    event.preventDefault();
-    event.stopPropagation();
-    this.suppressEscapeKeyup = true;
-    this.requestClose();
-  }
-
-  protected onEscapeKeyup(event: Event): void {
-    if (!this.suppressEscapeKeyup) return;
-    this.suppressEscapeKeyup = false;
-    // Do not let the release of the opening Escape dismiss its confirmation.
-    event.stopPropagation();
   }
 
   public requestClose(): void {

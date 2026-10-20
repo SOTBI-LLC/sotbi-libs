@@ -16,9 +16,57 @@
             <span>{{ item.name }}</span>
           }
           @if (editable === item.id) {
-            <clr-input-container>
-              <input clrInput type="text" [(ngModel)]="item.name" style="min-width: 50rem" />
-            </clr-input-container>
+            <div
+              class="clr-form-control"
+              [class.clr-form-control-disabled]="b35Control1?.disabled"
+            >
+              <div
+                class="clr-control-container"
+                [class.clr-error]="b35Control1?.invalid && b35Control1?.touched"
+              >
+                <div class="clr-input-wrapper">
+                  <div class="clr-input-group">
+                    <input
+                      type="text"
+                      [(ngModel)]="item.name"
+                      style="min-width: 50rem"
+                      id="b35-simple-edit-1"
+                      #b35Control1="ngModel"
+                      class="clr-input"
+                      [attr.aria-invalid]="
+                        b35Control1?.invalid && b35Control1?.touched
+                          ? true
+                          : null
+                      "
+                      [attr.aria-describedby]="
+                        b35Control1?.invalid && b35Control1?.touched
+                          ? 'b35-simple-edit-1-error'
+                          : null
+                      "
+                    />
+                  </div>
+                </div>
+                @if (b35Control1?.invalid && b35Control1?.touched) {
+                  <div
+                    class="clr-subtext-wrapper error"
+                    id="b35-simple-edit-1-error"
+                  >
+                    <clr-icon
+                      class="clr-validate-icon"
+                      shape="exclamation-circle"
+                      aria-hidden="true"
+                    ></clr-icon
+                    ><span class="clr-subtext">
+                      @if (b35Control1?.hasError('required')) {
+                        Заполните обязательное поле
+                      } @else {
+                        Проверьте формат значения
+                      }
+                    </span>
+                  </div>
+                }
+              </div>
+            </div>
           }
         </td>
         <td height="46">
@@ -52,9 +100,55 @@
     }
     <tr>
       <td height="46">
-        <clr-input-container class="input-container-style">
-          <input [(ngModel)]="newName" class="wide" clrInput style="min-width: 50rem" type="text" />
-        </clr-input-container>
+        <div
+          class="input-container-style clr-form-control"
+          [class.clr-form-control-disabled]="b35Control2?.disabled"
+        >
+          <div
+            class="clr-control-container"
+            [class.clr-error]="b35Control2?.invalid && b35Control2?.touched"
+          >
+            <div class="clr-input-wrapper">
+              <div class="clr-input-group">
+                <input
+                  [(ngModel)]="newName"
+                  class="wide clr-input"
+                  style="min-width: 50rem"
+                  type="text"
+                  id="b35-simple-edit-2"
+                  #b35Control2="ngModel"
+                  [attr.aria-invalid]="
+                    b35Control2?.invalid && b35Control2?.touched ? true : null
+                  "
+                  [attr.aria-describedby]="
+                    b35Control2?.invalid && b35Control2?.touched
+                      ? 'b35-simple-edit-2-error'
+                      : null
+                  "
+                />
+              </div>
+            </div>
+            @if (b35Control2?.invalid && b35Control2?.touched) {
+              <div
+                class="clr-subtext-wrapper error"
+                id="b35-simple-edit-2-error"
+              >
+                <clr-icon
+                  class="clr-validate-icon"
+                  shape="exclamation-circle"
+                  aria-hidden="true"
+                ></clr-icon
+                ><span class="clr-subtext">
+                  @if (b35Control2?.hasError('required')) {
+                    Заполните обязательное поле
+                  } @else {
+                    Проверьте формат значения
+                  }
+                </span>
+              </div>
+            }
+          </div>
+        </div>
       </td>
       <td height="46">
         <button class="simple-edit__btn-action" title="Create" type="button">

@@ -1,3 +1,4 @@
+import { Dialog } from '@angular/cdk/dialog';
 import { Component, PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
@@ -18,6 +19,9 @@ import { SidePanelFrameComponent } from './side-panel-frame';
 class DraftForm {
   public cancelled = false;
 }
+
+@Component({ template: '<button>Calendar</button>' })
+class CalendarPopup {}
 
 describe('Side panel interaction', () => {
   beforeEach(() =>
@@ -49,7 +53,11 @@ describe('Side panel interaction', () => {
     const fixture = TestBed.createComponent(DraftForm);
     fixture.detectChanges();
     await fixture.whenStable();
-    const event = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+    const event = new KeyboardEvent('keydown', {
+      key: 'Escape',
+      bubbles: true,
+      cancelable: true,
+    });
     document.querySelector<HTMLInputElement>('input')!.dispatchEvent(event);
     expect(event.defaultPrevented).toBe(true);
     fixture.destroy();
@@ -58,20 +66,27 @@ describe('Side panel interaction', () => {
     const fixture = TestBed.createComponent(DraftForm);
     fixture.detectChanges();
     await fixture.whenStable();
-    const overlay = document.createElement('div');
-    overlay.className = 'cdk-overlay-container';
-    overlay.innerHTML = '<div role="dialog" aria-modal="true">Calendar</div>';
-    document.body.appendChild(overlay);
-    const event = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+    const popup = TestBed.inject(Dialog).open(CalendarPopup, {
+      disableAnimations: true,
+    });
+    await fixture.whenStable();
+    const event = new KeyboardEvent('keydown', {
+      key: 'Escape',
+      keyCode: 27,
+      bubbles: true,
+      cancelable: true,
+    });
     try {
-      document.querySelector<HTMLInputElement>('input')!.dispatchEvent(event);
+      document.body.dispatchEvent(event);
       fixture.detectChanges();
       await fixture.whenStable();
-      expect(event.defaultPrevented).toBe(false);
-      expect(document.body.textContent).not.toContain('Закрыть без сохранения?');
+      expect(document.querySelectorAll('[role="dialog"]')).toHaveLength(1);
+      expect(document.body.textContent).not.toContain(
+        'Закрыть без сохранения?',
+      );
       expect(fixture.componentInstance.cancelled).toBe(false);
     } finally {
-      overlay.remove();
+      popup.close();
       fixture.destroy();
     }
   });
@@ -80,7 +95,13 @@ describe('Side panel interaction', () => {
     fixture.detectChanges();
     await fixture.whenStable();
     document.querySelector<HTMLElement>('.modal-backdrop')!.click();
-    document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+    document.body.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Escape',
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
     fixture.detectChanges();
     await fixture.whenStable();
     expect(document.body.textContent).toContain('Закрыть без сохранения?');
@@ -93,8 +114,13 @@ describe('Side panel interaction', () => {
     await fixture.whenStable();
     const input = document.querySelector<HTMLInputElement>('input')!;
     input.focus();
-    const press = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
-    document.querySelector<HTMLElement>('.modal-backdrop')!.dispatchEvent(press);
+    const press = new MouseEvent('mousedown', {
+      bubbles: true,
+      cancelable: true,
+    });
+    document
+      .querySelector<HTMLElement>('.modal-backdrop')!
+      .dispatchEvent(press);
     expect(press.defaultPrevented).toBe(true);
     expect(document.activeElement).toBe(input);
     fixture.destroy();
@@ -105,10 +131,16 @@ describe('Side panel interaction', () => {
     await fixture.whenStable();
     const input = document.querySelector<HTMLInputElement>('input')!;
     input.addEventListener('keydown', (event) => event.preventDefault());
-    input.dispatchEvent(new KeyboardEvent('keydown', {
-      key: 'Escape', bubbles: true, cancelable: true,
-    }));
-    input.dispatchEvent(new KeyboardEvent('keyup', { key: 'Escape', bubbles: true }));
+    input.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Escape',
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
+    input.dispatchEvent(
+      new KeyboardEvent('keyup', { key: 'Escape', bubbles: true }),
+    );
     fixture.detectChanges();
     await fixture.whenStable();
     expect(document.body.textContent).not.toContain('Закрыть без сохранения?');
@@ -163,7 +195,11 @@ describe('Side panel interaction', () => {
       expect(document.querySelectorAll('[role="dialog"]')).toHaveLength(2);
       if (entry === 'escape')
         stay.dispatchEvent(
-          new KeyboardEvent('keyup', { key: 'Escape', bubbles: true }),
+          new KeyboardEvent('keydown', {
+            key: 'Escape',
+            bubbles: true,
+            cancelable: true,
+          }),
         );
       else stay.click();
       fixture.detectChanges();

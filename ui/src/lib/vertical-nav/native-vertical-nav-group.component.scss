@@ -1,0 +1,10 @@
+.nav-group-children[hidden] {
+  display: none;
+}
+.nav-group-trigger-icon {
+  pointer-events: none;
+}
+
+:host ::ng-deep [sotbiNavGroupIcon] {
+  pointer-events: none;
+}

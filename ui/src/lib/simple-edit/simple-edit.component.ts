@@ -1,11 +1,11 @@
 import { Component, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ClarityModule } from '@clr/angular';
+import { ClrIcon } from '@clr/angular';
 import type { SimpleEditModel } from '@sotbi/models';
 
 @Component({
   selector: 'simple-edit',
-  imports: [FormsModule, ClarityModule],
+  imports: [FormsModule, ClrIcon],
   templateUrl: './simple-edit.component.html',
   styles: [
     `

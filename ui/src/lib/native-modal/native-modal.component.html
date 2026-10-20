@@ -1,0 +1,39 @@
+<ng-template #dialogContent>
+  <div [class]="hostClasses" [class.side-panel]="presentation() === 'panel'">
+    <div class="modal" [class.modal-full-screen]="size() === 'full-screen'">
+      <div
+        class="modal-dialog sotbi-native-dialog"
+        [class.modal-sm]="size() === 'sm'"
+        [class.modal-lg]="size() === 'lg'"
+        [class.modal-xl]="size() === 'xl'"
+      >
+        <div class="clr-sr-only">Start of modal content</div>
+        <div class="modal-content-wrapper">
+          <div class="modal-content">
+            <div class="modal-header--accessible">
+              <ng-content select=".leading-button" />
+              <div class="modal-title-wrapper" [id]="titleId" tabindex="-1">
+                <ng-content select=".modal-title" />
+              </div>
+              @if (closable()) {
+                <button
+                  type="button"
+                  class="close"
+                  [attr.aria-label]="closeButtonLabel()"
+                  (click)="requestClose()"
+                >
+                  <cds-icon shape="window-close" />
+                </button>
+              }
+            </div>
+            <div class="modal-body-wrapper">
+              <ng-content select=".modal-body" />
+            </div>
+            <ng-content select=".modal-footer" />
+          </div>
+        </div>
+      </div>
+      <div class="clr-sr-only">End of modal content</div>
+    </div>
+  </div>
+</ng-template>

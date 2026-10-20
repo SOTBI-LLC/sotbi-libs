@@ -35,9 +35,9 @@ describe('DialogHistoryComponent', () => {
       loadHistory: () => EMPTY,
     });
     await fixture.whenStable();
-    expect(document.querySelector('sotbi-side-panel')!.textContent).toContain(
-      'Изменений нет',
-    );
+    expect(
+      document.querySelector('.sotbi-modal-pane .modal-dialog')!.textContent,
+    ).toContain('Изменений нет');
   });
 
   it('displays supplied captions for changed fields', async () => {
@@ -67,7 +67,9 @@ describe('DialogHistoryComponent', () => {
     ] as AttachmentHistory[]);
     await fixture.whenStable();
 
-    const container = document.querySelector('sotbi-side-panel')!;
+    const container = document.querySelector(
+      '.sotbi-modal-pane .modal-dialog',
+    )!;
     expect(container.textContent).toContain('История изменений');
     expect(container.textContent).toContain('№ объявления');
     expect(container.textContent).toContain('Комментарий');
@@ -92,7 +94,9 @@ describe('DialogHistoryComponent', () => {
     ] as unknown as AttachmentHistory[]);
     await fixture.whenStable();
 
-    const container = document.querySelector('sotbi-side-panel')!;
+    const container = document.querySelector(
+      '.sotbi-modal-pane .modal-dialog',
+    )!;
     expect(container.textContent).toContain('mysteryKey');
     expect(container.textContent).toContain('after');
   });
@@ -112,7 +116,9 @@ describe('DialogHistoryComponent', () => {
     ] as AttachmentHistory[]);
     await fixture.whenStable();
 
-    const container = document.querySelector('sotbi-side-panel')!;
+    const container = document.querySelector(
+      '.sotbi-modal-pane .modal-dialog',
+    )!;
     expect(container.textContent).toContain('adNum');
     expect(container.textContent).toContain('ЧЕК-2');
   });

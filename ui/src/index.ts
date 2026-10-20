@@ -74,3 +74,12 @@ export {
   LoadingButtonComponent,
   LoadingButtonState,
 } from './lib/loading-button/loading-button.component';
+
+export * from './lib/vertical-nav/native-vertical-nav.component';
+
+export * from './lib/vertical-nav/native-vertical-nav-group.component';
+
+export * from './lib/shell/native-main-container.directive';
+export * from './lib/shell/native-nav-level.directive';
+
+export * from './lib/native-modal/native-modal.component';

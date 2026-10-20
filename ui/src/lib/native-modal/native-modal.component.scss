@@ -1,0 +1,76 @@
+.cdk-overlay-container:has(.sotbi-modal-pane) {
+  z-index: 1050;
+}
+.sotbi-modal-pane {
+  pointer-events: none !important;
+}
+.sotbi-modal-pane .modal {
+  pointer-events: none;
+}
+.sotbi-modal-pane .modal-dialog {
+  animation: sotbi-dialog-in 200ms ease-in-out;
+}
+.sotbi-modal-pane .side-panel .modal-dialog {
+  animation-name: sotbi-panel-in;
+}
+.sotbi-modal-pane.sotbi-dialog-leaving .modal-dialog {
+  animation: sotbi-dialog-out 200ms ease-in-out forwards;
+}
+.sotbi-modal-pane.sotbi-dialog-leaving .side-panel .modal-dialog {
+  animation-name: sotbi-panel-out;
+}
+.cdk-overlay-backdrop.sotbi-dialog-backdrop.sotbi-dialog-leaving {
+  animation: sotbi-backdrop-out 200ms ease-in-out forwards;
+}
+@keyframes sotbi-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(-25%);
+  }
+}
+@keyframes sotbi-dialog-out {
+  to {
+    opacity: 0;
+    transform: translateY(-25%);
+  }
+}
+@keyframes sotbi-panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(25%);
+  }
+}
+@keyframes sotbi-panel-out {
+  to {
+    opacity: 0;
+    transform: translateX(25%);
+  }
+}
+@keyframes sotbi-backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes sotbi-backdrop-out {
+  to {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sotbi-modal-pane .modal-dialog,
+  .cdk-overlay-backdrop.sotbi-dialog-backdrop {
+    animation-duration: 1ms !important;
+  }
+}
+
+.sotbi-modal-pane .modal-dialog {
+  pointer-events: auto;
+}
+.sotbi-modal-pane .cdk-dialog-container {
+  outline: 0;
+}
+.cdk-overlay-backdrop.sotbi-dialog-backdrop {
+  z-index: 1000;
+  background-color: var(--clr-modal-backdrop-color);
+  animation: sotbi-backdrop-in 200ms ease-in-out;
+}

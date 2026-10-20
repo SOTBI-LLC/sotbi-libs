@@ -1,5 +1,11 @@
+import { NativeMainContainerDirective } from '@sotbi/ui';
 import { provideRouter } from '@angular/router';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import {
+  moduleMetadata,
+  applicationConfig,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular';
 import { ClarityIcons, angleIcon, userIcon, boltIcon } from '@clr/angular/icon';
 
 import { HeaderComponent, type HeaderLink } from '@sotbi/ui';
@@ -38,6 +44,7 @@ const meta: Meta<HeaderComponent> = {
   component: HeaderComponent,
   tags: ['autodocs'],
   decorators: [
+    moduleMetadata({ imports: [NativeMainContainerDirective] }),
     applicationConfig({
       providers: [provideRouter([])],
     }),
@@ -45,7 +52,7 @@ const meta: Meta<HeaderComponent> = {
   render: (args) => ({
     props: args,
     template: `
-      <clr-main-container class="story-main-container">
+      <div libMainContainer class="story-main-container">
         <sotbi-header
           [loggedIn]="loggedIn"
           [brand]="brand"
@@ -56,7 +63,7 @@ const meta: Meta<HeaderComponent> = {
           [showSearch]="showSearch"
           [phrase]="phrase"
         />
-      </clr-main-container>
+      </div>
     `,
     styles: [
       `
@@ -106,7 +113,7 @@ export const NarrowWidth: Story = {
     props: args,
     template: `
       <div class="narrow-wrapper">
-        <clr-main-container class="story-main-container">
+        <div libMainContainer class="story-main-container">
           <sotbi-header
             [loggedIn]="true"
             [brand]="brand"
@@ -115,7 +122,7 @@ export const NarrowWidth: Story = {
             [accountItems]="accountItems"
             [showSearch]="true"
           />
-        </clr-main-container>
+        </div>
       </div>
     `,
     styles: [
@@ -152,7 +159,7 @@ export const WithLeftNav: Story = {
   render: (args) => ({
     props: { ...args, navItems },
     template: `
-      <clr-main-container class="story-main-container">
+      <div libMainContainer class="story-main-container">
         <sotbi-header
           [loggedIn]="true"
           [brand]="brand"
@@ -164,7 +171,7 @@ export const WithLeftNav: Story = {
           <left-nav-bar [items]="navItems" [colabsible]="true" />
           <div class="content-area wide"></div>
         </div>
-      </clr-main-container>
+      </div>
     `,
     styles: [
       `

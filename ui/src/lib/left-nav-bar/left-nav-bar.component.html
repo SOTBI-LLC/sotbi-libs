@@ -1,44 +1,52 @@
 @if (countWithChildren(items()) > 1) {
-  <clr-vertical-nav
-    [clrVerticalNavCollapsible]="colabsible()"
-    [clr-nav-level]="2"
+  <nav
+    sotbiVerticalNav
+    [multiExpandable]="true"
+    [collapsible]="colabsible()"
+    [libNavLevel]="2"
     class="nav-trigger--bottom"
+    aria-label="Разделы"
   >
-    @for (item of items(); track item.routerLink) {
+    @for (item of items(); track item.routerLink ?? item.label) {
       @if (item.children && item.children.length > 0) {
-        <clr-vertical-nav-group
+        <div
+          sotbiVerticalNavGroup
           routerLinkActive="active"
-          [clrVerticalNavGroupExpanded]="item.expanded ?? false"
+          [initiallyExpanded]="item.expanded ?? false"
         >
-          <clr-icon clrVerticalNavIcon [shape]="item.icon ?? ''"></clr-icon>
-          {{ item.label }}
-          <clr-vertical-nav-group-children>
-            @for (child of item.children; track child.routerLink) {
-              <a
-                clrVerticalNavLink
-                [routerLink]="child.routerLink ?? '/'"
-                routerLinkActive="active"
-                [routerLinkActiveOptions]="{ exact: true }"
-              >
-                @if (child.icon) {
-                  <clr-icon clrVerticalNavIcon [shape]="child.icon"></clr-icon>
-                }
-                {{ child.label }}
-              </a>
-            }
-          </clr-vertical-nav-group-children>
-        </clr-vertical-nav-group>
+          <clr-icon
+            sotbiNavGroupIcon
+            class="nav-icon"
+            [shape]="item.icon ?? ''"
+          />
+          <span sotbiNavGroupLabel>{{ item.label }}</span>
+          @for (child of item.children; track child.routerLink) {
+            <a
+              class="nav-link"
+              [routerLink]="child.routerLink ?? '/'"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              ariaCurrentWhenActive="page"
+            >
+              @if (child.icon) {
+                <clr-icon class="nav-icon" [shape]="child.icon" />
+              }
+              <span class="nav-text">{{ child.label }}</span>
+            </a>
+          }
+        </div>
       } @else {
         <a
-          clrVerticalNavLink
+          class="nav-link"
           [routerLink]="item.routerLink ?? '/'"
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
         >
-          <clr-icon clrVerticalNavIcon [shape]="item.icon ?? ''"></clr-icon>
-          {{ item.label }}
+          <clr-icon class="nav-icon" [shape]="item.icon ?? ''" />
+          <span class="nav-text">{{ item.label }}</span>
         </a>
       }
     }
-  </clr-vertical-nav>
+  </nav>
 }

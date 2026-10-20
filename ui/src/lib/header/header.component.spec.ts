@@ -1,10 +1,10 @@
+import { NativeMainContainerDirective } from '../shell/native-main-container.directive';
 import { Component } from '@angular/core';
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { Router, provideRouter } from '@angular/router';
-import { ClrMainContainerModule, ClrNavigationModule } from '@clr/angular';
 
 import {
   HeaderComponent,
@@ -38,10 +38,10 @@ const items: HeaderLink[] = [
 const accountItems: HeaderLink[] = [{ label: 'Админка', routerLink: '/admin' }];
 
 @Component({
-  imports: [HeaderComponent, ClrMainContainerModule, ClrNavigationModule],
+  imports: [HeaderComponent, NativeMainContainerDirective],
   template: `
     <button (click)="showSearchPanel()">show</button>
-    <clr-main-container>
+    <div libMainContainer>
       <sotbi-header
         [loggedIn]="hostLoggedIn"
         [brand]="hostBrand"
@@ -54,7 +54,7 @@ const accountItems: HeaderLink[] = [{ label: 'Админка', routerLink: '/adm
         (searchEvent)="hostOnSearch($event)"
         (logoutRequested)="hostLogoutRequested()"
       />
-    </clr-main-container>
+    </div>
   `,
 })
 class HeaderHostComponent {
@@ -148,7 +148,7 @@ describe('HeaderComponent', () => {
 
   it('hides the whole header when loggedIn is false', async () => {
     await createHost((h) => (h.hostLoggedIn = false));
-    expect(fixture.nativeElement.querySelector('clr-header')).toBeNull();
+    expect(fixture.nativeElement.querySelector('header.header')).toBeNull();
   });
 
   it('renders account items in the user menu', async () => {

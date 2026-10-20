@@ -1,5 +1,6 @@
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { Component, signal } from '@angular/core';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
@@ -12,7 +13,11 @@ const project = (name: string, debtors: string[], id = name.length): Project =>
     id,
     name,
     selected: false,
-    debtors: debtors.map((d, i) => ({ id: id * 10 + i, name: d, selected: false })),
+    debtors: debtors.map((d, i) => ({
+      id: id * 10 + i,
+      name: d,
+      selected: false,
+    })),
   }) as unknown as Project;
 
 @Component({
@@ -44,7 +49,9 @@ describe('ProjectDebtorTree', () => {
   let fixture: ComponentFixture<HostComponent>;
   let host: HostComponent;
 
-  const createHost = async (setup: (host: HostComponent) => void = () => undefined): Promise<void> => {
+  const createHost = async (
+    setup: (host: HostComponent) => void = () => undefined,
+  ): Promise<void> => {
     await TestBed.configureTestingModule({
       imports: [HostComponent],
       providers: [provideZonelessChangeDetection(), provideNoopAnimations()],
@@ -58,7 +65,9 @@ describe('ProjectDebtorTree', () => {
   };
 
   const tick = async () => {
-    (fixture.nativeElement.querySelector('button') as HTMLButtonElement).click();
+    (
+      fixture.nativeElement.querySelector('button') as HTMLButtonElement
+    ).click();
     await fixture.whenStable();
   };
 
@@ -71,7 +80,7 @@ describe('ProjectDebtorTree', () => {
     input.value = phrase;
     input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
     await new Promise((resolve) => setTimeout(resolve, 600));
-    await tick();
+    await fixture.whenStable();
   };
 
   it('creates and renders projects with debtors and the counter', async () => {
@@ -92,6 +101,12 @@ describe('ProjectDebtorTree', () => {
     await createHost((h) => h.checkedItems.set([pre]));
 
     expect(treeText()).toContain('2/4');
+    const inputs = fixture.nativeElement.querySelectorAll('[ngTree] input');
+    expect(
+      Array.from(inputs)
+        .slice(0, 3)
+        .every((input) => (input as HTMLInputElement).checked),
+    ).toBe(true);
   });
 
   it('filters the tree by the debounced search phrase', async () => {
@@ -113,6 +128,41 @@ describe('ProjectDebtorTree', () => {
     const text = treeText();
     expect(text).toContain('Стройка');
     expect(text).toContain('Ремонт');
+  });
+
+  it('reconciles a debtor-only programmatic selection and retains it through search', async () => {
+    await createHost();
+    const tree = fixture.debugElement.query(
+      By.directive(ProjectDebtorTreeComponent),
+    ).componentInstance as ProjectDebtorTreeComponent;
+    tree.setSelectedItems([10]);
+    await fixture.whenStable();
+    const parent = fixture.nativeElement.querySelector(
+      '[ngTreeItem]',
+    ) as HTMLElement;
+    expect(parent.getAttribute('aria-checked')).toBe('mixed');
+    expect(host.selected()).toBeNull();
+    await setSearch('рога');
+    expect(
+      fixture.nativeElement
+        .querySelector('[ngTreeItem]')
+        .getAttribute('aria-checked'),
+    ).toBe('true');
+    await setSearch('');
+    expect(
+      (
+        fixture.nativeElement.querySelector(
+          '[ngTree] input',
+        ) as HTMLInputElement
+      ).indeterminate,
+    ).toBe(true);
+    const inputs = fixture.nativeElement.querySelectorAll('[ngTree] input');
+    (inputs[2] as HTMLInputElement).click();
+    await fixture.whenStable();
+    expect(host.selected()![0].debtors!.map((debtor) => debtor.id)).toEqual([
+      10, 11,
+    ]);
+    expect(parent.getAttribute('aria-expanded')).toBe('true');
   });
 
   it('selects every project and debtor through the select-all checkbox', async () => {

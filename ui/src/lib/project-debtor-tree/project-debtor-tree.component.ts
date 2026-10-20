@@ -1,7 +1,8 @@
-import type {
-  OnInit} from '@angular/core';
+import { Tree, TreeItem, TreeItemGroup } from '@angular/aria/tree';
+import type { OnInit } from '@angular/core';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   DestroyRef,
   Input,
@@ -11,7 +12,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ClrSelectedState, ClrTreeViewModule } from '@clr/angular';
+import { ClrIcon } from '@clr/angular';
 import type { Debtor, Project } from '@sotbi/models';
 import { FilterBlockComponent } from '../filter-block';
 import { FilterComponent } from '../filter-search';
@@ -21,11 +22,19 @@ import { debounceTime } from 'rxjs/operators';
 @Component({
   selector: 'project-debtor-tree',
   templateUrl: './project-debtor-tree.component.html',
-  styleUrls: ['./project-debtor-tree.component.scss'],
+  styleUrls: ['./project-debtor-tree.component.scss', '../tree-native.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FilterBlockComponent, FilterComponent, ClrTreeViewModule],
+  imports: [
+    FilterBlockComponent,
+    FilterComponent,
+    ClrIcon,
+    Tree,
+    TreeItem,
+    TreeItemGroup,
+  ],
 })
 export class ProjectDebtorTreeComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
 
   public readonly all = input<number | undefined>(undefined);
@@ -47,6 +56,7 @@ export class ProjectDebtorTreeComponent implements OnInit {
     if (this.result?.length > 0) {
       this.markSelected(this.result, this._projects);
     }
+    this.reconcileSelection();
   }
   public get projects(): Project[] {
     return this._projects;
@@ -75,6 +85,16 @@ export class ProjectDebtorTreeComponent implements OnInit {
       return res;
     };
     this._projects = structuredClone(this.allProjects).reduce(reducer, []);
+    // Clarity derived the parent's state from the rendered children after filtering.
+    for (const item of this._projects) {
+      const children = item.debtors ?? [];
+      if (!children.length) continue;
+      item.selected = children.every((child) => child.selected === true)
+        ? true
+        : children.some((child) => !!child.selected)
+          ? 'indeterminate'
+          : false;
+    }
   }
 
   private filterDebtors(phrase: string, item: Project): Debtor[] | undefined {
@@ -108,9 +128,13 @@ export class ProjectDebtorTreeComponent implements OnInit {
     this.searchTextChanged
       .pipe(debounceTime(500))
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((phrase) => this.search(phrase));
+      .subscribe((phrase) => {
+        this.search(phrase);
+        this.cdr.markForCheck();
+      });
     if (this.checkedItems().length > 0) {
       this.markSelected(this.checkedItems(), this._projects);
+      this.reconcileSelection();
     }
   }
 
@@ -140,20 +164,53 @@ export class ProjectDebtorTreeComponent implements OnInit {
         }
       }
     });
+    this.reconcileSelection();
+    this.markSelected(this._projects, this.allProjects);
     this.selectedItems.set(count);
+    this.cdr.markForCheck();
   }
 
-  protected toClrState(value: Project['selected'] | Debtor['selected']): ClrSelectedState {
-    if (value === 'indeterminate') {
-      return ClrSelectedState.INDETERMINATE;
+  private reconcileSelection(): void {
+    for (const item of this._projects) {
+      const children = item.debtors ?? [];
+      if (!children.length) continue;
+      if (item.selected === true) {
+        for (const child of children) child.selected = true;
+      } else {
+        item.selected = children.every((child) => child.selected === true)
+          ? true
+          : children.some((child) => !!child.selected)
+            ? 'indeterminate'
+            : false;
+      }
     }
-    return value === true ? ClrSelectedState.SELECTED : ClrSelectedState.UNSELECTED;
   }
 
-  protected fromClrState(value: ClrSelectedState | null): boolean | 'indeterminate' {
-    return value === ClrSelectedState.INDETERMINATE
-      ? 'indeterminate'
-      : value === ClrSelectedState.SELECTED;
+  protected selectParent(parent: Project, selected: boolean): void {
+    parent.selected = selected;
+    for (const child of parent.debtors ?? []) child.selected = selected;
+    this.onChange();
+  }
+  protected selectChild(
+    parent: Project,
+    child: Debtor,
+    selected: boolean,
+  ): void {
+    child.selected = selected;
+    const children = parent.debtors ?? [];
+    parent.selected = children.every((item) => item.selected === true)
+      ? true
+      : children.some((item) => !!item.selected)
+        ? 'indeterminate'
+        : false;
+    this.onChange();
+  }
+  protected selectionKey(event: Event, parent: Project, child?: Debtor): void {
+    if (event.target !== event.currentTarget) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (child) this.selectChild(parent, child, child.selected !== true);
+    else this.selectParent(parent, parent.selected !== true);
   }
 
   protected toggleSelectAll(checked: boolean): void {

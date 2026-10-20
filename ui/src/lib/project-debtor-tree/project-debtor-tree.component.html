@@ -10,23 +10,142 @@
     [checked]="checked()"
   />
   @for (project of projects; track project.id) {
-    <clr-tree class="tree list">
-      <clr-tree-node
-        [clrSelected]="toClrState(project.selected)"
-        (clrSelectedChange)="project.selected = fromClrState($event)"
-        [clrExpanded]="true"
-        (change)="onChange()"
+    <div
+      ngTree
+      #tree="ngTree"
+      class="tree list"
+      focusMode="roving"
+      [multi]="true"
+      aria-label="{{ project.name }}"
+    >
+      <div
+        ngTreeItem
+        tabindex="-1"
+        #parentNode="ngTreeItem"
+        [parent]="tree"
+        [value]="project.id"
+        [label]="project.name"
+        [selectable]="false"
+        [expanded]="true"
+        [preserveContent]="true"
+        class="clr-tree-node"
+        [attr.aria-checked]="
+          project.selected === 'indeterminate'
+            ? 'mixed'
+            : project.selected === true
+        "
+        (keydown.space)="selectionKey($event, project)"
+        (keydown.enter)="selectionKey($event, project)"
       >
-        {{ project.name }}
-        @for (debtor of project.debtors; track debtor.id) {
-          <clr-tree-node
-            [clrSelected]="toClrState(debtor.selected)"
-            (clrSelectedChange)="debtor.selected = fromClrState($event)"
+        <div class="clr-tree-node-content-container">
+          @if (project.debtors?.length) {
+            <button
+              type="button"
+              class="clr-treenode-caret"
+              tabindex="-1"
+              aria-hidden="true"
+              (click)="
+                parentNode.element.focus();
+                parentNode.expanded.set(!parentNode.expanded());
+                $event.stopPropagation()
+              "
+            >
+              <clr-icon
+                class="clr-treenode-caret-icon"
+                shape="angle"
+                [direction]="parentNode.expanded() ? 'down' : 'right'"
+              />
+            </button>
+          }
+          <!-- Checkbox clicks are isolated from expansion; Space/Enter are handled by the roving treeitem. -->
+          <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+          <div
+            class="clr-checkbox-wrapper clr-treenode-checkbox"
+            (click)="$event.stopPropagation()"
           >
-            <span class="subtree" title="{{ debtor.name }}">{{ debtor.name }}</span>
-          </clr-tree-node>
+            <input
+              class="clr-checkbox"
+              type="checkbox"
+              tabindex="-1"
+              aria-hidden="true"
+              [id]="parentNode.id() + '-check'"
+              [checked]="project.selected === true"
+              [indeterminate]="project.selected === 'indeterminate'"
+              (focus)="parentNode.element.focus()"
+              (change)="selectParent(project, $any($event.target).checked)"
+            /><label
+              class="clr-control-label"
+              [for]="parentNode.id() + '-check'"
+              >{{ project.name }}</label
+            >
+          </div>
+        </div>
+        @if (project.debtors?.length) {
+          <div
+            class="clr-treenode-children"
+            role="group"
+            [hidden]="!parentNode.expanded()"
+            [attr.inert]="parentNode.expanded() ? null : ''"
+          >
+            <ng-template
+              ngTreeItemGroup
+              [ownedBy]="parentNode"
+              #group="ngTreeItemGroup"
+            >
+              @for (debtor of project.debtors; track debtor.id) {
+                <div
+                  ngTreeItem
+                  tabindex="-1"
+                  #childNode="ngTreeItem"
+                  [parent]="group"
+                  [value]="debtor.id"
+                  [label]="debtor.name"
+                  [selectable]="false"
+                  class="clr-tree-node"
+                  [attr.aria-checked]="
+                    debtor.selected === 'indeterminate'
+                      ? 'mixed'
+                      : debtor.selected === true
+                  "
+                  (keydown.space)="selectionKey($event, project, debtor)"
+                  (keydown.enter)="selectionKey($event, project, debtor)"
+                >
+                  <div class="clr-tree-node-content-container">
+                    <!-- Checkbox clicks are isolated from expansion; Space/Enter are handled by the roving treeitem. -->
+                    <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+                    <div
+                      class="clr-checkbox-wrapper clr-treenode-checkbox"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <input
+                        class="clr-checkbox"
+                        type="checkbox"
+                        tabindex="-1"
+                        aria-hidden="true"
+                        [id]="childNode.id() + '-check'"
+                        [checked]="debtor.selected === true"
+                        [indeterminate]="debtor.selected === 'indeterminate'"
+                        (focus)="childNode.element.focus()"
+                        (change)="
+                          selectChild(
+                            project,
+                            debtor,
+                            $any($event.target).checked
+                          )
+                        "
+                      /><label
+                        class="clr-control-label"
+                        [for]="childNode.id() + '-check'"
+                        ><span class="subtree">{{ debtor.name }}</span></label
+                      >
+                    </div>
+                  </div>
+                </div>
+              }
+            </ng-template>
+          </div>
         }
-      </clr-tree-node>
-    </clr-tree>
+      </div>
+    </div>
   }
 </filter-block>

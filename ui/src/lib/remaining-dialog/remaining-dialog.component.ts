@@ -13,7 +13,7 @@ import {
 import { SIDE_PANEL_DATA } from '../side-panel/side-panel-config';
 import { SidePanelRef } from '../side-panel/side-panel-ref';
 import { SidePanelFrameComponent } from '../side-panel/side-panel-frame';
-import { ClrCommonFormsModule, ClrIcon, ClrModalModule } from '@clr/angular';
+import { ClrIcon } from '@clr/angular';
 import { ClarityIcons, timesIcon } from '@clr/angular/icon';
 import type { Remaining } from '@sotbi/models';
 import { NativeDateValueAccessorDirective } from '../native-date/native-date.directive';
@@ -40,9 +40,7 @@ export type RemainingDialogData = {
 @Component({
   templateUrl: './remaining-dialog.component.html',
   imports: [
-    ClrModalModule,
     SidePanelFrameComponent,
-    ClrCommonFormsModule,
     FormsModule,
     ReactiveFormsModule,
     NativeDateValueAccessorDirective,

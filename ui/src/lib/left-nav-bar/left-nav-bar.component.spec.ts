@@ -68,8 +68,12 @@ describe('filterItems', () => {
 
     const result = filterItems(items, (path) => path === 'home');
 
-    expect(result).toEqual([{ label: 'Home', access: 'home', routerLink: './home' }]);
-    expect(items).toEqual([{ label: 'Home', access: 'home', routerLink: './home' }]);
+    expect(result).toEqual([
+      { label: 'Home', access: 'home', routerLink: './home' },
+    ]);
+    expect(items).toEqual([
+      { label: 'Home', access: 'home', routerLink: './home' },
+    ]);
   });
 
   it('prefers access over routerLink when checking permissions', () => {
@@ -142,7 +146,9 @@ describe('filterItems', () => {
     expect(result).toEqual([
       {
         label: 'Group',
-        children: [{ label: 'Allowed', access: 'allowed', routerLink: './allowed' }],
+        children: [
+          { label: 'Allowed', access: 'allowed', routerLink: './allowed' },
+        ],
       },
     ]);
     expect(items).toEqual([
@@ -173,7 +179,9 @@ const demoItems: LeftNavBarItem[] = [
     label: 'Poison',
     icon: 'sad-face',
     expanded: false,
-    children: [{ label: 'Sub Poison', icon: 'sad-face', routerLink: '/poison/sub' }],
+    children: [
+      { label: 'Sub Poison', icon: 'sad-face', routerLink: '/poison/sub' },
+    ],
   },
 ];
 
@@ -194,6 +202,84 @@ const createFixture = async (
 };
 
 describe('LeftNavBarComponent', () => {
+  it('keeps the panel toggle keyboard independent of the active accordion group', async () => {
+    const fixture = await createFixture(demoItems);
+    const trigger = fixture.nativeElement.querySelector(
+      '.nav-group-trigger',
+    ) as HTMLButtonElement;
+    const toggle = fixture.nativeElement.querySelector(
+      '.nav-trigger',
+    ) as HTMLButtonElement;
+    trigger.focus();
+    await fixture.whenStable();
+    toggle.focus();
+    toggle.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }),
+    );
+    await fixture.whenStable();
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('applies later expanded input changes after the user has interacted', async () => {
+    const items = [
+      {
+        label: 'Docs',
+        icon: 'folder',
+        expanded: false,
+        children: [
+          { label: 'First', routerLink: '/first' },
+          { label: 'Second', routerLink: '/second' },
+        ],
+      },
+    ];
+    const fixture = await createFixture(items);
+    const trigger = fixture.nativeElement.querySelector(
+      '.nav-group-trigger',
+    ) as HTMLButtonElement;
+    trigger.click();
+    await fixture.whenStable();
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+    fixture.componentRef.setInput('items', [{ ...items[0], expanded: true }]);
+    await fixture.whenStable();
+    fixture.componentRef.setInput('items', [{ ...items[0], expanded: false }]);
+    await fixture.whenStable();
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('restores expanded groups after collapsing the panel and opens it through a group', async () => {
+    const fixture = await createFixture([
+      {
+        label: 'Docs',
+        icon: 'folder',
+        expanded: true,
+        children: [
+          { label: 'First', routerLink: '/first' },
+          { label: 'Second', routerLink: '/second' },
+        ],
+      },
+    ]);
+    const nav = fixture.nativeElement.querySelector(
+      '.clr-vertical-nav',
+    ) as HTMLElement;
+    const trigger = nav.querySelector(
+      '.nav-group-trigger',
+    ) as HTMLButtonElement;
+    const toggle = nav.querySelector('.nav-trigger') as HTMLButtonElement;
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+    toggle.click();
+    await fixture.whenStable();
+    expect(nav.classList.contains('is-collapsed')).toBe(true);
+    toggle.click();
+    await fixture.whenStable();
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+    toggle.click();
+    await fixture.whenStable();
+    trigger.click();
+    await fixture.whenStable();
+    expect(nav.classList.contains('is-collapsed')).toBe(false);
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+  });
+
   it('creates', async () => {
     const fixture = await createFixture(demoItems);
     expect(fixture.componentInstance).toBeTruthy();
@@ -201,26 +287,38 @@ describe('LeftNavBarComponent', () => {
 
   it('hides the navigation for an empty menu', async () => {
     const fixture = await createFixture([]);
-    expect(fixture.debugElement.query(By.css('clr-vertical-nav'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('.clr-vertical-nav'))).toBeNull();
   });
 
   it('hides the navigation when there is a single leaf item', async () => {
-    const fixture = await createFixture([{ label: 'Home', routerLink: '/home' }]);
-    expect(fixture.debugElement.query(By.css('clr-vertical-nav'))).toBeNull();
+    const fixture = await createFixture([
+      { label: 'Home', routerLink: '/home' },
+    ]);
+    expect(fixture.debugElement.query(By.css('.clr-vertical-nav'))).toBeNull();
   });
 
   it('hides the navigation when a single leaf is an empty group', async () => {
-    const fixture = await createFixture([{ label: 'Empty group', children: [] }]);
-    expect(fixture.debugElement.query(By.css('clr-vertical-nav'))).toBeNull();
+    const fixture = await createFixture([
+      { label: 'Empty group', children: [] },
+    ]);
+    expect(fixture.debugElement.query(By.css('.clr-vertical-nav'))).toBeNull();
   });
 
   it('renders leaf links and group child links', async () => {
     const fixture = await createFixture(demoItems);
+    (
+      fixture.nativeElement.querySelector(
+        '.nav-group-trigger',
+      ) as HTMLButtonElement
+    ).click();
+    await fixture.whenStable();
     const links = fixture.debugElement
-      .queryAll(By.css('a[clrVerticalNavLink]'))
+      .queryAll(By.css('a.nav-link'))
       .map((link) => link.nativeElement.getAttribute('href'));
 
-    expect(fixture.debugElement.nativeElement.innerHTML).toContain('Sub Poison');
+    expect(fixture.debugElement.nativeElement.innerHTML).toContain(
+      'Sub Poison',
+    );
     expect(links).toEqual(['/normal', '/poison/sub']);
   });
 
@@ -230,7 +328,7 @@ describe('LeftNavBarComponent', () => {
     const link = fixture.debugElement
       .queryAll(By.css('a'))
       .find((a) => a.nativeElement.getAttribute('href') === '/normal')!;
-    const group = fixture.debugElement.query(By.css('clr-vertical-nav-group'))!;
+    const group = fixture.debugElement.query(By.css('.nav-group'))!;
 
     await router.navigateByUrl('/normal');
     await fixture.whenStable();
@@ -245,7 +343,7 @@ describe('LeftNavBarComponent', () => {
   it('marks the group active when its child route is active', async () => {
     const fixture = await createFixture(demoItems);
     const router = TestBed.inject(Router);
-    const group = fixture.debugElement.query(By.css('clr-vertical-nav-group'))!;
+    const group = fixture.debugElement.query(By.css('.nav-group'))!;
 
     await router.navigateByUrl('/poison/sub');
     await fixture.whenStable();
@@ -258,7 +356,9 @@ describe('LeftNavBarComponent', () => {
 
   it('starts a group collapsed and lets the user expand it', async () => {
     const fixture = await createFixture(demoItems);
-    const trigger = fixture.debugElement.query(By.css('button.nav-group-trigger'))!;
+    const trigger = fixture.debugElement.query(
+      By.css('button.nav-group-trigger'),
+    )!;
 
     expect(trigger.nativeElement.getAttribute('aria-expanded')).toBe('false');
 
@@ -277,14 +377,16 @@ describe('LeftNavBarComponent', () => {
       },
       { label: 'Normal', routerLink: '/normal' },
     ]);
-    const trigger = fixture.debugElement.query(By.css('button.nav-group-trigger'))!;
+    const trigger = fixture.debugElement.query(
+      By.css('button.nav-group-trigger'),
+    )!;
 
     expect(trigger.nativeElement.getAttribute('aria-expanded')).toBe('true');
   });
 
   it('collapses the panel with the nav trigger when colabsible', async () => {
     const fixture = await createFixture(demoItems, true);
-    const nav = fixture.debugElement.query(By.css('clr-vertical-nav'))!;
+    const nav = fixture.debugElement.query(By.css('.clr-vertical-nav'))!;
     const trigger = nav.query(By.css('button.nav-trigger'))!;
 
     expect(trigger).toBeTruthy();
@@ -297,7 +399,7 @@ describe('LeftNavBarComponent', () => {
 
   it('has no collapse trigger when colabsible is false', async () => {
     const fixture = await createFixture(demoItems, false);
-    const nav = fixture.debugElement.query(By.css('clr-vertical-nav'))!;
+    const nav = fixture.debugElement.query(By.css('.clr-vertical-nav'))!;
 
     expect(nav.query(By.css('button.nav-trigger'))).toBeNull();
   });

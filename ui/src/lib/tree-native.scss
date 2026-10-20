@@ -1,0 +1,19 @@
+[ngTreeItem] {
+  outline: none;
+}
+[ngTreeItem]:focus-visible
+  > .clr-tree-node-content-container
+  > .clr-treenode-content,
+[ngTreeItem]:focus-visible
+  > .clr-tree-node-content-container
+  > .clr-treenode-checkbox {
+  outline: 2px solid var(--clr-action-blue, #0072a3);
+  outline-offset: -2px;
+}
+.clr-treenode-caret-icon {
+  pointer-events: none;
+}
+
+.tree[ngTree] {
+  width: auto;
+}

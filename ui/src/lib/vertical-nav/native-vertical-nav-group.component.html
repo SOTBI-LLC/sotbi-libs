@@ -1,0 +1,31 @@
+<div class="nav-group-content">
+  <button
+    type="button"
+    ngAccordionTrigger
+    [panel]="panel"
+    [expanded]="isExpanded()"
+    (expandedChange)="changed($event)"
+    (click)="nav.expand()"
+    class="nav-group-trigger"
+  >
+    <ng-content select="[sotbiNavGroupIcon]" />
+    <div class="nav-group-text">
+      <ng-content select="[sotbiNavGroupLabel]" />
+    </div>
+    <clr-icon
+      shape="angle"
+      class="nav-group-trigger-icon"
+      [direction]="isExpanded() ? 'down' : 'right'"
+      aria-hidden="true"
+    />
+  </button>
+</div>
+<div
+  ngAccordionPanel
+  #panel="ngAccordionPanel"
+  [preserveContent]="true"
+  class="nav-group-children"
+  [hidden]="!panel.visible()"
+>
+  <ng-template ngAccordionContent><ng-content /></ng-template>
+</div>

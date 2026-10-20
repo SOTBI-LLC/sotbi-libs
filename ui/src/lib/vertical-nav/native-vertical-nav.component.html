@@ -1,0 +1,35 @@
+@if (collapsible()) {
+  <button
+    type="button"
+    class="nav-trigger"
+    [class.on-collapse]="collapsed()"
+    [attr.aria-controls]="contentId"
+    [attr.aria-expanded]="!collapsed()"
+    [attr.aria-label]="toggleLabel()"
+    (click)="toggle()"
+    (keydown)="$event.stopPropagation()"
+  >
+    <clr-icon
+      shape="angle-double"
+      class="nav-trigger-icon"
+      [direction]="collapsed() ? 'right' : 'left'"
+      aria-hidden="true"
+    />
+  </button>
+}
+<!-- Delegates native link keys without adding a new control or tab stop. -->
+<!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
+<div [id]="contentId" class="nav-content" (keydown)="nativeLinkKeydown($event)">
+  <ng-content />
+  @if (collapsible() && collapsed()) {
+    <button
+      type="button"
+      class="nav-btn"
+      aria-hidden="true"
+      tabindex="-1"
+      [attr.aria-controls]="contentId"
+      [attr.aria-label]="toggleLabel()"
+      (click)="expand()"
+    ></button>
+  }
+</div>

@@ -1,6 +1,9 @@
+import { NativeNavLevelDirective } from '../shell/native-nav-level.directive';
+import { NativeVerticalNavComponent } from '../vertical-nav/native-vertical-nav.component';
+import { NativeVerticalNavGroupComponent } from '../vertical-nav/native-vertical-nav-group.component';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { ClrIcon, ClrNavigationModule, ClrVerticalNavModule } from '@clr/angular';
+import { ClrIcon } from '@clr/angular';
 
 export interface LeftNavBarItem {
   label: string;
@@ -42,7 +45,14 @@ export const filterItems = (
 
 @Component({
   selector: 'left-nav-bar',
-  imports: [ClrVerticalNavModule, ClrNavigationModule, ClrIcon, RouterLink, RouterLinkActive],
+  imports: [
+    NativeVerticalNavComponent,
+    NativeVerticalNavGroupComponent,
+    NativeNavLevelDirective,
+    ClrIcon,
+    RouterLink,
+    RouterLinkActive,
+  ],
   templateUrl: './left-nav-bar.component.html',
   styleUrl: './left-nav-bar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

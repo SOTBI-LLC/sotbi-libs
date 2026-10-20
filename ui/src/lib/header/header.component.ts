@@ -1,3 +1,5 @@
+import { NativeMainContainerDirective } from '../shell/native-main-container.directive';
+import { NativeNavLevelDirective } from '../shell/native-nav-level.directive';
 import { CdkMenuModule } from '@angular/cdk/menu';
 import {
   ChangeDetectionStrategy,
@@ -14,7 +16,7 @@ import type { OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { ClrIcon, ClrNavigationModule } from '@clr/angular';
+import { ClrIcon } from '@clr/angular';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
@@ -69,7 +71,7 @@ class AccountMenuLinkSpaceDirective {
     AccountMenuLinkSpaceDirective,
     CdkMenuModule,
     ClrIcon,
-    ClrNavigationModule,
+    NativeNavLevelDirective,
     RouterLink,
     RouterLinkActive,
     FormsModule,
@@ -79,6 +81,12 @@ class AccountMenuLinkSpaceDirective {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent implements OnInit {
+  protected readonly shell = inject(NativeMainContainerDirective, {
+    optional: true,
+  });
+  protected openNavigation(level: 1 | 2, event: Event): void {
+    this.shell?.open(level, event.currentTarget as HTMLElement);
+  }
   public readonly loggedIn = input<boolean>(false);
   public readonly brand = input.required<HeaderBrand>();
   public readonly user = input<HeaderUser | null>(null);

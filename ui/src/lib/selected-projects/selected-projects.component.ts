@@ -1,12 +1,19 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { Tree, TreeItem, TreeItemGroup } from '@angular/aria/tree';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+} from '@angular/core';
 import type { Project } from '@sotbi/models';
 
 import { FilterBlockComponent } from '../filter-block';
-import { ClarityModule } from '@clr/angular';
+import { ClrIcon } from '@clr/angular';
 
 @Component({
   selector: 'selected-projects',
-  imports: [ClarityModule, FilterBlockComponent],
+  imports: [ClrIcon, Tree, TreeItem, TreeItemGroup, FilterBlockComponent],
+  styleUrls: ['../tree-native.scss'],
   template: `
     <filter-block
       title="Избранные проекты"
@@ -17,18 +24,85 @@ import { ClarityModule } from '@clr/angular';
       @if (projects().length > 0) {
         <span>
           @for (project of projects(); track project.id) {
-            <clr-tree class="tree list">
-              <clr-tree-node [clrExpanded]="true">
-                <clr-icon shape="star" class="is-warning"></clr-icon>
-                {{ project.name }}
-                @for (debtor of project.debtors; track debtor) {
-                  <clr-tree-node>
-                    <clr-icon shape="star" class="is-warning"></clr-icon>
-                    {{ debtor.name }}
-                  </clr-tree-node>
+            <div
+              ngTree
+              #tree="ngTree"
+              class="tree list"
+              focusMode="roving"
+              [attr.aria-label]="project.name"
+            >
+              <div
+                ngTreeItem
+                #node="ngTreeItem"
+                [parent]="tree"
+                [value]="project.id"
+                [label]="project.name"
+                [selectable]="false"
+                [expanded]="true"
+                [preserveContent]="true"
+                class="clr-tree-node"
+              >
+                <div class="clr-tree-node-content-container">
+                  @if (project.debtors?.length) {
+                    <button
+                      type="button"
+                      class="clr-treenode-caret"
+                      tabindex="-1"
+                      aria-hidden="true"
+                      (click)="
+                        node.element.focus();
+                        node.expanded.set(!node.expanded());
+                        $event.stopPropagation()
+                      "
+                    >
+                      <clr-icon
+                        class="clr-treenode-caret-icon"
+                        shape="angle"
+                        [direction]="node.expanded() ? 'down' : 'right'"
+                      />
+                    </button>
+                  }
+                  <div class="clr-treenode-content">
+                    <clr-icon shape="star" class="is-warning" />{{
+                      project.name
+                    }}
+                  </div>
+                </div>
+                @if (project.debtors?.length) {
+                  <div
+                    role="group"
+                    class="clr-treenode-children"
+                    [hidden]="!node.expanded()"
+                    [attr.inert]="node.expanded() ? null : ''"
+                  >
+                    <ng-template
+                      ngTreeItemGroup
+                      [ownedBy]="node"
+                      #group="ngTreeItemGroup"
+                    >
+                      @for (debtor of project.debtors; track debtor.id) {
+                        <div
+                          ngTreeItem
+                          [parent]="group"
+                          [value]="debtor.id"
+                          [label]="debtor.name"
+                          [selectable]="false"
+                          class="clr-tree-node"
+                        >
+                          <div class="clr-tree-node-content-container">
+                            <div class="clr-treenode-content">
+                              <clr-icon shape="star" class="is-warning" />{{
+                                debtor.name
+                              }}
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </ng-template>
+                  </div>
                 }
-              </clr-tree-node>
-            </clr-tree>
+              </div>
+            </div>
           }
         </span>
       } @else {
