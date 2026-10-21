@@ -86,6 +86,22 @@ describe('InsuranceListComponent', () => {
     expect(text).toContain('ООО Должник');
   });
 
+  it('numbers rows with the AG Grid row-number column', async () => {
+    const fixture = createComponent();
+    await fixture.whenStable();
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    await fixture.whenStable();
+
+    await waitFor(() => {
+      const host = fixture.nativeElement as HTMLElement;
+      const numbers = Array.from(
+        host.querySelectorAll('[col-id="ag-Grid-RowNumbersColumn"].ag-cell'),
+      ).map((el) => el.textContent?.trim());
+      expect(numbers[0]).toBe('1');
+      expect(host.textContent).not.toContain('№ п.п.');
+    });
+  });
+
   it('emits openInsurance with the row id on double click', async () => {
     const fixture = createComponent();
     const opened: number[] = [];
