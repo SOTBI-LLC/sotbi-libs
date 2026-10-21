@@ -53,7 +53,6 @@ export { SelectedProjectsComponent } from './lib/selected-projects/selected-proj
 export { PaymentsFilterComponent } from './lib/payments-filter';
 export { ProjectDebtorTreeComponent } from './lib/project-debtor-tree/project-debtor-tree.component';
 export { ProgressBarComponent } from './lib/progress-bar/progress-bar.component';
-export { SimpleEditComponent } from './lib/simple-edit/simple-edit.component';
 export { ShortLinksComponent } from './lib/short-links/short-links.component';
 export { TimeEditComponent } from './lib/time-edit';
 
