@@ -64,6 +64,7 @@ export class SimpleEdit2GridComponent {
       animateRows: true,
       overlayLoadingTemplate: '<span class="spinner"></span>',
       localeText,
+      rowNumbers: true,
       defaultColDef: {
         editable: () => {
           return this.floatingEditable() ? !!this.disabled : true;
@@ -93,17 +94,6 @@ export class SimpleEdit2GridComponent {
 
   private get columnDefs(): ColDef<SimpleEdit2Model>[] {
     return [
-      {
-        headerName: '№ п.п.',
-        field: 'count',
-        editable: false,
-        width: 70,
-        minWidth: 60,
-        maxWidth: 75,
-        valueGetter: ({ node }) => +(node?.id ?? 0) + 1,
-        pinned: 'left',
-        // hide: this.hiddenColumn,
-      },
       {
         headerName: this.captionForName(),
         field: 'name',

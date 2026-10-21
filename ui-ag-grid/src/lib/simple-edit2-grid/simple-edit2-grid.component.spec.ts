@@ -86,9 +86,19 @@ describe('SimpleEdit2Grid', () => {
     await waitFor(() => {
       const text = (fixture.nativeElement as HTMLElement).textContent!;
       expect(text).toContain('Наименование');
-      expect(text).toContain('№ п.п.');
       // колонка «Тип» скрыта hiddenColumn=true
       expect(text).not.toContain('Показывать');
+    });
+  });
+
+  it('numbers rows with the AG Grid row-number column', async () => {
+    await createHost();
+
+    await waitFor(() => {
+      const numbers = Array.from(
+        fixture.nativeElement.querySelectorAll('[col-id="ag-Grid-RowNumbersColumn"].ag-cell'),
+      ).map((el) => (el as HTMLElement).textContent?.trim());
+      expect(numbers).toEqual(['1', '2']);
     });
   });
 
