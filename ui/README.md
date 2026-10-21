@@ -234,21 +234,6 @@ Impure-пайп фильтрации вложений по типу. Имя: `at
 @for (file of attachments | attachments: 'egrn'; track file) { ... }
 ```
 
-## SimpleEditComponent
-
-Таблица простого редактирования списков-разделов. Селектор: `simple-edit`.
-
-### Inputs и outputs
-
-- `items: SimpleEditModel[]` — редактируемые записи `{ id, name }`.
-- `allowedToDelete: boolean` — показывает колонку удаления.
-- `action: SimpleEditModel` — создание (`id: 0`) или сохранение строки
-  с непустым именем.
-- `delete: number` — идентификатор удаляемой строки.
-
-Иконки `pencil`, `floppy`, `trash` должны быть зарегистрированы потребителем
-через `ClarityIcons.addIcons`.
-
 ## ProgressBarComponent
 
 Прогресс выполнения. Селектор: `progress-bar`.
