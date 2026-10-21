@@ -102,6 +102,7 @@ export class InsuranceListComponent {
       api.sizeColumnsToFit();
     },
     localeText,
+    rowNumbers: true,
     singleClickEdit: false,
     overlayLoadingTemplate: '<span class="spinner"></span>',
     icons: { additional: '<span class="ag-icon ag-icon-additional"></span>' },
@@ -150,19 +151,6 @@ export class InsuranceListComponent {
   };
   private readonly storeKey = 'insurance-list';
   public readonly columnDefs: ColDef[] = [
-    {
-      headerName: '№ п.п.',
-      sortable: false,
-      filter: false,
-      suppressHeaderMenuButton: true,
-      width: 70,
-      minWidth: 60,
-      maxWidth: 80,
-      valueGetter: (params) => {
-        const nodeId = params?.node?.id;
-        return nodeId === undefined || isNaN(+nodeId) ? '' : +nodeId + 1;
-      },
-    },
     {
       headerName: 'Статус',
       field: 'status',
