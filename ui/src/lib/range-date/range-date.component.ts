@@ -2,11 +2,11 @@ import { LoadingButtonComponent } from '../loading-button/loading-button.compone
 import type { OnInit } from '@angular/core';
 import { Component, Input, LOCALE_ID, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ClrIcon } from '@clr/angular';
 import type { Interval } from '@sotbi/models';
 import { FilterBlockComponent } from '../filter-block';
 import { NativeDateValueAccessorDirective } from '../native-date';
 import { DD_MM_YYYY, MM_YYYY } from '@sotbi/utils';
+import { LucideCircleAlert } from '@lucide/angular';
 
 enum PeriodsType {
   TODAY,
@@ -90,7 +90,7 @@ const ruRangeFormatter = ruDateFormatter as RangeFormatter;
     LoadingButtonComponent,
     FilterBlockComponent,
     FormsModule,
-    ClrIcon,
+    LucideCircleAlert,
     NativeDateValueAccessorDirective,
   ],
   providers: [{ provide: LOCALE_ID, useValue: 'ru' }],

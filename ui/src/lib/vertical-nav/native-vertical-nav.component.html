@@ -9,12 +9,12 @@
     (click)="toggle()"
     (keydown)="$event.stopPropagation()"
   >
-    <clr-icon
-      shape="angle-double"
+    <svg
+      lucideChevronsUp
       class="nav-trigger-icon"
-      [direction]="collapsed() ? 'right' : 'left'"
+      [attr.data-direction]="collapsed() ? 'right' : 'left'"
       aria-hidden="true"
-    />
+    ></svg>
   </button>
 }
 <!-- Delegates native link keys without adding a new control or tab stop. -->

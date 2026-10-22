@@ -16,9 +16,9 @@ import type { OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { ClrIcon } from '@clr/angular';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { LucideChevronUp } from '@lucide/angular';
 
 export interface HeaderBrand {
   title: string;
@@ -70,7 +70,7 @@ class AccountMenuLinkSpaceDirective {
   imports: [
     AccountMenuLinkSpaceDirective,
     CdkMenuModule,
-    ClrIcon,
+    LucideChevronUp,
     NativeNavLevelDirective,
     RouterLink,
     RouterLinkActive,

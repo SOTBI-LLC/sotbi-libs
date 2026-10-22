@@ -1,12 +1,12 @@
 import { LoadingButtonState, LoadingButtonComponent } from '@sotbi/ui';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ClrIcon } from '@clr/angular';
 import type { ICellEditorAngularComp } from 'ag-grid-angular';
 import type { GridApi, ICellEditorParams } from 'ag-grid-community';
 import type { Observable } from 'rxjs';
 import type { DownloadFileDescriptor } from '../file-download';
 import { downloadAttachment } from '../file-download';
+import { LucideUpload } from '@lucide/angular';
 
 export type IDropFileResult = DownloadFileDescriptor;
 
@@ -18,11 +18,16 @@ export interface DropFileParams extends ICellEditorParams<IDropFileResult> {
 @Component({
   template: `
     <div style="display: flex; align-items: center">
-      <clr-icon
+      <svg
+        lucideUpload
+        role="button"
+        tabindex="0"
+        title="Загрузить файл"
         style="cursor: pointer; color: #00567a; margin-left: 0.5rem"
         (click)="file.click()"
-        shape="upload"
-      ></clr-icon>
+        (keydown.enter)="file.click()"
+        (keydown.space)="$event.preventDefault(); file.click()"
+      ></svg>
       <button
         [style.cursor]="value()?.original_file_name ? '' : 'default'"
         [sotbiLoading]="uploadBtnState()"
@@ -45,7 +50,7 @@ export interface DropFileParams extends ICellEditorParams<IDropFileResult> {
     </div>
   `,
   styles: [],
-  imports: [LoadingButtonComponent, ClrIcon],
+  imports: [LoadingButtonComponent, LucideUpload],
 })
 export class DropFileComponent implements ICellEditorAngularComp {
   private readonly destroyRef = inject(DestroyRef);

@@ -13,12 +13,17 @@ import {
   effect,
   untracked,
 } from '@angular/core';
-import { ClrIcon } from '@clr/angular';
 import { NativeVerticalNavComponent } from './native-vertical-nav.component';
+import { LucideChevronUp } from '@lucide/angular';
 
 @Component({
   selector: 'div[sotbiVerticalNavGroup]',
-  imports: [AccordionTrigger, AccordionPanel, AccordionContent, ClrIcon],
+  imports: [
+    AccordionTrigger,
+    AccordionPanel,
+    AccordionContent,
+    LucideChevronUp,
+  ],
   templateUrl: './native-vertical-nav-group.component.html',
   styleUrl: './native-vertical-nav-group.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

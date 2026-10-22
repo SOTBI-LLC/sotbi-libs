@@ -50,11 +50,11 @@
                 $event.stopPropagation()
               "
             >
-              <clr-icon
+              <svg
+                lucideChevronUp
                 class="clr-treenode-caret-icon"
-                shape="angle"
-                [direction]="parentNode.expanded() ? 'down' : 'right'"
-              />
+                [attr.data-direction]="parentNode.expanded() ? 'down' : 'right'"
+              ></svg>
             </button>
           }
           <!-- Checkbox clicks are isolated from expansion; Space/Enter are handled by the roving treeitem. -->

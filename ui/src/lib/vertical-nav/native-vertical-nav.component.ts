@@ -1,4 +1,3 @@
-import { ClarityIcons, angleDoubleIcon, angleIcon } from '@clr/angular/icon';
 import { AccordionGroup } from '@angular/aria/accordion';
 import {
   ChangeDetectionStrategy,
@@ -10,14 +9,14 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { ClrIcon } from '@clr/angular';
 import { NativeVerticalNavGroupComponent } from './native-vertical-nav-group.component';
+import { LucideChevronsUp } from '@lucide/angular';
 
 let nextNavId = 0;
 
 @Component({
   selector: 'nav[sotbiVerticalNav]',
-  imports: [ClrIcon],
+  imports: [LucideChevronsUp],
   templateUrl: './native-vertical-nav.component.html',
   styleUrl: './native-vertical-nav.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,7 +41,6 @@ export class NativeVerticalNavComponent {
   protected readonly hasGroups = computed(() => this.groups().length > 0);
 
   constructor() {
-    ClarityIcons.addIcons(angleDoubleIcon, angleIcon);
     effect(() => {
       if (!this.collapsible()) this.collapsed.set(false);
     });

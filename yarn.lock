@@ -3382,6 +3382,13 @@
   resolved "https://registry.yarnpkg.com/@lmdb/lmdb-win32-x64/-/lmdb-win32-x64-3.5.6.tgz#8e26cbb62abb1454130fe73bd475df3b24a97567"
   integrity sha512-1g7G0knRX2iV/voDu54yxrGqw5Dk0w2oIYb7dgJq8IkOi+m7wbD8Q3QpPFjh0C01G58S88dqGn03len6UPCXsg==
 
+"@lucide/angular@^1.59.0":
+  version "1.61.0"
+  resolved "https://registry.yarnpkg.com/@lucide/angular/-/angular-1.61.0.tgz#bf47f0b0387224715a64afe452244ab1c6580814"
+  integrity sha512-62orthtecq8JuJKmB3HrJFUe1Ur28yx8vHHDBItjr8APOuvfp0/eiEvmxj8lIWkES72x5Rsf6QRQY7h/ZUQ99g==
+  dependencies:
+    tslib "^2.3.0"
+
 "@mdx-js/react@^3.0.0":
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/@mdx-js/react/-/react-3.1.1.tgz#24bda7fffceb2fe256f954482123cda1be5f5fef"

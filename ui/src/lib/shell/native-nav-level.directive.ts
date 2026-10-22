@@ -12,8 +12,7 @@ import {
   input,
   Renderer2,
 } from '@angular/core';
-import { ClrIcon } from '@clr/angular';
-import { ClarityIcons, timesIcon } from '@clr/angular/icon';
+import { LucideX } from '@lucide/angular';
 import {
   NativeMainContainerDirective,
   type NavigationLevel,
@@ -42,7 +41,6 @@ export class NativeNavLevelDirective implements ShellNavigationPanel {
     const environmentInjector = inject(EnvironmentInjector);
     const applicationRef = inject(ApplicationRef);
     const destroyRef = inject(DestroyRef);
-    ClarityIcons.addIcons(timesIcon);
     afterNextRender(() => {
       this.renderer.setAttribute(this.element, 'id', this.id);
       this.renderer.addClass(
@@ -55,13 +53,12 @@ export class NativeNavLevelDirective implements ShellNavigationPanel {
       this.renderer.setAttribute(button, 'type', 'button');
       this.renderer.setAttribute(button, 'aria-label', 'Close navigation');
       this.renderer.addClass(button, 'clr-nav-close');
-      const icon = this.renderer.createElement('cds-icon');
-      const iconRef = createComponent(ClrIcon, {
+      const icon = this.renderer.createElement('svg', 'svg');
+      const iconRef = createComponent(LucideX, {
         hostElement: icon,
         environmentInjector,
       });
-      iconRef.setInput('shape', 'times');
-      iconRef.setInput('size', '32');
+      this.renderer.setAttribute(icon, 'data-size', '32');
       applicationRef.attachView(iconRef.hostView);
       iconRef.changeDetectorRef.detectChanges();
       this.renderer.setAttribute(icon, 'aria-hidden', 'true');

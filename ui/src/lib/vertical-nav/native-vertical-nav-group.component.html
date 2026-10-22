@@ -12,12 +12,12 @@
     <div class="nav-group-text">
       <ng-content select="[sotbiNavGroupLabel]" />
     </div>
-    <clr-icon
-      shape="angle"
+    <svg
+      lucideChevronUp
       class="nav-group-trigger-icon"
-      [direction]="isExpanded() ? 'down' : 'right'"
+      [attr.data-direction]="isExpanded() ? 'down' : 'right'"
       aria-hidden="true"
-    />
+    ></svg>
   </button>
 </div>
 <div

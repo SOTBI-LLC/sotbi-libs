@@ -13,16 +13,12 @@ import {
 import { SIDE_PANEL_DATA } from '../side-panel/side-panel-config';
 import { SidePanelRef } from '../side-panel/side-panel-ref';
 import { SidePanelFrameComponent } from '../side-panel/side-panel-frame';
-import { ClrIcon } from '@clr/angular';
-import { ClarityIcons, timesIcon } from '@clr/angular/icon';
 import type { Remaining } from '@sotbi/models';
 import { NativeDateValueAccessorDirective } from '../native-date/native-date.directive';
 import type { FileSystemFileEntry, NgxFileDropEntry } from 'ngx-file-drop';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import type { Observable, Subscription } from 'rxjs';
-
-// Раньше эта иконка регистрировалась конструктором ClrAlertModule.
-ClarityIcons.addIcons(timesIcon);
+import { LucideCircleAlert, LucideCloudUpload, LucideX } from '@lucide/angular';
 
 export type RemainingDialogData = {
   row: Remaining;
@@ -45,7 +41,9 @@ export type RemainingDialogData = {
     ReactiveFormsModule,
     NativeDateValueAccessorDirective,
     NgxFileDropModule,
-    ClrIcon,
+    LucideCircleAlert,
+    LucideCloudUpload,
+    LucideX,
     CurrencyPipe,
     DatePipe,
   ],

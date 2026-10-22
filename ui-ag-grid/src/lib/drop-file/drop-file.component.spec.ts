@@ -14,7 +14,8 @@ describe('DropFileComponent', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
-    delete (window.URL as unknown as { createObjectURL?: unknown }).createObjectURL;
+    delete (window.URL as unknown as { createObjectURL?: unknown })
+      .createObjectURL;
   });
 
   it('returns the uploaded file when the user selects a file', async () => {
@@ -25,12 +26,15 @@ describe('DropFileComponent', () => {
       downloadFile: () => EMPTY,
       uploadFiles: (files: FileList) =>
         files[0].name === 'extract.pdf'
-          ? of([{ file: 'egrn/extract.pdf', original_file_name: 'extract.pdf' }])
+          ? of([
+              { file: 'egrn/extract.pdf', original_file_name: 'extract.pdf' },
+            ])
           : EMPTY,
     } as unknown as DropFileParams);
     await fixture.whenStable();
 
-    const input: HTMLInputElement = fixture.nativeElement.querySelector('input[type="file"]');
+    const input: HTMLInputElement =
+      fixture.nativeElement.querySelector('input[type="file"]');
     Object.defineProperty(input, 'files', {
       configurable: true,
       value: [new File(['extract'], 'extract.pdf')],
@@ -46,8 +50,9 @@ describe('DropFileComponent', () => {
 
   it('downloads the existing file when the user clicks its name', async () => {
     const downloaded: string[] = [];
-    (window.URL as unknown as { createObjectURL: () => string }).createObjectURL = () =>
-      'blob:extract';
+    (
+      window.URL as unknown as { createObjectURL: () => string }
+    ).createObjectURL = () => 'blob:extract';
     jest
       .spyOn(HTMLAnchorElement.prototype, 'click')
       .mockImplementation(function (this: HTMLAnchorElement) {
@@ -59,7 +64,9 @@ describe('DropFileComponent', () => {
       api: { stopEditing: () => undefined },
       uploadFiles: () => EMPTY,
       downloadFile: (attachment) =>
-        attachment.file === 'egrn/extract.pdf' ? of(new Blob(['extract'])) : EMPTY,
+        attachment.file === 'egrn/extract.pdf'
+          ? of(new Blob(['extract']))
+          : EMPTY,
     } as unknown as DropFileParams);
     await fixture.whenStable();
 

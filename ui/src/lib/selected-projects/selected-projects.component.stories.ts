@@ -1,9 +1,6 @@
-import { ClarityIcons, starIcon } from '@clr/angular/icon';
 import type { Meta, StoryObj } from '@storybook/angular';
 
 import { SelectedProjectsComponent } from './selected-projects.component';
-
-ClarityIcons.addIcons(starIcon);
 
 const meta: Meta<SelectedProjectsComponent> = {
   title: 'SelectedProjects',

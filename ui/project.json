@@ -18,6 +18,7 @@
       "cache": true,
       "inputs": [
         "{projectRoot}/src/styles.css",
+        "{projectRoot}/src/lucide-icons.css",
         "{projectRoot}/src/sotbi-component-layer.css",
         "{projectRoot}/src/**/*.{html,ts}"
       ],

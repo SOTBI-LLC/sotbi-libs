@@ -8,11 +8,11 @@ import {
   input,
   output,
 } from '@angular/core';
-import { ClrIcon } from '@clr/angular';
+import { LucideCloudDownload, LucideCloudUpload } from '@lucide/angular';
 
 @Component({
   selector: 'pauments-file-buttons',
-  imports: [LoadingButtonComponent, ClrIcon],
+  imports: [LoadingButtonComponent, LucideCloudDownload, LucideCloudUpload],
   templateUrl: './payments-file-buttons.component.html',
   styleUrl: './payments-file-buttons.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

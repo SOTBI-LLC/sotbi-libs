@@ -8,11 +8,18 @@ import {
 import type { Project } from '@sotbi/models';
 
 import { FilterBlockComponent } from '../filter-block';
-import { ClrIcon } from '@clr/angular';
+import { LucideChevronUp, LucideStar } from '@lucide/angular';
 
 @Component({
   selector: 'selected-projects',
-  imports: [ClrIcon, Tree, TreeItem, TreeItemGroup, FilterBlockComponent],
+  imports: [
+    LucideChevronUp,
+    LucideStar,
+    Tree,
+    TreeItem,
+    TreeItemGroup,
+    FilterBlockComponent,
+  ],
   styleUrls: ['../tree-native.scss'],
   template: `
     <filter-block
@@ -55,17 +62,17 @@ import { ClrIcon } from '@clr/angular';
                         $event.stopPropagation()
                       "
                     >
-                      <clr-icon
+                      <svg
+                        lucideChevronUp
                         class="clr-treenode-caret-icon"
-                        shape="angle"
-                        [direction]="node.expanded() ? 'down' : 'right'"
-                      />
+                        [attr.data-direction]="
+                          node.expanded() ? 'down' : 'right'
+                        "
+                      ></svg>
                     </button>
                   }
                   <div class="clr-treenode-content">
-                    <clr-icon shape="star" class="is-warning" />{{
-                      project.name
-                    }}
+                    <svg lucideStar class="is-warning"></svg>{{ project.name }}
                   </div>
                 </div>
                 @if (project.debtors?.length) {
@@ -91,9 +98,8 @@ import { ClrIcon } from '@clr/angular';
                         >
                           <div class="clr-tree-node-content-container">
                             <div class="clr-treenode-content">
-                              <clr-icon shape="star" class="is-warning" />{{
-                                debtor.name
-                              }}
+                              <svg lucideStar class="is-warning"></svg
+                              >{{ debtor.name }}
                             </div>
                           </div>
                         </div>

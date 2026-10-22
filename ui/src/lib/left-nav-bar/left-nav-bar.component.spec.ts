@@ -1,3 +1,8 @@
+import {
+  LucideFaceSlightlyFrowning,
+  LucideFolder,
+  LucideUser,
+} from '@lucide/angular';
 import { Component } from '@angular/core';
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
@@ -174,13 +179,17 @@ const routes = [
 ];
 
 const demoItems: LeftNavBarItem[] = [
-  { label: 'Normal', icon: 'user', routerLink: '/normal' },
+  { label: 'Normal', icon: LucideUser.icon, routerLink: '/normal' },
   {
     label: 'Poison',
-    icon: 'sad-face',
+    icon: LucideFaceSlightlyFrowning.icon,
     expanded: false,
     children: [
-      { label: 'Sub Poison', icon: 'sad-face', routerLink: '/poison/sub' },
+      {
+        label: 'Sub Poison',
+        icon: LucideFaceSlightlyFrowning.icon,
+        routerLink: '/poison/sub',
+      },
     ],
   },
 ];
@@ -224,7 +233,7 @@ describe('LeftNavBarComponent', () => {
     const items = [
       {
         label: 'Docs',
-        icon: 'folder',
+        icon: LucideFolder.icon,
         expanded: false,
         children: [
           { label: 'First', routerLink: '/first' },
@@ -250,7 +259,7 @@ describe('LeftNavBarComponent', () => {
     const fixture = await createFixture([
       {
         label: 'Docs',
-        icon: 'folder',
+        icon: LucideFolder.icon,
         expanded: true,
         children: [
           { label: 'First', routerLink: '/first' },

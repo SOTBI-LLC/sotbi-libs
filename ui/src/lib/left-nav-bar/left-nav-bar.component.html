@@ -14,11 +14,11 @@
           routerLinkActive="active"
           [initiallyExpanded]="item.expanded ?? false"
         >
-          <clr-icon
+          <svg
             sotbiNavGroupIcon
             class="nav-icon"
-            [shape]="item.icon ?? ''"
-          />
+            [lucideIcon]="item.icon ?? null"
+          ></svg>
           <span sotbiNavGroupLabel>{{ item.label }}</span>
           @for (child of item.children; track child.routerLink) {
             <a
@@ -29,7 +29,7 @@
               ariaCurrentWhenActive="page"
             >
               @if (child.icon) {
-                <clr-icon class="nav-icon" [shape]="child.icon" />
+                <svg class="nav-icon" [lucideIcon]="child.icon"></svg>
               }
               <span class="nav-text">{{ child.label }}</span>
             </a>
@@ -43,7 +43,7 @@
           [routerLinkActiveOptions]="{ exact: true }"
           ariaCurrentWhenActive="page"
         >
-          <clr-icon class="nav-icon" [shape]="item.icon ?? ''" />
+          <svg class="nav-icon" [lucideIcon]="item.icon ?? null"></svg>
           <span class="nav-text">{{ item.label }}</span>
         </a>
       }

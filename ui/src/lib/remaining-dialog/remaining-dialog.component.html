@@ -18,7 +18,7 @@
           aria-label="Close alert"
           (click)="nativeAlert.style.display = 'none'; onCloseAlert(alert)"
         >
-          <cds-icon shape="times"></cds-icon>
+          <svg lucideX></svg>
         </button>
       </div>
     }
@@ -144,10 +144,7 @@
           <div class="group-ctrl__value-wrap">
             <div class="clr-input-wrapper">
               <input type="date" nativeDate formControlName="startDate" />
-              <clr-icon
-                class="clr-validate-icon"
-                shape="exclamation-circle"
-              ></clr-icon>
+              <svg lucideCircleAlert class="clr-validate-icon"></svg>
             </div>
           </div>
         </div>
@@ -160,10 +157,7 @@
           <div class="group-ctrl__value-wrap">
             <div class="clr-input-wrapper">
               <input type="date" nativeDate formControlName="endDate" />
-              <clr-icon
-                class="clr-validate-icon"
-                shape="exclamation-circle"
-              ></clr-icon>
+              <svg lucideCircleAlert class="clr-validate-icon"></svg>
             </div>
           </div>
         </div>
@@ -182,7 +176,7 @@
             >
               @if (!fg.controls['file']?.value?.name) {
                 <div class="btn-upload">
-                  <clr-icon shape="upload-cloud" class="icon-upload"></clr-icon>
+                  <svg lucideCloudUpload class="icon-upload"></svg>
                   Перетащите файлы или
                 </div>
               }
@@ -192,7 +186,7 @@
                 (click)="openFileSelector()"
               >
                 @if (fg.controls['file']?.value?.name) {
-                  <clr-icon shape="upload-cloud" class="icon-upload"></clr-icon>
+                  <svg lucideCloudUpload class="icon-upload"></svg>
                 }
                 {{ fg.controls['file']?.value?.name || 'Загрузите...' }}
               </button>

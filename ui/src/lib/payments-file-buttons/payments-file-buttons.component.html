@@ -7,7 +7,7 @@
     [disabled]="uploadState() === loadingState.LOADING"
     (click)="download()"
   >
-    <clr-icon shape="download-cloud"></clr-icon>
+    <svg lucideCloudDownload></svg>
   </button>
   <button
     class="btn btn-sm btn-icon"
@@ -17,7 +17,7 @@
     [disabled]="uploadState() === loadingState.LOADING"
     (click)="file.click()"
   >
-    <clr-icon shape="upload-cloud"></clr-icon>
+    <svg lucideCloudUpload></svg>
   </button>
   <input
     type="file"

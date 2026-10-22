@@ -17,17 +17,16 @@ import {
   ViewEncapsulation,
   viewChild,
 } from '@angular/core';
-import { ClrIcon } from '@clr/angular';
-import { ClarityIcons, windowCloseIcon } from '@clr/angular/icon';
 import type { SidePanelSize } from '../side-panel/side-panel-config';
 import { DialogScrollService } from './dialog-scroll.service';
+import { LucideX } from '@lucide/angular';
 
 let nextDialogId = 0;
 
 @Component({
   selector: 'sotbi-modal',
   host: { style: 'display: contents' },
-  imports: [ClrIcon],
+  imports: [LucideX],
   templateUrl: './native-modal.component.html',
   styleUrl: './native-modal.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -58,7 +57,6 @@ export class NativeModalComponent {
   private lastObservedOpen = false;
 
   constructor() {
-    ClarityIcons.addIcons(windowCloseIcon);
     afterRenderEffect(() => {
       const open = this.open();
       const content = this.content();

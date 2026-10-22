@@ -1,3 +1,4 @@
+import { LucideUser, LucideZap } from '@lucide/angular';
 import { NativeMainContainerDirective } from '@sotbi/ui';
 import { provideRouter } from '@angular/router';
 import {
@@ -6,13 +7,10 @@ import {
   type Meta,
   type StoryObj,
 } from '@storybook/angular';
-import { ClarityIcons, angleIcon, userIcon, boltIcon } from '@clr/angular/icon';
 
 import { HeaderComponent, type HeaderLink } from '@sotbi/ui';
 import { type HeaderBrand, type HeaderUser } from '@sotbi/ui';
 import { LeftNavBarComponent, type LeftNavBarItem } from '@sotbi/ui';
-
-ClarityIcons.addIcons(angleIcon, userIcon, boltIcon);
 
 // Собственный ресурс логотипа истории, без assets приложений
 const logoUrl =
@@ -141,17 +139,25 @@ export const NarrowWidth: Story = {
 };
 
 const navItems: LeftNavBarItem[] = [
-  { label: 'Трудозатраты', icon: 'user', routerLink: '/costs' },
+  { label: 'Трудозатраты', icon: LucideUser.icon, routerLink: '/costs' },
   {
     label: 'Банкротство',
-    icon: 'bolt',
+    icon: LucideZap.icon,
     expanded: true,
     children: [
-      { label: 'Должники', icon: 'bolt', routerLink: '/bankruptcy/debtors' },
-      { label: 'Торги', icon: 'bolt', routerLink: '/bankruptcy/auctions' },
+      {
+        label: 'Должники',
+        icon: LucideZap.icon,
+        routerLink: '/bankruptcy/debtors',
+      },
+      {
+        label: 'Торги',
+        icon: LucideZap.icon,
+        routerLink: '/bankruptcy/auctions',
+      },
     ],
   },
-  { label: 'Платежи', icon: 'user', routerLink: '/payments' },
+  { label: 'Платежи', icon: LucideUser.icon, routerLink: '/payments' },
 ];
 
 export const WithLeftNav: Story = {

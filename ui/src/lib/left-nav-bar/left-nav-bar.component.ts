@@ -3,11 +3,11 @@ import { NativeVerticalNavComponent } from '../vertical-nav/native-vertical-nav.
 import { NativeVerticalNavGroupComponent } from '../vertical-nav/native-vertical-nav-group.component';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { ClrIcon } from '@clr/angular';
+import { LucideDynamicIcon, type LucideIconData } from '@lucide/angular';
 
 export interface LeftNavBarItem {
   label: string;
-  icon?: string;
+  icon?: LucideIconData;
   routerLink?: string;
   access?: string;
   expanded?: boolean;
@@ -49,7 +49,7 @@ export const filterItems = (
     NativeVerticalNavComponent,
     NativeVerticalNavGroupComponent,
     NativeNavLevelDirective,
-    ClrIcon,
+    LucideDynamicIcon,
     RouterLink,
     RouterLinkActive,
   ],

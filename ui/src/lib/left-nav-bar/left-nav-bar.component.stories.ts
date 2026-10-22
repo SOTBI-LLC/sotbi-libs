@@ -1,45 +1,40 @@
 import {
-  ClarityIcons,
-  boltIcon,
-  bugIcon,
-  certificateIcon,
-  sadFaceIcon,
-  shieldIcon,
-  userIcon,
-} from '@clr/angular/icon';
+  LucideBug,
+  LucideFaceSlightlyFrowning,
+  LucideFileBadge,
+  LucideShield,
+  LucideUser,
+  LucideZap,
+} from '@lucide/angular';
 import type { Meta, StoryObj } from '@storybook/angular';
 import { applicationConfig } from '@storybook/angular';
 import { provideRouter } from '@angular/router';
 
-import {
-  LeftNavBarComponent,
-  type LeftNavBarItem,
-} from '@sotbi/ui';
-
-ClarityIcons.addIcons(
-  userIcon,
-  boltIcon,
-  sadFaceIcon,
-  bugIcon,
-  shieldIcon,
-  certificateIcon,
-);
+import { LeftNavBarComponent, type LeftNavBarItem } from '@sotbi/ui';
 
 const demoItems: LeftNavBarItem[] = [
-  { label: 'Normal', icon: 'user', routerLink: './normal' },
-  { label: 'Electric', icon: 'bolt', routerLink: './electric' },
+  { label: 'Normal', icon: LucideUser.icon, routerLink: './normal' },
+  { label: 'Electric', icon: LucideZap.icon, routerLink: './electric' },
   {
     label: 'Poison',
-    icon: 'sad-face',
+    icon: LucideFaceSlightlyFrowning.icon,
     expanded: false,
     children: [
-      { label: 'Sub Poison 1', icon: 'sad-face', routerLink: './poison/1' },
-      { label: 'Sub Poison 2', icon: 'sad-face', routerLink: './poison/2' },
+      {
+        label: 'Sub Poison 1',
+        icon: LucideFaceSlightlyFrowning.icon,
+        routerLink: './poison/1',
+      },
+      {
+        label: 'Sub Poison 2',
+        icon: LucideFaceSlightlyFrowning.icon,
+        routerLink: './poison/2',
+      },
     ],
   },
-  { label: 'Grass', icon: 'bug', routerLink: './grass' },
-  { label: 'Fighting', icon: 'shield', routerLink: './fighting' },
-  { label: 'Credit', icon: 'certificate', routerLink: './credit' },
+  { label: 'Grass', icon: LucideBug.icon, routerLink: './grass' },
+  { label: 'Fighting', icon: LucideShield.icon, routerLink: './fighting' },
+  { label: 'Credit', icon: LucideFileBadge.icon, routerLink: './credit' },
 ];
 
 // Приложение-потребитель задаёт высоту навигации через контейнер
@@ -100,7 +95,7 @@ export const WithGroups: Story = {
     items: [
       {
         label: 'Poison',
-        icon: 'sad-face',
+        icon: LucideFaceSlightlyFrowning.icon,
         expanded: true,
         children: demoItems[2].children,
       },

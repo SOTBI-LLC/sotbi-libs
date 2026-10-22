@@ -12,12 +12,12 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ClrIcon } from '@clr/angular';
 import type { Debtor, Project } from '@sotbi/models';
 import { FilterBlockComponent } from '../filter-block';
 import { FilterComponent } from '../filter-search';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { LucideChevronUp } from '@lucide/angular';
 
 @Component({
   selector: 'project-debtor-tree',
@@ -27,7 +27,7 @@ import { debounceTime } from 'rxjs/operators';
   imports: [
     FilterBlockComponent,
     FilterComponent,
-    ClrIcon,
+    LucideChevronUp,
     Tree,
     TreeItem,
     TreeItemGroup,
