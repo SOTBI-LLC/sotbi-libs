@@ -9,6 +9,11 @@
       "glob": "styles.css",
       "input": ".",
       "output": "."
+    },
+    {
+      "glob": "styles-composable.css",
+      "input": ".",
+      "output": "."
     }
   ]
 }

@@ -4,9 +4,41 @@
 Приложение предоставляет данные и обработчики; пакет не выполняет HTTP-запросов
 и не хранит доменное состояние.
 
-Зависимости (peerDependencies): Angular 22.x, Angular Material, Clarity 18.3.x,
+Зависимости (peerDependencies): Angular 22.x, Clarity 18.3.x,
 ngx-file-drop 16.x, @ng-select, @sotbi/models, @sotbi/utils, rxjs. Стили
 подключаются через `@sotbi/ui/styles.css`.
+
+## CSS для приложения с собственным каскадом
+
+Помимо прежнего `@sotbi/ui/styles.css`, пакет экспортирует
+`@sotbi/ui/styles-composable.css`. Используйте **один** из этих файлов.
+
+- `styles.css` — прежний полный набор: Tailwind preflight, слои и важные
+  декларации сохраняются для существующих потребителей.
+- `styles-composable.css` — те же токены, утилиты и правила компонентов/иконок,
+  но без слоя `base` (preflight), директив `@layer` и важных деклараций.
+  Инициализация CSS properties Tailwind и `@property` сохраняются.
+  Это глобальный CSS, а не изолированная тема: слой и приоритет задаёт потребитель.
+
+Пример подключения в приложении с Clarity и Tailwind-first каскадом:
+
+```css
+@layer theme, vendor, base, components, overrides, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import '@clr/ui/clr-ui.min.css' layer(vendor);
+@import '@sotbi/ui/styles-composable.css' layer(vendor);
+@import 'tailwindcss/utilities.css' layer(utilities);
+```
+
+Базовые стили форм и типографики предоставляет Clarity или само приложение.
+При переходе проверить формы, ng-select и Lucide: в новом экспорте намеренно
+нет `!important`, поэтому важные правила других библиотек сохраняют приоритет.
+Не подключайте одновременно полный экспорт: он снова добавит preflight.
+
+Оба файла генерируются одной целью `yarn nx run ui:build-styles` из общего
+источника `ui/src/styles.css`; вручную редактировать их не нужно.
+`yarn nx run ui:test-styles` проверяет контракт подготовленного CSS;
+эта проверка также входит в `ui:test`.
 
 ## PaymentsFileButtonsComponent
 
@@ -44,7 +76,8 @@ this.dialog.open(DialogHistoryComponent, {
   data: {
     title: 'История изменений',
     info: id,
-    loadHistory: (attachmentId: number) => this.attachments.history(attachmentId),
+    loadHistory: (attachmentId: number) =>
+      this.attachments.history(attachmentId),
     fieldLabels: attachmentHistoryFields, // необязательный словарь приложения
   } satisfies DialogHistoryDataModel,
 });
@@ -63,13 +96,17 @@ import { RemainingDialogComponent, RemainingDialogData } from '@sotbi/ui';
 
 // Редактирование: обработчик загрузки обязателен
 const data = {
-  row, caption: 'Загрузить PDF файл', isEdit: true,
+  row,
+  caption: 'Загрузить PDF файл',
+  isEdit: true,
   uploadStatement: (formData: FormData) => this.uploadSrv.uploadPdf(formData),
 } satisfies RemainingDialogData;
 
 // Просмотр: обработчик не нужен
 const dataView = {
-  row, caption: 'Подробнее', isEdit: false,
+  row,
+  caption: 'Подробнее',
+  isEdit: false,
   // statementUrl: '/custom/statement/42', — необязательная ссылка на файл;
   // по умолчанию /download/payment/<id>
 } satisfies RemainingDialogData;

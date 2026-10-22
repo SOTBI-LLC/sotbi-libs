@@ -20,12 +20,20 @@
         "{projectRoot}/src/styles.css",
         "{projectRoot}/src/lucide-icons.css",
         "{projectRoot}/src/sotbi-component-layer.css",
-        "{projectRoot}/src/**/*.{html,ts}"
+        "{projectRoot}/src/**/*.{html,ts}",
+        "{workspaceRoot}/tools/styles/export-composable-css.mjs"
       ],
-      "outputs": ["{projectRoot}/styles.css"],
+      "outputs": [
+        "{projectRoot}/styles.css",
+        "{projectRoot}/styles-composable.css"
+      ],
       "options": {
-        "command": "npx @tailwindcss/cli -i src/styles.css -o styles.css --minify",
-        "cwd": "{projectRoot}"
+        "cwd": "{projectRoot}",
+        "commands": [
+          "npx @tailwindcss/cli -i src/styles.css -o styles.css --minify",
+          "node ../tools/styles/export-composable-css.mjs styles.css styles-composable.css"
+        ],
+        "parallel": false
       }
     },
     "build": {
@@ -110,7 +118,8 @@
           "ci": true,
           "codeCoverage": true
         }
-      }
+      },
+      "dependsOn": ["test-styles"]
     },
     "static-storybook": {
       "executor": "@nx/web:file-server",
@@ -131,6 +140,14 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["ui/src/**/*.scss"]
+      }
+    },
+    "test-styles": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["{workspaceRoot}/tools/styles/*.mjs"],
+      "options": {
+        "command": "node --test tools/styles/export-composable-css.test.mjs"
       }
     }
   }

@@ -3,6 +3,7 @@
 # compiled output
 dist
 ui/styles.css
+ui/styles-composable.css
 ui-ag-grid/styles.css
 tmp
 out-tsc
