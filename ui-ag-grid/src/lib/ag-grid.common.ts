@@ -222,7 +222,7 @@ export const setGridState = (api: GridApi, prefix: string): void => {
   }
 };
 
-/** Inline SVG for AG Grid string cell renderers (clr-icon does not upgrade via innerHTML). */
+/** Inline SVG for AG Grid string cell renderers (icon components do not render via innerHTML). */
 export const settingsCheckboxCellIcon = (
   checked: boolean,
   highlighted = false,
