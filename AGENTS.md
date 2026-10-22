@@ -11,7 +11,7 @@
 - **Package Manager:** Yarn
 - **Testing:** Jest 30+ (migrating from Jasmine)
 - **Linting & Formatting:** ESLint (Flat Config), Prettier
-- **UI Components:** Angular Material, Clarity Design (@clr/angular), AG Grid
+- **UI Components:** Angular Material, Clarity Design (@clr/ui CSS), Lucide icons (@lucide/angular), AG Grid
 
 ### Architecture & Libraries
 

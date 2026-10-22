@@ -2211,13 +2211,6 @@
     fast-wrap-ansi "^0.2.0"
     sisteransi "^1.0.5"
 
-"@clr/angular@^18.4.0":
-  version "18.4.0"
-  resolved "https://registry.yarnpkg.com/@clr/angular/-/angular-18.4.0.tgz#e05d318d94842ef533e196697f979a36653e85be"
-  integrity sha512-0gfEGJ0lS3WuPX19n2uMDqhM75R4b8f/NwM+XzF6YowKKC5VgShg+6rMtcbuk5L/vfQecekk6R12QbvipQOHkg==
-  dependencies:
-    tslib "^2.3.0"
-
 "@clr/ui@^18.4.0":
   version "18.4.0"
   resolved "https://registry.yarnpkg.com/@clr/ui/-/ui-18.4.0.tgz#28a739a6744dbc0e8ec980f9c9da553e0a66f03c"

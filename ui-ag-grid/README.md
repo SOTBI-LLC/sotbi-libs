@@ -5,7 +5,7 @@
 Зависимость направления `ui-ag-grid → ui`.
 
 Зависимости (peerDependencies): Angular 22.x, AG Grid 34.3.x (community +
-enterprise: таблицы используют SideBar/pivot), @clr/angular 18.3.x,
+enterprise: таблицы используют SideBar/pivot), @lucide/angular 1.x,
 @ng-select, date-fns, angular-imask, @sotbi/models, @sotbi/utils, @sotbi/ui,
 rxjs. Стили: `@sotbi/ui-ag-grid/styles.css`.
 

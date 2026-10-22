@@ -81,12 +81,14 @@ const dataView = {
 - Ошибка загрузки отображается в диалоге, диалог остаётся открытым.
 - Отмена закрывает диалог без результата загрузки.
 
-## Clarity CSS
+## Clarity CSS и иконки
 
-Компоненты на Clarity (`PaymentsFileButtons`, `RemainingDialog`, `Header`,
-`LeftNavBar`) требуют подключённых стилей Clarity в приложении-потребителе
-(стандартное подключение `@clr/angular` и `@clr/ui/clr-ui.min.css`), плюс
-`@sotbi/ui/styles.css`.
+Компоненты на разметке Clarity (`PaymentsFileButtons`, `RemainingDialog`,
+`Header`, `LeftNavBar`) требуют в приложении-потребителе стилей
+`@clr/ui/clr-ui.min.css` и `@sotbi/ui/styles.css`. Иконки — компоненты
+`@lucide/angular` (`<svg lucideX>`, peer-зависимость); `@sotbi/ui/styles.css`
+переносит на `svg.lucide` оформление иконок Clarity (размеры, цвета, `data-size`,
+`data-direction`, `data-status`). `@clr/angular` не требуется.
 
 ## HeaderComponent
 
@@ -144,13 +146,7 @@ import {
 - Требуются стили Clarity (`@clr/ui/clr-ui.min.css`) и `@sotbi/ui/styles.css`.
 - Ширина поля поиска задаётся локальным правилом `.focus-item` компонента
   (медиазапросы по ширине экрана).
-- Иконка `angle` в триггере меню должна быть зарегистрирована потребителем:
-
-```ts
-import { ClarityIcons, angleIcon } from '@clr/angular/icon';
-
-ClarityIcons.addIcons(angleIcon);
-```
+- Иконки — компоненты `@lucide/angular`, регистрация не требуется.
 
 ## LeftNavBarComponent
 
@@ -213,12 +209,14 @@ items = filterItems(config, (key) => this.access.has(key));
 - Высоту навигации задаёт контейнер приложения; в timetable это
   `.content-container .clr-vertical-nav { height: 100% }`. Скопируйте
   эквивалентное правило в стили потребителя.
-- Имена иконок из `icon` должны быть зарегистрированы приложением:
+- `icon` — данные иконки Lucide (`LucideIconData`), регистрация не требуется:
 
 ```ts
-import { ClarityIcons, userIcon } from '@clr/angular/icon';
+import { LucideUser } from '@lucide/angular';
 
-ClarityIcons.addIcons(userIcon);
+const items: LeftNavBarItem[] = [
+  { label: 'Сотрудники', icon: LucideUser.icon, routerLink: '/staff' },
+];
 ```
 
 ## AttachmentsPipe
