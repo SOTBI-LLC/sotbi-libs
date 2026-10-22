@@ -147,6 +147,10 @@ const base = `
   margin: 0;
   vertical-align: middle;
   color: var(--sotbi-icon-color, currentColor);
+  /* @clr/ui fills icons by class (.nav-icon, .clr-validate-icon, …); Lucide
+     glyphs are outlines, so a filled <svg> turns them into solid shapes.
+     Layered !important outranks every unlayered @clr/ui and app rule. */
+  fill: none !important;
 }
 ${['xs', 'sm', 'md', 'lg', 'xl', 'xxl', '3xl', '4xl']
   .map((size) => {
