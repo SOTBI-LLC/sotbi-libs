@@ -9,6 +9,16 @@
       "glob": "styles.css",
       "input": ".",
       "output": "."
+    },
+    {
+      "glob": "overrides.css",
+      "input": "src/styles",
+      "output": "."
+    },
+    {
+      "glob": "indicators.css",
+      "input": "src/styles",
+      "output": "."
     }
   ]
 }

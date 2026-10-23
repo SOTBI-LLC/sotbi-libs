@@ -1,0 +1,72 @@
+/* Общие семантические цвета и размеры контролов Sotbi. Tailwind v4: подключать до локальной темы. */
+@theme inline static {
+  --color-ink: var(--cds-global-color-black, #000);
+  --color-surface: var(--cds-global-color-white, #fff);
+  --color-text-deep: #1b1b1b;
+  --color-text-heading: #1b2b32;
+  --color-text-strong: var(--cds-global-color-gray-900, #333);
+  --color-text-default: var(--cds-global-color-gray-800, #454545);
+  --color-text-secondary: #565656;
+  --color-text-muted: var(--cds-global-color-gray-700, #666);
+  --color-text-subtle: #737373;
+  --color-text-caption: #334155;
+  --color-text-inactive: #808080;
+  --color-text-disabled: var(--cds-global-color-gray-500, #b3b3b3);
+  --color-link: #0072a3;
+  --color-link-hover: #00567a;
+  --color-link-strong: #00608a;
+  --color-focus: #0079ad;
+  --color-action-accent: #0079b8;
+  --color-info-bright: #0095d3;
+  --color-danger: #c21d00;
+  --color-required: #c92100;
+  --color-success: #318700;
+  --color-accent: #a534b6;
+  --color-signal-red: #f00;
+  --color-signal-gold: #ffd700;
+  --color-signal-green: #008000;
+  --color-signal-blue: #00f;
+  --color-highlight: #4fe;
+  --color-warning-outline: #f1b579;
+  --color-warning-badge: #fac400;
+  --color-favorite: #ffdc0b;
+  --color-border: var(--cds-global-color-gray-400, #ccc);
+  --color-border-muted: var(--cds-global-color-gray-300, #ddd);
+  --color-border-control: #9a9a9a;
+  --color-border-line: #d7d7d7;
+  --color-border-panel: #cbd4d8;
+  --color-border-chip: #c2e0ff;
+  --color-shadow-muted: #aaa;
+  --color-shadow-soft: #00000012;
+  --color-surface-hover: #8080800a;
+  --color-border-overlay: #8080803d;
+  --color-dropzone-hover: #8c8c8c63;
+  --color-calendar-highlight: #4ebcff5c;
+  --color-section-header: #b5bdc4;
+  --color-workspace: #e4e7ea;
+  --color-panel-hover: #d9e4ea;
+  --color-info-bg: #e3f5fc;
+  --color-surface-muted: var(--cds-global-color-gray-200, #e8e8e8);
+  --color-surface-neutral: #e9ecef;
+  --color-surface-shell: #eef5f8;
+  --color-surface-disabled: var(--cds-global-color-gray-100, #f2f2f2);
+  --color-danger-bg: #f5dbd9;
+  --color-chip-bg: #f5faff;
+  --color-detail-surface: #edf6ff;
+  --color-surface-subtle: var(--cds-global-color-gray-50, #fafafa);
+  --spacing-form-label: 155px;
+  --spacing-form-label-wide: 190px;
+  --spacing-control: var(--sotbi-control-height);
+  --spacing-select-control: 1rem;
+  --color-app-background: var(--clr-global-app-background, #fcfdfd);
+}
+
+@layer theme {
+  :root {
+    --sotbi-control-height: var(--clr-forms-input-wrapper-height);
+    --sotbi-control-line-height: var(--clr-base-typography-line-height-16);
+    --sotbi-control-font-size: var(--clr-base-typography-font-size-inline);
+    --sotbi-chip-height: var(--clr-base-row-height-xs);
+    --sotbi-chip-font-size: var(--clr-base-typography-font-size-caption);
+  }
+}
