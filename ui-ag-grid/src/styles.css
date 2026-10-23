@@ -1,4 +1,6 @@
 @import url('tailwindcss');
+@import './styles/overrides.css';
+@import './styles/indicators.css';
 
 @source './lib/**/*.{html,ts}';
 

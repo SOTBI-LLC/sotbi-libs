@@ -23,7 +23,8 @@
     "state",
     "ui",
     "ui-ag-grid",
-    "utils"
+    "utils",
+    "stylelint-config"
   ],
   "dependencies": {
     "@angular/animations": "^22.2.3",

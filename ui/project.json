@@ -21,7 +21,8 @@
         "{projectRoot}/src/lucide-icons.css",
         "{projectRoot}/src/sotbi-component-layer.css",
         "{projectRoot}/src/**/*.{html,ts}",
-        "{workspaceRoot}/tools/styles/export-composable-css.mjs"
+        "{workspaceRoot}/tools/styles/export-composable-css.mjs",
+        "{projectRoot}/src/styles/**/*.css"
       ],
       "outputs": [
         "{projectRoot}/styles.css",
@@ -140,7 +141,8 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["ui/src/**/*.scss"]
-      }
+      },
+      "dependsOn": ["stylelint-shared"]
     },
     "test-styles": {
       "executor": "nx:run-commands",
@@ -149,6 +151,14 @@
       "options": {
         "command": "node --test tools/styles/export-composable-css.test.mjs"
       }
+    },
+    "stylelint-shared": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "stylelint \"ui/src/styles/*.css\" --config ui/styles.stylelint.config.mjs"
+      },
+      "cache": true,
+      "inputs": ["default", "{workspaceRoot}/stylelint-config/src/**/*.mjs"]
     }
   }
 }

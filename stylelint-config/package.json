@@ -1,0 +1,29 @@
+{
+  "name": "@sotbi/stylelint-config",
+  "version": "0.3.6",
+  "description": "Общие строгие правила Stylelint для Tailwind и Angular в Sotbi",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "files": [
+    "src/index.mjs"
+  ],
+  "sideEffects": false,
+  "dependencies": {
+    "stylelint-config-standard": "^40.0.0"
+  },
+  "peerDependencies": {
+    "stylelint": "^17.16.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.bazys.io",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SOTBI-LLC/sotbi-libs.git",
+    "directory": "stylelint-config"
+  },
+  "license": "MIT"
+}

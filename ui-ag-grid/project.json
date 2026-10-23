@@ -19,7 +19,8 @@
       "inputs": [
         "{projectRoot}/src/styles.css",
         "{workspaceRoot}/ui/src/sotbi-component-layer.css",
-        "{projectRoot}/src/**/*.{html,ts}"
+        "{projectRoot}/src/**/*.{html,ts}",
+        "{projectRoot}/src/styles/**/*.css"
       ],
       "outputs": ["{projectRoot}/styles.css"],
       "options": {
@@ -133,7 +134,16 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["ui-ag-grid/src/**/*.scss"]
-      }
+      },
+      "dependsOn": ["stylelint-shared"]
+    },
+    "stylelint-shared": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "stylelint \"ui-ag-grid/src/styles/*.css\" --config ui-ag-grid/styles.stylelint.config.mjs"
+      },
+      "cache": true,
+      "inputs": ["default", "{workspaceRoot}/stylelint-config/src/**/*.mjs"]
     }
   }
 }

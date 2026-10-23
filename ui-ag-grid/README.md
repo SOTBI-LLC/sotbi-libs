@@ -111,7 +111,10 @@ Observable<string>` необязателен: без него выбор пол�
 ## Список страховых данных (InsuranceListComponent)
 
 ```ts
-import { InsuranceListComponent, InsuranceLinkBuilder } from '@sotbi/ui-ag-grid';
+import {
+  InsuranceListComponent,
+  InsuranceLinkBuilder,
+} from '@sotbi/ui-ag-grid';
 ```
 
 ```html
@@ -162,3 +165,19 @@ import { InsuranceListComponent, InsuranceLinkBuilder } from '@sotbi/ui-ag-grid'
 - `selectedId: number` — идентификатор выбранной строки.
 - `changeRowData(array)` — подмена данных грида без пересоздания.
 - `setFirstRowSelected()` — выбор первой строки.
+
+## Общие стили
+
+Собранный `styles.css` включает общие правила ячеек/заголовков Balham и статусные
+индикаторы. Для приложений со своей CSS-точкой входа доступны отдельные экспорты:
+
+```css
+@import '@sotbi/ui-ag-grid/overrides.css' layer(vendor);
+@import '@sotbi/ui-ag-grid/indicators.css' layer(vendor);
+```
+
+Эти два файла не содержат preflight, импортов Tailwind и объявления порядка слоёв.
+`overrides.css` задаёт изображения в ячейках, вертикальные заголовки, общую высоту
+строк read-only-grid и значок дополнительной панели. Кнопки sidebar сохраняют собственную раскладку компонента и базовую тему. Индикаторы сохраняют классы `.indicator` и состояний
+`open`, `reject`, `done`, `withdraw`, `future`, `approval`, `agreed`, `send`, `work`,
+`cardfile`, их геометрию и цвета. Селекторы раскладки приложения остаются у потребителя.

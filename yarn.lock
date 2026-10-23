@@ -346,13 +346,6 @@
     tinyglobby "^0.2.12"
     yargs "^18.0.0"
 
-"@angular/material@^22.2.3":
-  version "22.2.3"
-  resolved "https://registry.yarnpkg.com/@angular/material/-/material-22.2.3.tgz#e7ccfef5d87ed10bac1c8f93c74415a6eead34d1"
-  integrity sha512-zbkQRIFJdarPu8uwHnk77O3836ckejJnX5oT9Lx5Ydq/fN+xkAyedTJMpGD6FsAbtAth5Kv7YiAFbZQvBgNLsQ==
-  dependencies:
-    tslib "^2.3.0"
-
 "@angular/platform-browser-dynamic@^22.2.3":
   version "22.2.3"
   resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-22.2.3.tgz#f2bc7ee1230567f163c5436218d9ef722a4b5afb"

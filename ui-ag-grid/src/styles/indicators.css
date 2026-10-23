@@ -1,0 +1,50 @@
+/* Статусные индикаторы. Глобальные: класс .indicator использует и разметка
+   @sotbi/ui-ag-grid (ячейка страховок), не только списки заявок. */
+.indicator {
+  margin-left: -10px;
+}
+
+.indicator::before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='10' width='10'%3E%3Ccircle cx='5' cy='5' r='4'/%3E%3C/svg%3E");
+  margin-right: 5px;
+}
+
+.indicator.open::before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='10' width='10'%3E%3Ccircle cx='5' cy='5' r='4' fill='red'/%3E%3C/svg%3E");
+}
+
+.indicator.reject::before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='10' width='10'%3E%3Ccircle cx='5' cy='5' r='4' fill='gold'/%3E%3C/svg%3E");
+}
+
+.indicator.done::before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='10' width='10'%3E%3Ccircle cx='5' cy='5' r='4' fill='green'/%3E%3C/svg%3E");
+}
+
+.indicator.withdraw::before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='10' width='10'%3E%3Ccircle cx='5' cy='5' r='4' fill='gray'/%3E%3C/svg%3E");
+}
+
+.indicator.future::before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='10' width='10'%3E%3Ccircle cx='5' cy='5' r='4' fill='darkblue'/%3E%3C/svg%3E");
+}
+
+.indicator.approval::before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='10' width='10'%3E%3Ccircle cx='5' cy='5' r='4' fill='red'/%3E%3C/svg%3E%0A");
+}
+
+.indicator.agreed::before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='10' width='10'%3E%3Ccircle cx='5' cy='5' r='4' fill='%23e08e00'/%3E%3C/svg%3E%0A");
+}
+
+.indicator.send::before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='10' width='10'%3E%3Ccircle cx='5' cy='5' r='4' fill='%2368eea2'/%3E%3C/svg%3E%0A");
+}
+
+.indicator.work::before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='10' width='10'%3E%3Ccircle cx='5' cy='5' r='4' fill='%23e0ce00'/%3E%3C/svg%3E%0A");
+}
+
+.indicator.cardfile::before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='10' width='10'%3E%3Ccircle cx='5' cy='5' r='4' fill='%23454ae3'/%3E%3C/svg%3E%0A");
+}
