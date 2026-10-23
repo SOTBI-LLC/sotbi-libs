@@ -12,12 +12,14 @@
               <td class="field--bottom linebottom w-35">
                 {{ paymentDoc()?.income_date | date: 'dd.MM.yyyy' }}
               </td>
-              <td class="field w-15">&nbsp;</td>
+              <td class="field payment-form__spacer-15">&nbsp;</td>
               <td class="field--bottom linebottom w-35">
                 {{ paymentDoc()?.writen_off_date | date: 'dd.MM.yyyy' }}
               </td>
               <td class="field">&nbsp;</td>
-              <td class="rectangle w-15 h-7-fs-10">0401060</td>
+              <td class="rectangle payment-form__spacer-15 h-7-fs-10">
+                0401060
+              </td>
             </tr>
             <tr>
               <td class="field">Поступ. в банк плат.</td>
@@ -47,7 +49,7 @@
               <td class="data w-35-bottom center">
                 {{ paymentDoc()?.payment_type || ' ' }}
               </td>
-              <td class="field w-11">&nbsp;</td>
+              <td class="field payment-form__spacer-11">&nbsp;</td>
               <td class="accent rectangle w-8h-8 center"></td>
             </tr>
             <tr>
@@ -183,7 +185,7 @@
             <tr>
               <td class="field linetop lineleft h-5">Вид&nbsp;оп.</td>
               <td class="data linetop lineleft" rowspan="3">
-                <table cellspacing="0" class="w-100">
+                <table cellspacing="0" class="payment-form__full-width">
                   <tbody>
                     <tr>
                       <td class="data w-30 h-5">01</td>

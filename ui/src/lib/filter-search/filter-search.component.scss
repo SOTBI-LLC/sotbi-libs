@@ -75,3 +75,8 @@ $field-height: 1.2rem;
     pointer-events: none;
   }
 }
+
+/* Широкая форма предоставляет полную ширину поля; место иконки входит в padding. */
+:host-context(.wide) .search-input {
+  width: 100%;
+}

@@ -9,243 +9,248 @@ import { amountToWords } from '@sotbi/utils';
 // элемент через новый document, так как стилей у элемента нет.
 // Поэтому workaround хранить стили в виде строки и 'ручками' применять
 const STYLE = `
-code {
+.payments-dialog__table {
+    border: none;
+}
+  :where(.payments-dialog__table) code {
     white-space: pre;
   }
-  .code {
+  :where(.payments-dialog__table) .code {
     white-space: pre;
   }
-.w-180{
+:where(.payments-dialog__table) .w-180{
   width: 180mm;
 }
-.table-style{
+:where(.payments-dialog__table) .table-style{
   width: 100%;
   table-layout: fixed;
 }
-.w-35{
+:where(.payments-dialog__table) .w-35{
   width: 35mm;
 }
-.w-15{
+:where(.payments-dialog__table) .payment-form__spacer-15{
   width: 15mm;
 }
-.h-7-fs-10{
+:where(.payments-dialog__table) .h-7-fs-10{
   height: 7mm;
   font-size: 10pt;
 }
-.mt-3{
+:where(.payments-dialog__table) .mt-3{
   margin-top: 3mm;
 }
-.w-82-bottom{
+:where(.payments-dialog__table) .w-82-bottom{
   width: 82mm;
   vertical-align: bottom;
 }
-.w-35-bottom{
+:where(.payments-dialog__table) .w-35-bottom{
   width: 35mm;
   vertical-align: bottom;
 }
-.w-5{
+:where(.payments-dialog__table) .w-5{
  width: 5mm;
 }
-.h-5{
+:where(.payments-dialog__table) .h-5{
   width: 5mm;
 }
-.center{
+:where(.payments-dialog__table) .center{
   text-align: center;
 }
-.w-11{
+:where(.payments-dialog__table) .payment-form__spacer-11{
   width: 11mm;
 }
-.w-8h-8{
+:where(.payments-dialog__table) .w-8h-8{
   width: 8mm;
   height: 8mm;
 }
-.w-20h-15{
+:where(.payments-dialog__table) .w-20h-15{
   width: 20mm;
   height: 15mm;
 }
-.w-27{
+:where(.payments-dialog__table) .w-27{
   width: 27%;
 }
-.w-8{
+:where(.payments-dialog__table) .w-8{
   width: 8%;
 }
-.w-36{
+:where(.payments-dialog__table) .w-36{
   width: 36%;
 }
-.h-10{
+:where(.payments-dialog__table) .h-10{
   height: 10mm;
 }
-.w-30{
+:where(.payments-dialog__table) .w-30{
   width: 30%;
 }
-.w-38{
+:where(.payments-dialog__table) .w-38{
  width: 38%;
 }
-.w-24ls-004{
+:where(.payments-dialog__table) .w-24ls-004{
   width: 24%;
   letter-spacing: -0.04em;
 }
-.w-15per{
+:where(.payments-dialog__table) .w-15per{
   width: 15%;
 }
-.w-5per{
+:where(.payments-dialog__table) .w-5per{
   width: 5%;
   }
-.w-12per{
+:where(.payments-dialog__table) .w-12per{
   width: 12%;
 }
-.w-18per{
+:where(.payments-dialog__table) .w-18per{
   width: 18%;
 }
-.h-25{
+:where(.payments-dialog__table) .h-25{
   height: 25mm;
 }
-.h-15{
+:where(.payments-dialog__table) .h-15{
   height: 15mm;
 }
-.w-60{
+:where(.payments-dialog__table) .w-60{
   width: 60mm;
 }
-.bottom{
+:where(.payments-dialog__table) .bottom{
   vertical-align: bottom;
   }
-  .nowr {
+  :where(.payments-dialog__table) .nowr {
     white-space: nowrap;
   }
-  td {
+  :where(.payments-dialog__table) td {
     padding: 0;
     border: 0;
   }
-  table {
+  :where(.payments-dialog__table) table {
     border: none;
   }
-  img {
+  :where(.payments-dialog__table) img {
     border: none;
   }
-  form {
+  :where(.payments-dialog__table) form {
     margin: 0px;
     padding: 0px;
   }
-  sup {
+  :where(.payments-dialog__table) sup {
     font-size: 66%;
     line-height: 0.5;
   }
-  li {
+  :where(.payments-dialog__table) li {
     list-style: square outside;
     padding: 0px;
     margin: 0px;
   }
-  ul {
+  :where(.payments-dialog__table) ul {
     list-style: square outside;
     padding: 0em 0em 0em 0em;
     margin: 0em 0em 0em 1.5em;
   }
-  .fakelink {
+  :where(.payments-dialog__table) .fakelink {
     cursor: pointer;
   }
-  .centered {
+  :where(.payments-dialog__table) .centered {
     margin-left: auto;
     margin-right: auto;
   }
-  .zerosize {
+  :where(.payments-dialog__table) .zerosize {
     font-size: 1px;
   }
-  .underlined {
+  :where(.payments-dialog__table) .underlined {
     text-decoration: underline;
   }
-  .bolded {
+  :where(.payments-dialog__table) .bolded {
     font-weight: bold;
   }
-  .vbottom {
+  :where(.payments-dialog__table) .vbottom {
     vertical-align: bottom;
   }
-  .vsub {
+  :where(.payments-dialog__table) .vsub {
     vertical-align: sub;
   }
-  .h_left {
+  :where(.payments-dialog__table) .h_left {
     text-align: left;
   }
-  .h_right {
+  :where(.payments-dialog__table) .h_right {
     text-align: right;
   }
-  .h_center {
+  :where(.payments-dialog__table) .h_center {
     text-align: center;
   }
-  .v_top {
+  :where(.payments-dialog__table) .v_top {
     vertical-align: top;
   }
-  .v_bottom {
+  :where(.payments-dialog__table) .v_bottom {
     vertical-align: bottom;
   }
-  .v_middle {
+  :where(.payments-dialog__table) .v_middle {
     vertical-align: middle;
   }
-  .w100,
-  .full_w,
-  .full {
+  :where(.payments-dialog__table) .w100,
+  :where(.payments-dialog__table) .full_w,
+  :where(.payments-dialog__table) .full {
     width: 100%;
   }
-  .h100,
-  .full_h,
-  .full {
+  :where(.payments-dialog__table) .h100,
+  :where(.payments-dialog__table) .full_h,
+  :where(.payments-dialog__table) .full {
     height: 100%;
   }
-  .cramp,
-  .cramp_w {
+  :where(.payments-dialog__table) .cramp,
+  :where(.payments-dialog__table) .cramp_w {
     width: 1px;
   }
-  .cramp,
-  .cramp_h {
+  :where(.payments-dialog__table) .cramp,
+  :where(.payments-dialog__table) .cramp_h {
     height: 1px;
   }
-  .ucfirst:first-letter {
+  :where(.payments-dialog__table) .ucfirst:first-letter {
     text-transform: uppercase;
   }
-  .clean {
+  :where(.payments-dialog__table) .clean {
     clear: both;
   }
-  .rectangle {
+  :where(.payments-dialog__table) .rectangle {
     border: black 1pt solid;
   }
-  .linetop {
+  :where(.payments-dialog__table) .linetop {
     border-top: black 1pt solid;
   }
-  .linebottom {
+  :where(.payments-dialog__table) .linebottom {
     border-bottom: black 1pt solid;
   }
-  .lineleft {
+  :where(.payments-dialog__table) .lineleft {
     border-left: black 1pt solid;
     padding-left: 1mm;
   }
-  .accent {
+  :where(.payments-dialog__table) .accent {
     font-family: Arial, sans-serif;
     font-weight: bold;
     font-size: 11pt;
     line-height: 1;
   }
-  .data {
+  :where(.payments-dialog__table) .data {
     font-size: 11pt;
     vertical-align: top;
     word-break: break-word;
   }
-  .field {
+  :where(.payments-dialog__table) .field {
     font-size: 9pt;
     line-height: 1.4;
     height: 5mm;
     vertical-align: top;
   }
-  .field--bottom {
+  :where(.payments-dialog__table) .field--bottom {
     vertical-align: bottom;
   }
-  table.itbl tr {
+  table:where(.payments-dialog__table).itbl tr {
    font-family: "Times New Roman", Times, serif;
    font-size: 11pt;
     /*width: 190mm;*/
     /*margin: 12mm 0 12mm 10mm;*/
   }
-  p {
+  :where(.payments-dialog__table) p {
     margin: 2pt 0 2pt 0;
-  }`;
+  }
+  :where(.payments-dialog__table) .payment-form__full-width { width: 100%; }
+`;
 
 @Component({
   selector: 'payment-form',
