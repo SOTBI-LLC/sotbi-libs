@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/ui",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "public"
@@ -15,8 +15,8 @@
     "./styles-composable.css": "./styles-composable.css"
   },
   "peerDependencies": {
-    "@sotbi/models": "0.3.0",
-    "@sotbi/utils": "0.3.0",
+    "@sotbi/models": "0.3.5",
+    "@sotbi/utils": "0.3.5",
     "@angular/core": "^22.2.3",
     "@angular/forms": "^22.2.3",
     "@angular/animations": "^22.2.3",
