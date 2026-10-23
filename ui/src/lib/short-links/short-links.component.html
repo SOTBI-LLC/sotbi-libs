@@ -12,9 +12,13 @@
 </div>
 @for (item of shortLinks().controls; track item; let i = $index) {
   <form [formGroup]="item" class="flex short-links">
-    <input class="form-control br w-100" type="text" formControlName="name" />
     <input
-      class="form-control br w-100"
+      class="form-control br short-links__input"
+      type="text"
+      formControlName="name"
+    />
+    <input
+      class="form-control br short-links__input"
       type="text"
       placeholder="URI"
       required

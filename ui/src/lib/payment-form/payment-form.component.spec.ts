@@ -234,6 +234,46 @@ describe('PaymentFormComponent', () => {
     });
   });
 
+  it('keeps injected print styles inside the payment table', () => {
+    fixture.detectChanges();
+    const outside = document.createElement('ul');
+    outside.innerHTML = '<li>Outside payment form</li>';
+    document.body.appendChild(outside);
+    const marginBefore = getComputedStyle(outside).marginLeft;
+    const markerBefore = getComputedStyle(outside).listStyle;
+    const table = document.createElement('table');
+    table.className = 'itbl payments-dialog__table';
+    table.innerHTML =
+      '<tbody><tr><td><ul><li>Payment detail</li></ul></td></tr></tbody>';
+    document.body.appendChild(table);
+    try {
+      const styling = component as unknown as {
+        styling: (element: HTMLElement) => void;
+      };
+      styling.styling(table);
+      const style = table.querySelector('style')!;
+      // JSDOM does not parse innerText assignments as stylesheet content.
+      style.textContent = style.innerText;
+      expect(getComputedStyle(table.querySelector('tr')!).fontFamily).toContain(
+        'Times New Roman',
+      );
+      expect(getComputedStyle(table.querySelector('tr')!).fontSize).toBe(
+        '11pt',
+      );
+      expect(getComputedStyle(outside).marginLeft).toBe(marginBefore);
+      expect(getComputedStyle(outside).listStyle).toBe(markerBefore);
+      expect(getComputedStyle(table.querySelector('ul')!).marginLeft).toBe(
+        '1.5em',
+      );
+      expect(getComputedStyle(table.querySelector('ul')!).listStyle).toBe(
+        'square outside',
+      );
+    } finally {
+      outside.remove();
+      table.remove();
+    }
+  });
+
   describe('print', () => {
     let mockWindow: {
       document: { body: { appendChild: jest.Mock }; write: jest.Mock };
