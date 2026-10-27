@@ -53,9 +53,6 @@ import { UserWithAvatarComponent } from './user-with-avatar.component';
         white-space: pre;
         cursor: pointer;
       }
-      ::ng-deep .ng-dropdown-panel.ng-select-bottom {
-        width: 20% !important;
-      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
