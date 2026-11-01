@@ -1,3 +1,5 @@
+import { HttpContext } from '@angular/common/http';
+import { KEEP_FORBIDDEN_CONTEXT } from './forbidden-context';
 import { Location } from '@angular/common';
 import type { HttpHandler } from '@angular/common/http';
 import {
@@ -258,6 +260,19 @@ describe('AuthInterceptor', () => {
         },
       });
       expect(location.back).toHaveBeenCalled();
+    });
+
+    it('preserves URL on opt-in 403 while retaining Authorization and the HTTP error', () => {
+      const request = new HttpRequest('GET', '/api/v2/cost/dashboard/overview', {
+        context: new HttpContext().set(KEEP_FORBIDDEN_CONTEXT, true),
+      });
+      const response = new HttpErrorResponse({status:403,statusText:'Forbidden'});
+      httpHandler.handle.mockReturnValue(throwError(() => response));
+      let received: unknown;
+      interceptor.intercept(request,httpHandler).subscribe({error: error => {received=error;}});
+      expect(received).toBe(response);
+      expect(location.back).not.toHaveBeenCalled();
+      expect(httpHandler.handle.mock.calls[0][0].headers.get('Authorization')).toBe(`Bearer ${mockToken}`);
     });
 
     it('should rethrow non-401/403 errors', () => {

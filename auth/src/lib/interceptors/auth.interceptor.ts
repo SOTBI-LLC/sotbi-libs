@@ -15,6 +15,7 @@ import { BehaviorSubject, throwError } from 'rxjs';
 import { catchError, filter, finalize, switchMap, take } from 'rxjs/operators';
 import { RefreshToken } from '../store/auth.actions';
 import { AuthState } from '../store/auth.state';
+import { KEEP_FORBIDDEN_CONTEXT } from './forbidden-context';
 
 @Injectable({
   providedIn: 'root',
@@ -94,7 +95,9 @@ export class AuthInterceptor implements HttpInterceptor {
             return this.handle401Error(request, next, err);
           case 403:
             this.notification?.showError('У ВАС НЕДОСТАТОЧНО ПРАВ!');
-            this.location.back();
+            if (!request.context.get(KEEP_FORBIDDEN_CONTEXT)) {
+              this.location.back();
+            }
             return throwError(() => err);
         }
         return throwError(() => err);

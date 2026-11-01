@@ -1,6 +1,7 @@
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './lib/interceptors/auth.interceptor';
 
+export { KEEP_FORBIDDEN_CONTEXT } from './lib/interceptors/forbidden-context';
 export { AuthService } from './lib/auth.service';
 export {
   CanComponentDeactivate,
