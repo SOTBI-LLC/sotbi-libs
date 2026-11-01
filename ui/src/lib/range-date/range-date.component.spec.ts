@@ -36,7 +36,9 @@ describe('RangeDate', () => {
   let fixture: ComponentFixture<HostComponent>;
   let host: HostComponent;
 
-  const createHost = async (setup: (host: HostComponent) => void = () => undefined): Promise<void> => {
+  const createHost = async (
+    setup: (host: HostComponent) => void = () => undefined,
+  ): Promise<void> => {
     await TestBed.configureTestingModule({
       imports: [HostComponent],
       providers: [provideZonelessChangeDetection(), provideNoopAnimations()],
@@ -50,7 +52,9 @@ describe('RangeDate', () => {
   };
 
   const periodText = () =>
-    (fixture.nativeElement.querySelector('.summary') as HTMLElement).textContent!.trim();
+    (
+      fixture.nativeElement.querySelector('.summary') as HTMLElement
+    ).textContent!.trim();
 
   const clickPreset = async (name: string) => {
     const links = Array.from(
@@ -89,7 +93,9 @@ describe('RangeDate', () => {
 
   it('emits selectedFromDataPicker when a date input changes', async () => {
     await createHost();
-    const input = fixture.nativeElement.querySelector('#end') as HTMLInputElement;
+    const input = fixture.nativeElement.querySelector(
+      '#end',
+    ) as HTMLInputElement;
     input.value = '2026-11-15';
     input.dispatchEvent(new Event('change', { bubbles: true }));
     await fixture.whenStable();
@@ -102,7 +108,9 @@ describe('RangeDate', () => {
 
   it('swaps start and end when the picker sets them in reverse order', async () => {
     await createHost();
-    const startInput = fixture.nativeElement.querySelector('#start') as HTMLInputElement;
+    const startInput = fixture.nativeElement.querySelector(
+      '#start',
+    ) as HTMLInputElement;
     startInput.value = '2026-12-01';
     startInput.dispatchEvent(new Event('change', { bubbles: true }));
     await fixture.whenStable();
@@ -129,27 +137,55 @@ describe('RangeDate', () => {
     expect(fixture.nativeElement.querySelector('button.margin-btn')).toBeNull();
   });
 
-  it('offers analytics presets in analytics mode and starts from the previous month', async () => {
-    await createHost((h) => h.analytics.set(true));
+  it.each([
+    { start: new Date(2026, 9, 1), expectedStart: new Date(2026, 8, 1) },
+    { start: new Date(2026, 0, 1), expectedStart: new Date(2025, 11, 1) },
+  ])(
+    'offers analytics presets and starts one month before $start',
+    async ({ start, expectedStart }) => {
+      await createHost((h) => {
+        h.start = start;
+        h.analytics.set(true);
+      });
 
-    const links = Array.from(
-      fixture.nativeElement.querySelectorAll('a.clickable'),
-    ).map((a) => (a as HTMLAnchorElement).textContent!.trim());
-    expect(links).toEqual(['3 месяца', 'текущий год', '3 года', 'За всю историю']);
-    expect(host.start.getMonth()).toBe(new Date().getMonth() - 1);
-    expect(host.start.getDate()).toBe(1);
-  });
+      const links = Array.from(
+        fixture.nativeElement.querySelectorAll('a.clickable'),
+      ).map((a) => (a as HTMLAnchorElement).textContent!.trim());
+      expect(links).toEqual([
+        '3 месяца',
+        'текущий год',
+        '3 года',
+        'За всю историю',
+      ]);
+      expect(host.start).toEqual(expectedStart);
+    },
+  );
 
-  it('sets a three months window from the analytics preset', async () => {
-    await createHost((h) => h.analytics.set(true));
+  it.each([
+    {
+      now: new Date(2026, 9, 15),
+      expectedStart: new Date(2026, 6, 1),
+      expectedEnd: new Date(2026, 9, 1),
+    },
+    {
+      now: new Date(2026, 0, 15),
+      expectedStart: new Date(2025, 9, 1),
+      expectedEnd: new Date(2026, 0, 1),
+    },
+  ])(
+    'sets a three months analytics window at $now',
+    async ({ now, expectedStart, expectedEnd }) => {
+      jest.useFakeTimers({ now, advanceTimers: true });
+      try {
+        await createHost((h) => h.analytics.set(true));
+        await clickPreset('3 месяца');
 
-    await clickPreset('3 месяца');
-
-    const result = host.selected()!;
-    const now = new Date();
-    expect(result.start.getDate()).toBe(1);
-    expect(result.start.getMonth()).toBe(now.getMonth() - 3);
-    expect(result.end.getDate()).toBe(1);
-    expect(result.end.getMonth()).toBe(now.getMonth());
-  });
+        const result = host.selected()!;
+        expect(result.start).toEqual(expectedStart);
+        expect(result.end).toEqual(expectedEnd);
+      } finally {
+        jest.useRealTimers();
+      }
+    },
+  );
 });
