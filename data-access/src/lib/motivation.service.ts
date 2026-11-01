@@ -56,7 +56,9 @@ export class MotivationApiService {
   public listBaseCriteria(
     activeOn?: DateOnlyString,
   ): Observable<BaseCriteriaList> {
-    const params = activeOn ? new HttpParams().set('activeOn', activeOn) : undefined;
+    const params = activeOn
+      ? new HttpParams().set('activeOn', activeOn)
+      : undefined;
     return this.http.get<BaseCriteriaList>(`${this.basePath}/base-criteria`, {
       params,
     });
@@ -94,7 +96,7 @@ export class MotivationApiService {
     );
   }
 
-  // --- special criteria (one Criterion per position) ---
+  // --- special criteria (one shared Criterion for multiple positions) ---
 
   public listCriteria(filters?: {
     positionId?: string;
@@ -163,7 +165,9 @@ export class MotivationApiService {
   }
 
   public listCoefficientCapHistory(): Observable<CapHistory> {
-    return this.http.get<CapHistory>(`${this.basePath}/coefficient-cap/history`);
+    return this.http.get<CapHistory>(
+      `${this.basePath}/coefficient-cap/history`,
+    );
   }
 
   public setCoefficientCap(
@@ -220,9 +224,7 @@ export class MotivationApiService {
 
   // --- payroll and close lifecycle ---
 
-  public listPayrollResults(
-    periodId: Uuid,
-  ): Observable<PayrollResultList> {
+  public listPayrollResults(periodId: Uuid): Observable<PayrollResultList> {
     return this.http.get<PayrollResultList>(
       `${this.basePath}/periods/${periodId}/payroll-results`,
     );

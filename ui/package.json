@@ -1,6 +1,6 @@
 {
   "name": "@sotbi/ui",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "publishConfig": {
     "registry": "https://npm.bazys.io",
     "access": "public"
@@ -16,7 +16,7 @@
     "./tokens.css": "./tokens.css"
   },
   "peerDependencies": {
-    "@sotbi/models": "0.3.5",
+    "@sotbi/models": "0.3.6",
     "@sotbi/utils": "0.3.5",
     "@angular/core": "^22.2.3",
     "@angular/forms": "^22.2.3",

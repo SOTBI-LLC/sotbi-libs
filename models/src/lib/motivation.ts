@@ -81,13 +81,10 @@ export type CriterionType = 'base' | 'special';
 
 export interface Criterion {
   id: Uuid;
-  /** Exact immutable external position identifier as a decimal string. */
-  positionId: DecimalInt64;
-  /**
-   * Current display label resolved by the gateway; `null` when the position
-   * is deleted or unresolvable. Never used as an authority to add a line.
-   */
-  positionName: string | null;
+  /** Exact external position identifiers; one shared criterion per set. */
+  positionIds: DecimalInt64[];
+  /** Current labels; null names retain deleted/unresolvable assignments. */
+  positions: { id: DecimalInt64; name: string | null }[];
   name: string;
   description: string;
   /** Signed int32, minimum 1. */
@@ -105,8 +102,8 @@ export interface CriterionList {
 }
 
 export interface CreateCriterionRequest {
-  /** Required exact positive decimal string, e.g. `"200"`. */
-  positionId: DecimalInt64;
+  /** Required non-empty unique set of exact positive decimal strings. */
+  positionIds: DecimalInt64[];
   name: string;
   description?: string;
   maxScore: number;
@@ -120,6 +117,8 @@ export interface CreateCriterionRequest {
  * HTTP 400 when present.
  */
 export interface UpdateCriterionRequest {
+  /** When present, replaces the entire non-empty assignment set. */
+  positionIds?: DecimalInt64[];
   name?: string;
   description?: string;
   validTo?: DateOnlyString | null;

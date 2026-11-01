@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import type {
   CreateBaseCriteriaRequest,
   CreateCriterionRequest,
+  UpdateCriterionRequest,
   PerformanceSheetWrapper,
   SavePerformanceSheetRequest,
 } from '@sotbi/models';
@@ -51,7 +52,10 @@ describe('MotivationApiService', () => {
     } as unknown as jest.Mocked<HttpClient>;
 
     await TestBed.configureTestingModule({
-      providers: [{ provide: HttpClient, useValue: httpSpy }, MotivationApiService],
+      providers: [
+        { provide: HttpClient, useValue: httpSpy },
+        MotivationApiService,
+      ],
     }).compileComponents();
 
     service = TestBed.inject(MotivationApiService);
@@ -77,16 +81,21 @@ describe('MotivationApiService', () => {
 
     it('reads the complete cap audit from the published history route', () => {
       const history = {
-        baseline: { coefficientCap: { tenThousandths: 12550 }, recordedAt: '2026-09-22T09:00:00Z' },
+        baseline: {
+          coefficientCap: { tenThousandths: 12550 },
+          recordedAt: '2026-09-22T09:00:00Z',
+        },
         earlierHistoryUnavailable: true,
-        entries: [{
-          id: OPERATION_ID,
-          actorUserId: USER_ID,
-          recordedAt: '2026-09-22T10:00:00Z',
-          previousCap: { tenThousandths: 12550 },
-          newCap: { tenThousandths: 15000 },
-          comment: 'review',
-        }],
+        entries: [
+          {
+            id: OPERATION_ID,
+            actorUserId: USER_ID,
+            recordedAt: '2026-09-22T10:00:00Z',
+            previousCap: { tenThousandths: 12550 },
+            newCap: { tenThousandths: 15000 },
+            comment: 'review',
+          },
+        ],
       };
       httpClient.get.mockReturnValue(of(history));
 
@@ -95,11 +104,15 @@ describe('MotivationApiService', () => {
         expect(result.entries[0].actorUserId).toBe('9007199254740993');
       });
 
-      expect(httpClient.get).toHaveBeenCalledWith('/api/motivation/coefficient-cap/history');
+      expect(httpClient.get).toHaveBeenCalledWith(
+        '/api/motivation/coefficient-cap/history',
+      );
     });
 
     it('keeps optional cap audit text and idempotency identity in one command', () => {
-      httpClient.put.mockReturnValue(of({ coefficientCap: { tenThousandths: 15000 } }));
+      httpClient.put.mockReturnValue(
+        of({ coefficientCap: { tenThousandths: 15000 } }),
+      );
       const command = createMotivationCommand({
         tenThousandths: 15000,
         comment: 'review',
@@ -290,8 +303,11 @@ describe('MotivationApiService', () => {
     const criterionWrapper = {
       criterion: {
         id: CRITERION_ID,
-        positionId: '9007199254740993',
-        positionName: 'Старший пилот',
+        positionIds: ['200', '9007199254740993'],
+        positions: [
+          { id: '200', name: null },
+          { id: '9007199254740993', name: 'Старший пилот' },
+        ],
         name: 'Касса',
         description: '',
         maxScore: 60,
@@ -300,10 +316,10 @@ describe('MotivationApiService', () => {
       },
     };
 
-    it('creates a special with an exact decimal-string positionId', () => {
+    it('creates a special with an exact decimal-string positionIds', () => {
       httpClient.post.mockReturnValue(of(criterionWrapper));
       const payload: CreateCriterionRequest = {
-        positionId: '9007199254740993',
+        positionIds: ['200', '9007199254740993'],
         name: 'Касса',
         maxScore: 60,
         validFrom: '2026-01-01',
@@ -315,9 +331,11 @@ describe('MotivationApiService', () => {
       const [url, body, options] = httpClient.post.mock.calls[0];
       expect(url).toBe('/api/motivation/criteria');
       expect(body).toEqual(payload);
-      expect((body as CreateCriterionRequest).positionId).toBe(
+      expect((body as CreateCriterionRequest).positionIds).toEqual([
+        '200',
         '9007199254740993',
-      );
+      ]);
+      expect(body).not.toHaveProperty('positionId');
       expect(
         (options as { headers: Record<string, string> }).headers[
           'Idempotency-Key'
@@ -343,8 +361,31 @@ describe('MotivationApiService', () => {
       ).toBe('application/merge-patch+json');
     });
 
+    it('retries assignment replacement with the original body and key after the caller changes its array', () => {
+      httpClient.patch.mockReturnValue(of(criterionWrapper));
+      const payload: UpdateCriterionRequest = {
+        positionIds: ['200', '9007199254740993'],
+      };
+      const command = createMotivationCommand(payload);
+      service.updateCriterion(CRITERION_ID, command).subscribe();
+      expect(() => payload.positionIds?.splice(0, 1, '300')).toThrow(TypeError);
+      service.updateCriterion(CRITERION_ID, command).subscribe();
+      for (const [url, body, options] of httpClient.patch.mock.calls) {
+        expect(url).toBe(`/api/motivation/criteria/${CRITERION_ID}`);
+        expect(body).toEqual({ positionIds: ['200', '9007199254740993'] });
+        expect(
+          (options as { headers: Record<string, string> }).headers,
+        ).toEqual({
+          'Idempotency-Key': command.key,
+          'Content-Type': 'application/merge-patch+json',
+        });
+      }
+    });
+
     it('lists specials with combined exact filters', () => {
-      httpClient.get.mockReturnValue(of({ items: [criterionWrapper.criterion] }));
+      httpClient.get.mockReturnValue(
+        of({ items: [criterionWrapper.criterion] }),
+      );
 
       service
         .listCriteria({ positionId: '200', activeOn: '2026-09-01' })
@@ -357,7 +398,9 @@ describe('MotivationApiService', () => {
     });
 
     it('reads the admin-only position choices without an idempotency key', () => {
-      httpClient.get.mockReturnValue(of({ positions: [{ id: '200', name: 'Кассир' }] }));
+      httpClient.get.mockReturnValue(
+        of({ positions: [{ id: '200', name: 'Кассир' }] }),
+      );
 
       service.listMotivationPositions().subscribe();
 
@@ -368,7 +411,7 @@ describe('MotivationApiService', () => {
     it('keeps the idempotency key and body identical when a create is retried', () => {
       httpClient.post.mockReturnValue(of(criterionWrapper));
       const payload: CreateCriterionRequest = {
-        positionId: '200',
+        positionIds: ['200', '9007199254740993'],
         name: 'Касса',
         maxScore: 60,
         validFrom: '2026-01-01',

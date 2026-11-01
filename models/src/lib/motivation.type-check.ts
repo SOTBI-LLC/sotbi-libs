@@ -14,30 +14,46 @@ import type {
  */
 type Expect<T extends true> = T;
 type Equal<X, Y> =
-  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? true : false;
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+    ? true
+    : false;
 type HasKey<T, K extends string> = K extends keyof T ? true : false;
 
 // Position provenance is stringly typed for exactness above 2^53.
-type _CriterionPositionIsString = Expect<Equal<Criterion['positionId'], string>>;
+type _CriterionPositionIsString = Expect<
+  Equal<Criterion['positionIds'], string[]>
+>;
 type _ChoiceIdIsString = Expect<Equal<PositionChoice['id'], string>>;
 
-// Patch types carry only the mutable trio.
-type _BasePatchNoMaxScore = Expect<Equal<HasKey<UpdateBaseCriteriaRequest, 'maxScore'>, false>>;
-type _BasePatchNoValidFrom = Expect<Equal<HasKey<UpdateBaseCriteriaRequest, 'validFrom'>, false>>;
+// PATCH preserves text/date intent and permits assignment replacement.
+type _BasePatchNoMaxScore = Expect<
+  Equal<HasKey<UpdateBaseCriteriaRequest, 'maxScore'>, false>
+>;
+type _BasePatchNoValidFrom = Expect<
+  Equal<HasKey<UpdateBaseCriteriaRequest, 'validFrom'>, false>
+>;
 type _BasePatchNoPositionId = Expect<
   Equal<HasKey<UpdateBaseCriteriaRequest, 'positionId'>, false>
 >;
 type _SpecialPatchNoPositionId = Expect<
   Equal<HasKey<UpdateCriterionRequest, 'positionId'>, false>
 >;
-type _SpecialPatchNoMaxScore = Expect<Equal<HasKey<UpdateCriterionRequest, 'maxScore'>, false>>;
-type _SpecialPatchNoType = Expect<Equal<HasKey<UpdateCriterionRequest, 'type'>, false>>;
+type _SpecialPatchNoMaxScore = Expect<
+  Equal<HasKey<UpdateCriterionRequest, 'maxScore'>, false>
+>;
+type _SpecialPatchNoType = Expect<
+  Equal<HasKey<UpdateCriterionRequest, 'type'>, false>
+>;
 
 // The presence markers below are never evaluated; they exist so the type
 // aliases above cannot be tree-shaken away by careless refactors.
 export type BH_1851_CONTRACT_CHECKS = [
   _CriterionPositionIsString,
   _ChoiceIdIsString,
+  Expect<
+    Equal<Criterion['positions'][number], { id: string; name: string | null }>
+  >,
+  Expect<Equal<UpdateCriterionRequest['positionIds'], string[] | undefined>>,
   _BasePatchNoMaxScore,
   _BasePatchNoValidFrom,
   _BasePatchNoPositionId,
