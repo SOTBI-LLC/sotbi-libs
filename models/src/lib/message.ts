@@ -400,6 +400,8 @@ export interface ClaimInclusion {
   order_of_satisfaction?: TypeOrderOfSatisfaction;
   /** Обеспечение залогом */
   providing_collateral?: ProvidingCollateral;
+  /** Сумма требований, обеспеченных залогом, руб. */
+  amount_secured_claims?: number | null;
 }
 
 export enum CreditorType {
