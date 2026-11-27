@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
+import type { StateContext } from '@ngxs/store';
+import { Action, Selector, State } from '@ngxs/store';
 import { AppraiserService } from '@sotbi/data-access';
 import type { CatalogAppraiser } from '@sotbi/models';
 import { tap } from 'rxjs';
