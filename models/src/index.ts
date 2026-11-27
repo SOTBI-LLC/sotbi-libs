@@ -355,3 +355,4 @@ export {
   UpdateCriterionRequest,
   Uuid,
 } from './lib/motivation';
+export { CatalogAppraiser, SaveAppraiserRequest } from './lib/catalog-appraiser';
